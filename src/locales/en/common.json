@@ -134,5 +134,63 @@
     "linkContact": "Contact",
     "linkPending": "Awaiting official information",
     "placeholderDisclaimer": "All center records are demonstration placeholders. No real-world location is claimed or implied."
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "meditation": "Meditation Tracks",
+      "qa": "Q&A Management",
+      "centers": "DCI Centers",
+      "bioLinks": "BioPage Links",
+      "languages": "Languages",
+      "team": "Team Management (Owner Only)",
+      "signOut": "Sign Out",
+      "publicSite": "Public Site"
+    },
+    "dashboard": {
+      "title": "Admin CMS Dashboard",
+      "subtitle": "Manage MonkChat Guide content and resources",
+      "welcome": "Welcome back,",
+      "roleLabel": "Role:",
+      "ownerBadge": "Project Owner",
+      "teamBadge": "Team Member",
+      "ownerOnlyTag": "Owner Only",
+      "openModule": "Open Module"
+    },
+    "accessDeniedTitle": "Access Denied",
+    "accessDeniedDesc": "This page is restricted to the Project Owner. Team Members cannot access Team Management.",
+    "backToDashboard": "Back to Dashboard",
+    "modules": {
+      "meditation": {
+        "title": "Meditation Tracks & Subtitles",
+        "description": "Manage meditation audio metadata, transcripts, and subtitles",
+        "placeholder": "Meditation tracks & subtitles management module (CMS CRUD - under development)"
+      },
+      "qa": {
+        "title": "Meditation & Buddhism Q&A",
+        "description": "Manage Q&A items, translations, verification status, and publication",
+        "placeholder": "Q&A management & verification module (CMS CRUD - under development)"
+      },
+      "centers": {
+        "title": "DCI Meditation Centers",
+        "description": "Manage center locations, map links, contact details, and translations",
+        "placeholder": "DCI meditation centers management module (CMS CRUD - under development)"
+      },
+      "bioLinks": {
+        "title": "BioPage Links",
+        "description": "Manage key activity links, display order, and main page publishing",
+        "placeholder": "BioPage links management module (CMS CRUD - under development)"
+      },
+      "languages": {
+        "title": "Application Languages",
+        "description": "Manage supported languages across the MonkChat Guide platform",
+        "placeholder": "Languages management module (CMS CRUD - under development)"
+      },
+      "team": {
+        "title": "Team Account Management",
+        "description": "Manage team member profiles, access roles, and account status",
+        "placeholder": "Team account & role management module (Owner Only - under development)"
+      }
+    }
   }
 }

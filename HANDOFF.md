@@ -34,10 +34,13 @@
 - Owner profile and role authorization (`role = owner`, `is_active = true`) passed.
 - Sign-out and protected-route redirect (`/admin` -> `/admin/login`) passed.
 - `.env.local` remains private, local, and ignored.
-- Storage migration reviewed and approved locally (`20260812181301_storage_meditation_audio.sql`).
-- Real remote migration has not yet been pushed.
-- No real audio has been uploaded.
-- **Exact next step**: Apply and verify the Storage migration remotely.
+- Admin CMS shell completed and manually verified.
+- All Owner CMS routes (`/admin`, `/admin/meditation`, `/admin/qa`, `/admin/centers`, `/admin/bio-links`, `/admin/languages`, `/admin/team`) manually verified.
+- Sign-out and logged-out redirect manually verified.
+- CMS Thai/English switching manually verified.
+- Team Member direct-access testing is deferred until a Team Member account exists (OwnerRoute route guard enforced).
+- Security Advisor: 0 errors and 1 accepted Free-tier warning ("Leaked Password Protection Disabled" - requires Supabase Pro, accepted because project budget is 0 THB).
+- **Exact next step**: Implement the Meditation content-management module as a separate checkpoint.
 
 ## Completed Work
 - Created initial project documentation.
@@ -65,14 +68,14 @@
 - Implemented Supabase Authentication scaffold (login page, protected routes, context, locale strings, error handling).
 - Manually tested and verified Owner login flow, role authorization, sign-out, and protected route access.
 - Created idempotent migration for `meditation-audio` Storage bucket and RLS policies (`20260812181301_storage_meditation_audio.sql`).
-- Reviewed and approved Storage configuration and RLS policies locally.
+- Applied Storage migration to remote Supabase database and verified 0 lint errors/warnings.
+- Implemented responsive Admin CMS shell, module subroutes, OwnerRoute guard, and reactive Thai/English language switching.
 
 ## Current Task
-- Storage migration checkpoint completed locally. Ready to apply remotely when instructed.
-- **Important Object Naming Rule**: Storage files MUST follow the pattern `<meditation_track_id>/<safe-file-name>.mp3`. This precise path must be saved in `meditation_tracks.audio_storage_path` to properly link Storage permissions to DB content status.
+- Admin CMS shell checkpoint completed. Ready for Meditation content-management module implementation.
 
 ## Exact Next Step
-- Apply and verify the Storage migration remotely.
+- Implement the Meditation content-management module as a separate checkpoint.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.

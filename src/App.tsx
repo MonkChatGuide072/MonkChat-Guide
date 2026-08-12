@@ -1,36 +1,61 @@
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { Layout } from './components/Layout'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { OwnerRoute } from './components/OwnerRoute'
+import { AdminLayout } from './components/AdminLayout'
 import { AuthProvider } from './lib/auth'
+
 import { HomePage } from './pages/HomePage'
 import { MeditationPage } from './pages/MeditationPage'
 import { QAPage } from './pages/QAPage'
 import { CentersPage } from './pages/CentersPage'
 import { LoginPage } from './pages/LoginPage'
-import { AdminPage } from './pages/AdminPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
+import { AdminMeditationPage } from './pages/admin/AdminMeditationPage'
+import { AdminQAPage } from './pages/admin/AdminQAPage'
+import { AdminCentersPage } from './pages/admin/AdminCentersPage'
+import { AdminBioLinksPage } from './pages/admin/AdminBioLinksPage'
+import { AdminLanguagesPage } from './pages/admin/AdminLanguagesPage'
+import { AdminTeamPage } from './pages/admin/AdminTeamPage'
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Layout />}>
-            {/* Public Routes */}
             <Route index element={<HomePage />} />
             <Route path="meditation" element={<MeditationPage />} />
             <Route path="qa" element={<QAPage />} />
             <Route path="centers" element={<CentersPage />} />
             <Route path="admin/login" element={<LoginPage />} />
-
-            {/* Protected CMS Routes */}
-            <Route path="admin" element={<ProtectedRoute />}>
-              <Route index element={<AdminPage />} />
-            </Route>
-
-            {/* Fallback */}
-            <Route path="*" element={<NotFoundPage />} />
           </Route>
+
+          {/* Protected CMS Routes */}
+          <Route path="admin" element={<ProtectedRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route index element={<AdminDashboardPage />} />
+              <Route path="meditation" element={<AdminMeditationPage />} />
+              <Route path="qa" element={<AdminQAPage />} />
+              <Route path="centers" element={<AdminCentersPage />} />
+              <Route path="bio-links" element={<AdminBioLinksPage />} />
+              <Route path="languages" element={<AdminLanguagesPage />} />
+              <Route
+                path="team"
+                element={
+                  <OwnerRoute>
+                    <AdminTeamPage />
+                  </OwnerRoute>
+                }
+              />
+            </Route>
+          </Route>
+
+          {/* Fallback */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
