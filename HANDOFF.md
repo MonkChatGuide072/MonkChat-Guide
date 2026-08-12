@@ -25,7 +25,9 @@
 - Public mock pages continue to work without environment variables.
 - No remote Supabase project connected; no real credentials stored.
 - Local database migration SQL (`initial_schema.sql`) and RLS policies (`row_level_security.sql`) created according to `DATABASE_SCHEMA.md`.
-- **Next step**: Apply local migrations or proceed with Day 3 Step 3 (authentication scaffold).
+- Completed SQL security audit corrections: `update_modified_column()` and `enforce_qa_verification()` are `SECURITY INVOKER`; Team Members cannot change Q&A publication state (`NEW.is_published := OLD.is_published`); `get_user_role()` is the sole `SECURITY DEFINER` function (using `SET search_path = ''`, with `EXECUTE` restricted `TO authenticated`); `Profiles view` policy restricts profile reads `TO authenticated` (public users cannot read profiles).
+- Migrations have NOT been applied locally or remotely.
+- **Next step**: Prepare a Supabase Free cloud project and validate the migrations before connecting the application.
 
 ## Completed Work
 - Created initial project documentation.
@@ -47,12 +49,13 @@
 - Completed combined Day 2 public-flow browser review; all pages, language switching, and responsive widths passed.
 - Prepared local Supabase foundation (`@supabase/supabase-js`, CLI init, safe browser client, `.env.example`).
 - Created local initial schema and RLS policy migrations for Supabase based on `DATABASE_SCHEMA.md`.
+- Performed security audit and hardened database functions, RLS policies, search path, and profile access.
 
 ## Current Task
-- Database schema and RLS migrations completed.
+- Database schema security hardening completed.
 
 ## Exact Next Step
-- Apply local migrations or proceed with Day 3 Step 3 (authentication scaffold).
+- Prepare a Supabase Free cloud project and validate the migrations before connecting the application.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.

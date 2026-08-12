@@ -20,10 +20,13 @@ BEGIN
     SELECT role INTO user_role FROM public.profiles WHERE id = auth.uid();
     RETURN user_role;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
+
+REVOKE ALL ON FUNCTION public.get_user_role() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_user_role() TO authenticated;
 
 -- Profiles Policies
-CREATE POLICY "Profiles view" ON public.profiles FOR SELECT 
+CREATE POLICY "Profiles view" ON public.profiles FOR SELECT TO authenticated
 USING (auth.uid() = id OR public.get_user_role() = 'owner');
 
 CREATE POLICY "Profiles insert" ON public.profiles FOR INSERT 
@@ -208,21 +211,19 @@ BEGIN
         END IF;
     ELSIF TG_OP = 'UPDATE' THEN
         IF user_role = 'team_member' THEN
-            -- Team members cannot change verification status or published status if unverified
+            -- Team members cannot change verification status or published status
             NEW.verification_status := OLD.verification_status;
             NEW.verified_by := OLD.verified_by;
             NEW.verified_at := OLD.verified_at;
             
-            -- If it is unverified, team members can't publish it
-            IF NEW.verification_status = 'unverified' THEN
-                NEW.is_published := false;
-            END IF;
+            -- Team members must never change is_published
+            NEW.is_published := OLD.is_published;
         END IF;
     END IF;
     
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER enforce_qa_verification_trigger
 BEFORE INSERT OR UPDATE ON public.qa_items

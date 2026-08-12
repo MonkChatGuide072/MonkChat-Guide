@@ -134,10 +134,10 @@ CREATE TABLE public.usage_events (
 CREATE OR REPLACE FUNCTION public.update_modified_column()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.updated_at = now();
+    NEW.updated_at = pg_catalog.now();
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql;
 
 -- Apply triggers for updated_at
 CREATE TRIGGER update_meditation_tracks_modtime
