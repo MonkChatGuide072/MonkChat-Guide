@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
+import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../../lib/supabase'
 
@@ -174,17 +175,16 @@ export function AdminMeditationPage() {
               {t('admin.meditation.refresh')}
             </button>
 
-            {/* Add track — placeholder, disabled */}
-            <button
-              disabled
-              title={t('admin.meditation.comingSoon')}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg bg-amber-50 text-amber-700 border border-amber-200 opacity-60 cursor-not-allowed"
+            {/* Add track button */}
+            <Link
+              to="/admin/meditation/new"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white shadow-xs transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               {t('admin.meditation.addTrack')}
-            </button>
+            </Link>
           </div>
         </div>
       </div>

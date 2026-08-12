@@ -224,6 +224,38 @@
         "draft": "Draft",
         "published": "Published",
         "archived": "Archived"
+      },
+      "new": {
+        "title": "Add New Meditation Track",
+        "subtitle": "New records start as Draft, Unpublished, with no audio file.",
+        "cancel": "Cancel",
+        "submit": "Save Track",
+        "saving": "Saving...",
+        "noticeTitle": "New tracks always start as Draft",
+        "noticeDesc": "content_status = draft \u00b7 is_published = false \u00b7 audio_storage_path = null \u00b7 No audio upload yet",
+        "sectionThai": "Thai (Required)",
+        "sectionEnglish": "English (Optional)",
+        "sectionDuration": "Duration",
+        "fieldThTitle": "Track Title (Thai)",
+        "fieldThDesc": "Description (Thai)",
+        "fieldEnTitle": "Track Title (English)",
+        "fieldEnDesc": "Description (English)",
+        "fieldMinutes": "Minutes",
+        "fieldSeconds": "Seconds",
+        "placeholderThTitle": "e.g. \u0e01\u0e32\u0e23\u0e2a\u0e27\u0e14\u0e21\u0e19\u0e15\u0e4c\u0e20\u0e32\u0e27\u0e19\u0e32",
+        "placeholderThDesc": "\u0e04\u0e33\u0e2d\u0e18\u0e34\u0e1a\u0e32\u0e22\u0e2a\u0e31\u0e49\u0e19 \u0e46 (\u0e44\u0e21\u0e48\u0e1a\u0e31\u0e07\u0e04\u0e31\u0e1a)",
+        "placeholderEnTitle": "e.g. Mindfulness Meditation",
+        "placeholderEnDesc": "Brief description of this track (optional)",
+        "errorHeader": "Could not save track",
+        "errorThTitleRequired": "Thai title is required.",
+        "errorInvalidMinutes": "Minutes must be a non-negative integer.",
+        "errorInvalidSeconds": "Seconds must be between 0 and 59.",
+        "errorZeroDuration": "Total duration must be greater than 0 seconds.",
+        "errorNoUser": "No user session found. Please sign in again.",
+        "errorNoClient": "Supabase connection is not configured. Please check your .env.local file.",
+        "errorCoreInsert": "Could not create the core track record. Please try again.",
+        "errorPartialSave": "Core track was created but the translation insert failed. The track has been marked as archived. Details: {{error}}",
+        "errorGeneric": "An unexpected error occurred. Please try again."
       }
     }
   }

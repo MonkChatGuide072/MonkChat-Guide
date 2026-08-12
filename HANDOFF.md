@@ -47,7 +47,26 @@
   - Add, Edit, Upload MP3, and Transcript/Subtitle action buttons are intentionally disabled.
   - The module manages audio tracks only; video management is outside the prototype scope.
   - No database records or audio files were created.
-- **Exact next step**: Implement create/edit meditation-track metadata (CMS CRUD Step 2).
+- Day 4 Meditation CMS Step 2A completed and manually verified:
+  - Forward-only initial language seed migration (`20260812195634_seed_initial_languages.sql`) applied to remote database (`th` and `en` active rows present).
+  - Route `/admin/meditation/new` added under `ProtectedRoute`.
+  - Create-track form implemented with Thai title (required), Thai description, English title, English description, and duration (minutes + seconds).
+  - Thai/English validation and UI language switching manually verified.
+  - Form validation enforced: empty Thai title rejected, zero duration (0:00) rejected, seconds > 59 rejected, double-submit disabled while saving.
+  - Partial-save safety implemented: if translation insert fails after core row succeeds, core row is marked as `archived` and an honest error is shown.
+  - Browser Supabase client + RLS used strictly (no service-role key, no Edge Functions).
+  - One remote TEST draft record manually created:
+    - Thai title: `ทดสอบระบบเสียงสมาธิ`
+    - English title: `System Test Meditation Track`
+    - Duration: 5:00 (`300` seconds)
+    - `content_status`: `'draft'`
+    - `is_published`: `false`
+    - `audio_storage_path`: `null`
+  - English title switching and persistence after refresh manually verified.
+  - TEST record remains Draft, Unpublished, and has no audio uploaded.
+  - No real audio file has been uploaded.
+  - Video functionality is outside scope.
+- **Exact next step**: Meditation CMS Step 2B — edit existing track metadata.
 
 ## Completed Work
 - Created initial project documentation.

@@ -224,6 +224,38 @@
         "draft": "ร่าง",
         "published": "เผยแพร่",
         "archived": "เก็บถาวร"
+      },
+      "new": {
+        "title": "เพิ่มแทร็กสมาธิใหม่",
+        "subtitle": "บันทึกจะเริ่มต้นเป็น ร่าง ยังไม่เผยแพร่ และยังไม่มีไฟล์เสียง",
+        "cancel": "ยกเลิก",
+        "submit": "บันทึกแทร็ก",
+        "saving": "กำลังบันทึก...",
+        "noticeTitle": "แทร็กใหม่จะเริ่มต้นเป็นร่างเสมอ",
+        "noticeDesc": "content_status = draft · is_published = false · audio_storage_path = null · ยังไม่มีการอัปโหลดไฟล์เสียง",
+        "sectionThai": "ภาษาไทย (บังคับ)",
+        "sectionEnglish": "ภาษาอังกฤษ (ไม่บังคับ)",
+        "sectionDuration": "ระยะเวลา",
+        "fieldThTitle": "ชื่อแทร็ก (ภาษาไทย)",
+        "fieldThDesc": "คำอธิบาย (ภาษาไทย)",
+        "fieldEnTitle": "ชื่อแทร็ก (ภาษาอังกฤษ)",
+        "fieldEnDesc": "คำอธิบาย (ภาษาอังกฤษ)",
+        "fieldMinutes": "นาที",
+        "fieldSeconds": "วินาที",
+        "placeholderThTitle": "เช่น การสวดมนต์ภาวนา",
+        "placeholderThDesc": "คำอธิบายสั้น ๆ เกี่ยวกับแทร็กนี้ (ไม่บังคับ)",
+        "placeholderEnTitle": "เช่น Mindfulness Meditation",
+        "placeholderEnDesc": "Brief description of this track (optional)",
+        "errorHeader": "ไม่สามารถบันทึกได้",
+        "errorThTitleRequired": "กรุณากรอกชื่อแทร็กภาษาไทย",
+        "errorInvalidMinutes": "นาทีต้องเป็นตัวเลขจำนวนเต็มที่ไม่ต่ำกว่า 0",
+        "errorInvalidSeconds": "วินาทีต้องอยู่ระหว่าง 0 ถึง 59",
+        "errorZeroDuration": "ระยะเวลารวมต้องมากกว่า 0 วินาที",
+        "errorNoUser": "ไม่พบเซสชันผู้ใช้ กรุณาเข้าสู่ระบบใหม่",
+        "errorNoClient": "ยังไม่ได้ตั้งค่าการเชื่อมต่อ Supabase กรุณาตรวจสอบไฟล์ .env.local",
+        "errorCoreInsert": "ไม่สามารถสร้างแทร็กหลักได้ กรุณาลองใหม่",
+        "errorPartialSave": "สร้างแทร็กหลักได้ แต่การบันทึกคำแปลล้มเหลว แทร็กถูกตั้งเป็นเก็บถาวรแล้ว รายละเอียด: {{error}}",
+        "errorGeneric": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองใหม่"
       }
     }
   }
