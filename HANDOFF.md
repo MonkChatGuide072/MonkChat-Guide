@@ -24,10 +24,15 @@
 - Safe nullable browser client created (`src/lib/supabase.ts`) with `.env.example` placeholders.
 - Public mock pages continue to work without environment variables.
 - No remote Supabase project connected; no real credentials stored.
-- Local database migration SQL (`initial_schema.sql`) and RLS policies (`row_level_security.sql`) created according to `DATABASE_SCHEMA.md`.
-- Completed SQL security audit corrections: `update_modified_column()` and `enforce_qa_verification()` are `SECURITY INVOKER`; Team Members cannot change Q&A publication state (`NEW.is_published := OLD.is_published`); `get_user_role()` is the sole `SECURITY DEFINER` function (using `SET search_path = ''`, with `EXECUTE` restricted `TO authenticated`); `Profiles view` policy restricts profile reads `TO authenticated` (public users cannot read profiles).
-- Migrations have NOT been applied locally or remotely.
-- **Next step**: Prepare a Supabase Free cloud project and validate the migrations before connecting the application.
+- Initial schema and RLS migrations (`20260812152413_initial_schema.sql` & `20260812152735_row_level_security.sql`) applied remotely and verified.
+- Created forward-only migration `20260812160457_security_advisor_hardening.sql` addressing 5 Supabase Security Advisor warnings:
+  - `update_modified_column()` and `enforce_qa_verification()` updated with `SET search_path = ''`.
+  - `usage_events` insert policy restricted to approved event types (`audio_play`, `audio_complete`, `bio_link_click`).
+  - `get_user_role()` moved to non-exposed `private` schema (`private.get_user_role()`), retaining `SECURITY DEFINER` and `SET search_path = ''`. Execution permissions revoked from `PUBLIC` and `anon`; granted exclusively to `authenticated` and `service_role`.
+  - All 41 RLS policies updated to reference `private.get_user_role()`.
+  - `public.get_user_role()` dropped.
+- Hardening migration `20260812160457_security_advisor_hardening.sql` has NOT been pushed remotely.
+- **Next step**: Push `20260812160457_security_advisor_hardening.sql` to remote Supabase database and rerun Security Advisor audit, or proceed with Authentication Scaffold.
 
 ## Completed Work
 - Created initial project documentation.
@@ -50,12 +55,14 @@
 - Prepared local Supabase foundation (`@supabase/supabase-js`, CLI init, safe browser client, `.env.example`).
 - Created local initial schema and RLS policy migrations for Supabase based on `DATABASE_SCHEMA.md`.
 - Performed security audit and hardened database functions, RLS policies, search path, and profile access.
+- Applied initial schema and RLS migrations to remote Supabase project.
+- Created and audited forward-only migration `20260812160457_security_advisor_hardening.sql` for Security Advisor warnings.
 
 ## Current Task
-- Database schema security hardening completed.
+- Security Advisor hardening migration prepared and audited locally.
 
 ## Exact Next Step
-- Prepare a Supabase Free cloud project and validate the migrations before connecting the application.
+- Push `20260812160457_security_advisor_hardening.sql` to remote Supabase project, or proceed with Authentication Scaffold.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
