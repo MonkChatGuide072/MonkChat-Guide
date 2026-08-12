@@ -35,12 +35,19 @@
 - Sign-out and protected-route redirect (`/admin` -> `/admin/login`) passed.
 - `.env.local` remains private, local, and ignored.
 - Admin CMS shell completed and manually verified.
-- All Owner CMS routes (`/admin`, `/admin/meditation`, `/admin/qa`, `/admin/centers`, `/admin/bio-links`, `/admin/languages`, `/admin/team`) manually verified.
+- All Owner CMS routes manually verified.
 - Sign-out and logged-out redirect manually verified.
 - CMS Thai/English switching manually verified.
 - Team Member direct-access testing is deferred until a Team Member account exists (OwnerRoute route guard enforced).
 - Security Advisor: 0 errors and 1 accepted Free-tier warning ("Leaked Password Protection Disabled" - requires Supabase Pro, accepted because project budget is 0 THB).
-- **Exact next step**: Implement the Meditation content-management module as a separate checkpoint.
+- Meditation CMS read-only list manually verified:
+  - Empty-state displayed correctly; no records exist in the remote database.
+  - Refresh works without errors.
+  - Thai/English switching works.
+  - Add, Edit, Upload MP3, and Transcript/Subtitle action buttons are intentionally disabled.
+  - The module manages audio tracks only; video management is outside the prototype scope.
+  - No database records or audio files were created.
+- **Exact next step**: Implement create/edit meditation-track metadata (CMS CRUD Step 2).
 
 ## Completed Work
 - Created initial project documentation.
@@ -70,12 +77,13 @@
 - Created idempotent migration for `meditation-audio` Storage bucket and RLS policies (`20260812181301_storage_meditation_audio.sql`).
 - Applied Storage migration to remote Supabase database and verified 0 lint errors/warnings.
 - Implemented responsive Admin CMS shell, module subroutes, OwnerRoute guard, and reactive Thai/English language switching.
+- Implemented Meditation CMS read-only list (fetches from Supabase, shows loading/empty/error/results states).
 
 ## Current Task
-- Admin CMS shell checkpoint completed. Ready for Meditation content-management module implementation.
+- Meditation CMS read-only list implemented. No database records or audio files were created.
 
 ## Exact Next Step
-- Implement the Meditation content-management module as a separate checkpoint.
+- Implement create/edit meditation-track metadata (CMS CRUD Step 2).
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.

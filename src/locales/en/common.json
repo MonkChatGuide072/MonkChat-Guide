@@ -191,6 +191,40 @@
         "description": "Manage team member profiles, access roles, and account status",
         "placeholder": "Team account & role management module (Owner Only - under development)"
       }
+    },
+    "meditation": {
+      "subtitle": "Meditation tracks in the database (read-only)",
+      "refresh": "Refresh",
+      "addTrack": "+ Add Track",
+      "comingSoon": "This feature will be available in the next step",
+      "readOnlyNotice": "This page is currently read-only. Content management buttons will be enabled in the next step.",
+      "errorNoClient": "Supabase connection is not configured. Please check your .env.local file.",
+      "errorTitle": "Error loading tracks",
+      "retry": "Retry",
+      "emptyTitle": "No meditation tracks in the database yet",
+      "emptyDesc": "There are currently no meditation tracks in the database. Records will appear here once the first track is added.",
+      "emptyHint": "The add track feature will be available in the next step.",
+      "trackCount": "{{count}} meditation track(s)",
+      "duration": "Duration",
+      "audioExists": "Audio file exists",
+      "audioMissing": "No audio file yet",
+      "updatedAt": "Last updated",
+      "published": "Published",
+      "unpublished": "Unpublished",
+      "colTitle": "Title",
+      "colDuration": "Duration",
+      "colStatus": "Status",
+      "colAudio": "Audio",
+      "colUpdated": "Last Updated",
+      "colActions": "Actions",
+      "editTrack": "Edit",
+      "uploadAudio": "Upload Audio",
+      "manageTranscript": "Subtitles",
+      "status": {
+        "draft": "Draft",
+        "published": "Published",
+        "archived": "Archived"
+      }
     }
   }
 }
