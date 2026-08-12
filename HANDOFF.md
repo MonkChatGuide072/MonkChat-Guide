@@ -6,11 +6,15 @@
 - Tailwind CSS v4 foundation completed.
 - React Router foundation completed with routes: `/`, `/meditation`, `/qa`, `/centers`, `/admin/login`, and Not Found (`*`).
 - Thai is the default language; English switching works and persists in `localStorage`.
-- Browser verification passed at 360px, 390px, 768px, 1024px, and 1440px.
-- No horizontal scrolling, console errors, warnings, or broken resources were found.
+- Day 1 PWA foundation completed with `vite-plugin-pwa@1.3.0` and Thai web app manifest.
+- Service worker uses `generateSW` strategy with application-shell caching and explicit audio exclusion.
+- Standard browser PWA installation supported without custom popup prompts.
+- Temporary original MC branding created (replaceable with final branding later).
+- `@vite-pwa/assets-generator` and `sharp` removed; full and production `npm audit` report 0 vulnerabilities.
+- Production-preview testing passed at 390px, 768px, and 1440px (manifest, icons, service worker, routing, offline shell verified).
 - Application remains on mock/placeholder content.
-- Supabase, Cloudflare, PWA, and testing libraries have not been configured yet.
-- Next step: create and verify the project-local MonkChat Agent Skill.
+- Supabase, authentication, and external deployment are not connected.
+- Next step: complete the Day 1 mock-data structure and final Day 1 acceptance review.
 
 ## Completed Work
 - Created initial project documentation.
@@ -22,12 +26,14 @@
 - Verified environment readiness and initialized Git repository on branch main.
 - Created React + Vite + TypeScript foundation with Thai default and verified responsiveness.
 - Configured Tailwind CSS v4, React Router, and i18next Thai-English localization foundation.
+- Created project-local MonkChat Agent Skill (`.agents/skills/monkchat-safe-feature/SKILL.md`).
+- Implemented and verified installable PWA foundation.
 
 ## Current Task
-- Creating approved Git checkpoint for routing and localization foundation.
+- Creating approved Git checkpoint for Day 1 PWA foundation.
 
 ## Exact Next Step
-- Create and verify the project-local MonkChat Agent Skill (`.agents/skills/monkchat-safe-feature/SKILL.md`).
+- Complete the Day 1 mock-data structure and final Day 1 acceptance review.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -45,21 +51,15 @@
 - `package.json`
 - `package-lock.json`
 - `vite.config.ts`
-- `src/App.tsx`
-- `src/App.css` (deleted)
-- `src/index.css`
-- `src/main.tsx`
-- `src/i18n.ts`
-- `src/components/LanguageSwitcher.tsx`
-- `src/components/Layout.tsx`
-- `src/locales/th/common.json`
-- `src/locales/en/common.json`
-- `src/pages/HomePage.tsx`
-- `src/pages/MeditationPage.tsx`
-- `src/pages/QAPage.tsx`
-- `src/pages/CentersPage.tsx`
-- `src/pages/LoginPage.tsx`
-- `src/pages/NotFoundPage.tsx`
+- `index.html`
+- `tsconfig.app.json`
+- `public/monkchat-placeholder.svg`
+- `public/favicon.ico`
+- `public/pwa-64x64.png`
+- `public/pwa-192x192.png`
+- `public/pwa-512x512.png`
+- `public/maskable-icon-512x512.png`
+- `public/apple-touch-icon-180x180.png`
 - `HANDOFF.md`
 
 ## Actions That Must Not Be Started Yet
