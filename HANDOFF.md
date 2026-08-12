@@ -2,14 +2,15 @@
 
 ## Current Project Status
 - The four planning documents have been created and approved.
-- React + Vite + TypeScript foundation created.
-- Thai is visibly used as the default language.
-- Responsive browser inspection passed at 360px, 390px, 768px, 1024px, and 1440px.
-- No console errors or horizontal scrolling were found.
-- Unused Vite demonstration assets were removed.
-- Lint and production build passed.
-- Supabase, Cloudflare, Tailwind, routing, i18n, PWA, and testing libraries have not been configured yet.
-- Next step: configure the approved frontend foundation dependencies.
+- React + Vite + TypeScript foundation completed.
+- Tailwind CSS v4 foundation completed.
+- React Router foundation completed with routes: `/`, `/meditation`, `/qa`, `/centers`, `/admin/login`, and Not Found (`*`).
+- Thai is the default language; English switching works and persists in `localStorage`.
+- Browser verification passed at 360px, 390px, 768px, 1024px, and 1440px.
+- No horizontal scrolling, console errors, warnings, or broken resources were found.
+- Application remains on mock/placeholder content.
+- Supabase, Cloudflare, PWA, and testing libraries have not been configured yet.
+- Next step: create and verify the project-local MonkChat Agent Skill.
 
 ## Completed Work
 - Created initial project documentation.
@@ -20,12 +21,13 @@
 - Reviewed and approved IMPLEMENTATION_PLAN.md and updated DECISIONS.md.
 - Verified environment readiness and initialized Git repository on branch main.
 - Created React + Vite + TypeScript foundation with Thai default and verified responsiveness.
+- Configured Tailwind CSS v4, React Router, and i18next Thai-English localization foundation.
 
 ## Current Task
-- Completing Day 1 React + Vite foundation checkpoint.
+- Creating approved Git checkpoint for routing and localization foundation.
 
 ## Exact Next Step
-- Configure the approved frontend foundation dependencies.
+- Create and verify the project-local MonkChat Agent Skill (`.agents/skills/monkchat-safe-feature/SKILL.md`).
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -40,19 +42,24 @@
 - None at this stage.
 
 ## Files Changed in the Current Phase
-- `.gitignore`
-- `index.html`
 - `package.json`
 - `package-lock.json`
-- `tsconfig.json`
-- `tsconfig.app.json`
-- `tsconfig.node.json`
 - `vite.config.ts`
-- `.oxlintrc.json`
 - `src/App.tsx`
-- `src/App.css`
+- `src/App.css` (deleted)
 - `src/index.css`
 - `src/main.tsx`
+- `src/i18n.ts`
+- `src/components/LanguageSwitcher.tsx`
+- `src/components/Layout.tsx`
+- `src/locales/th/common.json`
+- `src/locales/en/common.json`
+- `src/pages/HomePage.tsx`
+- `src/pages/MeditationPage.tsx`
+- `src/pages/QAPage.tsx`
+- `src/pages/CentersPage.tsx`
+- `src/pages/LoginPage.tsx`
+- `src/pages/NotFoundPage.tsx`
 - `HANDOFF.md`
 
 ## Actions That Must Not Be Started Yet

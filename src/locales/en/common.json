@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "MonkChat Guide",
+    "heading": "Monk Chat Activity Guide",
+    "status": "Under Development",
+    "description": "Meditation guide and resources for visitors and the Monk Chat team.",
+    "footer": "© 2026 MonkChat Guide. All rights reserved."
+  },
+  "nav": {
+    "home": "Home",
+    "meditation": "Meditation",
+    "qa": "Q&A",
+    "centers": "Centers",
+    "login": "Team Login"
+  },
+  "language": {
+    "label": "Language",
+    "th": "ไทย",
+    "en": "English",
+    "switchToTh": "สลับเป็นภาษาไทย",
+    "switchToEn": "Switch to English"
+  },
+  "pages": {
+    "home": {
+      "title": "Home (BioPage)",
+      "subtitle": "Essential information and activity links for visitors",
+      "placeholder": "This page is currently being structured with links and activity resources."
+    },
+    "meditation": {
+      "title": "Guided Meditation",
+      "subtitle": "Meditation tracks with synchronized subtitles",
+      "placeholder": "The system is preparing meditation audio and verified transcriptions."
+    },
+    "qa": {
+      "title": "Meditation & Buddhism Q&A",
+      "subtitle": "Frequently asked questions with answers verified by teaching monks",
+      "placeholder": "The system is preparing verified questions and answers."
+    },
+    "centers": {
+      "title": "DCI Meditation Centers",
+      "subtitle": "Information for the 5 DCI meditation centers",
+      "placeholder": "The system is preparing location and contact information."
+    },
+    "login": {
+      "title": "Team Login",
+      "subtitle": "Private management area for team members and administrators",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submitButton": "Sign In",
+      "note": "(Authentication will be connected to Supabase in a future step)"
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "message": "Sorry, the page you are looking for does not exist or has been moved.",
+      "backHome": "Back to Home"
+    }
+  }
+}
