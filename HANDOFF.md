@@ -24,7 +24,8 @@
 - Safe nullable browser client created (`src/lib/supabase.ts`) with `.env.example` placeholders.
 - Public mock pages continue to work without environment variables.
 - No remote Supabase project connected; no real credentials stored.
-- **Next step**: Create and review database migration SQL and RLS policies locally without pushing remotely.
+- Local database migration SQL (`initial_schema.sql`) and RLS policies (`row_level_security.sql`) created according to `DATABASE_SCHEMA.md`.
+- **Next step**: Apply local migrations or proceed with Day 3 Step 3 (authentication scaffold).
 
 ## Completed Work
 - Created initial project documentation.
@@ -45,12 +46,13 @@
 - Implemented public DCI Centers interface with 5 neutral demonstration records and null-safe link handling.
 - Completed combined Day 2 public-flow browser review; all pages, language switching, and responsive widths passed.
 - Prepared local Supabase foundation (`@supabase/supabase-js`, CLI init, safe browser client, `.env.example`).
+- Created local initial schema and RLS policy migrations for Supabase based on `DATABASE_SCHEMA.md`.
 
 ## Current Task
-- Creating approved Git checkpoint for local Supabase foundation.
+- Database schema and RLS migrations completed.
 
 ## Exact Next Step
-- Create and review database migration SQL and RLS policies locally without pushing remotely.
+- Apply local migrations or proceed with Day 3 Step 3 (authentication scaffold).
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -73,6 +75,8 @@
 - `src/vite-env.d.ts`
 - `supabase/config.toml`
 - `supabase/.gitignore`
+- `supabase/migrations/20260812152413_initial_schema.sql`
+- `supabase/migrations/20260812152735_row_level_security.sql`
 
 ## Actions That Must Not Be Started Yet
 - Do not install extra packages beyond approved next steps.
