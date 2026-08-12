@@ -70,14 +70,24 @@
   - Edit form (`AdminMeditationEditPage.tsx`) manually verified against the remote TEST draft record.
   - Thai title updated to `ทดสอบระบบเสียงสมาธิ ฉบับแก้ไข`.
   - English title updated to `Edited System Test Meditation Track`.
-  - Duration updated successfully from 5:00 to 6:30 (`390` seconds).
+  - Duration updated successfully to 6:22 (`382` seconds).
   - Content status (`draft`), publication state (`false`), and audio path (`null`) were preserved.
   - Thai/English display, persistence after refresh, and UI language switching were manually verified.
   - Core duration rollback logic on translation upsert failure verified.
   - Existing English translation preservation when cleared verified.
   - No service-role key or RLS bypass used; no video functionality included.
   - No real audio file has been uploaded.
-- **Exact next step**: Meditation CMS Step 3 — upload and replace MP3 audio.
+- Day 4 Meditation CMS Step 3 completed and manually verified:
+  - Component `AdminMeditationAudioPage.tsx` implemented and verified against the remote TEST draft record.
+  - One MP3 file manually uploaded to private `meditation-audio` Storage bucket and linked to `meditation_tracks.audio_storage_path`.
+  - Track list now displays `✓ มีไฟล์เสียง` (`✓ Audio file attached`).
+  - Strict MP3 validation enforced: `.mp3` extension case-insensitively, allowed MIME (`audio/mpeg`, `audio/mp3`, `audio/x-mp3`, empty), size > 0, max 25 MB (`26214400` bytes). Non-MP3 files (including `.txt`) and oversized files rejected.
+  - TEST record duration correctly confirmed as 6:22 (`382` seconds).
+  - Record remains Draft (`content_status = 'draft'`) and Unpublished (`is_published = false`).
+  - Replacement handling requires explicit confirmation checkbox when `audio_storage_path` exists and uses `upsert: true`. Existing path safety validated (`<trackId>/...mp3`, no `..`).
+  - Safe partial-failure retry implemented: if Storage upload succeeds but metadata save fails, `handleRetryDbSave` retries metadata update only without re-uploading or deleting the object.
+  - No service-role key, public URL, or RLS bypass used; bucket remains private; no public playback implemented yet; no video functionality included.
+- **Exact next step**: Day 4 Meditation CMS Step 4 — transcript and synchronized subtitle management.
 
 ## Completed Work
 - Created initial project documentation.

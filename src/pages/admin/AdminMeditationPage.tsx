@@ -267,8 +267,13 @@ export function AdminMeditationPage() {
                     >
                       {t('admin.meditation.editTrack')}
                     </Link>
+                    <Link
+                      to={`/admin/meditation/${track.id}/audio`}
+                      className="px-2.5 py-1 text-xs font-semibold rounded border border-blue-300 text-blue-800 bg-blue-50 hover:bg-blue-100 transition-colors"
+                    >
+                      {t('admin.meditation.uploadAudio')}
+                    </Link>
                     {[
-                      { key: 'uploadAudio' },
                       { key: 'manageTranscript' },
                     ].map(({ key }) => (
                       <button
@@ -340,8 +345,13 @@ export function AdminMeditationPage() {
                           >
                             {t('admin.meditation.editTrack')}
                           </Link>
+                          <Link
+                            to={`/admin/meditation/${track.id}/audio`}
+                            className="px-2.5 py-1 text-xs font-semibold rounded border border-blue-300 text-blue-800 bg-blue-50 hover:bg-blue-100 transition-colors whitespace-nowrap"
+                          >
+                            {t('admin.meditation.uploadAudio')}
+                          </Link>
                           {[
-                            { key: 'uploadAudio' },
                             { key: 'manageTranscript' },
                           ].map(({ key }) => (
                             <button
