@@ -9,12 +9,16 @@
 - Day 1 PWA foundation completed with `vite-plugin-pwa@1.3.0` and Thai web app manifest.
 - Service worker uses `generateSW` strategy with application-shell caching and explicit audio exclusion.
 - Standard browser PWA installation supported without custom popup prompts.
-- Temporary original MC branding created (replaceable with final branding later).
-- `@vite-pwa/assets-generator` and `sharp` removed; full and production `npm audit` report 0 vulnerabilities.
-- Production-preview testing passed at 390px, 768px, and 1440px (manifest, icons, service worker, routing, offline shell verified).
-- Application remains on mock/placeholder content.
-- Supabase, authentication, and external deployment are not connected.
-- Next step: complete the Day 1 mock-data structure and final Day 1 acceptance review.
+- Day 1 typed mock-data foundation is complete (`src/types/content.ts` and `src/data/mock/`).
+- Thai is default and English is secondary; content and translations are stored separately using relational `language_code`.
+- 3 demonstration meditation tracks have null audio references.
+- 5 demonstration Q&A items are unverified (`verification_status: 'unverified'`) and unpublished (`is_published: false`, `content_status: 'draft'`).
+- 5 neutral DCI demonstration records contain no real-world location claims.
+- 6 demonstration BioPage links use example URLs (`https://example.com/`).
+- Usage events are an empty typed array containing zero personal information.
+- Mock data is not connected to public pages yet.
+- **Day 1 is complete.**
+- **Next step**: Begin Day 2 public interface development using typed mock data.
 
 ## Completed Work
 - Created initial project documentation.
@@ -28,12 +32,13 @@
 - Configured Tailwind CSS v4, React Router, and i18next Thai-English localization foundation.
 - Created project-local MonkChat Agent Skill (`.agents/skills/monkchat-safe-feature/SKILL.md`).
 - Implemented and verified installable PWA foundation.
+- Created and verified typed mock content models and mock data foundation. Completed Day 1.
 
 ## Current Task
-- Creating approved Git checkpoint for Day 1 PWA foundation.
+- Creating final Day 1 Git checkpoint for typed mock content foundation.
 
 ## Exact Next Step
-- Complete the Day 1 mock-data structure and final Day 1 acceptance review.
+- Begin Day 2 public interface development using typed mock data.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -48,18 +53,20 @@
 - None at this stage.
 
 ## Files Changed in the Current Phase
-- `package.json`
-- `package-lock.json`
-- `vite.config.ts`
-- `index.html`
-- `tsconfig.app.json`
-- `public/monkchat-placeholder.svg`
-- `public/favicon.ico`
-- `public/pwa-64x64.png`
-- `public/pwa-192x192.png`
-- `public/pwa-512x512.png`
-- `public/maskable-icon-512x512.png`
-- `public/apple-touch-icon-180x180.png`
+- `src/types/content.ts`
+- `src/data/mock/languages.ts`
+- `src/data/mock/meditationTracks.ts`
+- `src/data/mock/meditationTrackTranslations.ts`
+- `src/data/mock/transcripts.ts`
+- `src/data/mock/subtitles.ts`
+- `src/data/mock/qaItems.ts`
+- `src/data/mock/qaTranslations.ts`
+- `src/data/mock/dciCenters.ts`
+- `src/data/mock/dciCenterTranslations.ts`
+- `src/data/mock/bioLinks.ts`
+- `src/data/mock/bioLinkTranslations.ts`
+- `src/data/mock/usageEvents.ts`
+- `src/data/mock/index.ts`
 - `HANDOFF.md`
 
 ## Actions That Must Not Be Started Yet
