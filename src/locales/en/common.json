@@ -42,6 +42,25 @@
     "purposeVisitors": "For Visitors: Scan a QR code to access guided meditation, subtitles, and introductory Buddhist knowledge easily.",
     "purposeMonks": "For Monks & Team: Access a verified Q&A knowledge base to confidently guide visitors in multiple languages."
   },
+  "meditation": {
+    "heroTag": "GUIDED MEDITATION",
+    "title": "Guided Meditation Tracks",
+    "subtitle": "Select a meditation track to view description, transcript, and synchronized subtitles.",
+    "demoBadge": "Demonstration Track (Demo)",
+    "selectTrackTitle": "Meditation Tracks",
+    "duration": "Duration",
+    "minutes": "mins",
+    "speaker": "Guided by",
+    "audioPlayerTitle": "Meditation Audio Player",
+    "audioStatusUnavailable": "Real audio file pending team upload",
+    "audioUnavailableNotice": "Real audio files are currently pending upload. Playback is intentionally disabled until real files are added by the team.",
+    "transcriptTitle": "Transcript",
+    "subtitlesTitle": "Synchronized Subtitles",
+    "subtitleNotice": "* Subtitle timing and text are demonstration placeholders and not synced to real audio.",
+    "noTranscript": "No transcript available for this track yet.",
+    "noSubtitles": "No subtitles available for this track yet.",
+    "placeholderDisclaimer": "All meditation tracks, descriptions, and subtitles are demonstration placeholders for system testing."
+  },
   "pages": {
     "home": {
       "title": "Home (BioPage)",

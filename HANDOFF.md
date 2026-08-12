@@ -10,9 +10,10 @@
 - Day 1 typed mock-data foundation completed (`src/types/content.ts` and `src/data/mock/`).
 - **Day 1 is complete.**
 - Home/BioPage functional implementation completed using typed mock BioPage data (`mockBioLinks`, `mockBioLinkTranslations`).
-- Thai-English switching and responsive behavior passed at 360px, 390px, 768px, 1024px, and 1440px.
-- Final visual-design refinement is deferred until main public functionality is complete.
-- **Next step**: Build the Meditation page using typed mock data.
+- Meditation page functional mock-data implementation completed (displays 3 demo tracks, honest disabled audio state, transcript & subtitles display).
+- Real audio playback remains pending.
+- Final visual refinement is deferred.
+- **Next step**: Build the public Q&A page.
 
 ## Completed Work
 - Created initial project documentation.
@@ -28,12 +29,13 @@
 - Implemented and verified installable PWA foundation.
 - Created and verified typed mock content models and mock data foundation. Completed Day 1.
 - Implemented public Home/BioPage interface using typed mock data and language-scalable translation utility.
+- Implemented public Meditation interface with track selection, honest audio status, transcript, and subtitles.
 
 ## Current Task
-- Creating approved Git checkpoint for public Home/BioPage interface.
+- Creating approved Git checkpoint for public Meditation interface.
 
 ## Exact Next Step
-- Build the Meditation page using typed mock data.
+- Build the public Q&A page.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -48,10 +50,9 @@
 - None at this stage.
 
 ## Files Changed in the Current Phase
-- `src/pages/HomePage.tsx`
+- `src/pages/MeditationPage.tsx`
 - `src/locales/th/common.json`
 - `src/locales/en/common.json`
-- `src/utils/translation.ts`
 - `HANDOFF.md`
 
 ## Actions That Must Not Be Started Yet
