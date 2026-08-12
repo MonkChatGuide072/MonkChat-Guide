@@ -15,6 +15,7 @@ import { NotFoundPage } from './pages/NotFoundPage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { AdminMeditationPage } from './pages/admin/AdminMeditationPage'
 import { AdminMeditationNewPage } from './pages/admin/AdminMeditationNewPage'
+import { AdminMeditationEditPage } from './pages/admin/AdminMeditationEditPage'
 import { AdminQAPage } from './pages/admin/AdminQAPage'
 import { AdminCentersPage } from './pages/admin/AdminCentersPage'
 import { AdminBioLinksPage } from './pages/admin/AdminBioLinksPage'
@@ -41,6 +42,7 @@ function App() {
               <Route index element={<AdminDashboardPage />} />
               <Route path="meditation" element={<AdminMeditationPage />} />
               <Route path="meditation/new" element={<AdminMeditationNewPage />} />
+              <Route path="meditation/:trackId/edit" element={<AdminMeditationEditPage />} />
               <Route path="qa" element={<AdminQAPage />} />
               <Route path="centers" element={<AdminCentersPage />} />
               <Route path="bio-links" element={<AdminBioLinksPage />} />

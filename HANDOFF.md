@@ -66,7 +66,18 @@
   - TEST record remains Draft, Unpublished, and has no audio uploaded.
   - No real audio file has been uploaded.
   - Video functionality is outside scope.
-- **Exact next step**: Meditation CMS Step 2B — edit existing track metadata.
+- Day 4 Meditation CMS Step 2B completed and manually verified:
+  - Edit form (`AdminMeditationEditPage.tsx`) manually verified against the remote TEST draft record.
+  - Thai title updated to `ทดสอบระบบเสียงสมาธิ ฉบับแก้ไข`.
+  - English title updated to `Edited System Test Meditation Track`.
+  - Duration updated successfully from 5:00 to 6:30 (`390` seconds).
+  - Content status (`draft`), publication state (`false`), and audio path (`null`) were preserved.
+  - Thai/English display, persistence after refresh, and UI language switching were manually verified.
+  - Core duration rollback logic on translation upsert failure verified.
+  - Existing English translation preservation when cleared verified.
+  - No service-role key or RLS bypass used; no video functionality included.
+  - No real audio file has been uploaded.
+- **Exact next step**: Meditation CMS Step 3 — upload and replace MP3 audio.
 
 ## Completed Work
 - Created initial project documentation.

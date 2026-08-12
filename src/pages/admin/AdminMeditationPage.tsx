@@ -259,10 +259,15 @@ export function AdminMeditationPage() {
                   <div className="text-xs text-slate-400">
                     {t('admin.meditation.updatedAt')}: {formatDate(track.updated_at, currentLang)}
                   </div>
-                  {/* Per-row action placeholders */}
+                  {/* Per-row action buttons */}
                   <div className="flex gap-2 flex-wrap pt-1">
+                    <Link
+                      to={`/admin/meditation/${track.id}/edit`}
+                      className="px-2.5 py-1 text-xs font-semibold rounded border border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors"
+                    >
+                      {t('admin.meditation.editTrack')}
+                    </Link>
                     {[
-                      { key: 'editTrack' },
                       { key: 'uploadAudio' },
                       { key: 'manageTranscript' },
                     ].map(({ key }) => (
@@ -329,8 +334,13 @@ export function AdminMeditationPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5 flex-wrap">
+                          <Link
+                            to={`/admin/meditation/${track.id}/edit`}
+                            className="px-2.5 py-1 text-xs font-semibold rounded border border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors whitespace-nowrap"
+                          >
+                            {t('admin.meditation.editTrack')}
+                          </Link>
                           {[
-                            { key: 'editTrack' },
                             { key: 'uploadAudio' },
                             { key: 'manageTranscript' },
                           ].map(({ key }) => (
