@@ -29,8 +29,13 @@
 - Project Owner confirmed Supabase Security Advisor reports **0 errors** and **0 warnings**.
 - Supabase CLI database lint (`npx supabase db lint`) returned **0 errors** and **0 warnings**.
 - Database schema and Row-Level Security (RLS) deployment are complete.
-- Authentication and Storage setup have not started.
-- **Exact next step**: Prepare Supabase Authentication and Storage configuration.
+- **Authentication Scaffold implemented and manually verified.**
+- Real Owner login passed.
+- Owner profile and role authorization (`role = owner`, `is_active = true`) passed.
+- Sign-out and protected-route redirect (`/admin` -> `/admin/login`) passed.
+- `.env.local` remains private, local, and ignored.
+- CMS CRUD and Storage have not started.
+- **Exact next step**: Configure Supabase Storage for meditation audio.
 
 ## Completed Work
 - Created initial project documentation.
@@ -55,12 +60,14 @@
 - Performed security audit and hardened database functions, RLS policies, search path, and profile access.
 - Applied all 3 schema & hardening migrations to the remote Supabase project.
 - Verified remote database synchronization (`npx supabase db push --dry-run`), CLI schema lint (`npx supabase db lint`), and Project Owner confirmation of 0 errors and 0 warnings in Supabase Security Advisor.
+- Implemented Supabase Authentication scaffold (login page, protected routes, context, locale strings, error handling).
+- Manually tested and verified Owner login flow, role authorization, sign-out, and protected route access.
 
 ## Current Task
-- Database schema, RLS policies, and security hardening deployment complete.
+- Authentication Scaffold completed and verified. Ready for Supabase Storage setup.
 
 ## Exact Next Step
-- Prepare Supabase Authentication and Storage configuration.
+- Configure Supabase Storage for meditation audio.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.

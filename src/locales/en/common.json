@@ -104,7 +104,15 @@
       "emailLabel": "Email",
       "passwordLabel": "Password",
       "submitButton": "Sign In",
-      "note": "(Authentication will be connected to Supabase in a future step)"
+      "loadingButton": "Signing In...",
+      "note": "(Authentication connected to local Supabase project)",
+      "errors": {
+        "invalidCredentials": "The email or password you entered is incorrect.",
+        "inactiveAccount": "This account is inactive. Please contact the project owner.",
+        "accessDenied": "Authentication successful, but no authorized profile was found. Access denied.",
+        "configuration": "System configuration error. Please verify the connection settings.",
+        "generic": "An error occurred during sign in. Please try again."
+      }
     },
     "notFound": {
       "title": "Page Not Found",
