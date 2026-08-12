@@ -1,0 +1,131 @@
+# MonkChat Guide Requirements
+
+## Project Overview
+**MonkChat Guide** is a mobile-first Progressive Web Application (PWA) designed to provide meditation audio, Q&A on Buddhism, and information about DCI centers. It is a dynamic web application with a content management system (CMS) for the team, not a static information website.
+
+## Problems Being Addressed
+**Internal MonkChat Team & Monk Students:**
+- Monk students may not confidently guide foreign visitors in languages beyond their current ability.
+- New monk students need an organized and verified Q&A knowledge base for common meditation and Buddhism questions.
+- Existing teaching materials, audio, links, and center information are scattered and difficult to retrieve during activities.
+
+**Foreign Visitors:**
+- Visitors need guided meditation content they can understand.
+- Visitors need an easy way to continue meditation after returning home.
+- Visitors should be able to scan a QR code and access meditation audio, useful links, and DCI center information immediately.
+
+## Target Users
+1. **Primary Operational Users**: Monk students and MonkChat team members.
+2. **Primary Public Users**: Foreign visitors participating in MonkChat activities.
+3. **Secondary Public Users**: Anyone interested in continuing meditation practice.
+4. **Project Owner**: Manages content and team access.
+
+## Public User Requirements
+Public users must be able to:
+- Open the application through a QR Code.
+- Select their preferred language.
+- View the main BioPage and open important links.
+- Browse and play meditation audio tracks.
+- View time-synchronized subtitles while audio plays.
+- Search meditation and Buddhism-related Q&A.
+- View information about five DCI centers.
+- Use the application comfortably on a mobile phone.
+- Install the PWA on a supported device.
+
+## Team Management Requirements
+The application must include a private management area. Each team member must have an individual login account.
+
+**Roles and Permissions:**
+- **Owner**: Manages all content and team member accounts. Controls access.
+- **Team Member**: Adds, edits, and removes website content.
+- **Public User**: Views public content without logging in.
+
+After logging in, authorized team members must be able to:
+- Add, edit, and remove meditation tracks.
+- Upload and manage audio files.
+- Add and edit transcripts and synchronized subtitles.
+- Add, edit, and remove Q&A.
+- Add, edit, and remove DCI center information.
+- Add, edit, remove, and reorder BioPage links.
+
+## Language Scalability
+- English and Thai are the prototype demonstration languages.
+- The database and CMS must allow additional languages to be added later without changing the application structure.
+- Do not restrict database language fields to only English and Thai.
+
+## Content Requirements
+- **Currently Available**: Three meditation audio files, five DCI center details, a logo or representative image.
+- **Verified Q&A Requirements**:
+  - Every Q&A item should support a source or teacher reference.
+  - Every Q&A item should have a verification status.
+  - Only content verified by the Project Owner should be shown publicly.
+  - AI-generated Buddhist answers must never be published automatically.
+- **Mock Content**: The system must be designed so real content can be added later without rewriting the application. Use mock data while real content is being prepared. Keep content separate from application logic. Do not hard-code final content into user interface components.
+
+## Technical & System Requirements
+- Build as a Mobile-first PWA. The PWA should be installable on supported devices.
+- **Offline Scope**: Offline audio playback is not required for the first prototype. Avoid automatically caching large audio files because the project must remain within free-tier bandwidth and storage limits.
+- Use only free and open-source packages.
+- Development approach: AI agents will perform most coding, testing, and documentation work.
+
+## Anonymous Statistics
+- Record track play count.
+- Record completed-listening count.
+- Record BioPage link click count.
+- Do not collect unnecessary personal information.
+- Do not require public users to create accounts in the first prototype.
+
+## Security Requirements
+- Do not expose passwords, service keys, or secrets in source code.
+- Do not run destructive commands.
+
+## Cost Constraints
+- Runtime and deployment budget: 0 THB.
+- Plan to use **Supabase Free** for database, authentication, and file storage.
+- Plan to use **Cloudflare Pages Free** for deployment.
+- Plan to use the existing GitHub account and a new repository named “monkchat-guide”.
+- The system must remain within the free-tier limits.
+- Do not use paid APIs (no OpenAI, Gemini, etc. inside the deployed application).
+- Do not require a paid domain or billing information.
+- Do not enable automatic paid upgrades or overage spending.
+
+## ✅ CONFIRMED Items
+- Project name: MonkChat Guide.
+- Application type: Mobile-first PWA.
+- Thai is the primary and default interface language.
+- English is the secondary supported language.
+- Users can switch between Thai and English.
+- The prototype must support both Thai and English.
+- Public users do not need to log in.
+- Basic anonymous usage statistics are included.
+- The system must support adding more languages later.
+- Prototype development period: One week.
+- Initial visual direction: calm, clean, simple, international, mobile-first.
+- Initial color direction: white, soft gold, and deep navy.
+- Roles: Owner, Team Member, Public User.
+
+## 💡 AI PROPOSALS
+- React with Vite and TypeScript as the frontend stack.
+- Supabase Auth for team login.
+- Archive content before permanent deletion to reduce accidental data loss.
+
+## ❓ PENDING Decisions
+- AI-generated transcripts for the three audio files.
+- Time-synchronized subtitle files.
+- Ten verified Q&A items.
+- Final BioPage links.
+- Final branding files.
+- Team member names and email addresses.
+- Final confirmation of audio publication rights.
+
+## Out-of-Scope Features
+- Paid subscriptions or in-app purchases.
+- Complex approval workflows for content publishing.
+- AI chatbot functionality directly inside the app.
+- Real-time meditation rooms.
+- Matchmaking.
+- User ranking.
+- Integration with the JodJai application.
+- Live audio or video streaming.
+- Native Play Store or App Store applications.
+- AI-generated Buddhist answers inside the deployed application.
