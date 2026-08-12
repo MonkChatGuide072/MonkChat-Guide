@@ -20,6 +20,28 @@
     "switchToTh": "สลับเป็นภาษาไทย",
     "switchToEn": "Switch to English"
   },
+  "home": {
+    "heroTag": "MONKCHAT GUIDE",
+    "demoBadge": "Demonstration Content (Demo)",
+    "navCardsTitle": "Key Features & Activities",
+    "navCardsSubtitle": "Select a menu item below to access guided meditation, Q&A, or DCI centers.",
+    "meditationCardTitle": "Guided Meditation",
+    "meditationCardDesc": "Listen to guided meditation tracks for relaxation and peace, complete with subtitles.",
+    "meditationCardAction": "Explore Meditation Tracks",
+    "qaCardTitle": "Buddhism & Meditation Q&A",
+    "qaCardDesc": "Search verified answers to common meditation questions and temple etiquette.",
+    "qaCardAction": "Browse Verified Q&A",
+    "centersCardTitle": "DCI Meditation Centers",
+    "centersCardDesc": "Discover locations and contact details for international DCI meditation centers.",
+    "centersCardAction": "View DCI Centers",
+    "bioLinksTitle": "Important Links & Resources (BioPage)",
+    "bioLinksSubtitle": "Essential links and activity resources for Monk Chat participants",
+    "bioLinksNotice": "All links are demonstration placeholders for system testing purposes.",
+    "purposeTitle": "About the MonkChat Guide Project",
+    "purposeText": "MonkChat Guide is a mobile-first Progressive Web Application designed to support foreign visitors and monk students participating in Monk Chat activities.",
+    "purposeVisitors": "For Visitors: Scan a QR code to access guided meditation, subtitles, and introductory Buddhist knowledge easily.",
+    "purposeMonks": "For Monks & Team: Access a verified Q&A knowledge base to confidently guide visitors in multiple languages."
+  },
   "pages": {
     "home": {
       "title": "Home (BioPage)",

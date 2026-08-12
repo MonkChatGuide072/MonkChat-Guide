@@ -7,18 +7,12 @@
 - React Router foundation completed with routes: `/`, `/meditation`, `/qa`, `/centers`, `/admin/login`, and Not Found (`*`).
 - Thai is the default language; English switching works and persists in `localStorage`.
 - Day 1 PWA foundation completed with `vite-plugin-pwa@1.3.0` and Thai web app manifest.
-- Service worker uses `generateSW` strategy with application-shell caching and explicit audio exclusion.
-- Standard browser PWA installation supported without custom popup prompts.
-- Day 1 typed mock-data foundation is complete (`src/types/content.ts` and `src/data/mock/`).
-- Thai is default and English is secondary; content and translations are stored separately using relational `language_code`.
-- 3 demonstration meditation tracks have null audio references.
-- 5 demonstration Q&A items are unverified (`verification_status: 'unverified'`) and unpublished (`is_published: false`, `content_status: 'draft'`).
-- 5 neutral DCI demonstration records contain no real-world location claims.
-- 6 demonstration BioPage links use example URLs (`https://example.com/`).
-- Usage events are an empty typed array containing zero personal information.
-- Mock data is not connected to public pages yet.
+- Day 1 typed mock-data foundation completed (`src/types/content.ts` and `src/data/mock/`).
 - **Day 1 is complete.**
-- **Next step**: Begin Day 2 public interface development using typed mock data.
+- Home/BioPage functional implementation completed using typed mock BioPage data (`mockBioLinks`, `mockBioLinkTranslations`).
+- Thai-English switching and responsive behavior passed at 360px, 390px, 768px, 1024px, and 1440px.
+- Final visual-design refinement is deferred until main public functionality is complete.
+- **Next step**: Build the Meditation page using typed mock data.
 
 ## Completed Work
 - Created initial project documentation.
@@ -33,12 +27,13 @@
 - Created project-local MonkChat Agent Skill (`.agents/skills/monkchat-safe-feature/SKILL.md`).
 - Implemented and verified installable PWA foundation.
 - Created and verified typed mock content models and mock data foundation. Completed Day 1.
+- Implemented public Home/BioPage interface using typed mock data and language-scalable translation utility.
 
 ## Current Task
-- Creating final Day 1 Git checkpoint for typed mock content foundation.
+- Creating approved Git checkpoint for public Home/BioPage interface.
 
 ## Exact Next Step
-- Begin Day 2 public interface development using typed mock data.
+- Build the Meditation page using typed mock data.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -53,20 +48,10 @@
 - None at this stage.
 
 ## Files Changed in the Current Phase
-- `src/types/content.ts`
-- `src/data/mock/languages.ts`
-- `src/data/mock/meditationTracks.ts`
-- `src/data/mock/meditationTrackTranslations.ts`
-- `src/data/mock/transcripts.ts`
-- `src/data/mock/subtitles.ts`
-- `src/data/mock/qaItems.ts`
-- `src/data/mock/qaTranslations.ts`
-- `src/data/mock/dciCenters.ts`
-- `src/data/mock/dciCenterTranslations.ts`
-- `src/data/mock/bioLinks.ts`
-- `src/data/mock/bioLinkTranslations.ts`
-- `src/data/mock/usageEvents.ts`
-- `src/data/mock/index.ts`
+- `src/pages/HomePage.tsx`
+- `src/locales/th/common.json`
+- `src/locales/en/common.json`
+- `src/utils/translation.ts`
 - `HANDOFF.md`
 
 ## Actions That Must Not Be Started Yet

@@ -20,6 +20,28 @@
     "switchToTh": "สลับเป็นภาษาไทย",
     "switchToEn": "Switch to English"
   },
+  "home": {
+    "heroTag": "MONKCHAT GUIDE",
+    "demoBadge": "ข้อมูลสาธิต (Demo)",
+    "navCardsTitle": "กิจกรรมและบริการหลัก",
+    "navCardsSubtitle": "เลือกเมนูเพื่อเข้าสู่เสียงนำสมาธิ คำถาม-คำตอบธรรมะ หรือศูนย์ปฏิบัติธรรม DCI",
+    "meditationCardTitle": "เสียงนำสมาธิ",
+    "meditationCardDesc": "ฟังเสียงนำสมาธิเพื่อความผ่อนคลายและสงบใจ พร้อมคำบรรยายประกอบ",
+    "meditationCardAction": "เปิดหน้าเสียงนำสมาธิ",
+    "qaCardTitle": "คำถาม-คำตอบธรรมะ",
+    "qaCardDesc": "ค้นหาคำตอบเกี่ยวกับสมาธิและการปฏิบัติตนที่ผ่านการตรวจสอบ",
+    "qaCardAction": "เปิดหน้าถาม-ตอบ",
+    "centersCardTitle": "ศูนย์ปฏิบัติธรรม DCI",
+    "centersCardDesc": "ค้นหาข้อมูลสถานที่และช่องทางติดต่อศูนย์ปฏิบัติธรรม DCI",
+    "centersCardAction": "เปิดหน้าศูนย์ปฏิบัติธรรม",
+    "bioLinksTitle": "ลิงก์สำคัญและกิจกรรม (BioPage)",
+    "bioLinksSubtitle": "รวมช่องทางข้อมูลและลิงก์ภายนอกสำหรับผู้เข้าร่วมกิจกรรม Monk Chat",
+    "bioLinksNotice": "ลิงก์ทั้งหมดเป็นลิงก์สาธิตตัวอย่างเพื่อการทดสอบระบบ",
+    "purposeTitle": "เกี่ยวกับโครงการ MonkChat Guide",
+    "purposeText": "MonkChat Guide คือ Progressive Web Application ที่พัฒนาขึ้นเพื่ออำนวยความสะดวกแก่พระนิสิตและทีมงาน Monk Chat ในการต้อนรับและแนะนำสมาธิแก่ชาวต่างชาติ",
+    "purposeVisitors": "สำหรับผู้มาเยือน: สามารถสแกน QR Code เพื่อฟังเสียงนำสมาธิ อ่านคำบรรยาย และศึกษาธรรมะได้อย่างสะดวก",
+    "purposeMonks": "สำหรับพระนิสิตและทีมงาน: มีคลังข้อมูลถาม-ตอบที่ถูกต้องและผ่านการตรวจสอบเพื่อใช้เป็นคู่มืออ้างอิง"
+  },
   "pages": {
     "home": {
       "title": "หน้าหลัก (BioPage)",
