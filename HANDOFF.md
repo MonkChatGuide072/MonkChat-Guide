@@ -11,12 +11,12 @@
 - **Day 1 is complete.**
 - Home/BioPage functional implementation completed.
 - Meditation page functional mock-data implementation completed; real audio playback remains pending.
-- Public Q&A prototype interface completed with Thai-English search and translated mock questions.
-- All 5 current Q&A items remain unverified (`verification_status: 'unverified'`) and unpublished (`is_published: false`).
-- No real Buddhist answers are shown; placeholder text clearly indicates verified content is pending.
+- Public Q&A prototype interface completed; all items remain unverified and unpublished; no real Buddhist answers shown.
 - `isPublicQAItem` predicate added to `src/utils/translation.ts` for future real-content gating.
+- Public DCI Centers prototype interface completed with 5 neutral demonstration records.
+- No real-world center claims, invented addresses, coordinates, phone numbers, or fake contact links are shown.
 - Final visual refinement is deferred.
-- **Next step**: Build the public DCI Centers page.
+- **Next step**: Perform combined Day 2 public-flow review.
 
 ## Completed Work
 - Created initial project documentation.
@@ -34,12 +34,13 @@
 - Implemented public Home/BioPage interface using typed mock data and language-scalable translation utility.
 - Implemented public Meditation interface with track selection, honest audio status, transcript, and subtitles.
 - Implemented public Q&A prototype interface with search, status badges, verification notice, and content gating predicate.
+- Implemented public DCI Centers interface with 5 neutral demonstration records and null-safe link handling.
 
 ## Current Task
-- Creating approved Git checkpoint for public Q&A interface.
+- Creating approved Git checkpoint for public DCI Centers interface.
 
 ## Exact Next Step
-- Build the public DCI Centers page.
+- Perform combined Day 2 public-flow review.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -54,8 +55,7 @@
 - None at this stage.
 
 ## Files Changed in the Current Phase
-- `src/pages/QAPage.tsx`
-- `src/utils/translation.ts`
+- `src/pages/CentersPage.tsx`
 - `src/locales/th/common.json`
 - `src/locales/en/common.json`
 - `HANDOFF.md`

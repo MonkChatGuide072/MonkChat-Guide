@@ -111,5 +111,20 @@
       "message": "Sorry, the page you are looking for does not exist or has been moved.",
       "backHome": "Back to Home"
     }
+  },
+  "centers": {
+    "heroTag": "DCI MEDITATION CENTERS",
+    "title": "DCI Meditation Centers",
+    "subtitle": "Basic listing of DCI meditation centers (demonstration data).",
+    "demoBadge": "Demonstration Data (Demo)",
+    "listTitle": "Demonstration Center Records",
+    "demoNotice": "ℹ️ All center records below are system structure placeholders for testing. They do not represent real or official centers. Official data is pending from the project owner.",
+    "fieldCity": "Area",
+    "fieldAddress": "Address",
+    "linkMap": "Map",
+    "linkWebsite": "Website",
+    "linkContact": "Contact",
+    "linkPending": "Awaiting official information",
+    "placeholderDisclaimer": "All center records are demonstration placeholders. No real-world location is claimed or implied."
   }
 }
