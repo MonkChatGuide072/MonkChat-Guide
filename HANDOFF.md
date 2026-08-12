@@ -9,11 +9,14 @@
 - Day 1 PWA foundation completed with `vite-plugin-pwa@1.3.0` and Thai web app manifest.
 - Day 1 typed mock-data foundation completed (`src/types/content.ts` and `src/data/mock/`).
 - **Day 1 is complete.**
-- Home/BioPage functional implementation completed using typed mock BioPage data (`mockBioLinks`, `mockBioLinkTranslations`).
-- Meditation page functional mock-data implementation completed (displays 3 demo tracks, honest disabled audio state, transcript & subtitles display).
-- Real audio playback remains pending.
+- Home/BioPage functional implementation completed.
+- Meditation page functional mock-data implementation completed; real audio playback remains pending.
+- Public Q&A prototype interface completed with Thai-English search and translated mock questions.
+- All 5 current Q&A items remain unverified (`verification_status: 'unverified'`) and unpublished (`is_published: false`).
+- No real Buddhist answers are shown; placeholder text clearly indicates verified content is pending.
+- `isPublicQAItem` predicate added to `src/utils/translation.ts` for future real-content gating.
 - Final visual refinement is deferred.
-- **Next step**: Build the public Q&A page.
+- **Next step**: Build the public DCI Centers page.
 
 ## Completed Work
 - Created initial project documentation.
@@ -30,12 +33,13 @@
 - Created and verified typed mock content models and mock data foundation. Completed Day 1.
 - Implemented public Home/BioPage interface using typed mock data and language-scalable translation utility.
 - Implemented public Meditation interface with track selection, honest audio status, transcript, and subtitles.
+- Implemented public Q&A prototype interface with search, status badges, verification notice, and content gating predicate.
 
 ## Current Task
-- Creating approved Git checkpoint for public Meditation interface.
+- Creating approved Git checkpoint for public Q&A interface.
 
 ## Exact Next Step
-- Build the public Q&A page.
+- Build the public DCI Centers page.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -50,7 +54,8 @@
 - None at this stage.
 
 ## Files Changed in the Current Phase
-- `src/pages/MeditationPage.tsx`
+- `src/pages/QAPage.tsx`
+- `src/utils/translation.ts`
 - `src/locales/th/common.json`
 - `src/locales/en/common.json`
 - `HANDOFF.md`

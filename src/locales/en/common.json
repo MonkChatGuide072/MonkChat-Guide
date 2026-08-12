@@ -61,6 +61,22 @@
     "noSubtitles": "No subtitles available for this track yet.",
     "placeholderDisclaimer": "All meditation tracks, descriptions, and subtitles are demonstration placeholders for system testing."
   },
+  "qa": {
+    "heroTag": "BUDDHISM & MEDITATION Q&A",
+    "title": "Meditation & Buddhism Q&A",
+    "subtitle": "Search frequently asked questions about meditation practice and temple etiquette.",
+    "demoBadge": "Prototype Demonstration",
+    "searchPlaceholder": "Search questions...",
+    "clearSearch": "Clear search",
+    "demoSectionTitle": "Demonstration Questions (Demo Items)",
+    "demoSectionNotice": "All questions and answers below are demonstration placeholders for testing. They are unverified and unpublished.",
+    "statusDraft": "Draft",
+    "statusUnverified": "Unverified",
+    "statusUnpublished": "Unpublished",
+    "noResults": "No questions matched your search term.",
+    "verificationNotice": "ℹ️ Official public Q&A content requires explicit verification by teaching monks (verified) and administrative publication approval (published).",
+    "placeholderDisclaimer": "All demonstration Q&A items are placeholders for system testing."
+  },
   "pages": {
     "home": {
       "title": "Home (BioPage)",
