@@ -29,13 +29,15 @@
 - Project Owner confirmed Supabase Security Advisor reports **0 errors** and **0 warnings**.
 - Supabase CLI database lint (`npx supabase db lint`) returned **0 errors** and **0 warnings**.
 - Database schema and Row-Level Security (RLS) deployment are complete.
-- **Authentication Scaffold implemented and manually verified.**
+- Authentication Scaffold implemented and manually verified.
 - Real Owner login passed.
 - Owner profile and role authorization (`role = owner`, `is_active = true`) passed.
 - Sign-out and protected-route redirect (`/admin` -> `/admin/login`) passed.
 - `.env.local` remains private, local, and ignored.
-- CMS CRUD and Storage have not started.
-- **Exact next step**: Configure Supabase Storage for meditation audio.
+- Storage migration reviewed and approved locally (`20260812181301_storage_meditation_audio.sql`).
+- Real remote migration has not yet been pushed.
+- No real audio has been uploaded.
+- **Exact next step**: Apply and verify the Storage migration remotely.
 
 ## Completed Work
 - Created initial project documentation.
@@ -62,12 +64,15 @@
 - Verified remote database synchronization (`npx supabase db push --dry-run`), CLI schema lint (`npx supabase db lint`), and Project Owner confirmation of 0 errors and 0 warnings in Supabase Security Advisor.
 - Implemented Supabase Authentication scaffold (login page, protected routes, context, locale strings, error handling).
 - Manually tested and verified Owner login flow, role authorization, sign-out, and protected route access.
+- Created idempotent migration for `meditation-audio` Storage bucket and RLS policies (`20260812181301_storage_meditation_audio.sql`).
+- Reviewed and approved Storage configuration and RLS policies locally.
 
 ## Current Task
-- Authentication Scaffold completed and verified. Ready for Supabase Storage setup.
+- Storage migration checkpoint completed locally. Ready to apply remotely when instructed.
+- **Important Object Naming Rule**: Storage files MUST follow the pattern `<meditation_track_id>/<safe-file-name>.mp3`. This precise path must be saved in `meditation_tracks.audio_storage_path` to properly link Storage permissions to DB content status.
 
 ## Exact Next Step
-- Configure Supabase Storage for meditation audio.
+- Apply and verify the Storage migration remotely.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
