@@ -118,7 +118,37 @@
   - Current effective RLS helper verified as `private.get_user_role()` (defined in `20260812160457_security_advisor_hardening.sql`).
   - Added localized strings in `th/common.json` and `en/common.json` under `admin.qa`.
   - No Q&A records were created or inserted into the remote database. No AI-generated Buddhist answer was created.
-- **Exact next step**: Q&A CMS Step 2A — create unverified draft Q&A.
+- Day 4 Q&A CMS Step 2A create unverified draft Q&A form implemented (uncommitted):
+  - Created component `AdminQANewPage.tsx` and registered route `/admin/qa/new` in `src/App.tsx`.
+  - Enabled `+ เพิ่มถาม-ตอบ` button on `AdminQAPage.tsx`.
+  - Validates trimmed text inputs: required category, required Thai question & short answer; required English short answer if English question is supplied.
+  - Does not create English translation row when English question is empty.
+  - Displays fixed system values notice (`content_status = draft`, `verification_status = unverified`, `is_published = false`).
+  - Database insert sequence: inserts core `qa_items` row first, then batch inserts translation rows into `qa_translations`.
+  - Partial-save recovery: archives core row if translation insertion fails after core row exists.
+  - Added safety policy banner: Unverified content cannot be published, and AI-generated Buddhist answers must never be published automatically.
+  - Added localized strings under `admin.qa.create` in `th/common.json` and `en/common.json`.
+  - Remote TEST creation awaits Project Owner approval. No real or AI-generated Buddhist teaching was created.
+- Day 4 Q&A CMS remaining management actions implemented (uncommitted):
+  - Created component `AdminQAEditPage.tsx` and registered route `/admin/qa/:qaId/edit`.
+  - Implemented Edit logic: enforces exact validation rules as creation, handles optional English translation deletion/upsert properly.
+  - Wired inline action buttons in `AdminQAPage.tsx` with role-based and state-based access logic.
+  - Verify action (Owner only): Sets `verification_status = 'verified'` and records verification timestamp and owner ID. Requires source reference.
+  - Publish/Unpublish (Owner only): Sets `is_published` and `content_status` safely.
+  - Archive action: Safely hides record (`content_status = 'archived'`) without deleting data. Team Members limited to archiving unverified/unpublished items only.
+  - Added full Thai and English localizations.
+  - No database migration or schema was altered.
+- Day 4 Q&A CMS workflow fully completed and manually verified (committed):
+  - Created unverified draft Q&A item creation page (`AdminQANewPage.tsx`).
+  - Created Q&A edit page (`AdminQAEditPage.tsx`) enforcing validation rules and preserving English translations when fields are cleared.
+  - Implemented core action handlers in `AdminQAPage.tsx`: Verify, Publish, Unpublish, Archive, Return to Draft, and Restore to Draft.
+  - Resolved i18n key collisions by moving button actions to `admin.qa.actions` namespace.
+  - Fixed argument-order bug on action button click handlers to correctly call `handleAction(item, action)`.
+  - Added processing spinner, error banner, and green success alert banner.
+  - Verified Owner-only "Restore to Draft" functionality on archived items, resetting content status, verification status, and publication status.
+  - Checked that the TEST Q&A remains draft, unverified, and unpublished.
+  - All automated checks (lint, build, audit, git check) completed successfully.
+
 ## Completed Work
 - Created initial project documentation.
 - Updated REQUIREMENTS.md based on Project Owner feedback.
@@ -148,12 +178,13 @@
 - Applied Storage migration to remote Supabase database and verified 0 lint errors/warnings.
 - Implemented responsive Admin CMS shell, module subroutes, OwnerRoute guard, and reactive Thai/English language switching.
 - Implemented Meditation CMS read-only list (fetches from Supabase, shows loading/empty/error/results states).
+- Completed Day 4 Meditation CMS and Q&A CMS modules.
 
 ## Current Task
-- Meditation CMS read-only list implemented. No database records or audio files were created.
+- Day 4 Q&A CMS is completed.
 
 ## Exact Next Step
-- Implement create/edit meditation-track metadata (CMS CRUD Step 2).
+- Begin Day 5 — remaining MVP modules (DCI Centers CMS, BioLinks CMS) and public Supabase integration.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -169,15 +200,12 @@
 
 ## Files Changed in the Current Phase
 - `HANDOFF.md`
-- `package.json`
-- `package-lock.json`
-- `.env.example`
-- `src/lib/supabase.ts`
-- `src/vite-env.d.ts`
-- `supabase/config.toml`
-- `supabase/.gitignore`
-- `supabase/migrations/20260812152413_initial_schema.sql`
-- `supabase/migrations/20260812152735_row_level_security.sql`
+- `src/App.tsx`
+- `src/locales/en/common.json`
+- `src/locales/th/common.json`
+- `src/pages/admin/AdminQAPage.tsx`
+- `src/pages/admin/AdminQANewPage.tsx`
+- `src/pages/admin/AdminQAEditPage.tsx`
 
 ## Actions That Must Not Be Started Yet
 - Do not install extra packages beyond approved next steps.

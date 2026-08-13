@@ -20,6 +20,8 @@ import { AdminMeditationAudioPage } from './pages/admin/AdminMeditationAudioPage
 import { AdminMeditationTranscriptPage } from './pages/admin/AdminMeditationTranscriptPage'
 import { AdminMeditationSubtitlesPage } from './pages/admin/AdminMeditationSubtitlesPage'
 import { AdminQAPage } from './pages/admin/AdminQAPage'
+import { AdminQANewPage } from './pages/admin/AdminQANewPage'
+import { AdminQAEditPage } from './pages/admin/AdminQAEditPage'
 import { AdminCentersPage } from './pages/admin/AdminCentersPage'
 import { AdminBioLinksPage } from './pages/admin/AdminBioLinksPage'
 import { AdminLanguagesPage } from './pages/admin/AdminLanguagesPage'
@@ -50,6 +52,8 @@ function App() {
               <Route path="meditation/:trackId/transcript" element={<AdminMeditationTranscriptPage />} />
               <Route path="meditation/:trackId/subtitles" element={<AdminMeditationSubtitlesPage />} />
               <Route path="qa" element={<AdminQAPage />} />
+              <Route path="qa/new" element={<AdminQANewPage />} />
+              <Route path="qa/:qaId/edit" element={<AdminQAEditPage />} />
               <Route path="centers" element={<AdminCentersPage />} />
               <Route path="bio-links" element={<AdminBioLinksPage />} />
               <Route path="languages" element={<AdminLanguagesPage />} />

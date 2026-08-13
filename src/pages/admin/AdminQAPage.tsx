@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
 
@@ -39,7 +40,7 @@ function formatDate(iso: string, lang: string): string {
 function resolveQuestion(translations: QATranslationRow[], currentLang: string): string {
   const preferred = translations.find((tr) => tr.language_code === currentLang)
   const fallback = translations.find((tr) => tr.language_code === 'th')
-  return preferred?.question || fallback?.question || translations[0]?.question || '—'
+  return preferred?.question || fallback?.question || translations[0]?.question || 'เนโฌโ€'
 }
 
 export function AdminQAPage() {
@@ -54,6 +55,8 @@ export function AdminQAPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [items, setItems] = useState<QAItemRow[]>([])
+  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
+  const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null)
 
   // ── Fetch Q&A Items ────────────────────────────────────────────────────────
 
@@ -137,15 +140,237 @@ export function AdminQAPage() {
         </span>
 
         {/* Publication State */}
-        <span
-          className={`px-2 py-0.5 text-xs font-semibold rounded border ${
-            item.is_published
-              ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-              : 'bg-slate-100 text-slate-600 border-slate-300'
+        {item.is_published ? (
+          <span className="px-2 py-0.5 text-xs font-semibold rounded border bg-emerald-100 text-emerald-800 border-emerald-300">
+            {t('admin.qa.published')}
+          </span>
+        ) : (
+          <span className="px-2 py-0.5 text-xs font-semibold rounded border bg-slate-100 text-slate-600 border-slate-300">
+            {t('admin.qa.unpublished')}
+          </span>
+        )}
+      </div>
+    )
+  }
+
+  // ── Action Handlers ────────────────────────────────────────────────────────
+
+  type QAAction = 'verify' | 'publish' | 'unpublish' | 'archive' | 'returnToDraft' | 'restore'
+
+  const handleAction = async (item: QAItemRow, action: QAAction) => {
+    const messages: Record<QAAction, string> = {
+      verify: t('admin.qa.actions.verifyConfirm'),
+      publish: t('admin.qa.actions.publishConfirm'),
+      unpublish: t('admin.qa.actions.unpublishConfirm'),
+      archive: t('admin.qa.actions.archiveConfirm'),
+      returnToDraft: t('admin.qa.actions.returnToDraftConfirm'),
+      restore: t('admin.qa.actions.restoreConfirm'),
+    }
+
+    const confirmMsg = messages[action]
+    if (!confirmMsg) {
+      setError(t('admin.qa.actions.errorUpdate'))
+      return
+    }
+
+    if (!window.confirm(confirmMsg)) return
+
+    setActionLoadingId(item.id)
+    setError(null)
+    setActionSuccessMsg(null)
+
+    try {
+      if (!supabaseClient) throw new Error(t('admin.qa.errorNoClient'))
+
+      const { data: { session } } = await supabaseClient.auth.getSession()
+      if (!session) throw new Error(t('admin.qa.create.errorNoUser'))
+
+      let updates: Record<string, any> = { updated_by: session.user.id, updated_at: new Date().toISOString() }
+
+      switch (action) {
+        case 'verify': {
+          // Pre-verify check: fetch only Thai translation
+          const { data: thTrans, error: fetchErr } = await supabaseClient
+            .from('qa_translations')
+            .select('question, short_answer')
+            .eq('qa_item_id', item.id)
+            .eq('language_code', 'th')
+            .single()
+
+          if (fetchErr || !thTrans || !thTrans.question?.trim() || !thTrans.short_answer?.trim()) {
+            setError(t('admin.qa.actions.errorVerifyIncomplete'))
+            setActionLoadingId(null)
+            return
+          }
+          updates = { ...updates, verification_status: 'verified', verified_by: session.user.id, verified_at: new Date().toISOString() }
+          break
+        }
+        case 'publish':
+          updates = { ...updates, content_status: 'published', is_published: true }
+          break
+        case 'unpublish':
+          updates = { ...updates, content_status: 'draft', is_published: false }
+          break
+        case 'archive':
+          updates = { ...updates, content_status: 'archived', is_published: false, archived_at: new Date().toISOString() }
+          break
+        case 'returnToDraft':
+          updates = {
+            ...updates,
+            content_status: 'draft',
+            verification_status: 'unverified',
+            is_published: false,
+            verified_by: null,
+            verified_at: null,
+          }
+          break
+        case 'restore':
+          updates = {
+            ...updates,
+            content_status: 'draft',
+            verification_status: 'unverified',
+            is_published: false,
+            verified_by: null,
+            verified_at: null,
+            archived_at: null,
+          }
+          break
+        default:
+          throw new Error(t('admin.qa.actions.errorUpdate'))
+      }
+
+      const { error: updateError } = await supabaseClient
+        .from('qa_items')
+        .update(updates)
+        .eq('id', item.id)
+
+      if (updateError) throw new Error(t('admin.qa.actions.errorUpdate'))
+
+      setActionSuccessMsg(t('admin.qa.actions.successMsg'))
+      await fetchQAItems()
+    } catch (err: any) {
+      setError(err instanceof Error ? err.message : t('admin.qa.actions.errorUpdate'))
+    } finally {
+      setActionLoadingId(null)
+    }
+  }
+
+  const renderActionButtons = (item: QAItemRow) => {
+    const isArchived = item.content_status === 'archived'
+    const isVerified = item.verification_status === 'verified'
+    const hasSource = !!item.source_reference
+    const isPublished = item.is_published
+    const isProcessing = actionLoadingId === item.id || isLoading
+
+    const canEdit = !isArchived && !isVerified && !isProcessing
+    const canVerify = isOwner && !isArchived && !isVerified && hasSource && !isProcessing
+    const canPublish = isOwner && !isArchived && isVerified && hasSource && !isPublished && !isProcessing
+    const canUnpublish = isOwner && !isArchived && isPublished && !isProcessing
+    const canArchive = !isArchived && (isOwner || (!isVerified && !isPublished)) && !isProcessing
+    const canReturnToDraft = isOwner && !isArchived && isVerified && !isProcessing
+    const canRestore = isOwner && isArchived && !isProcessing
+
+    return (
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <Link
+          to={`/admin/qa/${item.id}/edit`}
+          onClick={(e) => { if (!canEdit) e.preventDefault() }}
+          className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
+            canEdit
+              ? 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer'
+              : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
           }`}
+          title={!canEdit && !isArchived && isVerified ? t('admin.qa.ownerOnlyHint') : undefined}
         >
-          {item.is_published ? t('admin.qa.published') : t('admin.qa.unpublished')}
-        </span>
+          {t('admin.qa.actions.edit')}
+        </Link>
+
+        {isOwner && isVerified && !isArchived && (
+          <button
+            type="button"
+            disabled={!canReturnToDraft}
+            onClick={() => handleAction(item, 'returnToDraft')}
+            className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {t('admin.qa.actions.returnToDraft')}
+          </button>
+        )}
+
+        {isOwner && !isVerified && (
+          <button
+            type="button"
+            disabled={!canVerify}
+            onClick={() => handleAction(item, 'verify')}
+            title={!hasSource ? t('admin.qa.create.labelSourceRef') + ' ' + t('admin.qa.create.fixedStatus') : undefined}
+            className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
+              canVerify
+                ? 'border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 cursor-pointer'
+                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+            }`}
+          >
+            {t('admin.qa.actions.verify')}
+          </button>
+        )}
+
+        {isOwner && isVerified && !isPublished && (
+          <button
+            type="button"
+            disabled={!canPublish}
+            onClick={() => handleAction(item, 'publish')}
+            className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
+              canPublish
+                ? 'border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 cursor-pointer'
+                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+            }`}
+          >
+            {t('admin.qa.status.published')}
+          </button>
+        )}
+
+        {isOwner && isVerified && isPublished && (
+          <button
+            type="button"
+            disabled={!canUnpublish}
+            onClick={() => handleAction(item, 'unpublish')}
+            className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
+              canUnpublish
+                ? 'border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100 cursor-pointer'
+                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+            }`}
+          >
+            {t('admin.qa.actions.unpublish')}
+          </button>
+        )}
+
+        {!isArchived && (
+          <button
+            type="button"
+            disabled={!canArchive}
+            onClick={() => handleAction(item, 'archive')}
+            className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
+              canArchive
+                ? 'border-red-200 text-red-700 bg-red-50 hover:bg-red-100 cursor-pointer'
+                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+            }`}
+          >
+            {t('admin.qa.actions.archive')}
+          </button>
+        )}
+
+        {isOwner && isArchived && (
+          <button
+            type="button"
+            disabled={!canRestore}
+            onClick={() => handleAction(item, 'restore')}
+            className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
+              canRestore
+                ? 'border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 cursor-pointer'
+                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+            }`}
+          >
+            {t('admin.qa.actions.restore')}
+          </button>
+        )}
       </div>
     )
   }
@@ -178,18 +403,16 @@ export function AdminQAPage() {
               {t('admin.qa.refresh')}
             </button>
 
-            {/* Add Q&A button (disabled step 1) */}
-            <button
-              type="button"
-              disabled
-              title={t('admin.qa.comingSoon')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300"
+            {/* Add Q&A button */}
+            <Link
+              to="/admin/qa/new"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               {t('admin.qa.addQA')}
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -222,6 +445,20 @@ export function AdminQAPage() {
             className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors cursor-pointer"
           >
             {t('admin.qa.retry')}
+          </button>
+        </div>
+      )}
+
+      {/* Success Alert State */}
+      {actionSuccessMsg && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex items-center justify-between">
+          <p className="font-semibold">✓ {actionSuccessMsg}</p>
+          <button
+            type="button"
+            onClick={() => setActionSuccessMsg(null)}
+            className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer"
+          >
+            ✕
           </button>
         </div>
       )}
@@ -276,34 +513,9 @@ export function AdminQAPage() {
                     {t('admin.qa.updatedAt')}: {formatDate(item.updated_at, currentLang)}
                   </div>
 
-                  {/* Disabled Per-row action buttons */}
-                  <div className="flex gap-2 flex-wrap pt-1">
-                    <button
-                      type="button"
-                      disabled
-                      title={t('admin.qa.comingSoon')}
-                      className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed"
-                    >
-                      {t('admin.qa.edit')}
-                    </button>
-                    {isOwner && (
-                      <button
-                        type="button"
-                        disabled
-                        title={t('admin.qa.ownerOnlyHint')}
-                        className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed"
-                      >
-                        {t('admin.qa.verify')}
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      disabled
-                      title={t('admin.qa.comingSoon')}
-                      className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed"
-                    >
-                      {t('admin.qa.archive')}
-                    </button>
+                  {/* Action buttons */}
+                  <div className="pt-1">
+                    {renderActionButtons(item)}
                   </div>
                 </div>
               )
@@ -357,34 +569,7 @@ export function AdminQAPage() {
                         {formatDate(item.updated_at, currentLang)}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <button
-                            type="button"
-                            disabled
-                            title={t('admin.qa.comingSoon')}
-                            className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed whitespace-nowrap"
-                          >
-                            {t('admin.qa.edit')}
-                          </button>
-                          {isOwner && (
-                            <button
-                              type="button"
-                              disabled
-                              title={t('admin.qa.ownerOnlyHint')}
-                              className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed whitespace-nowrap"
-                            >
-                              {t('admin.qa.verify')}
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            disabled
-                            title={t('admin.qa.comingSoon')}
-                            className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed whitespace-nowrap"
-                          >
-                            {t('admin.qa.archive')}
-                          </button>
-                        </div>
+                        {renderActionButtons(item)}
                       </td>
                     </tr>
                   )
