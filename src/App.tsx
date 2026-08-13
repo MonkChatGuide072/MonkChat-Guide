@@ -23,7 +23,11 @@ import { AdminQAPage } from './pages/admin/AdminQAPage'
 import { AdminQANewPage } from './pages/admin/AdminQANewPage'
 import { AdminQAEditPage } from './pages/admin/AdminQAEditPage'
 import { AdminCentersPage } from './pages/admin/AdminCentersPage'
+import { AdminCentersNewPage } from './pages/admin/AdminCentersNewPage'
+import { AdminCentersEditPage } from './pages/admin/AdminCentersEditPage'
 import { AdminBioLinksPage } from './pages/admin/AdminBioLinksPage'
+import { AdminBioLinksNewPage } from './pages/admin/AdminBioLinksNewPage'
+import { AdminBioLinksEditPage } from './pages/admin/AdminBioLinksEditPage'
 import { AdminLanguagesPage } from './pages/admin/AdminLanguagesPage'
 import { AdminTeamPage } from './pages/admin/AdminTeamPage'
 
@@ -55,7 +59,11 @@ function App() {
               <Route path="qa/new" element={<AdminQANewPage />} />
               <Route path="qa/:qaId/edit" element={<AdminQAEditPage />} />
               <Route path="centers" element={<AdminCentersPage />} />
+              <Route path="centers/new" element={<AdminCentersNewPage />} />
+              <Route path="centers/:centerId/edit" element={<AdminCentersEditPage />} />
               <Route path="bio-links" element={<AdminBioLinksPage />} />
+              <Route path="bio-links/new" element={<AdminBioLinksNewPage />} />
+              <Route path="bio-links/:linkId/edit" element={<AdminBioLinksEditPage />} />
               <Route path="languages" element={<AdminLanguagesPage />} />
               <Route
                 path="team"

@@ -179,12 +179,16 @@
 - Implemented responsive Admin CMS shell, module subroutes, OwnerRoute guard, and reactive Thai/English language switching.
 - Implemented Meditation CMS read-only list (fetches from Supabase, shows loading/empty/error/results states).
 - Completed Day 4 Meditation CMS and Q&A CMS modules.
+- Day 5 Step 1 DCI Centers and BioLinks CMS workflows fully completed and verified (uncommitted):
+  - DCI Centers CMS: Implemented read-only list with statuses, filters, sorting, search, and action handlers. Added create and edit pages with country code, city, address, maps/website/contact URLs, and localized names/descriptions (TH required, EN optional, with preservation rules for English translations). Status updates support publish/unpublish/archive and Owner-only restore.
+  - BioLinks CMS: Implemented link listing with destination URL, display order, status, and last updated. Supported create/edit forms validating prefix `http://` or `https://` on destination URLs and localized link titles. Added inline `display_order` editing in table and cards. Status updates support publish/unpublish/archive and Owner-only restore.
+  - Verification: All automated checks (lint, build, audit, git check) completed successfully.
 
 ## Current Task
-- Day 4 Q&A CMS is completed.
+- Day 5 Step 1 is completed.
 
 ## Exact Next Step
-- Begin Day 5 — remaining MVP modules (DCI Centers CMS, BioLinks CMS) and public Supabase integration.
+- Day 5 Step 2 — connect public pages to Supabase
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -203,9 +207,12 @@
 - `src/App.tsx`
 - `src/locales/en/common.json`
 - `src/locales/th/common.json`
-- `src/pages/admin/AdminQAPage.tsx`
-- `src/pages/admin/AdminQANewPage.tsx`
-- `src/pages/admin/AdminQAEditPage.tsx`
+- `src/pages/admin/AdminCentersPage.tsx`
+- `src/pages/admin/AdminCentersNewPage.tsx`
+- `src/pages/admin/AdminCentersEditPage.tsx`
+- `src/pages/admin/AdminBioLinksPage.tsx`
+- `src/pages/admin/AdminBioLinksNewPage.tsx`
+- `src/pages/admin/AdminBioLinksEditPage.tsx`
 
 ## Actions That Must Not Be Started Yet
 - Do not install extra packages beyond approved next steps.
