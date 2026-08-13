@@ -273,18 +273,12 @@ export function AdminMeditationPage() {
                     >
                       {t('admin.meditation.uploadAudio')}
                     </Link>
-                    {[
-                      { key: 'manageTranscript' },
-                    ].map(({ key }) => (
-                      <button
-                        key={key}
-                        disabled
-                        title={t('admin.meditation.comingSoon')}
-                        className="px-2 py-1 text-xs rounded border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed"
-                      >
-                        {t(`admin.meditation.${key}`)}
-                      </button>
-                    ))}
+                    <Link
+                      to={`/admin/meditation/${track.id}/transcript`}
+                      className="px-2.5 py-1 text-xs font-semibold rounded border border-emerald-300 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                    >
+                      {t('admin.meditation.manageTranscript')}
+                    </Link>
                   </div>
                 </div>
               )
@@ -351,18 +345,12 @@ export function AdminMeditationPage() {
                           >
                             {t('admin.meditation.uploadAudio')}
                           </Link>
-                          {[
-                            { key: 'manageTranscript' },
-                          ].map(({ key }) => (
-                            <button
-                              key={key}
-                              disabled
-                              title={t('admin.meditation.comingSoon')}
-                              className="px-2.5 py-1 text-xs rounded border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed whitespace-nowrap"
-                            >
-                              {t(`admin.meditation.${key}`)}
-                            </button>
-                          ))}
+                          <Link
+                            to={`/admin/meditation/${track.id}/transcript`}
+                            className="px-2.5 py-1 text-xs font-semibold rounded border border-emerald-300 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors whitespace-nowrap"
+                          >
+                            {t('admin.meditation.manageTranscript')}
+                          </Link>
                         </div>
                       </td>
                     </tr>

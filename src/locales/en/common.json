@@ -327,6 +327,34 @@
         "errorUploadDbFailed": "Audio file uploaded to Storage successfully, but metadata path save failed. The audio file is securely stored. You may retry metadata save. Details: {{error}}",
         "errorReplaceDbFailed": "Audio file replaced in Storage successfully, but metadata path save failed. Details: {{error}}",
         "errorGeneric": "An unexpected error occurred. Please try again."
+      },
+      "transcript": {
+        "title": "Manage Transcripts",
+        "subtitle": "Add or edit Thai and English meditation audio transcripts.",
+        "cancel": "Cancel",
+        "submit": "Save Transcripts",
+        "saving": "Saving...",
+        "draftNoticeTitle": "Track Content is Draft and Unpublished",
+        "draftNoticeDesc": "Transcripts will be saved to the database in preparation for future publication.",
+        "sectionThai": "Thai Transcript",
+        "sectionEnglish": "English Transcript",
+        "fieldThTranscript": "Transcript Text (Thai)",
+        "fieldEnTranscript": "Transcript Text (English)",
+        "placeholderThTranscript": "Type Thai transcript text here...",
+        "placeholderEnTranscript": "Type English transcript text here...",
+        "vttSectionTitle": "Synchronized Subtitles (VTT)",
+        "vttSectionNotice": "VTT subtitle file management and timing synchronization will be enabled in Step 4B.",
+        "vttButtonLabel": "Manage VTT Subtitles",
+        "vttStep4BHint": "Coming in Step 4B",
+        "notFoundTitle": "Meditation Track Not Found",
+        "notFoundDesc": "The track you are trying to manage transcripts for could not be found or may have been deleted.",
+        "backToList": "Back to Track List",
+        "errorHeader": "Could not save transcripts",
+        "errorNoClient": "Supabase connection is not configured.",
+        "errorGeneric": "An unexpected error occurred. Please try again.",
+        "errorMissingThaiRow": "Thai translation row not found for this track. Please check data integrity.",
+        "enUnavailable": "No English translation exists for this track yet.",
+        "enUnavailableHint": "Please add an English title via the 'Edit Track' page first, then return here to edit the English transcript."
       }
     }
   }

@@ -87,7 +87,18 @@
   - Replacement handling requires explicit confirmation checkbox when `audio_storage_path` exists and uses `upsert: true`. Existing path safety validated (`<trackId>/...mp3`, no `..`).
   - Safe partial-failure retry implemented: if Storage upload succeeds but metadata save fails, `handleRetryDbSave` retries metadata update only without re-uploading or deleting the object.
   - No service-role key, public URL, or RLS bypass used; bucket remains private; no public playback implemented yet; no video functionality included.
-- **Exact next step**: Day 4 Meditation CMS Step 4 — transcript and synchronized subtitle management.
+- Day 4 Meditation CMS Step 4A completed and manually verified:
+  - Component `AdminMeditationTranscriptPage.tsx` implemented and verified against the remote TEST draft record.
+  - Thai and English transcript saving was manually verified remotely with neutral TEST demonstration text (no Buddhist teaching generated).
+  - Transcript persistence verified after reopening the transcript management page.
+  - Core track remains Draft (`content_status = 'draft'`), Unpublished (`is_published = false`), duration `6:22` (`382` seconds), with private MP3 attached.
+  - Schema alignment: uses `transcript` column directly in `meditation_track_translations`.
+  - Data integrity enforced: Thai translation row is required (missing Thai row blocks save); English transcript is editable only when an English translation row exists (preventing empty-title row creation).
+  - Preserves each existing row's `title`, `description`, and `subtitle_vtt_storage_path`. Uninvolved language translations remain untouched. Empty transcripts are stored as `null`.
+  - Single atomic batch `upsert` statement used for existing rows; `content_status` and `is_published` are never modified.
+  - Subtitle/VTT section cleanly rendered as disabled and labelled as coming in Step 4B.
+  - No service-role key, public URL, paid AI API, or RLS bypass used; no video functionality included.
+- **Exact next step**: Day 4 Meditation CMS Step 4B — synchronized VTT subtitle management.
 
 ## Completed Work
 - Created initial project documentation.
