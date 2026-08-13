@@ -62,8 +62,8 @@ export function HomePage() {
 
       setBioLinks((data as BioLinkRow[]) ?? [])
       setIsLoadingLinks(false)
-    } catch (err: any) {
-      setErrorLinks(err.message || t('home.errorLoadLinks'))
+    } catch {
+      setErrorLinks(t('home.errorLoadLinks'))
       setIsLoadingLinks(false)
     }
   }, [t])

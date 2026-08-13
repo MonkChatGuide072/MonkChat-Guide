@@ -71,8 +71,8 @@ export function CentersPage() {
 
       setCenters((data as CenterRow[]) ?? [])
       setIsLoading(false)
-    } catch (err: any) {
-      setError(err.message || t('centers.errorLoad'))
+    } catch {
+      setError(t('centers.errorLoadCenters'))
       setIsLoading(false)
     }
   }, [t])

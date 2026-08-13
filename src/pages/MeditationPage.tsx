@@ -151,8 +151,8 @@ export function MeditationPage() {
         setSelectedTrackId(fetchedTracks[0].id)
       }
       setIsLoading(false)
-    } catch (err: any) {
-      setError(err.message || t('meditation.errorTitle'))
+    } catch {
+      setError(t('meditation.errorLoadTracks'))
       setIsLoading(false)
     }
   }, [t])
@@ -215,9 +215,10 @@ export function MeditationPage() {
             setCues(parsedCues)
           }
         }
-      } catch (err: any) {
+      } catch {
+        console.error('Failed to load subtitles')
         if (active) {
-          setAudioError(err.message || 'Error loading resources')
+          setAudioError('Error loading resources')
         }
       }
     }

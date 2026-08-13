@@ -219,13 +219,15 @@
 - Final confirmation of audio publication rights.
 
 ## Known Problems
-- None at this stage.
+- Production guest-access blocker: RLS policies calling `private.get_user_role()` were missing `TO authenticated`, causing public anonymous queries to fail with `permission denied for function get_user_role`. A hotfix migration `20260814022206_restrict_role_policies_to_authenticated.sql` has been created and is pending push.
 
 ## Files Changed in the Current Phase
 - `HANDOFF.md`
-- `README.md`
-- `src/App.tsx`
-- `public/_redirects`
+- `src/pages/HomePage.tsx`
+- `src/pages/MeditationPage.tsx`
+- `src/pages/QAPage.tsx`
+- `src/pages/CentersPage.tsx`
+- `supabase/migrations/20260814022206_restrict_role_policies_to_authenticated.sql`
 
 ## Actions That Must Not Be Started Yet
 - Do not commit or push to remote yet.

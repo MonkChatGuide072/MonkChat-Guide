@@ -69,8 +69,8 @@ export function QAPage() {
 
       setItems((data as QAItemRow[]) ?? [])
       setIsLoading(false)
-    } catch (err: any) {
-      setError(err.message || t('qa.errorLoad'))
+    } catch {
+      setError(t('qa.errorLoadItems'))
       setIsLoading(false)
     }
   }, [t])
