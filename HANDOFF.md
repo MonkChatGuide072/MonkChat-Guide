@@ -104,19 +104,21 @@
   - Idempotent private bucket `meditation-subtitles` active remotely (public: false, max 1MB, allowed MIME: `text/vtt`).
   - 5 RLS policies active remotely for anonymous read, team member upload/update, owner delete.
   - Verification: `npx supabase db lint` passed clean with 0 errors / 0 warnings.
-- Day 4 Meditation CMS Step 4B-2 completed and manually verified:
-  - Component `AdminMeditationSubtitlesPage.tsx` implemented and verified against the remote TEST draft record.
-  - Thai neutral TEST VTT file manually uploaded to private `meditation-subtitles` bucket and linked to `meditation_track_translations.subtitle_vtt_storage_path` for `th` (`<trackId>/th/subtitles.vtt`).
-  - English VTT remains absent (`⚠ ยังไม่มีไฟล์ซับไตเติล VTT`).
-  - Core track remains Draft (`content_status = 'draft'`), Unpublished (`is_published = false`), duration `6:22` (`382` seconds), with private MP3 attached and transcripts unchanged.
-  - Successful upload flow stays on `/admin/meditation/:trackId/subtitles`, displays an in-place success banner, and automatically re-fetches updated status.
-  - Partial-failure retry metadata save retries DB update only without uploading the VTT file again.
-  - Consistent Thai wording applied (`ซับไตเติล VTT`, `มีไฟล์ซับไตเติล VTT`, `ยังไม่มีไฟล์ซับไตเติล VTT`, `อัปโหลดไฟล์ซับไตเติล VTT`).
-  - Correct status badge resolution: Draft badge displays "ร่าง" in Thai and "Draft" in English (`admin.meditation.status.draft`).
-  - Strict VTT file validation enforced (exact `WEBVTT` header, timestamp arrow `-->` with start < end order, `.vtt` extension, MIME `text/vtt` or empty, max 1MB, script tag rejection).
-  - Deterministic storage paths enforced (`<trackId>/<lang>/subtitles.vtt`); path input from users prohibited.
-  - No service-role key, public URL, paid AI API, or RLS bypass used; no video functionality included.
-- **Exact next step**: Review Day 4 Meditation CMS completion and begin the next CMS module (Q&A CMS or DCI Centers CMS).
+- Day 4 Meditation CMS Step 4B-2 completed at commit `0db0b79`.
+- Day 4 Q&A CMS Step 1 completed:
+  - Component `AdminQAPage.tsx` implemented to fetch and render Q&A core (`qa_items`) and translation (`qa_translations`) data from Supabase.
+  - Empty state, Refresh button, and Thai/English switching manually verified in browser.
+  - List query fetches `id`, `category`, `source_reference`, `content_status`, `verification_status`, `verified_by`, `verified_at`, `is_published`, `created_at`, `updated_at`, and translation rows (`language_code`, `question`) — answer content is excluded from this list query to save bandwidth.
+  - Resolves current interface language with Thai fallback (`resolveQuestion`).
+  - Displays translated question, category badge, source reference indicator (`✓ มีอ้างอิง` / `—`), and last updated date.
+  - Displays badges for Draft/Published/Archived, Unverified/Verified, and Published/Unpublished.
+  - Implemented loading spinner, error banner with retry, honest empty state card, and working Refresh button.
+  - Provided disabled future-action buttons (`+ เพิ่มถาม-ตอบ`, `แก้ไข`, `ตรวจสอบ (Owner)`, `เก็บถาวร`).
+  - Added safety/policy notice: Unverified Q&A items cannot be published, and AI-generated Buddhist answers must never be published automatically.
+  - Current effective RLS helper verified as `private.get_user_role()` (defined in `20260812160457_security_advisor_hardening.sql`).
+  - Added localized strings in `th/common.json` and `en/common.json` under `admin.qa`.
+  - No Q&A records were created or inserted into the remote database. No AI-generated Buddhist answer was created.
+- **Exact next step**: Q&A CMS Step 2A — create unverified draft Q&A.
 ## Completed Work
 - Created initial project documentation.
 - Updated REQUIREMENTS.md based on Project Owner feedback.

@@ -397,6 +397,48 @@
         "notFoundTitle": "Meditation Track Not Found",
         "successUpload": "VTT Subtitle uploaded successfully"
       }
+    },
+    "qa": {
+      "subtitle": "List of Buddhist Q&A items in database (Read-only)",
+      "refresh": "Refresh",
+      "addQA": "+ Add Q&A",
+      "policyNoticeTitle": "Q&A Content Policy & Verification Notice",
+      "policyNotice": "Unverified Q&A items cannot be published to the public. AI-generated Buddhist answers must never be published automatically.",
+      "errorNoClient": "Supabase connection is not configured.",
+      "errorTitle": "Error loading Q&A data",
+      "errorGeneric": "An unexpected error occurred. Please try again.",
+      "retry": "Retry",
+      "emptyTitle": "No Q&A items in database",
+      "emptyDesc": "There are currently no Q&A items in the database. Items will appear here once created.",
+      "emptyHint": "Feature to create Q&A items will be enabled in the next step.",
+      "itemCount": "{{count}} Q&A items",
+      "category": "Category",
+      "hasSourceRef": "Has reference",
+      "noSourceRef": "No reference",
+      "sourceRef": "Source reference:",
+      "updatedAt": "Last updated",
+      "colQuestion": "Question",
+      "colCategory": "Category",
+      "colStatus": "Status",
+      "colSource": "Reference",
+      "colUpdated": "Last updated",
+      "colActions": "Actions",
+      "edit": "Edit",
+      "verify": "Verify (Owner)",
+      "archive": "Archive",
+      "comingSoon": "Coming in next step",
+      "ownerOnlyHint": "Coming in next step (Owner Only)",
+      "published": "Published",
+      "unpublished": "Unpublished",
+      "status": {
+        "draft": "Draft",
+        "published": "Published",
+        "archived": "Archived"
+      },
+      "verification": {
+        "unverified": "Unverified",
+        "verified": "Verified"
+      }
     }
   }
 }
