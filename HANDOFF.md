@@ -98,8 +98,17 @@
   - Single atomic batch `upsert` statement used for existing rows; `content_status` and `is_published` are never modified.
   - Subtitle/VTT section cleanly rendered as disabled and labelled as coming in Step 4B.
   - No service-role key, public URL, paid AI API, or RLS bypass used; no video functionality included.
-- **Exact next step**: Day 4 Meditation CMS Step 4B — synchronized VTT subtitle management.
-
+- Day 4 Meditation CMS Step 4A transcript management completed at commit `3d84248`.
+- Day 4 Meditation CMS Step 4B-1 implemented (uncommitted, awaiting remote db push):
+  - Created forward-only migration `20260813015023_storage_meditation_subtitles.sql`.
+  - Configured idempotent private bucket `meditation-subtitles` (public: false, max 1MB, allowed MIME: `text/vtt`).
+  - Added RLS policy for anonymous read: limited strictly to exact `subtitle_vtt_storage_path` of published tracks.
+  - Added RLS policies for Active Team Members & Owners: Read, Upload, Update within the bucket.
+  - Added RLS policy for Active Owner only: Delete.
+  - Inactive accounts and non-team members have no access.
+  - No real VTT has been uploaded. No VTT interface built yet.
+  - Real database push is pending Project Owner approval.
+- **Exact next step**: Review, commit, and remotely apply the VTT Storage migration (Step 4B-1).
 ## Completed Work
 - Created initial project documentation.
 - Updated REQUIREMENTS.md based on Project Owner feedback.
