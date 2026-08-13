@@ -99,16 +99,24 @@
   - Subtitle/VTT section cleanly rendered as disabled and labelled as coming in Step 4B.
   - No service-role key, public URL, paid AI API, or RLS bypass used; no video functionality included.
 - Day 4 Meditation CMS Step 4A transcript management completed at commit `3d84248`.
-- Day 4 Meditation CMS Step 4B-1 implemented (uncommitted, awaiting remote db push):
-  - Created forward-only migration `20260813015023_storage_meditation_subtitles.sql`.
-  - Configured idempotent private bucket `meditation-subtitles` (public: false, max 1MB, allowed MIME: `text/vtt`).
-  - Added RLS policy for anonymous read: limited strictly to exact `subtitle_vtt_storage_path` of published tracks.
-  - Added RLS policies for Active Team Members & Owners: Read, Upload, Update within the bucket.
-  - Added RLS policy for Active Owner only: Delete.
-  - Inactive accounts and non-team members have no access.
-  - No real VTT has been uploaded. No VTT interface built yet.
-  - Real database push is pending Project Owner approval.
-- **Exact next step**: Review, commit, and remotely apply the VTT Storage migration (Step 4B-1).
+- Day 4 Meditation CMS Step 4B-1 synchronized VTT Storage migration applied remotely at commit `e60160c`:
+  - Applied migration `20260813015023_storage_meditation_subtitles.sql` remotely (`npx supabase db push`).
+  - Idempotent private bucket `meditation-subtitles` active remotely (public: false, max 1MB, allowed MIME: `text/vtt`).
+  - 5 RLS policies active remotely for anonymous read, team member upload/update, owner delete.
+  - Verification: `npx supabase db lint` passed clean with 0 errors / 0 warnings.
+- Day 4 Meditation CMS Step 4B-2 completed and manually verified:
+  - Component `AdminMeditationSubtitlesPage.tsx` implemented and verified against the remote TEST draft record.
+  - Thai neutral TEST VTT file manually uploaded to private `meditation-subtitles` bucket and linked to `meditation_track_translations.subtitle_vtt_storage_path` for `th` (`<trackId>/th/subtitles.vtt`).
+  - English VTT remains absent (`⚠ ยังไม่มีไฟล์ซับไตเติล VTT`).
+  - Core track remains Draft (`content_status = 'draft'`), Unpublished (`is_published = false`), duration `6:22` (`382` seconds), with private MP3 attached and transcripts unchanged.
+  - Successful upload flow stays on `/admin/meditation/:trackId/subtitles`, displays an in-place success banner, and automatically re-fetches updated status.
+  - Partial-failure retry metadata save retries DB update only without uploading the VTT file again.
+  - Consistent Thai wording applied (`ซับไตเติล VTT`, `มีไฟล์ซับไตเติล VTT`, `ยังไม่มีไฟล์ซับไตเติล VTT`, `อัปโหลดไฟล์ซับไตเติล VTT`).
+  - Correct status badge resolution: Draft badge displays "ร่าง" in Thai and "Draft" in English (`admin.meditation.status.draft`).
+  - Strict VTT file validation enforced (exact `WEBVTT` header, timestamp arrow `-->` with start < end order, `.vtt` extension, MIME `text/vtt` or empty, max 1MB, script tag rejection).
+  - Deterministic storage paths enforced (`<trackId>/<lang>/subtitles.vtt`); path input from users prohibited.
+  - No service-role key, public URL, paid AI API, or RLS bypass used; no video functionality included.
+- **Exact next step**: Review Day 4 Meditation CMS completion and begin the next CMS module (Q&A CMS or DCI Centers CMS).
 ## Completed Work
 - Created initial project documentation.
 - Updated REQUIREMENTS.md based on Project Owner feedback.

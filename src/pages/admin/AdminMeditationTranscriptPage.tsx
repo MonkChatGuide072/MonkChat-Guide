@@ -363,20 +363,18 @@ export function AdminMeditationTranscriptPage() {
           )}
         </div>
 
-        {/* Subtitle / VTT Section (Disabled - Step 4B) */}
+        {/* Subtitle / VTT Section */}
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
               <span>💬</span> {t('admin.meditation.transcript.vttSectionTitle')}
             </h3>
-            <button
-              type="button"
-              disabled
-              title={t('admin.meditation.transcript.vttStep4BHint')}
-              className="px-3 py-1 text-xs rounded border border-slate-200 text-slate-400 bg-white cursor-not-allowed"
+            <Link
+              to={`/admin/meditation/${trackId}/subtitles`}
+              className="px-3 py-1 text-xs font-semibold rounded border border-purple-300 text-purple-800 bg-purple-50 hover:bg-purple-100 transition-colors"
             >
-              {t('admin.meditation.transcript.vttButtonLabel')}
-            </button>
+              {t('admin.meditation.manageSubtitles')}
+            </Link>
           </div>
           <p className="text-xs text-slate-500">
             {t('admin.meditation.transcript.vttSectionNotice')}

@@ -18,6 +18,7 @@ import { AdminMeditationNewPage } from './pages/admin/AdminMeditationNewPage'
 import { AdminMeditationEditPage } from './pages/admin/AdminMeditationEditPage'
 import { AdminMeditationAudioPage } from './pages/admin/AdminMeditationAudioPage'
 import { AdminMeditationTranscriptPage } from './pages/admin/AdminMeditationTranscriptPage'
+import { AdminMeditationSubtitlesPage } from './pages/admin/AdminMeditationSubtitlesPage'
 import { AdminQAPage } from './pages/admin/AdminQAPage'
 import { AdminCentersPage } from './pages/admin/AdminCentersPage'
 import { AdminBioLinksPage } from './pages/admin/AdminBioLinksPage'
@@ -47,6 +48,7 @@ function App() {
               <Route path="meditation/:trackId/edit" element={<AdminMeditationEditPage />} />
               <Route path="meditation/:trackId/audio" element={<AdminMeditationAudioPage />} />
               <Route path="meditation/:trackId/transcript" element={<AdminMeditationTranscriptPage />} />
+              <Route path="meditation/:trackId/subtitles" element={<AdminMeditationSubtitlesPage />} />
               <Route path="qa" element={<AdminQAPage />} />
               <Route path="centers" element={<AdminCentersPage />} />
               <Route path="bio-links" element={<AdminBioLinksPage />} />

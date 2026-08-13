@@ -279,6 +279,12 @@ export function AdminMeditationPage() {
                     >
                       {t('admin.meditation.manageTranscript')}
                     </Link>
+                    <Link
+                      to={`/admin/meditation/${track.id}/subtitles`}
+                      className="px-2.5 py-1 text-xs font-semibold rounded border border-purple-300 text-purple-800 bg-purple-50 hover:bg-purple-100 transition-colors"
+                    >
+                      {t('admin.meditation.manageSubtitles')}
+                    </Link>
                   </div>
                 </div>
               )
@@ -350,6 +356,12 @@ export function AdminMeditationPage() {
                             className="px-2.5 py-1 text-xs font-semibold rounded border border-emerald-300 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors whitespace-nowrap"
                           >
                             {t('admin.meditation.manageTranscript')}
+                          </Link>
+                          <Link
+                            to={`/admin/meditation/${track.id}/subtitles`}
+                            className="px-2.5 py-1 text-xs font-semibold rounded border border-purple-300 text-purple-800 bg-purple-50 hover:bg-purple-100 transition-colors whitespace-nowrap"
+                          >
+                            {t('admin.meditation.manageSubtitles')}
                           </Link>
                         </div>
                       </td>
