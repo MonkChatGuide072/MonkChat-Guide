@@ -1,13 +1,82 @@
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
-import { mockBioLinks, mockBioLinkTranslations } from '../data/mock'
+import { supabaseClient } from '../lib/supabase'
 import { getTranslation } from '../utils/translation'
+
+interface BioLinkTranslationRow {
+  language_code: string
+  title: string
+}
+
+interface BioLinkRow {
+  id: string
+  url: string
+  display_order: number
+  content_status: 'draft' | 'published' | 'archived'
+  is_published: boolean
+  bio_link_translations: BioLinkTranslationRow[]
+}
 
 export function HomePage() {
   const { t, i18n } = useTranslation()
+  const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
+    ? 'en'
+    : 'th'
 
-  // Sort BioPage links by display_order
-  const sortedBioLinks = [...mockBioLinks].sort((a, b) => a.display_order - b.display_order)
+  const [isLoadingLinks, setIsLoadingLinks] = useState(true)
+  const [errorLinks, setErrorLinks] = useState<string | null>(null)
+  const [bioLinks, setBioLinks] = useState<BioLinkRow[]>([])
+
+  // ── Fetch BioLinks ─────────────────────────────────────────────────────────
+
+  const fetchBioLinks = useCallback(async () => {
+    if (!supabaseClient) {
+      setErrorLinks(t('home.errorLoadLinks'))
+      setIsLoadingLinks(false)
+      return
+    }
+
+    setIsLoadingLinks(true)
+    setErrorLinks(null)
+
+    try {
+      const { data, error: dbError } = await supabaseClient
+        .from('bio_links')
+        .select(`
+          id,
+          url,
+          display_order,
+          content_status,
+          is_published,
+          bio_link_translations (
+            language_code,
+            title
+          )
+        `)
+        .eq('content_status', 'published')
+        .eq('is_published', true)
+        .order('display_order', { ascending: true })
+
+      if (dbError) throw dbError
+
+      setBioLinks((data as BioLinkRow[]) ?? [])
+      setIsLoadingLinks(false)
+    } catch (err: any) {
+      setErrorLinks(err.message || t('home.errorLoadLinks'))
+      setIsLoadingLinks(false)
+    }
+  }, [t])
+
+  useEffect(() => {
+    fetchBioLinks()
+  }, [fetchBioLinks])
+
+  // Filter only links that have valid url schemas (http or https)
+  const validBioLinks = bioLinks.filter((link) => {
+    const trimmed = link.url.trim()
+    return trimmed.startsWith('http://') || trimmed.startsWith('https://')
+  })
 
   return (
     <div className="space-y-8 sm:space-y-12 pb-8 pt-2 sm:pt-6">
@@ -22,9 +91,9 @@ export function HomePage() {
             />
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200/70">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse motion-reduce:animate-none"></span>
-            {t('home.demoBadge')}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/70">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            {t('app.status')}
           </div>
         </div>
 
@@ -138,34 +207,57 @@ export function HomePage() {
           </p>
         </div>
 
-        <div className="space-y-3">
-          {sortedBioLinks.map((link) => {
-            const translation = getTranslation(
-              mockBioLinkTranslations.filter((t) => t.bio_link_id === link.id),
-              i18n.language,
-              'th'
-            )
+        {/* Loading State */}
+        {isLoadingLinks && (
+          <div className="flex justify-center items-center py-6">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-600" />
+          </div>
+        )}
 
-            return (
-              <a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between min-h-[48px] px-5 py-3.5 bg-white rounded-xl border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-amber-400 hover:bg-amber-50/30 text-slate-800 hover:text-slate-900 font-medium text-sm sm:text-base focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 transition-all duration-200 motion-reduce:transition-none"
-              >
-                <span>{translation?.title || link.url}</span>
-                <span className="text-xs text-amber-600 font-semibold uppercase tracking-wider ml-2 flex-shrink-0">
-                  🔗 Demo Link
-                </span>
-              </a>
-            )
-          })}
-        </div>
+        {/* Error State */}
+        {!isLoadingLinks && errorLinks && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center space-y-2">
+            <p className="text-red-800 text-sm">{t('home.errorLoadLinks')}</p>
+            <button
+              type="button"
+              onClick={fetchBioLinks}
+              className="px-3 py-1.5 text-xs font-semibold rounded bg-amber-600 text-white hover:bg-amber-700 cursor-pointer"
+            >
+              {t('home.retry')}
+            </button>
+          </div>
+        )}
 
-        <p className="text-xs text-center text-slate-500 italic">
-          * {t('home.bioLinksNotice')}
-        </p>
+        {/* Empty State */}
+        {!isLoadingLinks && !errorLinks && validBioLinks.length === 0 && (
+          <div className="text-center p-6 text-slate-500 italic text-sm">
+            {t('home.emptyLinks')}
+          </div>
+        )}
+
+        {/* BioLinks List */}
+        {!isLoadingLinks && !errorLinks && validBioLinks.length > 0 && (
+          <div className="space-y-3">
+            {validBioLinks.map((link) => {
+              const translation = getTranslation(link.bio_link_translations, currentLang, 'th')
+
+              return (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between min-h-[48px] px-5 py-3.5 bg-white rounded-xl border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-amber-400 hover:bg-amber-50/30 text-slate-800 hover:text-slate-900 font-medium text-sm sm:text-base focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 transition-all duration-200 motion-reduce:transition-none"
+                >
+                  <span>{translation?.title || link.url}</span>
+                  <span className="text-xs text-amber-600 font-semibold uppercase tracking-wider ml-2 flex-shrink-0">
+                    🔗 Link
+                  </span>
+                </a>
+              )
+            })}
+          </div>
+        )}
       </section>
 
       {/* Project Purpose Section */}

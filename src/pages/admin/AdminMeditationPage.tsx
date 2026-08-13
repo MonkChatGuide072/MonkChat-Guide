@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
 
 // ---------------------------------------------------------------------------
@@ -68,6 +69,8 @@ function resolveTitle(
 
 export function AdminMeditationPage() {
   const { t, i18n } = useTranslation()
+  const { profile } = useAuth()
+  const isOwner = profile?.role === 'owner'
   const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
     ? 'en'
     : 'th'
@@ -75,6 +78,8 @@ export function AdminMeditationPage() {
   const [tracks, setTracks] = useState<MeditationTrackRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
+  const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null)
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
 
@@ -118,6 +123,56 @@ export function AdminMeditationPage() {
   useEffect(() => {
     fetchTracks()
   }, [fetchTracks])
+
+  // ── Action Handlers ────────────────────────────────────────────────────────
+
+  type TrackAction = 'publish' | 'unpublish'
+
+  const handleAction = async (track: MeditationTrackRow, action: TrackAction) => {
+    const confirmMsg = action === 'publish'
+      ? t('admin.meditation.actions.publishConfirm', 'คุณแน่ใจหรือไม่ว่าต้องการเผยแพร่? / Are you sure you want to publish?')
+      : t('admin.meditation.actions.unpublishConfirm', 'คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเผยแพร่? / Are you sure you want to unpublish?')
+
+    if (!window.confirm(confirmMsg)) return
+
+    setActionLoadingId(track.id)
+    setError(null)
+    setActionSuccessMsg(null)
+
+    try {
+      if (!supabaseClient) throw new Error(t('admin.meditation.errorNoClient'))
+
+      const { data: { session } } = await supabaseClient.auth.getSession()
+      if (!session) throw new Error(t('admin.meditation.errorNoUser', 'Authentication error'))
+
+      const updates: Record<string, any> = {
+        updated_by: session.user.id,
+        updated_at: new Date().toISOString(),
+      }
+
+      if (action === 'publish') {
+        updates.content_status = 'published'
+        updates.is_published = true
+      } else if (action === 'unpublish') {
+        updates.content_status = 'draft'
+        updates.is_published = false
+      }
+
+      const { error: updateError } = await supabaseClient
+        .from('meditation_tracks')
+        .update(updates)
+        .eq('id', track.id)
+
+      if (updateError) throw updateError
+
+      setActionSuccessMsg(t(`admin.meditation.actions.${action}Success`, 'ดำเนินการสำเร็จ / Action successful'))
+      await fetchTracks()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setActionLoadingId(null)
+    }
+  }
 
   // ── Status badge ───────────────────────────────────────────────────────────
 
@@ -194,6 +249,16 @@ export function AdminMeditationPage() {
         ℹ️ {t('admin.meditation.readOnlyNotice')}
       </div>
 
+      {/* Action Success */}
+      {actionSuccessMsg && (
+        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 flex items-center justify-between">
+          <span>✓ {actionSuccessMsg}</span>
+          <button onClick={() => setActionSuccessMsg(null)} className="text-green-600 hover:text-green-800 font-bold ml-4 cursor-pointer">
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Loading state */}
       {isLoading && (
         <div className="flex justify-center items-center py-20">
@@ -261,6 +326,24 @@ export function AdminMeditationPage() {
                   </div>
                   {/* Per-row action buttons */}
                   <div className="flex gap-2 flex-wrap pt-1">
+                    {isOwner && !track.is_published && track.content_status !== 'archived' && (
+                      <button
+                        onClick={() => handleAction(track, 'publish')}
+                        disabled={actionLoadingId === track.id}
+                        className="px-2.5 py-1 text-xs font-semibold rounded border border-emerald-300 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        {actionLoadingId === track.id ? '...' : t('admin.meditation.actions.publish', 'เผยแพร่ / Publish')}
+                      </button>
+                    )}
+                    {isOwner && track.is_published && (
+                      <button
+                        onClick={() => handleAction(track, 'unpublish')}
+                        disabled={actionLoadingId === track.id}
+                        className="px-2.5 py-1 text-xs font-semibold rounded border border-rose-300 text-rose-800 bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        {actionLoadingId === track.id ? '...' : t('admin.meditation.actions.unpublish', 'ยกเลิกเผยแพร่ / Unpublish')}
+                      </button>
+                    )}
                     <Link
                       to={`/admin/meditation/${track.id}/edit`}
                       className="px-2.5 py-1 text-xs font-semibold rounded border border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors"
@@ -339,6 +422,24 @@ export function AdminMeditationPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5 flex-wrap">
+                          {isOwner && !track.is_published && track.content_status !== 'archived' && (
+                            <button
+                              onClick={() => handleAction(track, 'publish')}
+                              disabled={actionLoadingId === track.id}
+                              className="px-2.5 py-1 text-xs font-semibold rounded border border-emerald-300 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+                            >
+                              {actionLoadingId === track.id ? '...' : t('admin.meditation.actions.publish', 'เผยแพร่ / Publish')}
+                            </button>
+                          )}
+                          {isOwner && track.is_published && (
+                            <button
+                              onClick={() => handleAction(track, 'unpublish')}
+                              disabled={actionLoadingId === track.id}
+                              className="px-2.5 py-1 text-xs font-semibold rounded border border-rose-300 text-rose-800 bg-rose-50 hover:bg-rose-100 transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+                            >
+                              {actionLoadingId === track.id ? '...' : t('admin.meditation.actions.unpublish', 'ยกเลิกเผยแพร่ / Unpublish')}
+                            </button>
+                          )}
                           <Link
                             to={`/admin/meditation/${track.id}/edit`}
                             className="px-2.5 py-1 text-xs font-semibold rounded border border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors whitespace-nowrap"

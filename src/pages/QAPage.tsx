@@ -1,23 +1,90 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { mockQAItems, mockQATranslations } from '../data/mock'
-import { getTranslation, isPublicQAItem } from '../utils/translation'
+import { supabaseClient } from '../lib/supabase'
+import { getTranslation } from '../utils/translation'
+
+interface QATranslationRow {
+  language_code: string
+  question: string
+  short_answer: string
+  detailed_answer: string | null
+}
+
+interface QAItemRow {
+  id: string
+  category: string
+  source_reference: string | null
+  content_status: 'draft' | 'published' | 'archived'
+  verification_status: 'unverified' | 'verified'
+  is_published: boolean
+  qa_translations: QATranslationRow[]
+}
 
 export function QAPage() {
   const { t, i18n } = useTranslation()
-  const [searchQuery, setSearchQuery] = useState('')
+  const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
+    ? 'en'
+    : 'th'
 
-  // Map mock items to their current translations
-  const itemsWithTranslations = mockQAItems.map((item) => {
-    const translation = getTranslation(
-      mockQATranslations.filter((tr) => tr.qa_item_id === item.id),
-      i18n.language,
-      'th'
-    )
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [items, setItems] = useState<QAItemRow[]>([])
+
+  // ── Fetch Q&A Items ────────────────────────────────────────────────────────
+
+  const fetchQAItems = useCallback(async () => {
+    if (!supabaseClient) {
+      setError(t('qa.errorNoClient'))
+      setIsLoading(false)
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const { data, error: dbError } = await supabaseClient
+        .from('qa_items')
+        .select(`
+          id,
+          category,
+          source_reference,
+          content_status,
+          verification_status,
+          is_published,
+          qa_translations (
+            language_code,
+            question,
+            short_answer,
+            detailed_answer
+          )
+        `)
+        .eq('content_status', 'published')
+        .eq('verification_status', 'verified')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false })
+
+      if (dbError) throw dbError
+
+      setItems((data as QAItemRow[]) ?? [])
+      setIsLoading(false)
+    } catch (err: any) {
+      setError(err.message || t('qa.errorLoad'))
+      setIsLoading(false)
+    }
+  }, [t])
+
+  useEffect(() => {
+    fetchQAItems()
+  }, [fetchQAItems])
+
+  // Resolve current language translations
+  const itemsWithTranslations = items.map((item) => {
+    const translation = getTranslation(item.qa_translations, currentLang, 'th')
     return {
       item,
       translation,
-      isPublicEligible: isPublicQAItem(item),
     }
   })
 
@@ -28,7 +95,7 @@ export function QAPage() {
     if (!translation) return false
     const questionMatch = translation.question.toLowerCase().includes(query)
     const shortAnsMatch = translation.short_answer.toLowerCase().includes(query)
-    const detailedAnsMatch = translation.detailed_answer?.toLowerCase().includes(query)
+    const detailedAnsMatch = translation.detailed_answer?.toLowerCase().includes(query) || false
     return questionMatch || shortAnsMatch || detailedAnsMatch
   })
 
@@ -45,10 +112,6 @@ export function QAPage() {
               {t('qa.title')}
             </h1>
           </div>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/70">
-            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-            {t('qa.demoBadge')}
-          </span>
         </div>
         <p className="text-sm sm:text-base text-slate-600">
           {t('qa.subtitle')}
@@ -74,7 +137,7 @@ export function QAPage() {
                 type="button"
                 onClick={() => setSearchQuery('')}
                 aria-label={t('qa.clearSearch')}
-                className="absolute right-3.5 text-slate-400 hover:text-slate-600 text-sm font-semibold p-1 rounded-lg focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500"
+                className="absolute right-3.5 text-slate-400 hover:text-slate-600 text-sm font-semibold p-1 rounded-lg focus:outline-hidden"
               >
                 ✕
               </button>
@@ -88,92 +151,106 @@ export function QAPage() {
         {t('qa.verificationNotice')}
       </div>
 
-      {/* Prototype Demo Section */}
-      <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-200 pb-3">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>❓</span>
-            <span>{t('qa.demoSectionTitle')}</span>
-          </h2>
-          <span className="text-xs text-slate-500">
-            {filteredItems.length} {t('qa.demoBadge')}
-          </span>
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-600" />
         </div>
+      )}
 
-        <p className="text-xs text-slate-500 italic">
-          * {t('qa.demoSectionNotice')}
-        </p>
+      {/* Error State */}
+      {!isLoading && error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
+          <p className="text-red-800 font-semibold">{t('qa.errorLoad')}</p>
+          <p className="text-red-600 text-sm font-mono break-all">{error}</p>
+          <button
+            type="button"
+            onClick={fetchQAItems}
+            className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer"
+          >
+            {t('qa.retry')}
+          </button>
+        </div>
+      )}
 
-        {/* Q&A Items List */}
-        {filteredItems.length > 0 ? (
-          <div className="space-y-4 pt-1">
-            {filteredItems.map(({ item, translation }) => (
-              <article
-                key={item.id}
-                className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-3"
-              >
-                {/* Header / Badges */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                  <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600">
-                    ID: {item.id}
-                  </span>
-                  <div className="flex flex-wrap items-center gap-1.5 text-xs font-medium">
-                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600">
-                      {t('qa.statusDraft')}
+      {/* Empty State */}
+      {!isLoading && !error && items.length === 0 && (
+        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-slate-50 flex items-center justify-center text-3xl">
+            ❓
+          </div>
+          <h2 className="text-lg font-semibold text-slate-800">
+            {t('qa.empty')}
+          </h2>
+        </div>
+      )}
+
+      {/* Q&A Items List */}
+      {!isLoading && !error && items.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-200 pb-3">
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span>❓</span>
+              <span>{t('qa.demoSectionTitle')}</span>
+            </h2>
+            <span className="text-xs text-slate-500">
+              {filteredItems.length} {t('qa.itemCount', { count: filteredItems.length })}
+            </span>
+          </div>
+
+          {filteredItems.length > 0 ? (
+            <div className="space-y-4 pt-1">
+              {filteredItems.map(({ item, translation }) => (
+                <article
+                  key={item.id}
+                  className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-3"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      {item.category}
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800">
-                      {t('qa.statusUnverified')}
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600">
-                      {t('qa.statusUnpublished')}
-                    </span>
+                    {item.source_reference && (
+                      <span className="text-xs text-slate-500">
+                        {t('qa.sourceRef')} {item.source_reference}
+                      </span>
+                    )}
                   </div>
-                </div>
 
-                {/* Question */}
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-                  {translation?.question || item.id}
-                </h3>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                    {translation?.question || item.id}
+                  </h3>
 
-                {/* Short & Detailed Answer (Placeholder wording only) */}
-                <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
-                  <p className="font-semibold text-amber-800 flex items-start gap-1.5">
-                    <span>💡</span>
-                    <span>{translation?.short_answer}</span>
-                  </p>
-                  {translation?.detailed_answer && (
-                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed pl-6 pt-1 border-t border-slate-200/60">
-                      {translation.detailed_answer}
+                  <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
+                    <p className="font-semibold text-amber-800 flex items-start gap-1.5">
+                      <span>💡</span>
+                      <span>{translation?.short_answer}</span>
                     </p>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          /* Empty Search State */
-          <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-8 sm:p-12 text-center space-y-3">
-            <span className="text-3xl block">🔍</span>
-            <h3 className="text-base font-bold text-slate-800">
-              {t('qa.noResults')}
-            </h3>
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 transition-colors"
-            >
-              {t('qa.clearSearch')}
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* Footer Notice */}
-      <div className="text-center pt-2">
-        <p className="text-xs text-slate-500 italic">
-          * {t('qa.placeholderDisclaimer')}
-        </p>
-      </div>
+                    {translation?.detailed_answer && (
+                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed pl-6 pt-1 border-t border-slate-200/60 whitespace-pre-wrap">
+                        {translation.detailed_answer}
+                      </p>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-8 sm:p-12 text-center space-y-3">
+              <span className="text-3xl block">🔍</span>
+              <h3 className="text-base font-bold text-slate-800">
+                {t('qa.noResults')}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200 focus:outline-hidden transition-colors"
+              >
+                {t('qa.clearSearch')}
+              </button>
+            </div>
+          )}
+        </section>
+      )}
     </div>
   )
 }

@@ -40,7 +40,11 @@
     "purposeTitle": "About the MonkChat Guide Project",
     "purposeText": "MonkChat Guide is a mobile-first Progressive Web Application designed to support foreign visitors and monk students participating in Monk Chat activities.",
     "purposeVisitors": "For Visitors: Scan a QR code to access guided meditation, subtitles, and introductory Buddhist knowledge easily.",
-    "purposeMonks": "For Monks & Team: Access a verified Q&A knowledge base to confidently guide visitors in multiple languages."
+    "purposeMonks": "For Monks & Team: Access a verified Q&A knowledge base to confidently guide visitors in multiple languages.",
+    "loadingLinks": "Loading links...",
+    "errorLoadLinks": "Could not load links.",
+    "emptyLinks": "No published links available.",
+    "retry": "Retry"
   },
   "meditation": {
     "heroTag": "GUIDED MEDITATION",
@@ -59,7 +63,12 @@
     "subtitleNotice": "* Subtitle timing and text are demonstration placeholders and not synced to real audio.",
     "noTranscript": "No transcript available for this track yet.",
     "noSubtitles": "No subtitles available for this track yet.",
-    "placeholderDisclaimer": "All meditation tracks, descriptions, and subtitles are demonstration placeholders for system testing."
+    "placeholderDisclaimer": "All meditation tracks, descriptions, and subtitles are demonstration placeholders for system testing.",
+    "errorNoClient": "Supabase client not initialized.",
+    "errorTitle": "Could not load meditation tracks.",
+    "retry": "Retry",
+    "emptyTitle": "No meditation tracks in system",
+    "emptyDesc": "There are currently no published guided meditation tracks available."
   },
   "qa": {
     "heroTag": "BUDDHISM & MEDITATION Q&A",
@@ -75,7 +84,13 @@
     "statusUnpublished": "Unpublished",
     "noResults": "No questions matched your search term.",
     "verificationNotice": "ℹ️ Official public Q&A content requires explicit verification by teaching monks (verified) and administrative publication approval (published).",
-    "placeholderDisclaimer": "All demonstration Q&A items are placeholders for system testing."
+    "placeholderDisclaimer": "All demonstration Q&A items are placeholders for system testing.",
+    "errorNoClient": "Supabase client not initialized.",
+    "errorLoad": "Could not load Q&A items.",
+    "retry": "Retry",
+    "empty": "No verified and published Q&A items available yet.",
+    "itemCount": "item(s)",
+    "sourceRef": "Source Reference:"
   },
   "pages": {
     "home": {
@@ -133,7 +148,12 @@
     "linkWebsite": "Website",
     "linkContact": "Contact",
     "linkPending": "Awaiting official information",
-    "placeholderDisclaimer": "All center records are demonstration placeholders. No real-world location is claimed or implied."
+    "placeholderDisclaimer": "All center records are demonstration placeholders. No real-world location is claimed or implied.",
+    "errorNoClient": "Supabase client not initialized.",
+    "errorLoad": "Could not load centers.",
+    "retry": "Retry",
+    "empty": "No published centers available yet.",
+    "itemCount": "center(s)"
   },
   "admin": {
     "nav": {
@@ -225,6 +245,14 @@
         "draft": "Draft",
         "published": "Published",
         "archived": "Archived"
+      },
+      "actions": {
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "publishConfirm": "Are you sure you want to publish this meditation track?",
+        "unpublishConfirm": "Are you sure you want to unpublish this meditation track?",
+        "publishSuccess": "Meditation track published successfully.",
+        "unpublishSuccess": "Meditation track unpublished successfully."
       },
       "new": {
         "title": "Add New Meditation Track",

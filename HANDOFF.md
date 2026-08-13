@@ -179,16 +179,27 @@
 - Implemented responsive Admin CMS shell, module subroutes, OwnerRoute guard, and reactive Thai/English language switching.
 - Implemented Meditation CMS read-only list (fetches from Supabase, shows loading/empty/error/results states).
 - Completed Day 4 Meditation CMS and Q&A CMS modules.
-- Day 5 Step 1 DCI Centers and BioLinks CMS workflows fully completed and verified (uncommitted):
-  - DCI Centers CMS: Implemented read-only list with statuses, filters, sorting, search, and action handlers. Added create and edit pages with country code, city, address, maps/website/contact URLs, and localized names/descriptions (TH required, EN optional, with preservation rules for English translations). Status updates support publish/unpublish/archive and Owner-only restore.
-  - BioLinks CMS: Implemented link listing with destination URL, display order, status, and last updated. Supported create/edit forms validating prefix `http://` or `https://` on destination URLs and localized link titles. Added inline `display_order` editing in table and cards. Status updates support publish/unpublish/archive and Owner-only restore.
-  - Verification: All automated checks (lint, build, audit, git check) completed successfully.
+- Day 5 Step 1 DCI Centers and BioLinks CMS workflows fully completed and verified (committed).
+- Day 5 Step 2 public Supabase integration fully completed and verified (committed):
+  - Connected public Meditation, Q&A, DCI Centers, and BioLinks/homepage pages to the linked Supabase database.
+  - Implemented strict status querying: meditation tracks (`published`), Q&A items (`published` AND `verified`), DCI centers (`published`), BioLinks (`published`).
+  - Added language fallbacks (current UI language -> Thai -> first available translation) updating on language changes.
+  - Setup signed URLs and dynamic WebVTT downloading/parsing for static subtitles on the Meditation page.
+  - Handled tracks and records with missing audio, subtitles, or transcripts honestly.
+  - Enforced http/https URL restrictions for homepage BioLinks.
+  - Added loading, error/retry, and empty states.
+  - Added secure Owner-only Publish and Unpublish actions for meditation tracks in `AdminMeditationPage.tsx`.
+  - Created forward-only database migration `20260813215600_meditation_track_publication_security.sql` with triggers to enforce that Team Members cannot insert or update published meditation tracks. Applied remotely.
+  - Added localized strings for meditation actions in `th/common.json` and `en/common.json`.
+  - Verified all local compile, build, and check workflows pass cleanly.
+  - Confirmed all neutral TEST records are unpublished and not publicly visible.
+- **Day 5 is complete.**
 
 ## Current Task
-- Day 5 Step 1 is completed.
+- Day 5 is complete.
 
 ## Exact Next Step
-- Day 5 Step 2 — connect public pages to Supabase
+- Day 6 — final MVP testing, security review, performance check, and deployment preparation.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -204,16 +215,14 @@
 
 ## Files Changed in the Current Phase
 - `HANDOFF.md`
-- `src/App.tsx`
 - `src/locales/en/common.json`
 - `src/locales/th/common.json`
-- `src/pages/admin/AdminCentersPage.tsx`
-- `src/pages/admin/AdminCentersNewPage.tsx`
-- `src/pages/admin/AdminCentersEditPage.tsx`
-- `src/pages/admin/AdminBioLinksPage.tsx`
-- `src/pages/admin/AdminBioLinksNewPage.tsx`
-- `src/pages/admin/AdminBioLinksEditPage.tsx`
+- `src/pages/CentersPage.tsx`
+- `src/pages/HomePage.tsx`
+- `src/pages/MeditationPage.tsx`
+- `src/pages/QAPage.tsx`
+- `src/pages/admin/AdminMeditationPage.tsx`
 
 ## Actions That Must Not Be Started Yet
 - Do not install extra packages beyond approved next steps.
-- Do not connect external services (Supabase, Cloudflare, GitHub remote).
+- Do not connect external services (Cloudflare, GitHub remote).
