@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
+import { trackUsageEvent } from '../lib/analytics'
 import { getTranslation } from '../utils/translation'
 
 interface TrackTranslationRow {
@@ -377,7 +378,27 @@ export function MeditationPage() {
 
                 {audioUrl ? (
                   <div className="bg-white p-3 rounded-lg border border-slate-200">
-                    <audio controls className="w-full focus:outline-hidden" src={audioUrl}>
+                    <audio
+                      controls
+                      className="w-full focus:outline-hidden"
+                      src={audioUrl}
+                      onPlay={() => {
+                        if (!currentTrack) return
+                        void trackUsageEvent({
+                          eventType: 'audio_play',
+                          resourceType: 'meditation_track',
+                          resourceId: currentTrack.id,
+                        })
+                      }}
+                      onEnded={() => {
+                        if (!currentTrack) return
+                        void trackUsageEvent({
+                          eventType: 'audio_complete',
+                          resourceType: 'meditation_track',
+                          resourceId: currentTrack.id,
+                        })
+                      }}
+                    >
                       {subtitleUrl && (
                         <track
                           kind="subtitles"

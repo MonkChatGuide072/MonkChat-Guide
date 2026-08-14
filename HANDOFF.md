@@ -202,12 +202,25 @@
   - Created `README.md` documenting Cloudflare Pages deployment and Supabase Auth Redirect URL requirements.
   - Passed full test suite (lint, build, audit, git diff --check).
 - **Day 6 is complete.**
+- Anonymous analytics and CMS audit feature implemented locally after Project Owner approval:
+  - Superseded the former ban on all public identifiers with a privacy-preserving random `visitor_id` and temporary `session_id`; raw IP addresses remain prohibited.
+  - Added and applied forward-only migration `20260814190506_anonymous_analytics_and_admin_audit.sql`.
+  - Added validated `record_usage_event` RPC and removed direct anonymous inserts into `usage_events`.
+  - Added public session-start, page-view, audio-play, audio-complete, and BioPage-link-click tracking.
+  - Added immutable `admin_audit_logs` populated by database triggers for authenticated CMS record changes.
+  - Kept usage analytics available to authenticated CMS users while restricting complete audit history to the Owner.
+  - Added responsive bilingual `/admin/analytics` dashboard with 7/30-day metrics, daily trend, masked visitor activity, and administrator activity history.
+  - Local lint, TypeScript compilation, production build, locale JSON parsing, and diff checks pass.
+  - Migration applied successfully to Supabase Production and is synchronized to remote migration version `20260814190506`.
+  - Post-migration permission tests passed: Guest RPC works without direct table writes; Team Members can read usage analytics but not audit history; the Owner can read audit history.
+  - All permission tests ran inside rolled-back transactions; no verification rows remain and the active Owner profile is unchanged.
+  - Security Advisor reports two intentional warnings for the public/authenticated `SECURITY DEFINER` analytics RPC plus the existing Free-tier leaked-password warning. The RPC uses an empty `search_path`, explicit schemas, strict event validation, and least-privilege table grants.
 
 ## Current Task
-- Day 6 is complete.
+- Anonymous analytics and CMS audit implementation is live in Supabase Production; direct GitHub Plugin publication to a feature branch and Draft PR is approved.
 
 ## Exact Next Step
-- Day 7 — Cloudflare Pages deployment, final production testing, and project delivery.
+- Review the Draft PR for `agent/anonymous-analytics-audit`, then merge only after the public and Admin changes are accepted. Review the production frontend flow before any Cloudflare deployment.
 
 ## Pending Content and Decisions
 - AI-generated transcripts for the three audio files.
@@ -219,16 +232,28 @@
 - Final confirmation of audio publication rights.
 
 ## Known Problems
-- Production guest-access blocker: RLS policies calling `private.get_user_role()` were missing `TO authenticated`, causing public anonymous queries to fail with `permission denied for function get_user_role`. A hotfix migration `20260814022206_restrict_role_policies_to_authenticated.sql` has been created and is pending push.
+- No known production guest-access blocker remains; commit `b464560` restored anonymous published-content access.
+- The frontend code is not yet pushed or deployed, so Production will not begin recording the new browser events until that release occurs.
+- No database blocker remains. Frontend release remains pending Draft PR review and merge.
 
 ## Files Changed in the Current Phase
+- `AGENTS.md` (read only; unchanged)
+- `REQUIREMENTS.md`
+- `DECISIONS.md`
+- `DATABASE_SCHEMA.md`
 - `HANDOFF.md`
+- `src/App.tsx`
+- `src/components/AdminLayout.tsx`
+- `src/components/UsageTracker.tsx` (new)
+- `src/lib/analytics.ts` (new)
 - `src/pages/HomePage.tsx`
 - `src/pages/MeditationPage.tsx`
-- `src/pages/QAPage.tsx`
-- `src/pages/CentersPage.tsx`
-- `supabase/migrations/20260814022206_restrict_role_policies_to_authenticated.sql`
+- `src/pages/admin/AdminAnalyticsPage.tsx` (new)
+- `src/pages/admin/AdminDashboardPage.tsx`
+- `src/locales/th/common.json`
+- `src/locales/en/common.json`
+- `src/types/content.ts`
+- `supabase/migrations/20260814190506_anonymous_analytics_and_admin_audit.sql` (new)
 
 ## Actions That Must Not Be Started Yet
-- Do not commit or push to remote yet.
-- Do not deploy to Cloudflare Pages yet.
+- Do not deploy the frontend to Cloudflare until the Git checkpoint is pushed and the production public/Admin flows are reviewed.

@@ -101,8 +101,14 @@ This document records the confirmed decisions made during the project's lifecycl
 ## 16. Anonymous Statistics Constraints
 - **Decision**: Anonymous statistics must not store names, emails, IP addresses, or public user IDs.
 - **Reason**: Protects user privacy while still tracking usage metrics.
-- **Status**: ✅ CONFIRMED
+- **Status**: 🔄 SUPERSEDED by Decision 16.1
 - **Date**: 2026-08-12
+
+## 16.1. Privacy-Preserving Unique Visitor Measurement
+- **Decision**: Estimate unique visitors with a random browser-generated `visitor_id` and a temporary `session_id`. Continue to prohibit IP addresses, names, emails, user-agent strings, device details, and browser fingerprints. Add database-generated audit logs for authenticated Owner and Team Member content changes; only the Owner can read the complete audit history.
+- **Reason**: The Project Owner approved anonymous unique-visitor measurement and accountable CMS activity history without collecting raw IP addresses or claiming to identify public visitors.
+- **Status**: ✅ CONFIRMED
+- **Date**: 2026-08-15
 
 ## 17. Implementation Plan
 - **Decision**: The seven-day implementation plan is approved.

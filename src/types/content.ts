@@ -14,7 +14,12 @@
 export type ContentStatus = 'draft' | 'published' | 'archived'
 export type VerificationStatus = 'unverified' | 'verified'
 export type UserRole = 'owner' | 'team_member'
-export type UsageEventType = 'audio_play' | 'audio_complete' | 'bio_link_click'
+export type UsageEventType =
+  | 'session_start'
+  | 'page_view'
+  | 'audio_play'
+  | 'audio_complete'
+  | 'bio_link_click'
 
 /**
  * Supported Languages
@@ -185,12 +190,16 @@ export interface BioLinkTranslation {
 
 /**
  * Anonymous Usage Event
- * Never records IP, user IDs, device IDs, or emails.
+ * Uses random anonymous browser/session identifiers.
+ * Never records IP, names, emails, user-agent strings, or device fingerprints.
  */
 export interface UsageEvent {
   id: string
   event_type: UsageEventType
-  resource_type: 'meditation_track' | 'bio_link'
-  resource_id: string
+  visitor_id: string | null
+  session_id: string | null
+  page_path: string | null
+  resource_type: 'meditation_track' | 'bio_link' | null
+  resource_id: string | null
   created_at: string
 }

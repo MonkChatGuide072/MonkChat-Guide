@@ -163,6 +163,7 @@
       "centers": "DCI Centers",
       "bioLinks": "BioPage Links",
       "languages": "Languages",
+      "analytics": "Analytics & Activity",
       "team": "Team Management (Owner Only)",
       "signOut": "Sign Out",
       "publicSite": "Public Site"
@@ -206,10 +207,80 @@
         "description": "Manage supported languages across the MonkChat Guide platform",
         "placeholder": "Languages management module (CMS CRUD - under development)"
       },
+      "analytics": {
+        "title": "Analytics & Activity History",
+        "description": "View anonymous visitor counts, public interactions, and team content-change history"
+      },
       "team": {
         "title": "Team Account Management",
         "description": "Manage team member profiles, access roles, and account status",
         "placeholder": "Team account & role management module (Owner Only - under development)"
+      }
+    },
+    "analytics": {
+      "title": "Usage Analytics & Activity History",
+      "subtitle": "Website usage and CMS content-change overview",
+      "days": "{{count}} days",
+      "refresh": "Refresh",
+      "retry": "Retry",
+      "errorNoClient": "Supabase connection is not configured.",
+      "errorLoad": "Could not load analytics and activity history.",
+      "privacyTitle": "Privacy protected",
+      "privacyDesc": "Visitors use random anonymous identifiers. The system does not store IP addresses, names, emails, device information, or digital fingerprints. The identifier is used only to estimate unique visitors.",
+      "metrics": {
+        "visitors": "Unique Visitors",
+        "sessions": "Sessions",
+        "pageViews": "Page Views",
+        "audioPlays": "Audio Plays",
+        "audioCompletes": "Completed Listening",
+        "bioClicks": "BioLink Clicks"
+      },
+      "dailyTitle": "Daily Usage Trend",
+      "dailyHint": "Shows up to the latest 14 days in the selected range",
+      "visitorsLegend": "Visitors",
+      "eventsLegend": "All Events",
+      "recentVisitorsTitle": "Recent Visitor Activity",
+      "recentVisitorsHint": "Visitor identifiers are masked and cannot identify a real person.",
+      "auditTitle": "Admin Activity History",
+      "auditHint": "Recorded automatically when an Owner or Team Member creates, updates, or deletes content.",
+      "emptyUsage": "No visitor activity in this period yet.",
+      "emptyAudit": "No content-change history yet.",
+      "columns": {
+        "visitor": "Visitor",
+        "event": "Event",
+        "location": "Page/Resource",
+        "time": "Date & Time",
+        "admin": "Administrator",
+        "action": "Action",
+        "item": "Managed Item"
+      },
+      "eventTypes": {
+        "session_start": "Session Started",
+        "page_view": "Page Viewed",
+        "audio_play": "Meditation Audio Played",
+        "audio_complete": "Audio Completed",
+        "bio_link_click": "BioPage Link Clicked"
+      },
+      "actions": {
+        "create": "Created",
+        "update": "Updated",
+        "delete": "Deleted"
+      },
+      "roles": {
+        "owner": "Owner",
+        "team_member": "Team Member"
+      },
+      "entities": {
+        "profiles": "Team Account",
+        "languages": "Language",
+        "meditation_tracks": "Meditation Track",
+        "meditation_track_translations": "Meditation Translation",
+        "qa_items": "Q&A Item",
+        "qa_translations": "Q&A Translation",
+        "dci_centers": "DCI Center",
+        "dci_center_translations": "DCI Center Translation",
+        "bio_links": "BioPage Link",
+        "bio_link_translations": "BioPage Link Translation"
       }
     },
     "meditation": {

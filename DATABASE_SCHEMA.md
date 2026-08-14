@@ -81,7 +81,13 @@ The overall architecture is **APPROVED** by the project owner. Individual implem
 - **Who can add, edit, archive, or permanently delete it**: Team Members and Owners can add, edit, and archive. Only the Owner can permanently delete.
 
 ## 11. Usage Events Table (`usage_events`)
-- **What it stores**: Simple, anonymous usage statistics to track interactions. It does not store names, email addresses, IP addresses, or public user IDs.
-- **Important fields**: `id`, `event_type` (audio_play, audio_complete, or bio_link_click), `resource_type`, `resource_id`, `created_at`.
+- **What it stores**: Anonymous usage statistics for sessions, page views, audio interactions, and BioPage link clicks. A random browser-generated visitor UUID estimates unique visitors; it is not a real identity. The table does not store names, emails, IP addresses, user-agent strings, device details, or browser fingerprints.
+- **Important fields**: `id`, `event_type` (session_start, page_view, audio_play, audio_complete, or bio_link_click), `visitor_id`, `session_id`, `page_path`, `resource_type`, `resource_id`, `created_at`.
 - **Who can view it**: Owners and Team Members can view statistics.
-- **Who can add, edit, archive, or permanently delete it**: The system appends data automatically; manual editing is not allowed. Only the Owner can permanently delete data.
+- **Who can add, edit, archive, or permanently delete it**: Public and signed-in clients can append only validated events through the narrow `record_usage_event` database function. Direct inserts, updates, and truncation are denied. Only the Owner can permanently delete data through RLS.
+
+## 12. Admin Audit Logs Table (`admin_audit_logs`)
+- **What it stores**: Immutable history of authenticated CMS record changes generated automatically by database triggers.
+- **Important fields**: `id`, `actor_user_id`, `actor_display_name`, `actor_role`, `action` (create, update, or delete), `entity_type`, `entity_id`, `details`, `occurred_at`.
+- **Who can view it**: Only the active Owner.
+- **Who can add, edit, archive, or permanently delete it**: Browser clients cannot add, edit, or delete audit rows. Database triggers append the rows automatically.

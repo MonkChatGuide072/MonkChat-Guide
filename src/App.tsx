@@ -4,6 +4,7 @@ import { Layout } from './components/Layout'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { OwnerRoute } from './components/OwnerRoute'
 import { AdminLayout } from './components/AdminLayout'
+import { UsageTracker } from './components/UsageTracker'
 import { AuthProvider } from './lib/auth'
 
 // Public Routes (Lazy)
@@ -33,11 +34,13 @@ const AdminBioLinksNewPage = lazy(() => import('./pages/admin/AdminBioLinksNewPa
 const AdminBioLinksEditPage = lazy(() => import('./pages/admin/AdminBioLinksEditPage').then(m => ({ default: m.AdminBioLinksEditPage })))
 const AdminLanguagesPage = lazy(() => import('./pages/admin/AdminLanguagesPage').then(m => ({ default: m.AdminLanguagesPage })))
 const AdminTeamPage = lazy(() => import('./pages/admin/AdminTeamPage').then(m => ({ default: m.AdminTeamPage })))
+const AdminAnalyticsPage = lazy(() => import('./pages/admin/AdminAnalyticsPage').then(m => ({ default: m.AdminAnalyticsPage })))
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <UsageTracker />
         <Suspense fallback={<div className="flex h-screen items-center justify-center p-8"><div className="h-8 w-8 animate-spin rounded-full border-4 border-neutral-200 border-t-neutral-800"></div></div>}>
           <Routes>
             {/* Public Routes */}
@@ -69,6 +72,7 @@ function App() {
                 <Route path="bio-links/new" element={<AdminBioLinksNewPage />} />
                 <Route path="bio-links/:linkId/edit" element={<AdminBioLinksEditPage />} />
                 <Route path="languages" element={<AdminLanguagesPage />} />
+                <Route path="analytics" element={<AdminAnalyticsPage />} />
                 <Route
                   path="team"
                   element={

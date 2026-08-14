@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
+import { trackUsageEvent } from '../lib/analytics'
 import { getTranslation } from '../utils/translation'
 
 interface BioLinkTranslationRow {
@@ -247,6 +248,13 @@ export function HomePage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    void trackUsageEvent({
+                      eventType: 'bio_link_click',
+                      resourceType: 'bio_link',
+                      resourceId: link.id,
+                    })
+                  }}
                   className="flex items-center justify-between min-h-[48px] px-5 py-3.5 bg-white rounded-xl border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-amber-400 hover:bg-amber-50/30 text-slate-800 hover:text-slate-900 font-medium text-sm sm:text-base focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 transition-all duration-200 motion-reduce:transition-none"
                 >
                   <span>{translation?.title || link.url}</span>
