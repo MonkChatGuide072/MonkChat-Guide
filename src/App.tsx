@@ -9,6 +9,7 @@ import { AuthProvider } from './lib/auth'
 
 // Public Routes (Lazy)
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })))
+const VisitorGuidePage = lazy(() => import('./pages/VisitorGuidePage').then(m => ({ default: m.VisitorGuidePage })))
 const MeditationPage = lazy(() => import('./pages/MeditationPage').then(m => ({ default: m.MeditationPage })))
 const QAPage = lazy(() => import('./pages/QAPage').then(m => ({ default: m.QAPage })))
 const CentersPage = lazy(() => import('./pages/CentersPage').then(m => ({ default: m.CentersPage })))
@@ -46,6 +47,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
+              <Route path="visit" element={<VisitorGuidePage />} />
               <Route path="meditation" element={<MeditationPage />} />
               <Route path="qa" element={<QAPage />} />
               <Route path="centers" element={<CentersPage />} />
