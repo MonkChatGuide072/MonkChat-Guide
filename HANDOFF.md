@@ -257,3 +257,9 @@
 
 ## Actions That Must Not Be Started Yet
 - Do not deploy the frontend to Cloudflare until the Git checkpoint is pushed and the production public/Admin flows are reviewed.
+
+## Public Entry-Point Phase (2026-08-19)
+- The Project Owner approved a clearer public journey without changing Buddhist content, database schema, or CMS permissions.
+- Homepage now presents two paths: a Monk Student/Team field-guide entry and a Visitor entry.
+- Added the public `/visit` route with direct links to Meditation, Q&A, and DCI Centers. This is the intended destination for visitor QR Codes.
+- Local lint, TypeScript, and production build passed in a clean feature worktree.
