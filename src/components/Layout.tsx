@@ -7,6 +7,7 @@ export function Layout() {
 
   const navItems = [
     { to: '/', label: t('nav.home'), end: true },
+    { to: '/visit', label: t('nav.visitor') },
     { to: '/meditation', label: t('nav.meditation') },
     { to: '/qa', label: t('nav.qa') },
     { to: '/centers', label: t('nav.centers') },

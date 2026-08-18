@@ -133,3 +133,9 @@ This document records the confirmed decisions made during the project's lifecycl
 - **Reason**: Confirmed by the Project Owner.
 - **Status**: ✅ CONFIRMED
 - **Date**: 2026-08-12
+
+## 21. Public Entry-Point Structure
+- **Decision**: The homepage introduces MonkChat Guide as a tool for monk students and international visitors. A dedicated public visitor route (`/visit`) gives direct access to Meditation, Q&A, and DCI Centers; visitor QR Codes will point to this route.
+- **Reason**: Keeps the application aligned with its confirmed purpose: supporting monk students in leading meditation and providing basic information to international visitors.
+- **Status**: ✅ CONFIRMED
+- **Date**: 2026-08-19
