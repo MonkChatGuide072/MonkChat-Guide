@@ -1,9 +1,9 @@
 {
   "app": {
     "title": "MonkChat Guide",
-    "heading": "Monk Chat Activity Guide",
+    "heading": "Meditation Guide for Monk Students and Visitors",
     "status": "Under Development",
-    "description": "Meditation guide and resources for visitors and the Monk Chat team.",
+    "description": "A web application that helps monk students guide meditation and share essential information with international visitors.",
     "footer": "© 2026 MonkChat Guide. All rights reserved."
   },
   "nav": {
@@ -11,7 +11,8 @@
     "meditation": "Meditation",
     "qa": "Q&A",
     "centers": "Centers",
-    "login": "Team Login"
+    "login": "Team Login",
+    "visitor": "For Visitors"
   },
   "language": {
     "label": "Language",
@@ -22,6 +23,14 @@
   },
   "home": {
     "heroTag": "MONKCHAT GUIDE",
+    "audienceTitle": "Choose how to use MonkChat Guide",
+    "audienceSubtitle": "Use it as a field guide for monk students, or begin exploring on your own as a visitor.",
+    "teamEntryTitle": "For Monk Students & Team",
+    "teamEntryDesc": "Open guided-meditation media, read supporting text, and find information to help visitors during activities.",
+    "teamEntryAction": "Open the field guide",
+    "visitorEntryTitle": "For Visitors",
+    "visitorEntryDesc": "Begin meditation, read common questions, and find ways to continue learning.",
+    "visitorEntryAction": "Get started",
     "demoBadge": "Demonstration Content (Demo)",
     "navCardsTitle": "Key Features & Activities",
     "navCardsSubtitle": "Select a menu item below to access guided meditation, Q&A, or DCI centers.",
@@ -45,6 +54,23 @@
     "errorLoadLinks": "Could not load links.",
     "emptyLinks": "No published links available.",
     "retry": "Retry"
+  },
+  "visitor": {
+    "heroTag": "MONKCHAT GUIDE",
+    "title": "Welcome to MonkChat Guide",
+    "subtitle": "Begin learning and practising meditation at your own pace. Choose what you would like to explore below.",
+    "chooseTitle": "What would you like to do?",
+    "chooseSubtitle": "Choose a section to begin right away.",
+    "meditationTitle": "Begin Meditation",
+    "meditationDesc": "Listen to guided meditation with a transcript and subtitles when they are available.",
+    "meditationAction": "Open meditation",
+    "qaTitle": "Frequently Asked Questions",
+    "qaDesc": "Find introductory answers about meditation and Buddhism.",
+    "qaAction": "Open Q&A",
+    "centersTitle": "Find a Dhammakaya Center",
+    "centersDesc": "Explore international centers and ways to continue learning.",
+    "centersAction": "View centers",
+    "notice": "Dhamma content and media are reviewed before they are published for public use."
   },
   "meditation": {
     "heroTag": "GUIDED MEDITATION",
