@@ -114,6 +114,34 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* Audience entry points */}
+      <section className="space-y-4 max-w-4xl mx-auto">
+        <div className="text-center space-y-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">{t('home.audienceTitle')}</h2>
+          <p className="text-sm text-slate-600 max-w-xl mx-auto">{t('home.audienceSubtitle')}</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <Link
+            to="/meditation"
+            className="group rounded-xl border border-slate-200 bg-white p-6 shadow-2xs transition-all duration-200 hover:border-amber-400 hover:shadow-md focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 motion-reduce:transition-none"
+          >
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-lg" aria-hidden="true">🪷</span>
+            <h3 className="mt-4 text-lg font-bold text-slate-900 group-hover:text-amber-700">{t('home.teamEntryTitle')}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">{t('home.teamEntryDesc')}</p>
+            <p className="mt-4 text-sm font-semibold text-amber-700">{t('home.teamEntryAction')} →</p>
+          </Link>
+          <Link
+            to="/visit"
+            className="group rounded-xl border border-amber-300 bg-amber-50/50 p-6 shadow-2xs transition-all duration-200 hover:border-amber-500 hover:shadow-md focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 motion-reduce:transition-none"
+          >
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-lg" aria-hidden="true">🌏</span>
+            <h3 className="mt-4 text-lg font-bold text-slate-900 group-hover:text-amber-700">{t('home.visitorEntryTitle')}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">{t('home.visitorEntryDesc')}</p>
+            <p className="mt-4 text-sm font-semibold text-amber-700">{t('home.visitorEntryAction')} →</p>
+          </Link>
+        </div>
+      </section>
+
       {/* Primary Navigation Cards */}
       <section className="space-y-4 max-w-5xl mx-auto">
         <div className="text-center space-y-1">
