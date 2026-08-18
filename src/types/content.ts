@@ -168,6 +168,7 @@ export interface DCICenterTranslation {
 export interface BioLink {
   id: string
   url: string
+  image_storage_path: string | null
   display_order: number
   content_status: ContentStatus
   is_published: boolean

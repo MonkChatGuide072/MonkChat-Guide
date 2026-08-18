@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { trackUsageEvent } from '../lib/analytics'
+import { getBioLinkImageUrl } from '../lib/bioLinkImages'
 import { getTranslation } from '../utils/translation'
 
 interface BioLinkTranslationRow {
@@ -13,6 +14,7 @@ interface BioLinkTranslationRow {
 interface BioLinkRow {
   id: string
   url: string
+  image_storage_path: string | null
   display_order: number
   content_status: 'draft' | 'published' | 'archived'
   is_published: boolean
@@ -47,6 +49,7 @@ export function HomePage() {
         .select(`
           id,
           url,
+          image_storage_path,
           display_order,
           content_status,
           is_published,
@@ -241,6 +244,7 @@ export function HomePage() {
           <div className="space-y-3">
             {validBioLinks.map((link) => {
               const translation = getTranslation(link.bio_link_translations, currentLang, 'th')
+              const imageUrl = getBioLinkImageUrl(link.image_storage_path)
 
               return (
                 <a
@@ -257,7 +261,23 @@ export function HomePage() {
                   }}
                   className="flex items-center justify-between min-h-[48px] px-5 py-3.5 bg-white rounded-xl border border-slate-200/90 shadow-2xs hover:shadow-xs hover:border-amber-400 hover:bg-amber-50/30 text-slate-800 hover:text-slate-900 font-medium text-sm sm:text-base focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 transition-all duration-200 motion-reduce:transition-none"
                 >
-                  <span>{translation?.title || link.url}</span>
+                  <span className="flex min-w-0 items-center gap-3 text-left">
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt=""
+                        className="h-11 w-11 flex-none rounded-lg border border-amber-100 object-cover bg-amber-50"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="flex h-11 w-11 flex-none items-center justify-center rounded-lg border border-amber-100 bg-amber-50 text-lg"
+                      >
+                        🔗
+                      </span>
+                    )}
+                    <span className="min-w-0 truncate">{translation?.title || link.url}</span>
+                  </span>
                   <span className="text-xs text-amber-600 font-semibold uppercase tracking-wider ml-2 flex-shrink-0">
                     🔗 Link
                   </span>

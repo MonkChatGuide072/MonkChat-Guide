@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams, Link } from 'react-router'
 import { supabaseClient } from '../../lib/supabase'
+import { getBioLinkImageUrl, uploadBioLinkImage, validateBioLinkImage } from '../../lib/bioLinkImages'
 
 export function AdminBioLinksEditPage() {
   const { t } = useTranslation()
@@ -15,6 +16,9 @@ export function AdminBioLinksEditPage() {
   // Database core metadata
   const [url, setUrl] = useState('')
   const [displayOrder, setDisplayOrder] = useState('1')
+  const [imageStoragePath, setImageStoragePath] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [removeImage, setRemoveImage] = useState(false)
   const [contentStatus, setContentStatus] = useState('draft')
   const [isPublished, setIsPublished] = useState(false)
 
@@ -51,6 +55,7 @@ export function AdminBioLinksEditPage() {
 
         setUrl(link.url)
         setDisplayOrder(String(link.display_order))
+        setImageStoragePath(link.image_storage_path ?? null)
         setContentStatus(link.content_status)
         setIsPublished(link.is_published)
 
@@ -131,12 +136,20 @@ export function AdminBioLinksEditPage() {
         throw new Error(t('admin.bioLinks.create.errorNoUser'))
       }
 
-      // 1. Update Core DCI Center
+      let nextImageStoragePath = imageStoragePath
+      if (removeImage) {
+        nextImageStoragePath = null
+      } else if (imageFile) {
+        nextImageStoragePath = await uploadBioLinkImage(imageFile, linkId)
+      }
+
+      // 1. Update core BioPage link
       const { error: linkUpdateErr } = await supabaseClient
         .from('bio_links')
         .update({
           url: trimmedUrl,
           display_order: parseInt(displayOrder, 10),
+          image_storage_path: nextImageStoragePath,
           updated_by: session.user.id,
           updated_at: new Date().toISOString(),
         })
@@ -266,6 +279,64 @@ export function AdminBioLinksEditPage() {
               />
             </div>
           </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-3">
+          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+            {t('admin.bioLinks.create.secImage')}
+          </h2>
+          {imageStoragePath && !removeImage && !imageFile && (
+            <img
+              src={getBioLinkImageUrl(imageStoragePath) ?? undefined}
+              alt=""
+              className="h-28 w-full max-w-xs rounded-lg border border-slate-200 object-cover"
+            />
+          )}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1" htmlFor="bio-link-image">
+              {t('admin.bioLinks.create.labelImage')}
+            </label>
+            <input
+              id="bio-link-image"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(event) => {
+                const selectedFile = event.target.files?.[0] ?? null
+                if (!selectedFile) {
+                  setImageFile(null)
+                  return
+                }
+
+                const validationError = validateBioLinkImage(selectedFile)
+                if (validationError) {
+                  setImageFile(null)
+                  setError(validationError)
+                  event.target.value = ''
+                  return
+                }
+
+                setError(null)
+                setRemoveImage(false)
+                setImageFile(selectedFile)
+              }}
+              className="block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-amber-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-amber-800 hover:file:bg-amber-200"
+            />
+            <p className="mt-2 text-xs text-slate-500">{t('admin.bioLinks.create.imageHint')}</p>
+            {imageFile && <p className="mt-1 text-xs font-medium text-emerald-700">{imageFile.name}</p>}
+          </div>
+          {imageStoragePath && (
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={removeImage}
+                onChange={(event) => {
+                  setRemoveImage(event.target.checked)
+                  if (event.target.checked) setImageFile(null)
+                }}
+              />
+              {t('admin.bioLinks.create.removeImage')}
+            </label>
+          )}
         </div>
 
         {/* Thai Translation */}

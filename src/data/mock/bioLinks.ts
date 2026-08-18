@@ -8,6 +8,7 @@ export const mockBioLinks: BioLink[] = [
   {
     id: 'link-demo-001',
     url: 'https://example.com/monk-chat-schedule',
+    image_storage_path: null,
     display_order: 1,
     content_status: 'published',
     is_published: true,
@@ -20,6 +21,7 @@ export const mockBioLinks: BioLink[] = [
   {
     id: 'link-demo-002',
     url: 'https://example.com/meditation-guide',
+    image_storage_path: null,
     display_order: 2,
     content_status: 'published',
     is_published: true,
@@ -32,6 +34,7 @@ export const mockBioLinks: BioLink[] = [
   {
     id: 'link-demo-003',
     url: 'https://example.com/temple-etiquette',
+    image_storage_path: null,
     display_order: 3,
     content_status: 'published',
     is_published: true,
@@ -44,6 +47,7 @@ export const mockBioLinks: BioLink[] = [
   {
     id: 'link-demo-004',
     url: 'https://example.com/dci-global-centers',
+    image_storage_path: null,
     display_order: 4,
     content_status: 'published',
     is_published: true,
@@ -56,6 +60,7 @@ export const mockBioLinks: BioLink[] = [
   {
     id: 'link-demo-005',
     url: 'https://example.com/online-meditation-class',
+    image_storage_path: null,
     display_order: 5,
     content_status: 'published',
     is_published: true,
@@ -68,6 +73,7 @@ export const mockBioLinks: BioLink[] = [
   {
     id: 'link-demo-006',
     url: 'https://example.com/feedback-and-contact',
+    image_storage_path: null,
     display_order: 6,
     content_status: 'published',
     is_published: true,
