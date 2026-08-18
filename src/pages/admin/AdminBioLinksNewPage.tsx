@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, Link } from 'react-router'
 import { supabaseClient } from '../../lib/supabase'
+import { uploadBioLinkImage, validateBioLinkImage } from '../../lib/bioLinkImages'
 
 export function AdminBioLinksNewPage() {
   const { t } = useTranslation()
@@ -13,6 +14,7 @@ export function AdminBioLinksNewPage() {
   // Form Fields
   const [url, setUrl] = useState('')
   const [displayOrder, setDisplayOrder] = useState('1')
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   // Localized Fields
   const [thTitle, setThTitle] = useState('')
@@ -110,6 +112,20 @@ export function AdminBioLinksNewPage() {
         throw new Error(transErr.message)
       }
 
+      if (imageFile && createdLinkId) {
+        const imageStoragePath = await uploadBioLinkImage(imageFile, createdLinkId)
+        const { error: imageUpdateErr } = await supabaseClient
+          .from('bio_links')
+          .update({
+            image_storage_path: imageStoragePath,
+            updated_by: session.user.id,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', createdLinkId)
+
+        if (imageUpdateErr) throw new Error(imageUpdateErr.message)
+      }
+
       navigate('/admin/bio-links')
     } catch (err: any) {
       setError(err instanceof Error ? err.message : t('admin.bioLinks.create.errorGeneric'))
@@ -181,6 +197,43 @@ export function AdminBioLinksNewPage() {
                 className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-600 focus:border-emerald-600"
               />
             </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-3">
+          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+            {t('admin.bioLinks.create.secImage')}
+          </h2>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1" htmlFor="bio-link-image">
+              {t('admin.bioLinks.create.labelImage')}
+            </label>
+            <input
+              id="bio-link-image"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(event) => {
+                const selectedFile = event.target.files?.[0] ?? null
+                if (!selectedFile) {
+                  setImageFile(null)
+                  return
+                }
+
+                const validationError = validateBioLinkImage(selectedFile)
+                if (validationError) {
+                  setImageFile(null)
+                  setError(validationError)
+                  event.target.value = ''
+                  return
+                }
+
+                setError(null)
+                setImageFile(selectedFile)
+              }}
+              className="block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-amber-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-amber-800 hover:file:bg-amber-200"
+            />
+            <p className="mt-2 text-xs text-slate-500">{t('admin.bioLinks.create.imageHint')}</p>
+            {imageFile && <p className="mt-1 text-xs font-medium text-emerald-700">{imageFile.name}</p>}
           </div>
         </div>
 
