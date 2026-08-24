@@ -26,6 +26,7 @@ interface MeditationTrackRow {
   audio_storage_path: string | null
   content_status: 'draft' | 'published' | 'archived'
   is_published: boolean
+  is_recommended: boolean
   created_at: string
   updated_at: string
   meditation_track_translations: TrackTranslation[]
@@ -101,6 +102,7 @@ export function AdminMeditationPage() {
         audio_storage_path,
         content_status,
         is_published,
+        is_recommended,
         created_at,
         updated_at,
         meditation_track_translations (
@@ -126,12 +128,13 @@ export function AdminMeditationPage() {
 
   // ── Action Handlers ────────────────────────────────────────────────────────
 
-  type TrackAction = 'publish' | 'unpublish'
+  type TrackAction = 'publish' | 'unpublish' | 'set_recommended'
 
   const handleAction = async (track: MeditationTrackRow, action: TrackAction) => {
-    const confirmMsg = action === 'publish'
-      ? t('admin.meditation.actions.publishConfirm', 'คุณแน่ใจหรือไม่ว่าต้องการเผยแพร่? / Are you sure you want to publish?')
-      : t('admin.meditation.actions.unpublishConfirm', 'คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเผยแพร่? / Are you sure you want to unpublish?')
+    let confirmMsg = ''
+    if (action === 'publish') confirmMsg = t('admin.meditation.actions.publishConfirm', 'Are you sure you want to publish?')
+    else if (action === 'unpublish') confirmMsg = t('admin.meditation.actions.unpublishConfirm', 'Are you sure you want to unpublish?')
+    else if (action === 'set_recommended') confirmMsg = 'Are you sure you want to set this track as recommended for its language? (Only one per language)'
 
     if (!window.confirm(confirmMsg)) return
 
@@ -156,6 +159,18 @@ export function AdminMeditationPage() {
       } else if (action === 'unpublish') {
         updates.content_status = 'draft'
         updates.is_published = false
+        updates.is_recommended = false
+      }
+
+      if (action === 'set_recommended') {
+        const { error: rpcError } = await supabaseClient.rpc('set_recommended_track', {
+          p_track_id: track.id
+        })
+        if (rpcError) throw rpcError
+
+        setActionSuccessMsg('Set as recommended successfully.')
+        await fetchTracks()
+        return
       }
 
       const { error: updateError } = await supabaseClient
@@ -198,6 +213,15 @@ export function AdminMeditationPage() {
           </span>
         )}
       </div>
+    )
+  }
+
+  const renderRecommendedBadge = (isRecommended: boolean) => {
+    if (!isRecommended) return null
+    return (
+      <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-[#A86100]/10 text-[#A86100] border border-[#A86100]/20 uppercase ml-2">
+        Recommended
+      </span>
     )
   }
 
@@ -313,7 +337,10 @@ export function AdminMeditationPage() {
               const title = resolveTitle(track.meditation_track_translations, currentLang)
               return (
                 <div key={track.id} className="p-4 space-y-3">
-                  <div className="font-semibold text-slate-900 truncate">{title}</div>
+                  <div className="font-semibold text-slate-900 truncate">
+                    {title}
+                    {renderRecommendedBadge(track.is_recommended)}
+                  </div>
                   {statusBadge(track.content_status, track.is_published)}
                   <div className="flex items-center gap-4 text-xs text-slate-500">
                     <span>{t('admin.meditation.duration')}: {formatDuration(track.duration_seconds)}</span>
@@ -342,6 +369,15 @@ export function AdminMeditationPage() {
                         className="px-2.5 py-1 text-xs font-semibold rounded border border-rose-300 text-rose-800 bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer disabled:opacity-50"
                       >
                         {actionLoadingId === track.id ? '...' : t('admin.meditation.actions.unpublish', 'ยกเลิกเผยแพร่ / Unpublish')}
+                      </button>
+                    )}
+                    {isOwner && track.is_published && track.content_status === 'published' && !track.is_recommended && (
+                      <button
+                        onClick={() => handleAction(track, 'set_recommended')}
+                        disabled={actionLoadingId === track.id}
+                        className="px-2.5 py-1 text-xs font-semibold rounded border border-[#A86100]/30 text-[#A86100] bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        {actionLoadingId === track.id ? '...' : 'Set Recommended'}
                       </button>
                     )}
                     <Link
@@ -403,6 +439,7 @@ export function AdminMeditationPage() {
                     <tr key={track.id} className="hover:bg-slate-50 transition-colors">
                       <td className="px-4 py-3 font-medium text-slate-900 max-w-xs truncate">
                         {title}
+                        {renderRecommendedBadge(track.is_recommended)}
                       </td>
                       <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
                         {formatDuration(track.duration_seconds)}
@@ -438,6 +475,15 @@ export function AdminMeditationPage() {
                               className="px-2.5 py-1 text-xs font-semibold rounded border border-rose-300 text-rose-800 bg-rose-50 hover:bg-rose-100 transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
                             >
                               {actionLoadingId === track.id ? '...' : t('admin.meditation.actions.unpublish', 'ยกเลิกเผยแพร่ / Unpublish')}
+                            </button>
+                          )}
+                          {isOwner && track.is_published && track.content_status === 'published' && !track.is_recommended && (
+                            <button
+                              onClick={() => handleAction(track, 'set_recommended')}
+                              disabled={actionLoadingId === track.id}
+                              className="px-2.5 py-1 text-xs font-semibold rounded border border-[#A86100]/30 text-[#A86100] bg-amber-50 hover:bg-amber-100 transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+                            >
+                              {actionLoadingId === track.id ? '...' : 'Set Recommended'}
                             </button>
                           )}
                           <Link

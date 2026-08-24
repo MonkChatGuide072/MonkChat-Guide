@@ -34,7 +34,8 @@ The overall architecture is **APPROVED** by the project owner. Individual implem
 
 ## 3. Meditation Tracks Table (`meditation_tracks`)
 - **What it stores**: Core metadata and file references for meditation audio, independent of any language.
-- **Important fields**: `id`, `audio_storage_path`, `source_language_code`, `speaker_name`, `duration_seconds`, `is_published`, `archived_at`, `created_by`, `updated_by`, `created_at`, `updated_at`.
+- **Important fields**: `id`, `audio_storage_path`, `source_language_code`, `is_recommended`, `speaker_name`, `duration_seconds`, `is_published`, `archived_at`, `created_by`, `updated_by`, `created_at`, `updated_at`.
+- **Logic constraints**: `is_recommended` is restricted to the Owner. Max 1 recommended track per `source_language_code`. Track must be `is_published = true` and `content_status = 'published'` to be recommended.
 - **Who can view it**: Public users can view published tracks. Owners and Team Members can view all tracks.
 - **Who can add, edit, archive, or permanently delete it**: Team Members and Owners can add, edit, and archive. Only the Owner can permanently delete.
 

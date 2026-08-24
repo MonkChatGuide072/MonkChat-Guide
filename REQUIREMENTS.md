@@ -22,9 +22,9 @@
 
 ## Public User Requirements
 Public users must be able to:
-- Open the application through a QR Code.
-- Select their preferred language.
-- View the main BioPage and open important links.
+- Open the application through a QR Code directly to `/visit`.
+- See a Language Gate at `/visit` (English and Thai) before proceeding.
+- View the main visitor home and open important links.
 - Browse and play meditation audio tracks.
 - View time-synchronized subtitles while audio plays.
 - Search meditation and Buddhism-related Q&A.
@@ -43,6 +43,7 @@ The application must include a private management area. Each team member must ha
 After logging in, authorized team members must be able to:
 - Add, edit, and remove meditation tracks.
 - Upload and manage audio files.
+- Set a meditation track as recommended (Owner only, max 1 per spoken language).
 - Add and edit transcripts and synchronized subtitles.
 - Add, edit, and remove Q&A.
 - Add, edit, and remove DCI center information.
@@ -60,7 +61,12 @@ After logging in, authorized team members must be able to:
   - Every Q&A item should have a verification status.
   - Only content verified by the Project Owner should be shown publicly.
   - AI-generated Buddhist answers must never be published automatically.
-- **Mock Content**: The system must be designed so real content can be added later without rewriting the application. Use mock data while real content is being prepared. Keep content separate from application logic. Do not hard-code final content into user interface components.
+- **Meditation Tracks**:
+  - `is_recommended` flag managed only by Owner. Maximum 1 recommended track per `source_language_code`.
+  - Must be `content_status = published` and `is_published = true` to be recommended.
+- **Strict Translation Rules**:
+  - The UI language determines which content is shown. If a track or QA does not have a translation in the current UI language, it MUST NOT be shown. No silent fallbacks to other languages.
+- **Mock Content**: The system must be designed so real content can be added later without rewriting the application. Use mock data while real content is being prepared. Keep content separate from application logic. Do not hard-code final content into user interface components. Do not display "test", "draft", or internal IDs on public pages.
 
 ## Technical & System Requirements
 - Build as a Mobile-first PWA. The PWA should be installable on supported devices.
@@ -100,8 +106,8 @@ After logging in, authorized team members must be able to:
 - Basic anonymous usage statistics are included.
 - The system must support adding more languages later.
 - Prototype development period: One week.
-- Initial visual direction: calm, clean, simple, international, mobile-first.
-- Initial color direction: white, soft gold, and deep navy.
+- Design tokens: navy `#11223C`, gold `#A86100`, ivory `#FFFEF9`, Noto Sans Thai, 8px system.
+- Icons: SVG pictograms only (no emojis as system icons).
 - Roles: Owner, Team Member, Public User.
 
 ## 💡 AI PROPOSALS

@@ -37,10 +37,9 @@ i18n
     },
   })
 
-// Listen to language change to update localStorage and HTML lang attribute
+// Listen to language change to update HTML lang attribute (do not save to localStorage for visitors yet)
 i18n.on('languageChanged', (lng) => {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(STORAGE_KEY, lng)
     document.documentElement.lang = lng
   }
 })

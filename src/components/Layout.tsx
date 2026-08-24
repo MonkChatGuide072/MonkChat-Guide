@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router'
+import { useState, useEffect } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
@@ -6,12 +7,32 @@ export function Layout() {
   const { t } = useTranslation()
 
   const navItems = [
-    { to: '/', label: t('nav.home'), end: true },
+    { to: '/visit', label: t('nav.home'), end: true },
     { to: '/meditation', label: t('nav.meditation') },
     { to: '/qa', label: t('nav.qa') },
     { to: '/centers', label: t('nav.centers') },
-    { to: '/admin/login', label: t('nav.login') },
   ]
+
+  const location = useLocation()
+  const [hasSessionLang, setHasSessionLang] = useState(false)
+
+  useEffect(() => {
+    setHasSessionLang(!!sessionStorage.getItem('ui_language_code'))
+    const handleStorage = () => setHasSessionLang(!!sessionStorage.getItem('ui_language_code'))
+    window.addEventListener('languageSelected', handleStorage)
+    return () => window.removeEventListener('languageSelected', handleStorage)
+  }, [])
+
+  const isProjectInfo = location.pathname === '/'
+  const isLanguageGate = location.pathname === '/visit' && !hasSessionLang
+
+  if (isProjectInfo || isLanguageGate) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#fcfbf9] text-slate-800">
+        <main className="flex-1 w-full"><Outlet /></main>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fcfbf9] text-slate-800">
@@ -19,7 +40,7 @@ export function Layout() {
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
           <NavLink
-            to="/"
+            to="/visit"
             className="flex items-center gap-2 font-bold text-slate-900 tracking-tight hover:text-amber-700 transition-colors"
           >
             <span className="inline-block w-3 h-3 rounded-full bg-amber-600"></span>
@@ -63,7 +84,11 @@ export function Layout() {
       <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs sm:text-sm text-slate-500">
         <div className="max-w-5xl mx-auto px-4 space-y-1">
           <p>{t('app.footer')}</p>
-          <p className="text-slate-400 font-medium">{t('app.status')}</p>
+          <div className="pt-2">
+            <NavLink to="/" className="text-amber-700 hover:underline">
+              About MonkChat Guide
+            </NavLink>
+          </div>
         </div>
       </footer>
     </div>

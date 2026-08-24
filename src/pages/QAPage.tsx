@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
-import { getTranslation } from '../utils/translation'
 
 interface QATranslationRow {
   language_code: string
@@ -79,14 +78,13 @@ export function QAPage() {
     fetchQAItems()
   }, [fetchQAItems])
 
-  // Resolve current language translations
-  const itemsWithTranslations = items.map((item) => {
-    const translation = getTranslation(item.qa_translations, currentLang, 'th')
-    return {
-      item,
-      translation,
-    }
-  })
+  // Resolve current language translations (Strict Filtering - No Fallback)
+  const itemsWithTranslations = items
+    .map((item) => {
+      const translation = item.qa_translations.find(t => t.language_code === currentLang)
+      return { item, translation }
+    })
+    .filter(x => x.translation != null)
 
   // Filter items based on search query
   const query = searchQuery.trim().toLowerCase()
@@ -100,15 +98,15 @@ export function QAPage() {
   })
 
   return (
-    <div className="space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto font-['Noto_Sans_Thai']">
       {/* Banner */}
       <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-amber-600">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#A86100]">
               {t('qa.heroTag')}
             </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#11223C]">
               {t('qa.title')}
             </h1>
           </div>
@@ -130,7 +128,7 @@ export function QAPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('qa.searchPlaceholder')}
-              className="w-full pl-11 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 focus:bg-white transition-all duration-200 min-h-[48px]"
+              className="w-full pl-11 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#A86100] focus:bg-white transition-all duration-200 min-h-[48px]"
             />
             {searchQuery && (
               <button
@@ -154,7 +152,7 @@ export function QAPage() {
       {/* Loading State */}
       {isLoading && (
         <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-600" />
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#A86100]" />
         </div>
       )}
 
@@ -174,23 +172,23 @@ export function QAPage() {
       )}
 
       {/* Empty State */}
-      {!isLoading && !error && items.length === 0 && (
+      {!isLoading && !error && itemsWithTranslations.length === 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-slate-50 flex items-center justify-center text-3xl">
-            ❓
+          <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 text-[#A86100] flex items-center justify-center text-3xl">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
           </div>
-          <h2 className="text-lg font-semibold text-slate-800">
+          <h2 className="text-lg font-semibold text-[#11223C]">
             {t('qa.empty')}
           </h2>
         </div>
       )}
 
       {/* Q&A Items List */}
-      {!isLoading && !error && items.length > 0 && (
+      {!isLoading && !error && itemsWithTranslations.length > 0 && (
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-200 pb-3">
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <span>❓</span>
+            <h2 className="text-lg font-bold text-[#11223C] flex items-center gap-2">
+              <svg className="w-5 h-5 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
               <span>{t('qa.demoSectionTitle')}</span>
             </h2>
             <span className="text-xs text-slate-500">
@@ -216,13 +214,13 @@ export function QAPage() {
                     )}
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                  <h3 className="text-base sm:text-lg font-bold text-[#11223C] leading-snug">
                     {translation?.question || item.id}
                   </h3>
 
                   <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
-                    <p className="font-semibold text-amber-800 flex items-start gap-1.5">
-                      <span>💡</span>
+                    <p className="font-semibold text-[#A86100] flex items-start gap-1.5">
+                      <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                       <span>{translation?.short_answer}</span>
                     </p>
                     {translation?.detailed_answer && (
@@ -236,8 +234,8 @@ export function QAPage() {
             </div>
           ) : (
             <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-8 sm:p-12 text-center space-y-3">
-              <span className="text-3xl block">🔍</span>
-              <h3 className="text-base font-bold text-slate-800">
+              <svg className="w-12 h-12 mx-auto text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <h3 className="text-base font-bold text-[#11223C]">
                 {t('qa.noResults')}
               </h3>
               <button

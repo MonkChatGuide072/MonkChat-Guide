@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { supabaseClient } from '../lib/supabase'
-import { getTranslation } from '../utils/translation'
+import { trackUsageEvent, getBioLinkImageUrl, supabaseClient } from '../lib/supabase'
 
 interface CenterTranslationRow {
   language_code: string
@@ -22,6 +21,19 @@ interface CenterRow {
   dci_center_translations: CenterTranslationRow[]
 }
 
+interface BioLinkTranslationRow {
+  language_code: string
+  title: string
+}
+
+interface BioLinkRow {
+  id: string
+  url: string
+  display_order: number
+  image_storage_path: string | null
+  bio_link_translations: BioLinkTranslationRow[]
+}
+
 export function CentersPage() {
   const { t, i18n } = useTranslation()
   const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
@@ -31,10 +43,11 @@ export function CentersPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [centers, setCenters] = useState<CenterRow[]>([])
+  const [bioLinks, setBioLinks] = useState<BioLinkRow[]>([])
 
-  // ── Fetch DCI Centers ──────────────────────────────────────────────────────
+  // ── Fetch Data ──────────────────────────────────────────────────────────────
 
-  const fetchCenters = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     if (!supabaseClient) {
       setError(t('centers.errorNoClient'))
       setIsLoading(false)
@@ -45,52 +58,73 @@ export function CentersPage() {
     setError(null)
 
     try {
-      const { data, error: dbError } = await supabaseClient
-        .from('dci_centers')
-        .select(`
-          id,
-          country_code,
-          city,
-          address,
-          map_url,
-          website_url,
-          contact_url,
-          content_status,
-          is_published,
-          dci_center_translations (
-            language_code,
-            name,
-            description
-          )
-        `)
-        .eq('content_status', 'published')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false })
+      const [centersRes, linksRes] = await Promise.all([
+        supabaseClient
+          .from('dci_centers')
+          .select(`
+            id,
+            country_code,
+            city,
+            address,
+            map_url,
+            website_url,
+            contact_url,
+            content_status,
+            is_published,
+            dci_center_translations (
+              language_code,
+              name,
+              description
+            )
+          `)
+          .eq('content_status', 'published')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false }),
+        supabaseClient
+          .from('bio_links')
+          .select(`id, url, display_order, image_storage_path, bio_link_translations(language_code, title)`)
+          .eq('content_status', 'published')
+          .eq('is_published', true)
+          .order('display_order', { ascending: true })
+      ])
 
-      if (dbError) throw dbError
+      if (centersRes.error) throw centersRes.error
+      if (linksRes.error) throw linksRes.error
 
-      setCenters((data as CenterRow[]) ?? [])
+      const allCenters = (centersRes.data as CenterRow[]) ?? []
+      const validCenters = allCenters.filter(center =>
+        center.dci_center_translations.some(tr => tr.language_code === currentLang)
+      )
+      setCenters(validCenters)
+
+      const linksData = (linksRes.data || []) as BioLinkRow[]
+      const validLinks = linksData.filter(link => {
+        const trans = link.bio_link_translations.find(tr => tr.language_code === currentLang)
+        return trans != null && (link.url.startsWith('http://') || link.url.startsWith('https://'))
+      })
+      setBioLinks(validLinks)
+
       setIsLoading(false)
     } catch {
       setError(t('centers.errorLoadCenters'))
       setIsLoading(false)
     }
-  }, [t])
+  }, [t, currentLang])
 
   useEffect(() => {
-    fetchCenters()
-  }, [fetchCenters])
+    fetchData()
+  }, [fetchData])
 
   return (
-    <div className="space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto font-['Noto_Sans_Thai']">
       {/* Banner */}
       <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-amber-600">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#A86100]">
               {t('centers.heroTag')}
             </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#11223C]">
               {t('centers.title')}
             </h1>
           </div>
@@ -100,15 +134,10 @@ export function CentersPage() {
         </p>
       </section>
 
-      {/* Notice Banner */}
-      <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs sm:text-sm text-amber-900 leading-relaxed">
-        {t('centers.demoNotice')}
-      </div>
-
       {/* Loading State */}
       {isLoading && (
         <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-600" />
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#A86100]" />
         </div>
       )}
 
@@ -116,26 +145,13 @@ export function CentersPage() {
       {!isLoading && error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
           <p className="text-red-800 font-semibold">{t('centers.errorLoad')}</p>
-          <p className="text-red-600 text-sm font-mono break-all">{error}</p>
           <button
             type="button"
-            onClick={fetchCenters}
-            className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer"
+            onClick={fetchData}
+            className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-[#A86100] hover:bg-amber-800 text-white transition-colors cursor-pointer"
           >
             {t('centers.retry')}
           </button>
-        </div>
-      )}
-
-      {/* Empty State */}
-      {!isLoading && !error && centers.length === 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-slate-50 flex items-center justify-center text-3xl">
-            🏛️
-          </div>
-          <h2 className="text-lg font-semibold text-slate-800">
-            {t('centers.empty')}
-          </h2>
         </div>
       )}
 
@@ -143,8 +159,8 @@ export function CentersPage() {
       {!isLoading && !error && centers.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <span>🏛️</span>
+            <h2 className="text-lg font-bold text-[#11223C] flex items-center gap-2">
+              <svg className="w-5 h-5 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
               <span>{t('centers.listTitle')}</span>
             </h2>
             <span className="text-xs text-slate-500">
@@ -153,8 +169,8 @@ export function CentersPage() {
           </div>
 
           <div className="space-y-4">
-            {centers.map((center, index) => {
-              const translation = getTranslation(center.dci_center_translations, currentLang, 'th')
+            {centers.map((center) => {
+              const translation = center.dci_center_translations.find(tr => tr.language_code === currentLang)
 
               return (
                 <article
@@ -163,14 +179,9 @@ export function CentersPage() {
                 >
                   {/* Header */}
                   <div className="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
-                    <div className="space-y-0.5">
-                      <span className="text-xs font-mono text-slate-400">
-                        #{index + 1} · {center.id}
-                      </span>
-                      <h3 className="text-base sm:text-lg font-bold text-slate-900">
-                        {translation?.name || center.id}
-                      </h3>
-                    </div>
+                    <h3 className="text-base sm:text-lg font-bold text-[#11223C]">
+                      {translation?.name || t('centers.unnamedCenter', 'Unnamed Center')}
+                    </h3>
                     <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 flex-shrink-0">
                       {center.country_code}
                     </span>
@@ -200,22 +211,25 @@ export function CentersPage() {
                   </div>
 
                   {/* Links */}
-                  <div className="space-y-2 text-sm">
-                    <NullSafeLink
-                      href={center.map_url}
-                      label={t('centers.linkMap')}
-                      pendingLabel={t('centers.linkPending')}
-                    />
-                    <NullSafeLink
-                      href={center.website_url}
-                      label={t('centers.linkWebsite')}
-                      pendingLabel={t('centers.linkPending')}
-                    />
-                    <NullSafeLink
-                      href={center.contact_url}
-                      label={t('centers.linkContact')}
-                      pendingLabel={t('centers.linkPending')}
-                    />
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    {center.map_url && (
+                      <a href={center.map_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
+                        <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        {t('centers.linkMap')}
+                      </a>
+                    )}
+                    {center.website_url && (
+                      <a href={center.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
+                        <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                        {t('centers.linkWebsite')}
+                      </a>
+                    )}
+                    {center.contact_url && (
+                      <a href={center.contact_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
+                        <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                        {t('centers.linkContact')}
+                      </a>
+                    )}
                   </div>
                 </article>
               )
@@ -223,35 +237,53 @@ export function CentersPage() {
           </div>
         </section>
       )}
-    </div>
-  )
-}
 
-function NullSafeLink({
-  href,
-  label,
-  pendingLabel,
-}: {
-  href: string | null
-  label: string
-  pendingLabel: string
-}) {
-  return (
-    <div className="flex flex-col sm:flex-row gap-1 items-start sm:items-center">
-      <span className="font-semibold text-slate-700 sm:w-24 flex-shrink-0">{label}:</span>
-      {href ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-amber-700 underline underline-offset-2 hover:text-amber-900 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
-        >
-          {href}
-        </a>
-      ) : (
-        <span className="text-slate-400 italic text-xs">
-          {pendingLabel}
-        </span>
+      {/* Empty State */}
+      {!isLoading && !error && centers.length === 0 && (
+        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 text-[#A86100] flex items-center justify-center text-3xl">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </div>
+          <h2 className="text-lg font-semibold text-[#11223C]">
+            {t('centers.empty')}
+          </h2>
+        </div>
+      )}
+
+      {/* BioLinks */}
+      {!isLoading && !error && bioLinks.length > 0 && (
+        <section className="bg-slate-50/50 rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
+          <h2 className="text-xl font-bold text-[#11223C] text-center">{t('home.importantLinks', 'Important Links')}</h2>
+          <div className="space-y-3">
+            {bioLinks.map(link => {
+              const transTitle = link.bio_link_translations.find(tr => tr.language_code === currentLang)?.title;
+              const imgUrl = getBioLinkImageUrl(link.image_storage_path);
+
+              return (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackUsageEvent('bio_link_click', 'bio_link', link.id)}
+                  className="flex items-center justify-between px-5 py-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs hover:border-[#A86100] transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    {imgUrl ? (
+                      <img src={imgUrl} alt={transTitle} className="w-10 h-10 object-cover rounded-lg" />
+                    ) : (
+                      <div className="w-10 h-10 bg-amber-50 text-[#A86100] rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                      </div>
+                    )}
+                    <span className="font-semibold text-[#11223C]">{transTitle}</span>
+                  </div>
+                  <svg className="w-5 h-5 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                </a>
+              )
+            })}
+          </div>
+        </section>
       )}
     </div>
   )

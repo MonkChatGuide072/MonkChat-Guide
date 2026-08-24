@@ -127,3 +127,27 @@ This document records the confirmed decisions made during the project's lifecycl
 - **Reason**: Confirmed by the Project Owner.
 - **Status**: ✅ CONFIRMED
 - **Date**: 2026-08-12
+
+## 21. Public Routing & Flow
+- **Decision**: `/` is the project info page. `/visit` is the public visitor entry point with a Language Gate.
+- **Reason**: Separates the project's institutional identity from the immediate needs of foreign visitors.
+- **Status**: ✅ CONFIRMED
+- **Date**: 2026-08-25
+
+## 22. Strict Translation Fallback
+- **Decision**: No silent fallbacks to other languages. Content is only shown if a translation exists for the selected UI language.
+- **Reason**: Ensures visitors only see content they can understand, preventing mixed-language UI confusion.
+- **Status**: ✅ CONFIRMED
+- **Date**: 2026-08-25
+
+## 23. Recommended Meditation Tracks
+- **Decision**: Owner can set `is_recommended` for meditation tracks (max 1 per `source_language_code`). Must be an atomic database action.
+- **Reason**: Allows curation of the best audio tracks per spoken language without giving CMS team members arbitrary promotion power.
+- **Status**: ✅ CONFIRMED
+- **Date**: 2026-08-25
+
+## 24. Design Tokens & Assets
+- **Decision**: Use strict colors (navy `#11223C`, gold `#A86100`, ivory `#FFFEF9`), Noto Sans Thai font, 8px spacing, and SVG pictograms. No emojis for system icons.
+- **Reason**: Maintains a professional, calm, and cohesive visual identity.
+- **Status**: ✅ CONFIRMED
+- **Date**: 2026-08-25

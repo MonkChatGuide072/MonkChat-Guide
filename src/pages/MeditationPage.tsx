@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams, Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { getTranslation } from '../utils/translation'
 
@@ -18,6 +19,8 @@ interface TrackRow {
   duration_seconds: number
   content_status: 'draft' | 'published' | 'archived'
   is_published: boolean
+  is_recommended: boolean
+  source_language_code: string
   meditation_track_translations: TrackTranslationRow[]
 }
 
@@ -98,10 +101,13 @@ export function MeditationPage() {
     ? 'en'
     : 'th'
 
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialTrackId = searchParams.get('trackId')
+
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [tracks, setTracks] = useState<TrackRow[]>([])
-  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null)
+  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(initialTrackId)
 
   // Selected Track Resources State
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
@@ -131,6 +137,7 @@ export function MeditationPage() {
           duration_seconds,
           content_status,
           is_published,
+          is_recommended,
           meditation_track_translations (
             language_code,
             title,
@@ -146,16 +153,26 @@ export function MeditationPage() {
       if (dbError) throw dbError
 
       const fetchedTracks = (data as TrackRow[]) ?? []
-      setTracks(fetchedTracks)
-      if (fetchedTracks.length > 0) {
-        setSelectedTrackId(fetchedTracks[0].id)
+
+      // Strict Translation Filtering: Only keep tracks that have a translation in currentLang
+      const validTracks = fetchedTracks.filter((t) =>
+        t.meditation_track_translations.some(tr => tr.language_code === currentLang)
+      )
+
+      setTracks(validTracks)
+      if (validTracks.length > 0) {
+        if (!initialTrackId || !validTracks.find(t => t.id === initialTrackId)) {
+          setSelectedTrackId(validTracks[0].id)
+        }
+      } else {
+        setSelectedTrackId(null)
       }
       setIsLoading(false)
     } catch {
       setError(t('meditation.errorLoadTracks'))
       setIsLoading(false)
     }
-  }, [t])
+  }, [t, currentLang, initialTrackId])
 
   useEffect(() => {
     fetchTracks()
@@ -247,6 +264,12 @@ export function MeditationPage() {
         <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
           {t('meditation.subtitle')}
         </p>
+        <div className="pt-2">
+          <Link to="/visit" className="inline-flex items-center text-sm font-semibold text-[#A86100] hover:text-amber-800 transition-colors">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            {t('meditation.backToHome', 'Back to visitor home')}
+          </Link>
+        </div>
       </section>
 
       {/* Loading State */}
@@ -307,8 +330,11 @@ export function MeditationPage() {
                     type="button"
                     role="tab"
                     aria-selected={isSelected}
-                    onClick={() => setSelectedTrackId(track.id)}
-                    className={`w-full text-left p-4 rounded-xl border transition-all duration-200 motion-reduce:transition-none min-h-[48px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                    onClick={() => {
+                      setSelectedTrackId(track.id)
+                      setSearchParams({ trackId: track.id })
+                    }}
+                    className={`w-full text-left p-4 rounded-xl border transition-all duration-200 motion-reduce:transition-none min-h-[48px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#A86100] ${
                       isSelected
                         ? 'bg-amber-50/80 border-amber-400 text-slate-900 shadow-2xs font-medium'
                         : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
@@ -316,11 +342,18 @@ export function MeditationPage() {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <span className="font-semibold text-sm sm:text-base leading-snug">
-                        {translation?.title || track.id}
+                        {translation?.title || t('meditation.untitledTrack', 'Untitled Track')}
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-mono flex-shrink-0">
-                        {Math.round(track.duration_seconds / 60)} {t('meditation.minutes')}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-mono flex-shrink-0">
+                          {Math.round(track.duration_seconds / 60)} {t('meditation.minutes')}
+                        </span>
+                        {track.is_recommended && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-[#A86100]/10 text-[#A86100] font-bold uppercase">
+                            {t('meditation.recommended', 'Recommended')}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {translation?.description && (
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
@@ -341,7 +374,7 @@ export function MeditationPage() {
                   {t('meditation.duration')}: {Math.round((currentTrack?.duration_seconds || 0) / 60)} {t('meditation.minutes')} ({currentTrack?.duration_seconds}s)
                 </span>
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  {trackTranslation?.title || currentTrack?.id}
+                  {trackTranslation?.title || t('meditation.untitledTrack', 'Untitled Track')}
                 </h2>
                 {trackTranslation?.description && (
                   <p className="text-sm text-slate-600 leading-relaxed">
@@ -353,6 +386,11 @@ export function MeditationPage() {
                     {t('meditation.speaker')}: {currentTrack.speaker_name}
                   </p>
                 )}
+                <div className="pt-2 flex items-center">
+                  <span className="text-xs px-2.5 py-1 rounded-md bg-[#A86100]/10 text-[#A86100] font-bold uppercase tracking-wider">
+                    {t('meditation.audioLanguage', 'Audio Language')}: {currentTrack?.source_language_code || t('meditation.unknownLanguage', 'Unknown')}
+                  </span>
+                </div>
               </div>
 
               {/* Audio Player Box */}
@@ -371,7 +409,7 @@ export function MeditationPage() {
 
                 {audioError && (
                   <div className="bg-red-50 text-red-800 text-xs p-3 rounded-lg border border-red-200">
-                    ⚠️ {audioError}
+                    ⚠️ {t('meditation.playbackError', 'Failed to load audio.')}
                   </div>
                 )}
 
@@ -444,9 +482,10 @@ export function MeditationPage() {
                   ))}
                 </div>
               ) : (
-                <div className="p-6 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-center">
-                  <p className="text-sm text-slate-500 italic">
-                    {t('meditation.noSubtitles')}
+                <div className="p-8 rounded-xl bg-slate-50 border border-slate-200 text-center flex flex-col items-center justify-center space-y-3">
+                  <svg className="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                  <p className="text-sm text-slate-500 font-medium">
+                    {t('meditation.noSubtitles') || 'No timed caption available for this track.'}
                   </p>
                 </div>
               )}
