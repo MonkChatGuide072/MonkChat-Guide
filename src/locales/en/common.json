@@ -66,6 +66,12 @@
     "placeholderDisclaimer": "All meditation tracks, descriptions, and subtitles are demonstration placeholders for system testing.",
     "errorNoClient": "Supabase client not initialized.",
     "errorTitle": "Could not load meditation tracks.",
+    "errorLoadTracks": "An error occurred while loading the meditation tracks. Please try again.",
+    "untitledTrack": "Untitled Track",
+    "recommended": "Recommended",
+    "audioLanguage": "Audio Language",
+    "unknownLanguage": "Unknown",
+    "playbackError": "Failed to load audio.",
     "retry": "Retry",
     "emptyTitle": "No meditation tracks in system",
     "emptyDesc": "There are currently no published guided meditation tracks available."
