@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { trackUsageEvent, getBioLinkImageUrl, supabaseClient } from '../lib/supabase'
+import { supabaseClient } from '../lib/supabase'
+import { trackUsageEvent } from '../lib/analytics'
+import { getBioLinkImageUrl } from '../lib/bioLinkImages'
 
 interface CenterTranslationRow {
   language_code: string
@@ -265,7 +267,7 @@ export function CentersPage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackUsageEvent('bio_link_click', 'bio_link', link.id)}
+                  onClick={() => trackUsageEvent({ eventType: 'bio_link_click', resourceType: 'bio_link', resourceId: link.id })}
                   className="flex items-center justify-between px-5 py-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs hover:border-[#A86100] transition-all"
                 >
                   <div className="flex items-center gap-4">

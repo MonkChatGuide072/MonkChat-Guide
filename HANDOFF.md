@@ -16,6 +16,78 @@
 - หน้าเว็บสาธารณะและระบบ CMS หลังบ้านเชื่อมต่อ Supabase ผ่าน Client-side SDK พร้อม RLS Security ตามสิทธิ์
 
 ---
+## Completed Work
+- Created initial project documentation.
+- Updated REQUIREMENTS.md based on Project Owner feedback.
+- Created the AI handoff system (HANDOFF.md, DECISIONS.md, and updated AGENTS.md).
+- Updated language requirements: Thai is now the primary and default interface language.
+- Reviewed and approved DATABASE_SCHEMA.md and updated DECISIONS.md.
+- Reviewed and approved IMPLEMENTATION_PLAN.md and updated DECISIONS.md.
+- Verified environment readiness and initialized Git repository on branch main.
+- Created React + Vite + TypeScript foundation with Thai default and verified responsiveness.
+- Configured Tailwind CSS v4, React Router, and i18next Thai-English localization foundation.
+- Created project-local MonkChat Agent Skill (`.agents/skills/monkchat-safe-feature/SKILL.md`).
+- Implemented and verified installable PWA foundation.
+- Created and verified typed mock content models and mock data foundation. Completed Day 1.
+- Implemented public Home/BioPage interface using typed mock data and language-scalable translation utility.
+- Implemented public Meditation interface with track selection, honest audio status, transcript, and subtitles.
+- Implemented public Q&A prototype interface with search, status badges, verification notice, and content gating predicate.
+- Implemented public DCI Centers interface with 5 neutral demonstration records and null-safe link handling.
+- Completed combined Day 2 public-flow browser review; all pages, language switching, and responsive widths passed.
+- Prepared local Supabase foundation (`@supabase/supabase-js`, CLI init, safe browser client, `.env.example`).
+- Created local initial schema and RLS policy migrations for Supabase based on `DATABASE_SCHEMA.md`.
+- Performed security audit and hardened database functions, RLS policies, search path, and profile access.
+- Applied all 3 schema & hardening migrations to the remote Supabase project.
+- Verified remote database synchronization (`npx supabase db push --dry-run`), CLI schema lint (`npx supabase db lint`), and Project Owner confirmation of 0 errors and 0 warnings in Supabase Security Advisor.
+- Implemented Supabase Authentication scaffold (login page, protected routes, context, locale strings, error handling).
+- Manually tested and verified Owner login flow, role authorization, sign-out, and protected route access.
+- Created idempotent migration for `meditation-audio` Storage bucket and RLS policies (`20260812181301_storage_meditation_audio.sql`).
+- Applied Storage migration to remote Supabase database and verified 0 lint errors/warnings.
+- Implemented responsive Admin CMS shell, module subroutes, OwnerRoute guard, and reactive Thai/English language switching.
+- Implemented Meditation CMS read-only list (fetches from Supabase, shows loading/empty/error/results states).
+- Completed Day 4 Meditation CMS and Q&A CMS modules.
+- Day 5 Step 1 DCI Centers and BioLinks CMS workflows fully completed and verified (committed).
+- Day 5 Step 2 public Supabase integration fully completed and verified (committed):
+  - Connected public Meditation, Q&A, DCI Centers, and BioLinks/homepage pages to the linked Supabase database.
+  - Implemented strict status querying: meditation tracks (`published`), Q&A items (`published` AND `verified`), DCI centers (`published`), BioLinks (`published`).
+  - Added language fallbacks (current UI language -> Thai -> first available translation) updating on language changes.
+  - Setup signed URLs and dynamic WebVTT downloading/parsing for static subtitles on the Meditation page.
+  - Handled tracks and records with missing audio, subtitles, or transcripts honestly.
+  - Enforced http/https URL restrictions for homepage BioLinks.
+  - Added loading, error/retry, and empty states.
+  - Added secure Owner-only Publish and Unpublish actions for meditation tracks in `AdminMeditationPage.tsx`.
+  - Created forward-only database migration `20260813215600_meditation_track_publication_security.sql` with triggers to enforce that Team Members cannot insert or update published meditation tracks. Applied remotely.
+  - Added localized strings for meditation actions in `th/common.json` and `en/common.json`.
+  - Verified all local compile, build, and check workflows pass cleanly.
+- Day 6 final MVP testing, security review, performance check, and Cloudflare Pages deployment preparation completed successfully:
+  - Validated local and remote migrations synchronization.
+  - Passed database linting with 0 errors/warnings.
+  - Verified role-based RLS and triggers secure owner-only actions.
+  - Addressed oversized bundle warning by implementing React.lazy route-level code splitting (main bundle reduced significantly).
+  - Configured visually neutral SVG spinner for Suspense fallback.
+  - Prepared `public/_redirects` for Cloudflare Pages SPA fallback routing.
+  - Created `README.md` documenting Cloudflare Pages deployment and Supabase Auth Redirect URL requirements.
+  - Passed full test suite (lint, build, audit, git diff --check).
+- **Day 6 is complete.**
+- Anonymous analytics and CMS audit feature implemented locally after Project Owner approval:
+  - Superseded the former ban on all public identifiers with a privacy-preserving random `visitor_id` and temporary `session_id`; raw IP addresses remain prohibited.
+  - Added and applied forward-only migration `20260814190506_anonymous_analytics_and_admin_audit.sql`.
+  - Added validated `record_usage_event` RPC and removed direct anonymous inserts into `usage_events`.
+  - Added public session-start, page-view, audio-play, audio-complete, and BioPage-link-click tracking.
+  - Added immutable `admin_audit_logs` populated by database triggers for authenticated CMS record changes.
+  - Kept usage analytics available to authenticated CMS users while restricting complete audit history to the Owner.
+  - Added responsive bilingual `/admin/analytics` dashboard with 7/30-day metrics, daily trend, masked visitor activity, and administrator activity history.
+  - Local lint, TypeScript compilation, production build, locale JSON parsing, and diff checks pass.
+  - Migration applied successfully to Supabase Production and is synchronized to remote migration version `20260814190506`.
+  - Post-migration permission tests passed: Guest RPC works without direct table writes; Team Members can read usage analytics but not audit history; the Owner can read audit history.
+  - All permission tests ran inside rolled-back transactions; no verification rows remain and the active Owner profile is unchanged.
+  - Security Advisor reports two intentional warnings for the public/authenticated `SECURITY DEFINER` analytics RPC plus the existing Free-tier leaked-password warning. The RPC uses an empty `search_path`, explicit schemas, strict event validation, and least-privilege table grants.
+
+## Current Task
+- Anonymous analytics and CMS audit implementation is live in Supabase Production; direct GitHub Plugin publication to a feature branch and Draft PR is approved.
+
+## Exact Next Step
+- Review the Draft PR for `agent/anonymous-analytics-audit`, then merge only after the public and Admin changes are accepted. Review the production frontend flow before any Cloudflare deployment.
 
 ## 2. ฟีเจอร์ที่มีแล้วในระบบ (Implemented Features)
 1. **Mobile-first PWA**:
@@ -123,3 +195,35 @@
 
 ## 9. ขั้นตอนถัดไปเพียง 1 ขั้นตอน (Exact Next Step)
 - รายงานผลลัพธ์การพัฒนา Public Flow v0.2 และการกู้คืน/สร้าง Migration `20260825000000_add_is_recommended.sql` ให้ Owner ตรวจ พร้อมส่ง diff ห้าม commit, push หรือ deploy จนกว่าจะได้รับคำสั่งยืนยัน
+## Known Problems
+- No known production guest-access blocker remains; commit `b464560` restored anonymous published-content access.
+- The frontend code is not yet pushed or deployed, so Production will not begin recording the new browser events until that release occurs.
+- No database blocker remains. Frontend release remains pending Draft PR review and merge.
+
+## Files Changed in the Current Phase
+- `AGENTS.md` (read only; unchanged)
+- `REQUIREMENTS.md`
+- `DECISIONS.md`
+- `DATABASE_SCHEMA.md`
+- `HANDOFF.md`
+- `src/App.tsx`
+- `src/components/AdminLayout.tsx`
+- `src/components/UsageTracker.tsx` (new)
+- `src/lib/analytics.ts` (new)
+- `src/pages/HomePage.tsx`
+- `src/pages/MeditationPage.tsx`
+- `src/pages/admin/AdminAnalyticsPage.tsx` (new)
+- `src/pages/admin/AdminDashboardPage.tsx`
+- `src/locales/th/common.json`
+- `src/locales/en/common.json`
+- `src/types/content.ts`
+- `supabase/migrations/20260814190506_anonymous_analytics_and_admin_audit.sql` (new)
+
+## Actions That Must Not Be Started Yet
+- Do not deploy the frontend to Cloudflare until the Git checkpoint is pushed and the production public/Admin flows are reviewed.
+
+## Public Entry-Point Phase (2026-08-19)
+- The Project Owner approved a clearer public journey without changing Buddhist content, database schema, or CMS permissions.
+- Homepage now presents two paths: a Monk Student/Team field-guide entry and a Visitor entry.
+- Added the public `/visit` route with direct links to Meditation, Q&A, and DCI Centers. This is the intended destination for visitor QR Codes.
+- Local lint, TypeScript, and production build passed in a clean feature worktree.

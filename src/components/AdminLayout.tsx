@@ -24,6 +24,7 @@ export function AdminLayout() {
     { path: '/admin/centers', label: t('admin.nav.centers') },
     { path: '/admin/bio-links', label: t('admin.nav.bioLinks') },
     { path: '/admin/languages', label: t('admin.nav.languages') },
+    { path: '/admin/analytics', label: t('admin.nav.analytics') },
     ...(isOwner ? [{ path: '/admin/team', label: t('admin.nav.team') }] : []),
   ]
 

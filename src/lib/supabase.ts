@@ -49,20 +49,3 @@ export const supabaseClient: SupabaseClient | null = isSupabaseConfigured
     })
   : null
 
-export async function trackUsageEvent(eventType: string, resourceType: string, resourceId: string) {
-  if (!supabaseClient) return
-  try {
-    await supabaseClient.from('usage_events').insert({
-      event_type: eventType,
-      resource_type: resourceType,
-      resource_id: resourceId
-    })
-  } catch (e) {
-    console.error('Failed to track usage event:', e)
-  }
-}
-
-export function getBioLinkImageUrl(path: string | null) {
-  if (!path || !supabaseClient) return null
-  return supabaseClient.storage.from('bio-link-images').getPublicUrl(path).data.publicUrl
-}

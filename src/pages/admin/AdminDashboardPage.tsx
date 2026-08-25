@@ -44,6 +44,13 @@ export function AdminDashboardPage() {
       path: '/admin/languages',
       color: 'border-l-teal-500',
     },
+    {
+      key: 'analytics',
+      title: t('admin.modules.analytics.title'),
+      description: t('admin.modules.analytics.description'),
+      path: '/admin/analytics',
+      color: 'border-l-cyan-500',
+    },
     ...(isOwner
       ? [
           {

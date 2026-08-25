@@ -1,9 +1,9 @@
 {
   "app": {
     "title": "MonkChat Guide",
-    "heading": "Monk Chat Activity Guide",
+    "heading": "Meditation Guide for Monk Students and Visitors",
     "status": "Under Development",
-    "description": "Meditation guide and resources for visitors and the Monk Chat team.",
+    "description": "A web application that helps monk students guide meditation and share essential information with international visitors.",
     "footer": "© 2026 MonkChat Guide. All rights reserved."
   },
   "nav": {
@@ -11,7 +11,8 @@
     "meditation": "Meditation",
     "qa": "Q&A",
     "centers": "Centers",
-    "login": "Team Login"
+    "login": "Team Login",
+    "visitor": "For Visitors"
   },
   "language": {
     "label": "Language",
@@ -22,6 +23,14 @@
   },
   "home": {
     "heroTag": "MONKCHAT GUIDE",
+    "audienceTitle": "Choose how to use MonkChat Guide",
+    "audienceSubtitle": "Use it as a field guide for monk students, or begin exploring on your own as a visitor.",
+    "teamEntryTitle": "For Monk Students & Team",
+    "teamEntryDesc": "Open guided-meditation media, read supporting text, and find information to help visitors during activities.",
+    "teamEntryAction": "Open the field guide",
+    "visitorEntryTitle": "For Visitors",
+    "visitorEntryDesc": "Begin meditation, read common questions, and find ways to continue learning.",
+    "visitorEntryAction": "Get started",
     "demoBadge": "Demonstration Content (Demo)",
     "navCardsTitle": "Key Features & Activities",
     "navCardsSubtitle": "Select a menu item below to access guided meditation, Q&A, or DCI centers.",
@@ -45,6 +54,23 @@
     "errorLoadLinks": "Could not load links.",
     "emptyLinks": "No published links available.",
     "retry": "Retry"
+  },
+  "visitor": {
+    "heroTag": "MONKCHAT GUIDE",
+    "title": "Welcome to MonkChat Guide",
+    "subtitle": "Begin learning and practising meditation at your own pace. Choose what you would like to explore below.",
+    "chooseTitle": "What would you like to do?",
+    "chooseSubtitle": "Choose a section to begin right away.",
+    "meditationTitle": "Begin Meditation",
+    "meditationDesc": "Listen to guided meditation with a transcript and subtitles when they are available.",
+    "meditationAction": "Open meditation",
+    "qaTitle": "Frequently Asked Questions",
+    "qaDesc": "Find introductory answers about meditation and Buddhism.",
+    "qaAction": "Open Q&A",
+    "centersTitle": "Find a Dhammakaya Center",
+    "centersDesc": "Explore international centers and ways to continue learning.",
+    "centersAction": "View centers",
+    "notice": "Dhamma content and media are reviewed before they are published for public use."
   },
   "meditation": {
     "heroTag": "GUIDED MEDITATION",
@@ -169,6 +195,7 @@
       "centers": "DCI Centers",
       "bioLinks": "BioPage Links",
       "languages": "Languages",
+      "analytics": "Analytics & Activity",
       "team": "Team Management (Owner Only)",
       "signOut": "Sign Out",
       "publicSite": "Public Site"
@@ -212,10 +239,80 @@
         "description": "Manage supported languages across the MonkChat Guide platform",
         "placeholder": "Languages management module (CMS CRUD - under development)"
       },
+      "analytics": {
+        "title": "Analytics & Activity History",
+        "description": "View anonymous visitor counts, public interactions, and team content-change history"
+      },
       "team": {
         "title": "Team Account Management",
         "description": "Manage team member profiles, access roles, and account status",
         "placeholder": "Team account & role management module (Owner Only - under development)"
+      }
+    },
+    "analytics": {
+      "title": "Usage Analytics & Activity History",
+      "subtitle": "Website usage and CMS content-change overview",
+      "days": "{{count}} days",
+      "refresh": "Refresh",
+      "retry": "Retry",
+      "errorNoClient": "Supabase connection is not configured.",
+      "errorLoad": "Could not load analytics and activity history.",
+      "privacyTitle": "Privacy protected",
+      "privacyDesc": "Visitors use random anonymous identifiers. The system does not store IP addresses, names, emails, device information, or digital fingerprints. The identifier is used only to estimate unique visitors.",
+      "metrics": {
+        "visitors": "Unique Visitors",
+        "sessions": "Sessions",
+        "pageViews": "Page Views",
+        "audioPlays": "Audio Plays",
+        "audioCompletes": "Completed Listening",
+        "bioClicks": "BioLink Clicks"
+      },
+      "dailyTitle": "Daily Usage Trend",
+      "dailyHint": "Shows up to the latest 14 days in the selected range",
+      "visitorsLegend": "Visitors",
+      "eventsLegend": "All Events",
+      "recentVisitorsTitle": "Recent Visitor Activity",
+      "recentVisitorsHint": "Visitor identifiers are masked and cannot identify a real person.",
+      "auditTitle": "Admin Activity History",
+      "auditHint": "Recorded automatically when an Owner or Team Member creates, updates, or deletes content.",
+      "emptyUsage": "No visitor activity in this period yet.",
+      "emptyAudit": "No content-change history yet.",
+      "columns": {
+        "visitor": "Visitor",
+        "event": "Event",
+        "location": "Page/Resource",
+        "time": "Date & Time",
+        "admin": "Administrator",
+        "action": "Action",
+        "item": "Managed Item"
+      },
+      "eventTypes": {
+        "session_start": "Session Started",
+        "page_view": "Page Viewed",
+        "audio_play": "Meditation Audio Played",
+        "audio_complete": "Audio Completed",
+        "bio_link_click": "BioPage Link Clicked"
+      },
+      "actions": {
+        "create": "Created",
+        "update": "Updated",
+        "delete": "Deleted"
+      },
+      "roles": {
+        "owner": "Owner",
+        "team_member": "Team Member"
+      },
+      "entities": {
+        "profiles": "Team Account",
+        "languages": "Language",
+        "meditation_tracks": "Meditation Track",
+        "meditation_track_translations": "Meditation Translation",
+        "qa_items": "Q&A Item",
+        "qa_translations": "Q&A Translation",
+        "dci_centers": "DCI Center",
+        "dci_center_translations": "DCI Center Translation",
+        "bio_links": "BioPage Link",
+        "bio_link_translations": "BioPage Link Translation"
       }
     },
     "meditation": {
@@ -667,11 +764,15 @@
         "subtitle": "Create a new button link. New records start as Draft, Unpublished.",
         "backToList": "Back to List",
         "secMetadata": "Core Metadata",
+        "secImage": "BioPage Image",
         "secThai": "Thai Title (Required)",
         "secEnglish": "English Title (Optional)",
         "labelUrl": "Destination URL (must start with http:// or https://)",
         "labelOrder": "Display Order (lower numbers show first)",
         "labelTitle": "Link Title",
+        "labelImage": "Upload Image (Optional)",
+        "imageHint": "JPG, PNG, or WebP up to 2 MB. A simple icon is shown when no image is set.",
+        "removeImage": "Remove image from this link",
         "phUrl": "https://example.com",
         "phOrder": "e.g. 1, 2, 3",
         "phThTitle": "e.g. สมัครสมาธิออนไลน์",
