@@ -2,6 +2,7 @@ import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import thCommon from './locales/th/common.json'
 import enCommon from './locales/en/common.json'
+import { projectLandingTranslations } from './locales/projectLanding'
 
 export const STORAGE_KEY = 'monkchat_language'
 
@@ -26,8 +27,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      th: { common: thCommon },
-      en: { common: enCommon },
+      th: { common: { ...thCommon, projectLanding: projectLandingTranslations.th } },
+      en: { common: { ...enCommon, projectLanding: projectLandingTranslations.en } },
     },
     lng: initialLanguage,
     fallbackLng: 'th',
