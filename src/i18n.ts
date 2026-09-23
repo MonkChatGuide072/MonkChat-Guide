@@ -3,14 +3,20 @@ import { initReactI18next } from 'react-i18next'
 import thCommon from './locales/th/common.json'
 import enCommon from './locales/en/common.json'
 import { projectLandingTranslations } from './locales/projectLanding'
+import { managementTranslations } from './locales/management'
+import { LANGUAGE_STORAGE_KEY, normalizeLanguage, type AppLanguage } from './lib/language'
 
-export const STORAGE_KEY = 'monkchat_language'
+export const STORAGE_KEY = LANGUAGE_STORAGE_KEY
 
-const getSavedLanguage = (): string => {
+const getSavedLanguage = (): AppLanguage => {
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved === 'th' || saved === 'en') {
-      return saved
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved === 'th' || saved === 'en') {
+        return saved
+      }
+    } catch {
+      // Keep the Thai default when browser storage is unavailable.
     }
   }
   return 'th'
@@ -27,8 +33,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      th: { common: { ...thCommon, projectLanding: projectLandingTranslations.th } },
-      en: { common: { ...enCommon, projectLanding: projectLandingTranslations.en } },
+      th: { common: { ...thCommon, projectLanding: projectLandingTranslations.th, management: managementTranslations.th } },
+      en: { common: { ...enCommon, projectLanding: projectLandingTranslations.en, management: managementTranslations.en } },
     },
     lng: initialLanguage,
     fallbackLng: 'th',
@@ -38,10 +44,16 @@ i18n
     },
   })
 
-// Listen to language change to update HTML lang attribute (do not save to localStorage for visitors yet)
+// Keep every public language control in sync through i18next.
 i18n.on('languageChanged', (lng) => {
   if (typeof window !== 'undefined') {
-    document.documentElement.lang = lng
+    const normalizedLanguage = normalizeLanguage(lng)
+    try {
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, normalizedLanguage)
+    } catch {
+      // Language switching must still work when browser storage is unavailable.
+    }
+    document.documentElement.lang = normalizedLanguage
   }
 })
 

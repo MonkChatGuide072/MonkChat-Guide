@@ -9,12 +9,16 @@ export function AdminLayout() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [signOutError, setSignOutError] = useState(false)
 
   const isOwner = profile?.role === 'owner'
 
   const handleSignOut = async () => {
-    await signOut()
-    navigate('/admin/login', { replace: true })
+    setSignOutError(false)
+    try {
+      await signOut()
+      navigate('/admin/login', { replace: true })
+    } catch { setSignOutError(true) }
   }
 
   const navItems = [
@@ -30,6 +34,7 @@ export function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+      {signOutError && <p role="alert" className="bg-red-50 p-4 text-center text-red-800">{t('management.signOutError')}</p>}
       {/* Top Header */}
       <header className="bg-slate-900 text-white sticky top-0 z-30 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

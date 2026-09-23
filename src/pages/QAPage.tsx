@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
+import { VisitorBackLink } from '../components/VisitorBackLink'
 
 interface QATranslationRow {
   language_code: string
@@ -69,7 +70,7 @@ export function QAPage() {
       setItems((data as QAItemRow[]) ?? [])
       setIsLoading(false)
     } catch {
-      setError(t('qa.errorLoadItems'))
+      setError(t('qa.errorLoad'))
       setIsLoading(false)
     }
   }, [t])
@@ -98,7 +99,7 @@ export function QAPage() {
   })
 
   return (
-    <div className="space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto font-['Noto_Sans_Thai']">
+    <div className="break-words [overflow-wrap:anywhere] space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto font-['Noto_Sans_Thai']">
       {/* Banner */}
       <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -114,6 +115,7 @@ export function QAPage() {
         <p className="text-sm sm:text-base text-slate-600">
           {t('qa.subtitle')}
         </p>
+        <VisitorBackLink />
 
         {/* Search Field */}
         <div className="relative pt-2">
@@ -121,7 +123,7 @@ export function QAPage() {
             {t('qa.searchPlaceholder')}
           </label>
           <div className="relative flex items-center">
-            <span className="absolute left-4 text-slate-400 text-base">🔍</span>
+            <svg aria-hidden="true" className="absolute left-4 h-5 w-5 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6" /><path strokeLinecap="round" d="m15 15 6 6" /></svg>
             <input
               id="qa-search-input"
               type="text"
@@ -135,9 +137,9 @@ export function QAPage() {
                 type="button"
                 onClick={() => setSearchQuery('')}
                 aria-label={t('qa.clearSearch')}
-                className="absolute right-3.5 text-slate-400 hover:text-slate-600 text-sm font-semibold p-1 rounded-lg focus:outline-hidden"
+                className="absolute right-1 flex h-11 w-11 items-center justify-center text-slate-500 hover:text-slate-700 rounded-lg"
               >
-                ✕
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6" /></svg>
               </button>
             )}
           </div>
@@ -151,7 +153,7 @@ export function QAPage() {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="flex justify-center items-center py-20">
+        <div role="status" aria-label={t('qa.loading')} className="flex justify-center items-center py-20">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#A86100]" />
         </div>
       )}
@@ -159,8 +161,7 @@ export function QAPage() {
       {/* Error State */}
       {!isLoading && error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
-          <p className="text-red-800 font-semibold">{t('qa.errorLoad')}</p>
-          <p className="text-red-600 text-sm font-mono break-all">{error}</p>
+          <p role="alert" className="text-red-800 font-semibold">{error}</p>
           <button
             type="button"
             onClick={fetchQAItems}
@@ -189,9 +190,9 @@ export function QAPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-200 pb-3">
             <h2 className="text-lg font-bold text-[#11223C] flex items-center gap-2">
               <svg className="w-5 h-5 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-              <span>{t('qa.demoSectionTitle')}</span>
+              <span>{t('qa.listTitle')}</span>
             </h2>
-            <span className="text-xs text-slate-500">
+            <span aria-live="polite" className="text-xs text-slate-500">
               {filteredItems.length} {t('qa.itemCount', { count: filteredItems.length })}
             </span>
           </div>
@@ -215,7 +216,7 @@ export function QAPage() {
                   </div>
 
                   <h3 className="text-base sm:text-lg font-bold text-[#11223C] leading-snug">
-                    {translation?.question || item.id}
+                    {translation?.question}
                   </h3>
 
                   <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
@@ -224,9 +225,10 @@ export function QAPage() {
                       <span>{translation?.short_answer}</span>
                     </p>
                     {translation?.detailed_answer && (
-                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed pl-6 pt-1 border-t border-slate-200/60 whitespace-pre-wrap">
-                        {translation.detailed_answer}
-                      </p>
+                      <details className="border-t border-slate-200/60 pt-1">
+                        <summary className="min-h-11 cursor-pointer py-3 font-semibold text-[#A86100]">{t('qa.readMore')}</summary>
+                        <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">{translation.detailed_answer}</p>
+                      </details>
                     )}
                   </div>
                 </article>

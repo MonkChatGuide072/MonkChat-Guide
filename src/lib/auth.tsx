@@ -29,14 +29,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [sessionReady, setSessionReady] = useState(false)
+  const [profileFor, setProfileFor] = useState<string | null>(null)
+  const [profileRevision, setProfileRevision] = useState(0)
+  const isLoading = !sessionReady || (!!user && profileFor !== user.id)
 
   useEffect(() => {
     let mounted = true
+    let receivedAuthEvent = false
 
     async function getInitialSession() {
       if (!supabaseClient) {
-        setIsLoading(false)
+        setSessionReady(true)
         return
       }
 
@@ -44,14 +48,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { session: initialSession }, error } = await supabaseClient.auth.getSession()
         if (error) throw error
 
-        if (mounted) {
+        if (mounted && !receivedAuthEvent) {
           setSession(initialSession)
           setUser(initialSession?.user ?? null)
+          setSessionReady(true)
           // Do not fetch profile here. The separate effect will handle it based on user.id
         }
       } catch (err) {
         console.error('Error getting initial session:', err)
-        if (mounted) setIsLoading(false)
+        if (mounted && !receivedAuthEvent) setSessionReady(true)
       }
     }
 
@@ -63,8 +68,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // KEEP THIS SYNCHRONOUS to avoid deadlocks!
       const { data } = supabaseClient.auth.onAuthStateChange((_event, newSession) => {
         if (!mounted) return
+        receivedAuthEvent = true
         setSession(newSession)
         setUser(newSession?.user ?? null)
+        setProfileFor(null)
+        setSessionReady(true)
+        setProfileRevision(value => value + 1)
       })
       authListener = data
     }
@@ -82,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function fetchProfile(userId: string) {
       if (!supabaseClient) return
       
-      setIsLoading(true)
+      setProfileFor(null)
       try {
         const { data, error } = await supabaseClient
           .from('profiles')
@@ -100,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('Unexpected error fetching profile:', err)
         if (mounted) setProfile(null)
       } finally {
-        if (mounted) setIsLoading(false)
+        if (mounted) setProfileFor(userId)
       }
     }
 
@@ -108,27 +117,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       fetchProfile(user.id)
     } else {
       setProfile(null)
-      // Only set loading false here if we know supabase is initialized
-      // (This handles the logged-out state correctly)
-      setIsLoading(false)
+      setProfileFor(null)
     }
 
     return () => {
       mounted = false
     }
+  }, [user?.id, profileRevision])
+
+  useEffect(() => {
+    const refresh = () => { if (user?.id) setProfileRevision(value => value + 1) }
+    window.addEventListener('focus', refresh)
+    return () => window.removeEventListener('focus', refresh)
   }, [user?.id])
 
   const signOut = async () => {
     if (!supabaseClient) return
-    try {
-      await supabaseClient.auth.signOut()
-    } catch (err) {
-      console.error('Error signing out:', err)
-    }
+    const { error } = await supabaseClient.auth.signOut()
+    if (error) throw error
+    setSession(null)
+    setUser(null)
+    setProfile(null)
   }
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, isLoading, signOut }}>
+    <AuthContext.Provider value={{ session, user, profile: profileFor === user?.id ? profile : null, isLoading, signOut }}>
       {children}
     </AuthContext.Provider>
   )

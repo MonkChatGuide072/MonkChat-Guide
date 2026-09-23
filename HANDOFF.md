@@ -1,5 +1,72 @@
 # MonkChat Guide - Project Handoff
 
+## Approved release in progress — 2026-09-23
+
+- The owner explicitly approved production database installation, website release, and commit/push. This supersedes the prior missing-approval blocker. Do not request the same approval again.
+- `cms_account_access` was successfully applied to project `jxrllzpqatoauxjuoqmo` as migration `20260923020015`; the local filename and regression harness now match the actual remote history. Do not reapply the earlier local timestamp.
+- After an approval-service usage-limit interruption, `team-management` deployed successfully as ACTIVE version 1 with `verify_jwt=true`. It uses the existing project and production-origin allowlist; no account/content records were created or edited.
+- Frontend release is proceeding from `agent/system-ui-foundation`. The implementation passed 32 application tests, 20 isolated database checks, TypeScript/build, lint and Deno entry checks in the previous phase. Hosted account creation/update and the 5 responsive viewports remain unverified.
+- The earlier secure browser login returned `submission_failed`; no verified signed-in session was observed. Manual handoff was offered. Do not treat the supplied credentials as tested or use a lower-level credential-entry workaround.
+
+---
+
+## Release attempt and live inspection — 2026-09-23
+
+- User supplied an existing admin account and asked to continue. Credentials were not copied into source, scripts, documentation, or ordinary browser form-fill calls.
+- Remote `main` is still `dd9822d5d75cea21dced92aa505fd1bfe4d08883`. The working branch remains `agent/system-ui-foundation`; no commit, push, or deployment occurred in this attempt.
+- The attempted `cms_account_access` migration was **rejected by automatic approval review**: it requires explicit approval to write the production database and change authorization/suspension rules. Do not retry through SQL, CLI, or another indirect path. Obtain explicit production-release approval before retrying.
+- A subsequent read-only check confirmed no migration history entry, no `cms_security_version()` function, and the original single profile still present. Edge Function/frontend deployment was left pending to avoid a partial release.
+- Live browser: `/admin/login` renders the existing sign-in form; `/visit` opens the Thai/English language gate without 404. These observations concern the old deployed version, not the local changes.
+- Secure browser authentication returned `submission_failed`; subsequent visible DOM remained on the login form without a verified signed-in signal. This does not establish that the supplied password is wrong. Do not bypass `browserAuth` with direct credential entry or an HTTP login request; use its permitted manual handoff if needed.
+- Revalidation: all 32 tests and the production TypeScript/build passed again, as did `git diff --check`.
+- Read-only Supabase security advisors currently warn about intentional elevated RPC access (`record_usage_event`, `set_recommended_track`) and disabled leaked-password protection. These are existing notices; no security settings or pricing plan were changed. Do not report zero security warnings.
+- Next gate: explicit approval for applying the reviewed production migration and releasing the server/frontend (including the required Git checkpoint/push), followed by authenticated CMS verification. Original pending browser viewport and team-account tests still apply.
+
+---
+
+## Latest CMS checkpoint — 2026-09-23
+
+This is the newest working-copy status. Earlier sections are historical; none proves that these changes are deployed.
+
+- User authorized continuing the backend/CMS while deferring real-content entry. Existing public-page work is preserved on `agent/system-ui-foundation`; all changes remain uncommitted, with no push or deployment.
+- Read-only hosted inspection confirmed that Languages and Team were placeholder UI modules, no Edge Functions were deployed, and `private.get_user_role()` did not filter `is_active`. No hosted database/account/content mutations were performed.
+- Implemented `AdminLanguagesPage`: Owner add/edit/activate content languages, Team Member read-only access, immutable codes when editing, protected Thai/English core languages, localized loading/error/retry/success states, and confirmation of a returned database row before reporting a save.
+- Implemented `AdminTeamPage` and server-side `team-management`: active Owner list/create/update Team Members; no role transfer, Owner suspension, or hard delete. Account creation uses a server-only service-role client; profile writes use the Owner JWT to preserve RLS and audit attribution. No automatic email is sent. Unavailable service disables creation; partial account creation reports a recovery-required state without deleting an account.
+- Prepared migration `20260923012808_cms_account_access.sql`: inactive profiles receive no management role; protect profile identity/roles/Owner active status; revoke CMS profile deletion; protect core languages; add an Owner-only version check so the team endpoint stays closed until this migration is installed. **Not applied to the hosted project.**
+- Fixed initial-session/profile readiness and stale profile results in `src/lib/auth.tsx`; recheck profiles on window focus; propagate sign-out errors. Updated route guards, login messaging and CMS sign-out UI.
+- Added `AudioLanguageField` to track create/edit forms, replacing the previously forced Thai source language. Existing translations remain separate; rollback restores source language as well as duration.
+- Created: `src/locales/management.ts`, `src/components/AudioLanguageField.tsx`, `src/lib/auth.test.tsx`, `src/lib/teamManagement.test.ts`, `src/pages/admin/ManagementPages.test.tsx`, `supabase/functions/team-management/{handler.ts,index.ts,deno.json,README.md}`, the migration above, and `scripts/check-cms-security.mjs`. Modified existing CMS/auth/i18n files and `supabase/config.toml` (explicit `verify_jwt = true`). No files removed.
+- Verification: **32 automated tests passed across 6 files**; lint, TypeScript and production build passed; Deno type-check of the Edge entry passed with `--node-modules-dir=manual` using installed dependencies (direct Deno registry access was unavailable). Diff whitespace check passed.
+- Database verification: **20 isolated PostgreSQL checks passed** using temporary PGlite and the actual initial schema/RLS/hardening/audit migrations with a minimal Auth shim. Covered allowed public language reads; denied public/member writes; no inactive role/content writes; Owner member creation/suspension with audit; blocked role escalation, Owner lockout, hard deletes, and core-language changes. This did not test the hosted Supabase gateway or Storage end to end.
+- No application dependencies were added/removed. Deno and PGlite were used only as temporary validation tools. Existing free-tier services remain unchanged; no secrets were written to source or browser code.
+- Still required before calling this phase production-ready: apply the reviewed migration, deploy the Edge Function and frontend, then verify real Owner/member login and CMS operations in an approved test environment. Verify layouts at 360/390/768/1024/1440 and real browser behavior. The earlier local cloud-browser access was blocked, so responsive CSS/jsdom coverage is not visual verification.
+- Deployment order and partial-account recovery behavior are documented in `supabase/functions/team-management/README.md`. Commit still requires the owner's explicit instruction per the project skill; no new major phase started.
+
+---
+
+## Latest local work — 2026-09-23
+
+This section records the current working copy. The sections below are historical and do not prove current deployment or account verification.
+
+- User priority: improve the system and public website first; defer manual entry of real content.
+- Branch: `agent/system-ui-foundation`, based on `dd9822d`. Changes are local and uncommitted; no push or deployment performed.
+- Previous phase: rebuilt `/visit`, unified language switching, restored guest Bio Links, and added loading/error/empty states.
+- This phase: public Meditation, Q&A and Centers improvements.
+  - Meditation query now selects `source_language_code`. Selection follows the URL, including browser back/forward. Current-language filtering has no fallback to other translations.
+  - Extracted `MeditationPlayer`: independent audio and subtitle loading/retry, media error handling, caption display and highlighting driven by playback/seek time. Changing track/language discards stale media responses. Audio uses `preload="none"`; large audio caching remains disabled.
+  - Added WebVTT parsing with validation of timestamps and cue ranges. No real transcripts or subtitle files were created or edited.
+  - Q&A retains verified + published queries, supports searching translated answers and expanding longer answers, and no longer exposes internal IDs as missing-question labels.
+  - Center links accept only absolute HTTP(S) URLs without embedded credentials. Failed Bio Links no longer suppress loaded center details.
+  - Added a shared bilingual visitor-home link on all three pages, replaced public emoji controls with SVGs, and improved wrapping and media sizing for narrow layouts.
+- Created: `src/components/MeditationPlayer.tsx`, `src/components/VisitorBackLink.tsx`, `src/lib/publicContent.ts`, `src/lib/subtitles.ts`, `src/lib/subtitles.test.ts`, `src/pages/PublicPages.test.tsx`.
+- Modified this phase: public Meditation/Q&A/Centers pages, Thai/English locale files, and this handoff. Earlier `/visit` changes remain in the same working tree.
+- Packages added/removed this phase: none. No database writes, migrations, account changes, real-content edits, paid services, or secret handling.
+- Verification: 14 automated tests passed across 3 files; lint, `tsc -b`, production build and diff whitespace check passed. New tests use mocked Supabase responses and media events, not production accounts or real audio playback.
+- Still unverified: rendered layouts at 360/390/768/1024/1440, real audio/caption timing, and current Owner CMS login/edit flow. The prior cloud-browser attempt to open the local server was blocked; do not treat CSS review or jsdom tests as viewport verification.
+- Next: review the public changes in a browser-accessible preview, then address CMS as a separate phase. Do not claim these edits are live; commit/push/deployment require the corresponding owner instruction.
+
+---
+
 > **หมายเหตุการทบทวนกรอบโครงงานจบปี 4 (อยู่ระหว่างการทบทวน ยังไม่อนุมัติให้เปลี่ยน REQUIREMENTS หรือโค้ด):**
 > “MonkChat Guide เป็นเว็บไซต์ทางการของโครงการ และเป็นเครื่องมือช่วยพระนิสิตฝึกใช้สื่อนำนั่งสมาธิภาษาอังกฤษที่ผ่านการตรวจ พร้อมใช้ช่วยชาวต่างชาติหน้างาน ส่วนชาวต่างชาติสแกน QR เพื่อเข้าถึงสื่อและช่องทางศึกษาต่อ โดยเว็บไซต์ธรรมกายทางการเป็นแหล่งข้อมูลรายละเอียด”
 

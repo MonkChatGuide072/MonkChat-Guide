@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
+import { AudioLanguageField } from '../../components/AudioLanguageField'
 
 export function AdminMeditationNewPage() {
   const { t } = useTranslation()
@@ -15,6 +16,7 @@ export function AdminMeditationNewPage() {
   const [enDesc, setEnDesc] = useState('')
   const [minutes, setMinutes] = useState('5')
   const [seconds, setSeconds] = useState('0')
+  const [sourceLanguage, setSourceLanguage] = useState('th')
 
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -73,7 +75,7 @@ export function AdminMeditationNewPage() {
       const { data: trackRow, error: trackErr } = await supabaseClient
         .from('meditation_tracks')
         .insert({
-          source_language_code: 'th',
+          source_language_code: sourceLanguage,
           duration_seconds: totalSeconds,
           audio_storage_path: null,
           content_status: 'draft',
@@ -182,6 +184,7 @@ export function AdminMeditationNewPage() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <AudioLanguageField value={sourceLanguage} onChange={setSourceLanguage} disabled={isSubmitting} />
         {/* Thai Section */}
         <div className="space-y-4 pt-2 border-b border-slate-100 pb-6">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
