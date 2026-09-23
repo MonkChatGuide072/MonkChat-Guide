@@ -1,5 +1,18 @@
 # MonkChat Guide - Project Handoff
 
+## Production release completed — 2026-09-23
+
+- Owner approval covered production database/server/frontend installation and commit/push. Migration `20260923020015_cms_account_access.sql` is applied; hosted read-only checks confirm the active-profile role predicate and both guard triggers. No real content or team account was created/edited.
+- `team-management` is ACTIVE version 1, with JWT verification enabled. A real unauthenticated POST returned 401 / `Missing authorization header`.
+- Implementation release: GitHub commit `f51a3c0054efde83b2b4c7bdf068a82f68a8e239`, PR #5 merged into `main` as `52dd291093d918e38bbd17dc71d1356e197fa3ca`. Cloudflare Pages reports successful preview and production deployments. Production deployment ID: `cd9eb544-5af5-496e-a99c-87ae9c8fe4eb`.
+- Local HTTPS push lacked credentials, so the authorized GitHub connector uploaded the same changes. Remote/local content tree matched exactly (`f77d346cd73b356b5e23aada0dcdbe869aee5655`); the original local implementation checkpoint is `aa1ae09`. The checkout was then moved to `agent/release-record` from fetched `origin/main`, preserving the original branch.
+- Release revalidation passed: 32 tests, lint, TypeScript/build, whitespace check, and all 20 isolated PostgreSQL checks. The temporary PGlite dependency had expired and was reinstalled outside the repository. No application dependency changes.
+- Actual production browser checks: after one reload to update the cached application, `/visit` displayed the new language gate; Thai and English visitor content loaded; recommended audio and all five existing Bio Links were visible without login. An unauthenticated visit to `/admin/team` redirected to `/admin/login`, which displayed the new localized login note.
+- Remaining verification: authenticated Owner/member list/create/edit/suspend operations and real device/responsive checks at 360/390/768/1024/1440. Secure browser sign-in previously returned `submission_failed`; the current browser has no signed-in CMS session. Do not claim authenticated CRUD or mobile verification has passed.
+- Existing Supabase advisor notices remain unchanged (elevated analytics/recommendation RPCs and disabled leaked-password protection). No new warning category was introduced by this migration. See prior notes for scope.
+
+---
+
 ## Approved release in progress — 2026-09-23
 
 - The owner explicitly approved production database installation, website release, and commit/push. This supersedes the prior missing-approval blocker. Do not request the same approval again.
