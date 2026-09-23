@@ -63,8 +63,8 @@ export function LoginPage() {
   // Show a generic loading state if we are still fetching the initial auth state
   if (isAuthLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+      <div className="flex min-h-[55vh] items-center justify-center" role="status">
+        <div className="h-9 w-9 animate-spin rounded-full border-2 border-[#11223C]/12 border-t-[#A86100]"></div>
       </div>
     )
   }
@@ -75,8 +75,8 @@ export function LoginPage() {
     const errorKey = isInactive ? 'inactiveAccount' : 'accessDenied'
 
     return (
-      <div className="max-w-md mx-auto space-y-6 pt-4 sm:pt-8">
-        <div className="bg-white rounded-xl border border-red-200 p-6 sm:p-8 shadow-xs text-center">
+      <div className="mx-auto max-w-md space-y-6 py-6 sm:py-12">
+        <div className="rounded-[1.75rem] border border-red-200 bg-white p-6 text-center shadow-[0_18px_55px_rgba(17,34,60,0.08)] sm:p-8">
           <h2 className="text-xl font-bold text-red-700 mb-4">
             {t(isInactive ? 'management.inactiveTitle' : 'management.deniedTitle')}
           </h2>
@@ -97,26 +97,49 @@ export function LoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-6 pt-4 sm:pt-8">
-      <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-4">
-        <div className="text-center space-y-1">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+    <div className="mx-auto grid max-w-5xl overflow-hidden rounded-[2rem] border border-[#11223C]/8 bg-white shadow-[0_28px_80px_rgba(17,34,60,0.12)] lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="relative hidden overflow-hidden bg-[#11223C] p-10 text-white lg:flex lg:flex-col lg:justify-between">
+        <div aria-hidden="true" className="absolute -right-20 -top-20 h-72 w-72 rounded-full border border-white/8" />
+        <div aria-hidden="true" className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full border border-[#DDA756]/15" />
+        <div className="relative flex items-center gap-3">
+          <img src="/monkchat-placeholder.svg" alt="" className="h-11 w-11 rounded-xl ring-1 ring-white/15" />
+          <div className="leading-tight">
+            <p className="text-[0.65rem] font-extrabold uppercase tracking-[0.22em] text-[#DDA756]">MonkChat</p>
+            <p className="font-extrabold">Guide CMS</p>
+          </div>
+        </div>
+        <div className="relative mt-24">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#DDA756]/12 text-[#DDA756]">
+            <svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M8 11V8a4 4 0 118 0v3m-9 0h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6a2 2 0 012-2z" />
+            </svg>
+          </span>
+          <h2 className="mt-6 text-3xl font-bold leading-tight tracking-[-0.03em]">{t('management.loginPanelTitle')}</h2>
+          <p className="mt-4 text-sm leading-7 text-white/55">{t('management.loginPanelDescription')}</p>
+        </div>
+      </section>
+
+      <section className="p-6 sm:p-10 lg:p-12">
+        <div className="mx-auto max-w-md space-y-5">
+        <div className="space-y-2">
+          <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#A86100]">Owner access</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#11223C] sm:text-3xl">
             {t('pages.login.title')}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="text-sm leading-6 text-[#11223C]/55">
             {t('pages.login.subtitle')}
           </p>
         </div>
 
         {errorMsg && (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm text-center">
+          <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-center text-sm text-red-700">
             {errorMsg}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1" htmlFor="email">
+            <label className="mb-2 block text-xs font-bold text-[#11223C]/75" htmlFor="email">
               {t('pages.login.emailLabel')}
             </label>
             <input
@@ -128,12 +151,12 @@ export function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isSubmitting || !supabaseClient}
               placeholder="team@example.com"
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:bg-slate-50 disabled:text-slate-500"
+              className="min-h-12 w-full rounded-xl border border-[#11223C]/15 bg-[#FFFEF9] px-4 text-sm text-[#11223C] transition-colors placeholder:text-slate-400 focus:border-[#A86100]/50 focus:outline-none focus:ring-2 focus:ring-[#A86100]/15 disabled:bg-slate-50 disabled:text-slate-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1" htmlFor="password">
+            <label className="mb-2 block text-xs font-bold text-[#11223C]/75" htmlFor="password">
               {t('pages.login.passwordLabel')}
             </label>
             <input
@@ -145,23 +168,24 @@ export function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={isSubmitting || !supabaseClient}
               placeholder="••••••••"
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:bg-slate-50 disabled:text-slate-500"
+              className="min-h-12 w-full rounded-xl border border-[#11223C]/15 bg-[#FFFEF9] px-4 text-sm text-[#11223C] transition-colors placeholder:text-slate-400 focus:border-[#A86100]/50 focus:outline-none focus:ring-2 focus:ring-[#A86100]/15 disabled:bg-slate-50 disabled:text-slate-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting || !supabaseClient || !email || !password}
-            className="w-full rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:bg-slate-300 disabled:text-slate-500 transition-colors"
+            className="min-h-12 w-full rounded-xl bg-[#11223C] px-4 text-sm font-bold text-white shadow-[0_10px_25px_rgba(17,34,60,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#1A3256] disabled:translate-y-0 disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none"
           >
             {isSubmitting ? t('pages.login.loadingButton') : t('pages.login.submitButton')}
           </button>
         </form>
 
-        <p className="text-center text-xs text-amber-700 bg-amber-50 rounded-lg p-2.5 border border-amber-200/60 font-medium">
+        <p className="rounded-xl border border-[#A86100]/15 bg-[#A86100]/6 p-3 text-center text-xs font-semibold leading-5 text-[#8D5200]">
           {t('management.loginNote')}
         </p>
+        </div>
+      </section>
       </div>
-    </div>
   )
 }

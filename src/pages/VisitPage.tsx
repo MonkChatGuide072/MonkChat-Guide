@@ -81,39 +81,73 @@ export function VisitPage() {
 
 function LanguageGate({ onSelect }: { onSelect: (language: AppLanguage) => void }) {
   return (
-    <main className="min-h-screen bg-[#fcfbf9] px-4 py-10 sm:px-6">
-      <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-xl flex-col items-center justify-center text-center">
-        <span className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-800">
-          <svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.2-2.3 3.3-5.3 3.3-9S14.2 5.3 12 3m0 18c-2.2-2.3-3.3-5.3-3.3-9S9.8 5.3 12 3M3.5 9h17m-17 6h17" />
-          </svg>
-        </span>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-700">MonkChat Guide</p>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-[#11223C] sm:text-4xl">
-          เลือกภาษา / Choose language
-        </h1>
-        <p className="mt-4 max-w-md text-sm leading-6 text-slate-600 sm:text-base">
-          เลือกภาษาที่ต้องการใช้ ระบบจะจดจำการเลือกของคุณสำหรับการเข้าชมครั้งนี้
-          <br className="hidden sm:block" />
-          Choose the language you would like to use for this visit.
-        </p>
-        <div className="mt-8 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+    <main className="relative isolate min-h-screen overflow-hidden bg-[#0C1B31] px-4 py-6 text-white sm:px-8 sm:py-8">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_10%,rgba(221,167,86,0.22),transparent_30%),radial-gradient(circle_at_12%_88%,rgba(168,97,0,0.18),transparent_32%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-24 top-16 -z-10 h-80 w-80 rounded-full border border-white/6" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-10 top-30 -z-10 h-52 w-52 rounded-full border border-[#DDA756]/15" />
+
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <Link to="/" className="group flex items-center gap-3" aria-label="MonkChat Guide">
+          <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 rounded-xl ring-1 ring-white/15 transition-transform group-hover:-rotate-3" />
+          <span className="leading-tight">
+            <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.22em] text-[#DDA756]">MonkChat</span>
+            <span className="block text-sm font-extrabold">Guide</span>
+          </span>
+        </Link>
+        <Link to="/" className="inline-flex min-h-10 items-center rounded-full border border-white/15 px-4 text-xs font-bold text-white/70 transition-colors hover:border-[#DDA756]/45 hover:text-[#DDA756]">
+          โครงการ / About
+        </Link>
+      </div>
+
+      <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-12 py-12 lg:grid-cols-[1fr_0.82fr] lg:gap-20">
+        <div className="max-w-2xl">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#DDA756]/25 bg-[#DDA756]/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#F2C887]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#DDA756]" />
+            Welcome to MonkChat
+          </span>
+          <h1 className="mt-7 text-4xl font-bold leading-tight tracking-[-0.04em] text-balance sm:text-6xl">
+            ฟัง เรียนรู้ และเดินทางต่ออย่างสงบ
+          </h1>
+          <p className="mt-6 max-w-xl text-sm leading-7 text-white/62 sm:text-base">
+            Meditation audio, trusted answers, and DCI centers—all in one calm space for your visit.
+          </p>
+        </div>
+
+        <section aria-labelledby="language-gate-title" className="rounded-[2rem] border border-white/10 bg-[#FFFEF9] p-6 text-[#11223C] shadow-[0_30px_90px_rgba(0,0,0,0.28)] sm:p-8">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#A86100]/10 text-[#A86100]">
+            <svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.2-2.3 3.3-5.3 3.3-9S14.2 5.3 12 3m0 18c-2.2-2.3-3.3-5.3-3.3-9S9.8 5.3 12 3M3.5 9h17m-17 6h17" />
+            </svg>
+          </span>
+          <p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-[#A86100]">Your language</p>
+          <h2 id="language-gate-title" className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+            เลือกภาษา / Choose language
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-[#11223C]/60">
+            ระบบจะจดจำภาษาสำหรับการเข้าชมครั้งนี้<br />Choose the language for this visit.
+          </p>
+          <div className="mt-7 grid gap-3 sm:grid-cols-2">
           <button
             type="button"
             onClick={() => onSelect('th')}
-            className="min-h-14 rounded-xl bg-[#A86100] px-6 py-4 text-lg font-bold text-white shadow-sm transition-colors hover:bg-amber-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+            aria-label="ภาษาไทย"
+            className="group flex min-h-20 items-center gap-4 rounded-2xl bg-[#A86100] px-5 py-4 text-left text-white shadow-[0_12px_30px_rgba(168,97,0,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#8D5200]"
           >
-            ภาษาไทย
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/15 text-xs font-extrabold">TH</span>
+            <span><span className="block font-bold">ภาษาไทย</span><span className="mt-0.5 block text-xs text-white/65">ดำเนินการต่อ</span></span>
           </button>
           <button
             type="button"
             onClick={() => onSelect('en')}
-            className="min-h-14 rounded-xl border border-slate-300 bg-white px-6 py-4 text-lg font-bold text-[#11223C] shadow-sm transition-colors hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700"
+            aria-label="English"
+            className="group flex min-h-20 items-center gap-4 rounded-2xl border border-[#11223C]/12 bg-white px-5 py-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#A86100]/35 hover:shadow-md"
           >
-            English
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#11223C]/6 text-xs font-extrabold">EN</span>
+            <span><span className="block font-bold">English</span><span className="mt-0.5 block text-xs text-[#11223C]/50">Continue</span></span>
           </button>
+          </div>
+        </section>
         </div>
-      </div>
     </main>
   )
 }
@@ -216,13 +250,16 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
   )
 
   return (
-    <div className="space-y-8 pb-6 sm:space-y-10">
-      <section className="overflow-hidden rounded-3xl bg-[#11223C] px-5 py-8 text-white shadow-sm sm:px-10 sm:py-11">
+    <div className="space-y-10 pb-5 sm:space-y-14">
+      <section className="relative isolate overflow-hidden rounded-[2rem] bg-[#11223C] px-6 py-9 text-white shadow-[0_24px_70px_rgba(17,34,60,0.18)] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_20%,rgba(221,167,86,0.2),transparent_28%)]" />
+        <div aria-hidden="true" className="absolute -right-10 -top-24 -z-10 h-80 w-80 rounded-full border border-white/8" />
+        <div aria-hidden="true" className="absolute right-8 top-10 -z-10 hidden h-44 w-44 rounded-full border border-[#DDA756]/18 md:block" />
         <div className="max-w-2xl space-y-4">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-amber-300">
             {t('visitor.heroTag')}
           </p>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="text-3xl font-bold leading-tight tracking-[-0.035em] text-balance sm:text-5xl">
             {t('visitor.title')}
           </h1>
           <p className="max-w-xl text-sm leading-7 text-slate-200 sm:text-base">
@@ -231,7 +268,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </div>
       </section>
 
-      <section aria-labelledby="recommended-heading" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs sm:p-8">
+      <section aria-labelledby="recommended-heading" className="rounded-[1.75rem] border border-[#11223C]/8 bg-white/85 p-5 shadow-[0_18px_55px_rgba(17,34,60,0.07)] backdrop-blur sm:p-8">
         <div className="flex flex-col gap-2 border-b border-slate-100 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#A86100]">
@@ -318,6 +355,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             description={t('visitor.meditationDesc')}
             action={t('visitor.meditationAction')}
             icon={<PlayIcon />}
+            tone="gold"
           />
           <VisitorActionCard
             to="/qa"
@@ -325,6 +363,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             description={t('visitor.qaDesc')}
             action={t('visitor.qaAction')}
             icon={<QuestionIcon />}
+            tone="navy"
           />
           <VisitorActionCard
             to="/centers"
@@ -332,11 +371,12 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             description={t('visitor.centersDesc')}
             action={t('visitor.centersAction')}
             icon={<LocationIcon />}
+            tone="sand"
           />
         </div>
       </section>
 
-      <section aria-labelledby="bio-links-heading" className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-8">
+      <section aria-labelledby="bio-links-heading" className="rounded-[1.75rem] border border-[#11223C]/8 bg-[#F2E9D8]/55 p-5 sm:p-8 lg:p-10">
         <div className="text-center">
           <h2 id="bio-links-heading" className="text-xl font-bold text-[#11223C] sm:text-2xl">
             {t('home.bioLinksTitle')}
@@ -392,19 +432,26 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
   )
 }
 
-function VisitorActionCard({ to, title, description, action, icon }: {
+function VisitorActionCard({ to, title, description, action, icon, tone }: {
   to: string
   title: string
   description: string
   action: string
   icon: ReactNode
+  tone: 'gold' | 'navy' | 'sand'
 }) {
+  const toneClasses = {
+    gold: 'bg-[#A86100]/10 text-[#A86100] group-hover:bg-[#A86100] group-hover:text-white',
+    navy: 'bg-[#11223C]/8 text-[#11223C] group-hover:bg-[#11223C] group-hover:text-white',
+    sand: 'bg-[#DDA756]/20 text-[#8D5200] group-hover:bg-[#DDA756] group-hover:text-[#11223C]',
+  }
+
   return (
     <Link
       to={to}
-      className="group flex min-h-56 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-amber-600 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
+      className="group flex min-h-64 flex-col rounded-[1.5rem] border border-[#11223C]/8 bg-white/90 p-6 shadow-[0_12px_35px_rgba(17,34,60,0.05)] transition-all hover:-translate-y-1 hover:border-[#A86100]/30 hover:shadow-[0_22px_55px_rgba(17,34,60,0.1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
     >
-      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-[#A86100] transition-colors group-hover:bg-[#A86100] group-hover:text-white">
+      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-colors ${toneClasses[tone]}`}>
         {icon}
       </span>
       <h3 className="mt-5 text-lg font-bold text-[#11223C]">{title}</h3>

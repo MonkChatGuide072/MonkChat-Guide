@@ -155,8 +155,14 @@ This document records the confirmed decisions made during the project's lifecycl
 ## 24. Design Tokens & Assets
 - **Decision**: Use strict colors (navy `#11223C`, gold `#A86100`, ivory `#FFFEF9`), Noto Sans Thai font, 8px spacing, and SVG pictograms. No emojis for system icons.
 - **Reason**: Maintains a professional, calm, and cohesive visual identity.
-- **Status**: ✅ CONFIRMED
+- **Status**: ✅ CONFIRMED for the application shell; refined for the public Home by Decision 25
 - **Date**: 2026-08-25
+
+## 25. Monk Chat Public Home
+- **Decision**: `/` is the public Home for the Monk Chat project. It introduces what Monk Chat is, its purpose, activities, atmosphere, and related links, then presents MonkChat Guide as a supporting set of visitor tools. `/visit` remains the direct QR entry point. The Home extends the application palette with soft terracotta, clay pink, cream, sand, and muted sage so brick red is never used as a single heavy color. Its atmospheric imagery centers on meditation in fields with ancient Thai/Ayutthaya-style ruins. Use authentic project photos once approved; generated illustrations must be labeled and must not be represented as real activity photos.
+- **Reason**: The public website has two distinct responsibilities: communicating the identity of the Monk Chat project and providing practical meditation, Q&A, and continuation guides.
+- **Status**: ✅ CONFIRMED
+- **Date**: 2026-09-23
 ## 21. Public Entry-Point Structure
 - **Decision**: The homepage introduces MonkChat Guide as a tool for monk students and international visitors. A dedicated public visitor route (`/visit`) gives direct access to Meditation, Q&A, and DCI Centers; visitor QR Codes will point to this route.
 - **Reason**: Keeps the application aligned with its confirmed purpose: supporting monk students in leading meditation and providing basic information to international visitors.
