@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
 import { trackUsageEvent } from '../lib/analytics'
 import { getBioLinkImageUrl } from '../lib/bioLinkImages'
+import { isSafeWebUrl } from '../lib/publicContent'
+import { VisitorBackLink } from '../components/VisitorBackLink'
 
 interface CenterTranslationRow {
   language_code: string
@@ -44,8 +46,11 @@ export function CentersPage() {
 
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [centers, setCenters] = useState<CenterRow[]>([])
-  const [bioLinks, setBioLinks] = useState<BioLinkRow[]>([])
+  const [allCenters, setCenters] = useState<CenterRow[]>([])
+  const [allLinks, setBioLinks] = useState<BioLinkRow[]>([])
+  const [linksError, setLinksError] = useState(false)
+  const centers = allCenters.filter(center => center.dci_center_translations.some(tr => tr.language_code === currentLang))
+  const bioLinks = allLinks.filter(link => isSafeWebUrl(link.url) && link.bio_link_translations.some(tr => tr.language_code === currentLang))
 
   // ── Fetch Data ──────────────────────────────────────────────────────────────
 
@@ -58,9 +63,10 @@ export function CentersPage() {
 
     setIsLoading(true)
     setError(null)
+    setLinksError(false)
 
     try {
-      const [centersRes, linksRes] = await Promise.all([
+      const [centerResult, linkResult] = await Promise.allSettled([
         supabaseClient
           .from('dci_centers')
           .select(`
@@ -90,35 +96,30 @@ export function CentersPage() {
           .order('display_order', { ascending: true })
       ])
 
+      if (centerResult.status === 'rejected') throw centerResult.reason
+      const centersRes = centerResult.value
       if (centersRes.error) throw centersRes.error
-      if (linksRes.error) throw linksRes.error
+      const linksRes = linkResult.status === 'fulfilled' ? linkResult.value : null
+      setLinksError(!linksRes || !!linksRes.error)
 
-      const allCenters = (centersRes.data as CenterRow[]) ?? []
-      const validCenters = allCenters.filter(center =>
-        center.dci_center_translations.some(tr => tr.language_code === currentLang)
-      )
-      setCenters(validCenters)
+      setCenters((centersRes.data as CenterRow[]) ?? [])
 
-      const linksData = (linksRes.data || []) as BioLinkRow[]
-      const validLinks = linksData.filter(link => {
-        const trans = link.bio_link_translations.find(tr => tr.language_code === currentLang)
-        return trans != null && (link.url.startsWith('http://') || link.url.startsWith('https://'))
-      })
-      setBioLinks(validLinks)
+      const linksData = (linksRes && !linksRes.error ? linksRes.data || [] : []) as BioLinkRow[]
+      setBioLinks(linksData)
 
       setIsLoading(false)
     } catch {
-      setError(t('centers.errorLoadCenters'))
+      setError(t('centers.errorLoad'))
       setIsLoading(false)
     }
-  }, [t, currentLang])
+  }, [t])
 
   useEffect(() => {
     fetchData()
   }, [fetchData])
 
   return (
-    <div className="space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto font-['Noto_Sans_Thai']">
+    <div className="break-words [overflow-wrap:anywhere] space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto font-['Noto_Sans_Thai']">
       {/* Banner */}
       <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -134,11 +135,12 @@ export function CentersPage() {
         <p className="text-sm sm:text-base text-slate-600">
           {t('centers.subtitle')}
         </p>
+        <VisitorBackLink />
       </section>
 
       {/* Loading State */}
       {isLoading && (
-        <div className="flex justify-center items-center py-20">
+        <div role="status" aria-label={t('centers.loading')} className="flex justify-center items-center py-20">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#A86100]" />
         </div>
       )}
@@ -146,7 +148,7 @@ export function CentersPage() {
       {/* Error State */}
       {!isLoading && error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
-          <p className="text-red-800 font-semibold">{t('centers.errorLoad')}</p>
+          <p role="alert" className="text-red-800 font-semibold">{error}</p>
           <button
             type="button"
             onClick={fetchData}
@@ -213,20 +215,23 @@ export function CentersPage() {
                   </div>
 
                   {/* Links */}
+                  {![center.map_url, center.website_url, center.contact_url].some(isSafeWebUrl) && (
+                    <p className="text-sm text-slate-500">{t('centers.linkPending')}</p>
+                  )}
                   <div className="flex flex-wrap gap-3 pt-2">
-                    {center.map_url && (
+                    {isSafeWebUrl(center.map_url) && (
                       <a href={center.map_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
                         <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         {t('centers.linkMap')}
                       </a>
                     )}
-                    {center.website_url && (
+                    {isSafeWebUrl(center.website_url) && (
                       <a href={center.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
                         <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
                         {t('centers.linkWebsite')}
                       </a>
                     )}
-                    {center.contact_url && (
+                    {isSafeWebUrl(center.contact_url) && (
                       <a href={center.contact_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
                         <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                         {t('centers.linkContact')}
@@ -253,9 +258,15 @@ export function CentersPage() {
       )}
 
       {/* BioLinks */}
+      {!isLoading && !error && linksError && (
+        <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          <p>{t('home.errorLoadLinks')}</p>
+          <button type="button" onClick={fetchData} className="mt-2 min-h-11 rounded-lg border border-amber-300 px-4 font-semibold">{t('home.retry')}</button>
+        </div>
+      )}
       {!isLoading && !error && bioLinks.length > 0 && (
         <section className="bg-slate-50/50 rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
-          <h2 className="text-xl font-bold text-[#11223C] text-center">{t('home.importantLinks', 'Important Links')}</h2>
+          <h2 className="text-xl font-bold text-[#11223C] text-center">{t('home.bioLinksTitle')}</h2>
           <div className="space-y-3">
             {bioLinks.map(link => {
               const transTitle = link.bio_link_translations.find(tr => tr.language_code === currentLang)?.title;
@@ -267,14 +278,14 @@ export function CentersPage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackUsageEvent({ eventType: 'bio_link_click', resourceType: 'bio_link', resourceId: link.id })}
+                  onClick={() => { void trackUsageEvent({ eventType: 'bio_link_click', resourceType: 'bio_link', resourceId: link.id }).catch(() => {}) }}
                   className="flex items-center justify-between px-5 py-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs hover:border-[#A86100] transition-all"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex min-w-0 items-center gap-4">
                     {imgUrl ? (
-                      <img src={imgUrl} alt={transTitle} className="w-10 h-10 object-cover rounded-lg" />
+                      <img src={imgUrl} alt="" loading="lazy" className="w-10 h-10 shrink-0 object-cover rounded-lg" />
                     ) : (
-                      <div className="w-10 h-10 bg-amber-50 text-[#A86100] rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 shrink-0 bg-amber-50 text-[#A86100] rounded-lg flex items-center justify-center">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                       </div>
                     )}

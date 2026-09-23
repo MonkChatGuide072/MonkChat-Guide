@@ -13,7 +13,7 @@ export function ProtectedRoute() {
   }
 
   // User must have an active session, a valid profile, and be active
-  if (!session || !profile || !profile.is_active) {
+  if (!session || !profile || !profile.is_active || !['owner', 'team_member'].includes(profile.role)) {
     return <Navigate to="/admin/login" replace />
   }
 

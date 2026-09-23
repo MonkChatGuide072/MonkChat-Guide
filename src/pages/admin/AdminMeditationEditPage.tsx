@@ -3,9 +3,11 @@ import { useNavigate, useParams, Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
+import { AudioLanguageField } from '../../components/AudioLanguageField'
 
 interface TrackData {
   id: string
+  source_language_code: string
   duration_seconds: number
   audio_storage_path: string | null
   content_status: 'draft' | 'published' | 'archived'
@@ -41,6 +43,7 @@ export function AdminMeditationEditPage() {
 
   const [minutes, setMinutes] = useState('0')
   const [seconds, setSeconds] = useState('0')
+  const [sourceLanguage, setSourceLanguage] = useState('th')
 
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -67,7 +70,7 @@ export function AdminMeditationEditPage() {
       // 1. Fetch core track row
       const { data: trackRow, error: trackErr } = await supabaseClient
         .from('meditation_tracks')
-        .select('id, duration_seconds, audio_storage_path, content_status, is_published, created_at, updated_at')
+        .select('id, source_language_code, duration_seconds, audio_storage_path, content_status, is_published, created_at, updated_at')
         .eq('id', trackId)
         .single()
 
@@ -78,6 +81,7 @@ export function AdminMeditationEditPage() {
       }
 
       setTrackData(trackRow as TrackData)
+      setSourceLanguage(trackRow.source_language_code)
       setMinutes(Math.floor(trackRow.duration_seconds / 60).toString())
       setSeconds((trackRow.duration_seconds % 60).toString())
 
@@ -178,11 +182,12 @@ export function AdminMeditationEditPage() {
     try {
       const originalDuration = trackData.duration_seconds
 
-      // Step 1: Update Core Track Row (duration_seconds, updated_by)
+      // Step 1: Update the core track and its audio language.
       const { error: coreUpdateErr } = await supabaseClient
         .from('meditation_tracks')
         .update({
           duration_seconds: totalSeconds,
+          source_language_code: sourceLanguage,
           updated_by: user.id,
         })
         .eq('id', trackId)
@@ -223,11 +228,12 @@ export function AdminMeditationEditPage() {
         .upsert(translationsToUpsert, { onConflict: 'track_id, language_code' })
 
       if (transUpsertErr) {
-        // Attempt rollback of core duration back to originalDuration
+        // Restore both core fields if the translation save fails.
         const { error: rollbackErr } = await supabaseClient
           .from('meditation_tracks')
           .update({
             duration_seconds: originalDuration,
+            source_language_code: trackData.source_language_code,
             updated_by: user.id,
           })
           .eq('id', trackId)
@@ -344,6 +350,7 @@ export function AdminMeditationEditPage() {
 
       {/* Edit Form */}
       <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <AudioLanguageField value={sourceLanguage} onChange={setSourceLanguage} disabled={isSubmitting} />
         {/* Thai Section */}
         <div className="space-y-4 pt-2 border-b border-slate-100 pb-6">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">

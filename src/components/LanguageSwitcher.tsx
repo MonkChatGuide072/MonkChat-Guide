@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
+import { normalizeLanguage, type AppLanguage } from '../lib/language'
 
 export function LanguageSwitcher() {
   const { i18n, t } = useTranslation()
-  const activeLang = i18n.resolvedLanguage || i18n.language || 'th'
-  const currentLang = activeLang.startsWith('en') ? 'en' : 'th'
+  const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
 
-  const setLanguage = (lang: 'th' | 'en') => {
+  const setLanguage = (lang: AppLanguage) => {
     i18n.changeLanguage(lang)
   }
 

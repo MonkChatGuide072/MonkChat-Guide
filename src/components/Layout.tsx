@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import {
+  VISITOR_LANGUAGE_SELECTED_EVENT,
+  VISITOR_LANGUAGE_SESSION_KEY,
+} from '../lib/language'
 
 export function Layout() {
   const { t } = useTranslation()
@@ -14,13 +18,17 @@ export function Layout() {
   ]
 
   const location = useLocation()
-  const [hasSessionLang, setHasSessionLang] = useState(false)
+  const [hasSessionLang, setHasSessionLang] = useState(
+    () => !!sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY),
+  )
 
   useEffect(() => {
-    setHasSessionLang(!!sessionStorage.getItem('ui_language_code'))
-    const handleStorage = () => setHasSessionLang(!!sessionStorage.getItem('ui_language_code'))
-    window.addEventListener('languageSelected', handleStorage)
-    return () => window.removeEventListener('languageSelected', handleStorage)
+    setHasSessionLang(!!sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY))
+    const handleLanguageSelected = () => {
+      setHasSessionLang(!!sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY))
+    }
+    window.addEventListener(VISITOR_LANGUAGE_SELECTED_EVENT, handleLanguageSelected)
+    return () => window.removeEventListener(VISITOR_LANGUAGE_SELECTED_EVENT, handleLanguageSelected)
   }, [])
 
   const isProjectInfo = location.pathname === '/'
@@ -53,7 +61,7 @@ export function Layout() {
         </div>
 
         {/* Navigation Bar */}
-        <nav aria-label="Main Navigation" className="border-t border-slate-100 bg-slate-50/70">
+        <nav aria-label={t('nav.mainNavigation')} className="border-t border-slate-100 bg-slate-50/70">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center gap-1 sm:gap-2 overflow-x-auto py-2">
             {navItems.map((item) => (
               <NavLink
@@ -86,7 +94,7 @@ export function Layout() {
           <p>{t('app.footer')}</p>
           <div className="pt-2">
             <NavLink to="/" className="text-amber-700 hover:underline">
-              About MonkChat Guide
+              {t('nav.aboutProject')}
             </NavLink>
           </div>
         </div>

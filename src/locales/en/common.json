@@ -12,7 +12,9 @@
     "qa": "Q&A",
     "centers": "Centers",
     "login": "Team Login",
-    "visitor": "For Visitors"
+    "visitor": "For Visitors",
+    "mainNavigation": "Main navigation",
+    "aboutProject": "About MonkChat Guide"
   },
   "language": {
     "label": "Language",
@@ -70,7 +72,16 @@
     "centersTitle": "Find a Dhammakaya Center",
     "centersDesc": "Explore international centers and ways to continue learning.",
     "centersAction": "View centers",
-    "notice": "Dhamma content and media are reviewed before they are published for public use."
+    "notice": "Dhamma content and media are reviewed before they are published for public use.",
+    "recommendedTag": "Recommended for you",
+    "recommendedTitle": "Begin a meditation session",
+    "recommendedSubtitle": "Choose a published track with content available in your language.",
+    "loadingRecommended": "Loading a recommended track...",
+    "errorRecommended": "Could not load the recommended track.",
+    "noRecommended": "No recommended track is available in this language yet. You can still browse all meditation tracks.",
+    "selectRecommended": "Choose a recommended track",
+    "playNow": "Open guided meditation",
+    "backToHome": "Back to visitor home"
   },
   "meditation": {
     "heroTag": "GUIDED MEDITATION",
@@ -83,7 +94,7 @@
     "speaker": "Guided by",
     "audioPlayerTitle": "Meditation Audio Player",
     "audioStatusUnavailable": "Real audio file pending team upload",
-    "audioUnavailableNotice": "Real audio files are currently pending upload. Playback is intentionally disabled until real files are added by the team.",
+    "audioUnavailableNotice": "No audio file is available for this track yet. You can read any available supporting text.",
     "transcriptTitle": "Transcript",
     "subtitlesTitle": "Synchronized Subtitles",
     "subtitleNotice": "* Subtitle timing and text are demonstration placeholders and not synced to real audio.",
@@ -100,7 +111,13 @@
     "playbackError": "Failed to load audio.",
     "retry": "Retry",
     "emptyTitle": "No meditation tracks in system",
-    "emptyDesc": "There are currently no published guided meditation tracks available."
+    "emptyDesc": "There are currently no published guided meditation tracks available.",
+    "loadingAudio": "Preparing meditation audio...",
+    "loadingSubtitles": "Loading captions...",
+    "subtitleError": "Captions could not be loaded. You can still listen or read the transcript.",
+    "currentCaption": "Current caption",
+    "captionWaiting": "Captions will appear when playback reaches a captioned section.",
+    "allCaptions": "View all captions with timestamps"
   },
   "qa": {
     "heroTag": "BUDDHISM & MEDITATION Q&A",
@@ -115,14 +132,17 @@
     "statusUnverified": "Unverified",
     "statusUnpublished": "Unpublished",
     "noResults": "No questions matched your search term.",
-    "verificationNotice": "ℹ️ Official public Q&A content requires explicit verification by teaching monks (verified) and administrative publication approval (published).",
+    "verificationNotice": "Official public Q&A content requires explicit verification by teaching monks (verified) and administrative publication approval (published).",
     "placeholderDisclaimer": "All demonstration Q&A items are placeholders for system testing.",
     "errorNoClient": "Supabase client not initialized.",
     "errorLoad": "Could not load Q&A items.",
     "retry": "Retry",
     "empty": "No verified and published Q&A items available yet.",
     "itemCount": "item(s)",
-    "sourceRef": "Source Reference:"
+    "sourceRef": "Source Reference:",
+    "listTitle": "Questions & answers",
+    "loading": "Loading questions and answers...",
+    "readMore": "Read the full answer"
   },
   "pages": {
     "home": {
@@ -170,9 +190,9 @@
   "centers": {
     "heroTag": "DCI MEDITATION CENTERS",
     "title": "DCI Meditation Centers",
-    "subtitle": "Basic listing of DCI meditation centers (demonstration data).",
+    "subtitle": "Explore DCI meditation centers and contact details published by the team.",
     "demoBadge": "Demonstration Data (Demo)",
-    "listTitle": "Demonstration Center Records",
+    "listTitle": "Meditation centers",
     "demoNotice": "ℹ️ All center records below are system structure placeholders for testing. They do not represent real or official centers. Official data is pending from the project owner.",
     "fieldCity": "Area",
     "fieldAddress": "Address",
@@ -185,7 +205,8 @@
     "errorLoad": "Could not load centers.",
     "retry": "Retry",
     "empty": "No published centers available yet.",
-    "itemCount": "center(s)"
+    "itemCount": "center(s)",
+    "loading": "Loading centers..."
   },
   "admin": {
     "nav": {

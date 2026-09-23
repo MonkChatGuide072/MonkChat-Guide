@@ -9,7 +9,7 @@ import { isAuthApiError } from '@supabase/supabase-js'
 export function LoginPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { session, profile, isLoading: isAuthLoading } = useAuth()
+  const { session, profile, isLoading: isAuthLoading, signOut } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -78,18 +78,19 @@ export function LoginPage() {
       <div className="max-w-md mx-auto space-y-6 pt-4 sm:pt-8">
         <div className="bg-white rounded-xl border border-red-200 p-6 sm:p-8 shadow-xs text-center">
           <h2 className="text-xl font-bold text-red-700 mb-4">
-            {isInactive ? 'Account Inactive' : 'Access Denied'}
+            {t(isInactive ? 'management.inactiveTitle' : 'management.deniedTitle')}
           </h2>
           <p className="text-slate-600 mb-6">{t(`pages.login.errors.${errorKey}`)}</p>
           <button
-            onClick={() => {
-              supabaseClient?.auth.signOut()
-              setErrorMsg('') // Clear any lingering form errors
+            onClick={async () => {
+              try { await signOut(); setErrorMsg('') }
+              catch { setErrorMsg(t('management.signOutError')) }
             }}
             className="w-full rounded-lg bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-200"
           >
-            Sign Out
+            {t('admin.nav.signOut')}
           </button>
+          {errorMsg && <p role="alert" className="mt-3 text-sm text-red-700">{errorMsg}</p>}
         </div>
       </div>
     )
@@ -121,6 +122,7 @@ export function LoginPage() {
             <input
               id="email"
               type="email"
+              autoComplete="username"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -137,6 +139,7 @@ export function LoginPage() {
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -156,7 +159,7 @@ export function LoginPage() {
         </form>
 
         <p className="text-center text-xs text-amber-700 bg-amber-50 rounded-lg p-2.5 border border-amber-200/60 font-medium">
-          {t('pages.login.note')}
+          {t('management.loginNote')}
         </p>
       </div>
     </div>
