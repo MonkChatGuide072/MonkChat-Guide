@@ -16,6 +16,8 @@ export const managementTranslations = {
     partialCreate: 'สร้างบัญชีเข้าสู่ระบบแล้ว แต่ยังเพิ่มสิทธิ์ทีมไม่ได้ บัญชีนี้ยังเข้า CMS ไม่ได้ กรุณาให้ผู้ดูแลตรวจสอบก่อนลองใหม่',
     sourceLanguage: 'ภาษาที่พูดในไฟล์เสียง', sourceLanguageHelp: 'เลือกตามเสียงจริง แยกจากภาษาของชื่อและคำอธิบาย',
     inactiveTitle: 'บัญชีถูกระงับ', deniedTitle: 'ไม่มีสิทธิ์เข้าถึง', loginNote: 'เฉพาะบัญชีทีมงานที่ได้รับสิทธิ์จากผู้ดูแลโครงการ',
+    loginPanelTitle: 'พื้นที่จัดการเนื้อหาสำหรับผู้ดูแลโครงการ',
+    loginPanelDescription: 'จัดการเสียงสมาธิ คำถาม–คำตอบ ศูนย์ปฏิบัติธรรม และลิงก์ที่เผยแพร่บนเว็บไซต์',
     signOutError: 'ออกจากระบบไม่สำเร็จ กรุณาลองใหม่',
   },
   en: {
@@ -35,6 +37,8 @@ export const managementTranslations = {
     partialCreate: 'The sign-in account was created, but team access could not be added. It cannot access the CMS. Ask the administrator to check before retrying.',
     sourceLanguage: 'Spoken audio language', sourceLanguageHelp: 'Choose the actual spoken language, independently of translated titles and descriptions.',
     inactiveTitle: 'Account inactive', deniedTitle: 'Access denied', loginNote: 'For team accounts authorized by the project owner.',
+    loginPanelTitle: 'Content management for project administrators',
+    loginPanelDescription: 'Manage meditation audio, questions and answers, DCI centers, and links published on the website.',
     signOutError: 'Could not sign out. Please try again.',
   },
 }

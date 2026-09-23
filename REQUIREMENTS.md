@@ -22,6 +22,7 @@
 
 ## Public User Requirements
 Public users must be able to:
+- Open `/` as the public Home for the Monk Chat project, with a clear introduction, purpose, activity overview, project imagery, and a path into MonkChat Guide.
 - Open the application through a QR Code directly to `/visit`.
 - See a Language Gate at `/visit` (English and Thai) before proceeding.
 - View the main visitor home and open important links.
@@ -31,6 +32,13 @@ Public users must be able to:
 - View information about five DCI centers.
 - Use the application comfortably on a mobile phone.
 - Install the PWA on a supported device.
+
+## Public Home Requirements
+- The public Home represents the real Monk Chat project rather than presenting the website as an academic report or software showcase.
+- The Home must clearly separate two layers: information about Monk Chat and the supporting MonkChat Guide tools.
+- The Home must provide sections for the project introduction, purpose, activities, atmosphere/gallery, visitor resources, and official related links.
+- Authentic project photos should replace temporary illustrations when approved assets are available. Generated or stock people must not be presented as real Monk Chat participants.
+- `/visit` remains the direct QR entry point for Meditation, Q&A, DCI Centers, and Bio Links.
 
 ## Team Management Requirements
 The application must include a private management area. Each team member must have an individual login account.
@@ -114,7 +122,7 @@ After logging in, authorized team members must be able to:
 - Basic anonymous usage statistics are included.
 - The system must support adding more languages later.
 - Prototype development period: One week.
-- Design tokens: navy `#11223C`, gold `#A86100`, ivory `#FFFEF9`, Noto Sans Thai, 8px system.
+- Core application design tokens: navy `#11223C`, gold `#A86100`, ivory `#FFFEF9`, Noto Sans Thai, 8px system. The public Home uses the calm terracotta extension recorded in Decision 25.
 - Icons: SVG pictograms only (no emojis as system icons).
 - Roles: Owner, Team Member, Public User.
 
