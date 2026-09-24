@@ -37,6 +37,22 @@ body {
   min-height: 100vh;
 }
 
+.monkchat-hero-image {
+  animation: monkchat-hero-reveal 1.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes monkchat-hero-reveal {
+  from {
+    filter: saturate(0.82) brightness(0.94);
+    transform: scale(1.025);
+  }
+
+  to {
+    filter: saturate(1) brightness(1);
+    transform: scale(1);
+  }
+}
+
 ::selection {
   background: rgba(168, 97, 0, 0.2);
   color: #11223c;
