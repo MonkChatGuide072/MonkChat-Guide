@@ -11,6 +11,9 @@ export type HomePrototypeVariant = (typeof variants)[number]['key']
 
 export function PrototypeSwitcher({ current }: { current: HomePrototypeVariant }) {
   const [searchParams, setSearchParams] = useSearchParams()
+  const hostname = typeof window === 'undefined' ? '' : window.location.hostname
+  const isCloudflarePreview = hostname.endsWith('.monkchat-guide.pages.dev') && hostname !== 'monkchat-guide.pages.dev'
+  const canShowSwitcher = import.meta.env.DEV || isCloudflarePreview
 
   const selectOffset = (offset: number) => {
     const currentIndex = variants.findIndex((variant) => variant.key === current)
@@ -32,7 +35,7 @@ export function PrototypeSwitcher({ current }: { current: HomePrototypeVariant }
     return () => window.removeEventListener('keydown', handleKeyDown)
   })
 
-  if (!import.meta.env.DEV) return null
+  if (!canShowSwitcher) return null
 
   const active = variants.find((variant) => variant.key === current) ?? variants[0]
 
