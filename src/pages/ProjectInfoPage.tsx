@@ -1,7 +1,10 @@
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import type { ReactNode } from 'react'
+import { lazy, Suspense, type ReactNode } from 'react'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
+import type { HomePrototypeVariant } from '../components/PrototypeSwitcher'
+
+const ProjectInfoPrototype = lazy(() => import('./ProjectInfoPrototype').then((module) => ({ default: module.ProjectInfoPrototype })))
 
 const facebookUrl = 'https://web.facebook.com/MonkChatAyutthaya/'
 const meditationCenterUrl = 'https://ayothayameditation.com'
@@ -109,6 +112,19 @@ function GuideCard({ icon, title, text }: { icon: ReactNode; title: string; text
 
 export function ProjectInfoPage() {
   const { t } = useTranslation()
+  const [searchParams] = useSearchParams()
+  const requestedVariant = searchParams.get('variant')?.toUpperCase()
+  const hostname = typeof window === 'undefined' ? '' : window.location.hostname
+  const isCloudflarePreview = hostname.endsWith('.monkchat-guide.pages.dev') && hostname !== 'monkchat-guide.pages.dev'
+  const canShowPrototype = import.meta.env.DEV || isCloudflarePreview
+
+  if (canShowPrototype && (requestedVariant === 'A' || requestedVariant === 'B' || requestedVariant === 'C')) {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-[#F7F0E8]" />}>
+        <ProjectInfoPrototype variant={requestedVariant as HomePrototypeVariant} />
+      </Suspense>
+    )
+  }
 
   return (
     <div className="min-h-screen overflow-x-clip bg-[#FBF6EF] text-[#4A342E]">
