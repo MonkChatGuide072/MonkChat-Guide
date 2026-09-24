@@ -5,6 +5,8 @@ import { LanguageSwitcher } from '../components/LanguageSwitcher'
 
 const facebookUrl = 'https://web.facebook.com/MonkChatAyutthaya/'
 const meditationCenterUrl = 'https://ayothayameditation.com'
+// Replace this path with approved real project photography when it is available.
+const homeHeroImage = '/images/home/monkchat-meditation-field.webp'
 
 function ArrowIcon({ direction = 'right', className = 'h-5 w-5' }: {
   direction?: 'right' | 'down' | 'external'
@@ -113,60 +115,50 @@ export function ProjectInfoPage() {
 
   return (
     <div className="monkchat-home min-h-screen overflow-x-clip bg-[#FFFDF9] text-[#3F2E29]">
-      <header className="sticky top-0 z-40 border-b border-[#744A3B]/15 bg-[#FFFDF9]/95 backdrop-blur-md">
+      <header className="absolute inset-x-0 top-0 z-40 text-white">
         <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-4 px-4 py-3 sm:px-8 lg:px-12">
           <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label="Monk Chat Ayutthaya">
-            <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 shrink-0 rounded-xl bg-white ring-1 ring-[#744A3B]/15 transition-transform group-hover:-rotate-3" />
-            <span className="min-w-0 leading-tight">
-              <span className="block truncate text-sm font-black tracking-tight text-[#3F2E29] sm:text-base">Monk Chat</span>
-              <span className="mt-1 block text-[0.58rem] font-bold uppercase tracking-[0.22em] text-[#8A4C39]">Ayutthaya</span>
+            <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 shrink-0 rounded-xl bg-white/95 ring-1 ring-white/25 transition-transform group-hover:-rotate-3" />
+            <span className="hidden min-w-0 leading-tight sm:block">
+              <span className="block truncate text-sm font-black tracking-tight text-white sm:text-base">Monk Chat</span>
+              <span className="mt-1 block text-[0.58rem] font-bold uppercase tracking-[0.22em] text-white/70">Ayutthaya</span>
             </span>
           </Link>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label={t('projectLanding.navigation')}>
-            <a href="#story" className="text-sm font-bold text-[#62493F] transition-colors hover:text-[#8A4C39]">{t('projectLanding.navStory')}</a>
-            <a href="#moments" className="text-sm font-bold text-[#62493F] transition-colors hover:text-[#8A4C39]">{t('projectLanding.navMoments')}</a>
-            <a href="#plan" className="text-sm font-bold text-[#62493F] transition-colors hover:text-[#8A4C39]">{t('projectLanding.navPlan')}</a>
+            <a href="#story" className="text-sm font-bold text-white/80 transition-colors hover:text-white">{t('projectLanding.navStory')}</a>
+            <a href="#moments" className="text-sm font-bold text-white/80 transition-colors hover:text-white">{t('projectLanding.navMoments')}</a>
+            <a href="#plan" className="text-sm font-bold text-white/80 transition-colors hover:text-white">{t('projectLanding.navPlan')}</a>
           </nav>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            <LanguageSwitcher tone="clay" />
-            <Link to="/visit" className="inline-flex min-h-10 items-center rounded-full bg-[#713D2F] px-4 text-xs font-bold text-white transition-colors hover:bg-[#5B3025]">
-              {t('projectLanding.navGuide')}
+            <LanguageSwitcher tone="overlay" />
+            <Link to="/visit" aria-label={t('projectLanding.navGuide')} className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full bg-white/90 px-3 text-xs font-bold text-[#3F2E29] shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-md transition-colors hover:bg-white sm:px-5">
+              <span className="hidden sm:inline">{t('projectLanding.navGuide')}</span><ArrowIcon className="h-4 w-4" />
             </Link>
           </div>
         </div>
-
-        <nav className="flex gap-2 overflow-x-auto border-t border-[#744A3B]/10 px-4 py-2 sm:px-8 lg:hidden" aria-label={t('projectLanding.mobileNavigation')}>
-          <a href="#story" className="inline-flex min-h-9 shrink-0 items-center rounded-full bg-[#F1E2D8] px-4 text-xs font-bold text-[#5A3A31]">{t('projectLanding.navStory')}</a>
-          <a href="#moments" className="inline-flex min-h-9 shrink-0 items-center rounded-full px-4 text-xs font-bold text-[#5A3A31]">{t('projectLanding.navMoments')}</a>
-          <a href="#plan" className="inline-flex min-h-9 shrink-0 items-center rounded-full px-4 text-xs font-bold text-[#5A3A31]">{t('projectLanding.navPlan')}</a>
-        </nav>
       </header>
 
       <main>
-        <section className="mx-auto grid min-h-[78svh] max-w-[90rem] gap-10 px-5 py-10 sm:px-8 sm:py-14 lg:min-h-[calc(100svh-65px)] lg:grid-cols-[0.84fr_1.16fr] lg:items-center lg:gap-14 lg:px-12 lg:py-16">
-          <div className="relative z-10 max-w-3xl lg:pr-4">
-            <h1 className="whitespace-pre-line text-[clamp(3.15rem,6.5vw,6rem)] font-black leading-[0.96] tracking-[-0.04em] text-balance text-[#3C2B26]">
-              {t('projectLanding.heroTitle')}
-            </h1>
-            <p className="mt-7 max-w-2xl text-base leading-8 text-[#60483F] sm:text-lg">{t('projectLanding.heroDescription')}</p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a href="#story" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-full bg-[#713D2F] px-6 text-sm font-bold text-white shadow-[0_14px_34px_rgba(92,48,37,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#5B3025]">
-                {t('projectLanding.primaryCta')}<ArrowIcon direction="down" className="h-4 w-4" />
-              </a>
-              <Link to="/visit" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-full border border-[#713D2F]/25 px-6 text-sm font-bold text-[#4B332C] transition-colors hover:border-[#713D2F]/55 hover:bg-[#F6ECE5]">
-                {t('projectLanding.secondaryCta')}<ArrowIcon className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
+        <section className="relative isolate min-h-[100svh] overflow-hidden bg-[#3D3029] text-white">
+          <img src={homeHeroImage} alt={t('projectLanding.heroVisualAlt')} decoding="async" fetchPriority="high" className="monkchat-hero-image absolute inset-0 h-full w-full object-cover object-[56%_center] sm:object-center" />
+          <div className="monkchat-hero-overlay absolute inset-0" aria-hidden="true" />
 
-          <figure className="lg:-mr-12">
-            <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-[#E3CDBF] sm:aspect-[16/11] lg:aspect-[4/5] lg:max-h-[46rem]">
-              <img src="/images/home/monkchat-meditation-field.webp" alt={t('projectLanding.heroVisualAlt')} decoding="async" fetchPriority="high" className="monkchat-hero-image h-full w-full object-cover object-center" />
+          <div className="relative mx-auto flex min-h-[100svh] max-w-[90rem] flex-col justify-end px-5 pb-7 pt-28 sm:px-8 sm:pb-9 lg:px-12 lg:pb-10">
+            <div className="grid gap-8 border-b border-white/25 pb-8 lg:grid-cols-[1.15fr_0.65fr] lg:items-end lg:gap-16 lg:pb-10">
+              <h1 className="max-w-5xl whitespace-pre-line text-[clamp(3.35rem,7.4vw,7rem)] font-black leading-[0.88] tracking-[-0.055em] text-balance text-white drop-shadow-[0_4px_28px_rgba(0,0,0,0.24)]">
+                {t('projectLanding.heroTitle')}
+              </h1>
+              <div className="max-w-xl lg:justify-self-end">
+                <p className="text-base font-medium leading-8 text-white/90 sm:text-lg">{t('projectLanding.heroDescription')}</p>
+                <a href="#plan" className="mt-6 inline-flex min-h-13 items-center justify-center gap-3 rounded-full bg-[#D87350] px-6 text-sm font-bold text-white shadow-[0_14px_34px_rgba(0,0,0,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C46243]">
+                  {t('projectLanding.primaryCta')}<ArrowIcon direction="down" className="h-4 w-4" />
+                </a>
+              </div>
             </div>
-            <figcaption className="mt-4"><ImageDisclosure /></figcaption>
-          </figure>
+            <div className="pt-4"><ImageDisclosure inverse /></div>
+          </div>
         </section>
 
         <section className="bg-[#5B372E] text-white" aria-labelledby="purpose-heading">
