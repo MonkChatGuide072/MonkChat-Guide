@@ -41,6 +41,12 @@ body {
   animation: monkchat-hero-reveal 1.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.monkchat-hero-overlay {
+  background:
+    linear-gradient(180deg, rgba(24, 19, 16, 0.46) 0%, rgba(24, 19, 16, 0.06) 30%, rgba(24, 19, 16, 0.2) 56%, rgba(24, 19, 16, 0.84) 100%),
+    linear-gradient(90deg, rgba(24, 19, 16, 0.38) 0%, rgba(24, 19, 16, 0.08) 58%, rgba(24, 19, 16, 0.18) 100%);
+}
+
 @keyframes monkchat-hero-reveal {
   from {
     filter: saturate(0.82) brightness(0.94);
