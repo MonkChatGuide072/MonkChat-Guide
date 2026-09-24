@@ -6,9 +6,12 @@ import { LanguageSwitcher } from '../components/LanguageSwitcher'
 const facebookUrl = 'https://web.facebook.com/MonkChatAyutthaya/'
 const meditationCenterUrl = 'https://ayothayameditation.com'
 
-function ArrowIcon({ className = 'h-5 w-5' }: { className?: string }) {
+function ArrowIcon({ direction = 'right', className = 'h-5 w-5' }: {
+  direction?: 'right' | 'down' | 'external'
+  className?: string
+}) {
   return (
-    <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none">
+    <svg className={`${className} ${direction === 'down' ? 'rotate-90' : ''} ${direction === 'external' ? '-rotate-45' : ''}`} aria-hidden="true" viewBox="0 0 24 24" fill="none">
       <path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
@@ -66,43 +69,41 @@ function CompassIcon() {
   )
 }
 
-function ActivityCard({ icon, title, text, accent }: {
-  icon: ReactNode
-  title: string
-  text: string
-  accent: string
-}) {
+function ImageDisclosure({ inverse = false }: { inverse?: boolean }) {
+  const { t } = useTranslation()
   return (
-    <article className="group overflow-hidden rounded-[1.6rem] border border-[#7A3E2E]/10 bg-[#FFFDFC] shadow-[0_15px_45px_rgba(91,58,49,0.07)] transition-all hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(91,58,49,0.12)]">
-      <div className={`h-2 ${accent}`} />
-      <div className="p-6 sm:p-7">
-        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-[#F3DED4] text-[#7A3E2E] transition-colors group-hover:bg-[#7A3E2E] group-hover:text-white">
-          {icon}
-        </span>
-        <h3 className="mt-6 text-xl font-bold text-[#4A3029]">{title}</h3>
-        <p className="mt-3 text-sm leading-7 text-[#6B5149]/78">{text}</p>
-      </div>
+    <span className={`inline-flex items-start gap-2 text-xs font-semibold leading-5 ${inverse ? 'text-[#F5E8DF]' : 'text-[#694B40]'}`}>
+      <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${inverse ? 'bg-[#E6B98F]' : 'bg-[#A95F47]'}`} />
+      {t('projectLanding.visualNote')}
+    </span>
+  )
+}
+
+function ExperienceRow({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
+  return (
+    <article className="grid gap-5 py-8 sm:grid-cols-[4rem_0.7fr_1.3fr] sm:items-start sm:gap-7 sm:py-10">
+      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#E7C4B2] text-[#6F3C2F]">{icon}</span>
+      <h3 className="text-2xl font-black leading-tight tracking-[-0.025em] text-[#3F2E29]">{title}</h3>
+      <p className="max-w-2xl text-base leading-8 text-[#60483F]">{text}</p>
     </article>
   )
 }
 
-function GalleryVisual({ src, label, position = 'center' }: { src: string; label: string; position?: string }) {
+function PlanRow({ label, value }: { label: string; value: string }) {
   return (
-    <figure className="relative h-full min-h-64 overflow-hidden bg-[#E8D3C8]">
-      <img src={src} alt={label} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.025]" style={{ objectPosition: position }} />
-      <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#35251F]/88 to-transparent px-5 pb-5 pt-16 text-sm font-bold text-white">
-        {label}
-      </figcaption>
-    </figure>
+    <div className="grid gap-2 border-b border-[#6F4A3D]/20 py-6 last:border-b-0 sm:grid-cols-[0.52fr_1.48fr] sm:gap-8 sm:py-7">
+      <dt className="text-sm font-black text-[#7A3E2E]">{label}</dt>
+      <dd className="text-base font-bold leading-7 text-[#3F2E29]">{value}</dd>
+    </div>
   )
 }
 
-function GuideCard({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
+function GuideRow({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
   return (
-    <article className="rounded-2xl border border-white/12 bg-white/[0.07] p-6 backdrop-blur-sm">
-      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#D7AA73] text-[#4A3029]">{icon}</span>
-      <h3 className="mt-5 text-lg font-bold text-white">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-white/62">{text}</p>
+    <article className="grid gap-4 border-b border-white/20 py-7 last:border-b-0 sm:grid-cols-[3rem_0.72fr_1.28fr] sm:items-start sm:gap-6">
+      <span className="grid h-11 w-11 place-items-center rounded-2xl bg-[#E7BC8E] text-[#3D3029]">{icon}</span>
+      <h3 className="text-xl font-black text-white">{title}</h3>
+      <p className="text-sm leading-7 text-[#E8DED8]">{text}</p>
     </article>
   )
 }
@@ -111,193 +112,170 @@ export function ProjectInfoPage() {
   const { t } = useTranslation()
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-[#FBF6EF] text-[#4A342E]">
-      <header className="sticky top-0 z-30 border-b border-[#7A3E2E]/10 bg-[#E8C8BA]/92 shadow-[0_8px_25px_rgba(91,58,49,0.08)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-8 lg:px-12">
+    <div className="monkchat-home min-h-screen overflow-x-clip bg-[#FFFDF9] text-[#3F2E29]">
+      <header className="sticky top-0 z-40 border-b border-[#744A3B]/15 bg-[#FFFDF9]/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[90rem] items-center justify-between gap-4 px-4 py-3 sm:px-8 lg:px-12">
           <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label="Monk Chat Ayutthaya">
-            <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 shrink-0 rounded-xl bg-white shadow-sm ring-1 ring-[#7A3E2E]/10 transition-transform group-hover:-rotate-3" />
-            <div className="min-w-0 leading-tight">
-              <span className="block truncate text-sm font-extrabold tracking-tight text-[#4A3029] sm:text-base">Monk Chat</span>
-              <span className="block text-[0.6rem] font-bold uppercase tracking-[0.19em] text-[#7A3E2E]/65">Ayutthaya</span>
-            </div>
+            <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 shrink-0 rounded-xl bg-white ring-1 ring-[#744A3B]/15 transition-transform group-hover:-rotate-3" />
+            <span className="min-w-0 leading-tight">
+              <span className="block truncate text-sm font-black tracking-tight text-[#3F2E29] sm:text-base">Monk Chat</span>
+              <span className="mt-1 block text-[0.58rem] font-bold uppercase tracking-[0.22em] text-[#8A4C39]">Ayutthaya</span>
+            </span>
           </Link>
 
-          <nav className="hidden items-center gap-6 lg:flex" aria-label={t('projectLanding.navigation')}>
-            <a href="#about" className="text-sm font-bold text-[#5B3A31]/68 transition-colors hover:text-[#5B3A31]">{t('projectLanding.navAbout')}</a>
-            <a href="#activities" className="text-sm font-bold text-[#5B3A31]/68 transition-colors hover:text-[#5B3A31]">{t('projectLanding.navActivities')}</a>
-            <a href="#gallery" className="text-sm font-bold text-[#5B3A31]/68 transition-colors hover:text-[#5B3A31]">{t('projectLanding.navGallery')}</a>
+          <nav className="hidden items-center gap-7 lg:flex" aria-label={t('projectLanding.navigation')}>
+            <a href="#story" className="text-sm font-bold text-[#62493F] transition-colors hover:text-[#8A4C39]">{t('projectLanding.navStory')}</a>
+            <a href="#moments" className="text-sm font-bold text-[#62493F] transition-colors hover:text-[#8A4C39]">{t('projectLanding.navMoments')}</a>
+            <a href="#plan" className="text-sm font-bold text-[#62493F] transition-colors hover:text-[#8A4C39]">{t('projectLanding.navPlan')}</a>
           </nav>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <LanguageSwitcher tone="clay" />
-            <Link to="/visit" className="hidden min-h-10 items-center rounded-full bg-[#7A3E2E] px-4 text-xs font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#603025] sm:inline-flex">
+            <Link to="/visit" className="inline-flex min-h-10 items-center rounded-full bg-[#713D2F] px-4 text-xs font-bold text-white transition-colors hover:bg-[#5B3025]">
               {t('projectLanding.navGuide')}
             </Link>
           </div>
         </div>
+
+        <nav className="flex gap-2 overflow-x-auto border-t border-[#744A3B]/10 px-4 py-2 sm:px-8 lg:hidden" aria-label={t('projectLanding.mobileNavigation')}>
+          <a href="#story" className="inline-flex min-h-9 shrink-0 items-center rounded-full bg-[#F1E2D8] px-4 text-xs font-bold text-[#5A3A31]">{t('projectLanding.navStory')}</a>
+          <a href="#moments" className="inline-flex min-h-9 shrink-0 items-center rounded-full px-4 text-xs font-bold text-[#5A3A31]">{t('projectLanding.navMoments')}</a>
+          <a href="#plan" className="inline-flex min-h-9 shrink-0 items-center rounded-full px-4 text-xs font-bold text-[#5A3A31]">{t('projectLanding.navPlan')}</a>
+        </nav>
       </header>
 
       <main>
-        <section className="relative isolate overflow-hidden bg-[#F1DDD3]">
-          <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_16%,rgba(255,253,249,0.9),transparent_26%),radial-gradient(circle_at_85%_10%,rgba(122,62,46,0.12),transparent_25%),linear-gradient(135deg,rgba(239,205,191,0.45),transparent_55%)]" />
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-12 sm:px-8 sm:py-16 lg:min-h-[calc(100vh-65px)] lg:grid-cols-[0.88fr_1.12fr] lg:gap-12 lg:px-12 lg:py-20">
-            <div className="relative z-10 max-w-2xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#7A3E2E]/12 bg-[#FFFDFC]/72 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[0.18em] text-[#7A3E2E] shadow-sm backdrop-blur">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#9A5A45]" />
-                {t('projectLanding.eyebrow')}
-              </span>
-              <h1 className="mt-7 text-[2.6rem] font-extrabold leading-[1.13] tracking-[-0.045em] text-balance text-[#4A3029] sm:text-6xl lg:text-[4.35rem]">
-                {t('projectLanding.heroTitle')}
-              </h1>
-              <p className="mt-6 max-w-xl text-base leading-8 text-[#6B5149]/84 sm:text-lg">
-                {t('projectLanding.heroDescription')}
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a href="#about" className="inline-flex min-h-13 items-center justify-center gap-2 rounded-xl bg-[#7A3E2E] px-6 py-3.5 text-sm font-bold text-white shadow-[0_12px_30px_rgba(122,62,46,0.2)] transition-all hover:-translate-y-0.5 hover:bg-[#603025]">
-                  {t('projectLanding.primaryCta')}
-                  <ArrowIcon className="h-4 w-4 rotate-90" />
-                </a>
-                <Link to="/visit" className="inline-flex min-h-13 items-center justify-center gap-2 rounded-xl border border-[#7A3E2E]/15 bg-[#FFFDFC]/78 px-6 py-3.5 text-sm font-bold text-[#5B3A31] transition-all hover:-translate-y-0.5 hover:border-[#A86852]/55 hover:bg-white">
-                  {t('projectLanding.secondaryCta')}
-                  <ArrowIcon className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative min-h-[22rem] overflow-hidden rounded-[2rem] border border-white/60 bg-[#D9C2B5] shadow-[0_28px_80px_rgba(91,58,49,0.17)] sm:min-h-[30rem] lg:min-h-[36rem]">
-              <img src="/images/home/monkchat-meditation-hero.webp" alt={t('projectLanding.heroVisualAlt')} decoding="async" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" />
-              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#4A3029]/18 via-transparent to-[#FFF4E8]/6" />
+        <section className="mx-auto grid min-h-[78svh] max-w-[90rem] gap-10 px-5 py-10 sm:px-8 sm:py-14 lg:min-h-[calc(100svh-65px)] lg:grid-cols-[0.84fr_1.16fr] lg:items-center lg:gap-14 lg:px-12 lg:py-16">
+          <div className="relative z-10 max-w-3xl lg:pr-4">
+            <h1 className="whitespace-pre-line text-[clamp(3.15rem,6.5vw,6rem)] font-black leading-[0.96] tracking-[-0.04em] text-balance text-[#3C2B26]">
+              {t('projectLanding.heroTitle')}
+            </h1>
+            <p className="mt-7 max-w-2xl text-base leading-8 text-[#60483F] sm:text-lg">{t('projectLanding.heroDescription')}</p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <a href="#story" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-full bg-[#713D2F] px-6 text-sm font-bold text-white shadow-[0_14px_34px_rgba(92,48,37,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#5B3025]">
+                {t('projectLanding.primaryCta')}<ArrowIcon direction="down" className="h-4 w-4" />
+              </a>
+              <Link to="/visit" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-full border border-[#713D2F]/25 px-6 text-sm font-bold text-[#4B332C] transition-colors hover:border-[#713D2F]/55 hover:bg-[#F6ECE5]">
+                {t('projectLanding.secondaryCta')}<ArrowIcon className="h-4 w-4" />
+              </Link>
             </div>
           </div>
+
+          <figure className="lg:-mr-12">
+            <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-[#E3CDBF] sm:aspect-[16/11] lg:aspect-[4/5] lg:max-h-[46rem]">
+              <img src="/images/home/monkchat-meditation-field.webp" alt={t('projectLanding.heroVisualAlt')} decoding="async" fetchPriority="high" className="monkchat-hero-image h-full w-full object-cover object-center" />
+            </div>
+            <figcaption className="mt-4"><ImageDisclosure /></figcaption>
+          </figure>
         </section>
 
-        <section id="about" className="scroll-mt-24 bg-[#FFFDFC]">
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:gap-20 lg:px-12">
+        <section className="bg-[#5B372E] text-white" aria-labelledby="purpose-heading">
+          <div className="mx-auto grid max-w-[90rem] gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.62fr_1.38fr] lg:items-start lg:px-12 lg:py-28">
+            <h2 id="purpose-heading" className="text-sm font-black uppercase tracking-[0.18em] text-[#E7BC8E]">{t('projectLanding.purposeLabel')}</h2>
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#9A503B]">{t('projectLanding.introEyebrow')}</p>
-              <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-[-0.035em] text-balance text-[#4A3029] sm:text-5xl">
-                {t('projectLanding.introTitle')}
-              </h2>
-            </div>
-            <div className="space-y-5 border-l-2 border-[#B86F57]/42 pl-6 sm:pl-8">
-              <p className="text-base leading-8 text-[#6B5149]/86 sm:text-lg">{t('projectLanding.introDescription')}</p>
-              <p className="text-sm leading-7 text-[#6B5149]/68 sm:text-base">{t('projectLanding.introSupporting')}</p>
+              <p className="max-w-5xl text-3xl font-black leading-[1.28] tracking-[-0.03em] text-balance sm:text-5xl lg:text-6xl">{t('projectLanding.purposeStatement')}</p>
+              <p className="mt-8 max-w-3xl text-base leading-8 text-[#F0E5DE] sm:text-lg">{t('projectLanding.purposeDescription')}</p>
             </div>
           </div>
         </section>
 
-        <section className="bg-[#F3E6DE]">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-20 lg:px-12">
-            <div className="relative overflow-hidden rounded-[2rem] bg-[#6B4034] p-7 text-white shadow-[0_24px_70px_rgba(91,58,49,0.17)] sm:p-10">
-              <div aria-hidden="true" className="absolute -right-20 -top-20 h-64 w-64 rounded-full border border-white/10" />
-              <div aria-hidden="true" className="absolute -bottom-28 -left-20 h-72 w-72 rounded-full bg-[#D7AA73]/13" />
-              <ConversationIcon />
-              <blockquote className="relative mt-16 max-w-xl text-2xl font-bold leading-relaxed tracking-[-0.02em] sm:text-3xl">
-                “{t('projectLanding.originQuote')}”
-              </blockquote>
-              <div className="relative mt-8 h-px w-24 bg-[#D7AA73]" />
+        <section id="story" className="scroll-mt-28 border-b border-[#744A3B]/15 bg-[#F4E7DD]" aria-labelledby="story-heading">
+          <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.62fr_1.38fr] lg:gap-20 lg:px-12 lg:py-28">
+            <div className="lg:sticky lg:top-32 lg:self-start">
+              <h2 id="story-heading" className="max-w-lg text-4xl font-black leading-[1.08] tracking-[-0.035em] text-balance sm:text-6xl">{t('projectLanding.storyTitle')}</h2>
+              <p className="mt-6 max-w-md text-base leading-8 text-[#60483F]">{t('projectLanding.storyDescription')}</p>
+            </div>
+            <div className="divide-y divide-[#744A3B]/20 border-y border-[#744A3B]/20">
+              <ExperienceRow icon={<ConversationIcon />} title={t('projectLanding.conversationTitle')} text={t('projectLanding.conversationText')} />
+              <ExperienceRow icon={<CultureIcon />} title={t('projectLanding.cultureTitle')} text={t('projectLanding.cultureText')} />
+              <ExperienceRow icon={<MeditationIcon />} title={t('projectLanding.meditationTitle')} text={t('projectLanding.meditationText')} />
+            </div>
+          </div>
+        </section>
+
+        <section id="moments" className="scroll-mt-28 bg-[#FFFDF9]" aria-labelledby="moments-heading">
+          <div className="mx-auto max-w-[90rem] px-5 py-16 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
+            <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+              <h2 id="moments-heading" className="max-w-xl text-4xl font-black leading-[1.08] tracking-[-0.035em] text-balance sm:text-6xl">{t('projectLanding.momentsTitle')}</h2>
+              <p className="max-w-2xl text-base leading-8 text-[#60483F] lg:justify-self-end">{t('projectLanding.momentsDescription')}</p>
+            </div>
+
+            <div className="mt-12 grid gap-6 lg:grid-cols-[1.38fr_0.62fr]">
+              <figure>
+                <img src="/images/home/monkchat-meditation-hero.webp" alt={t('projectLanding.momentPrimaryAlt')} loading="lazy" decoding="async" className="aspect-[16/10] w-full rounded-2xl object-cover" />
+                <figcaption className="mt-4 space-y-2"><p className="text-sm font-black text-[#3F2E29]">{t('projectLanding.momentPrimaryCaption')}</p><ImageDisclosure /></figcaption>
+              </figure>
+              <figure>
+                <img src="/images/home/monkchat-meditation-ruins.webp" alt={t('projectLanding.momentSecondaryAlt')} loading="lazy" decoding="async" className="aspect-[4/5] w-full rounded-2xl object-cover" />
+                <figcaption className="mt-4 space-y-2"><p className="text-sm font-black text-[#3F2E29]">{t('projectLanding.momentSecondaryCaption')}</p><ImageDisclosure /></figcaption>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <section id="plan" className="scroll-mt-28 bg-[#EDD4C5]" aria-labelledby="plan-heading">
+          <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.68fr_1.32fr] lg:gap-20 lg:px-12 lg:py-28">
+            <div>
+              <h2 id="plan-heading" className="max-w-lg text-4xl font-black leading-[1.08] tracking-[-0.035em] text-balance sm:text-6xl">{t('projectLanding.planTitle')}</h2>
+              <p className="mt-6 max-w-md text-base leading-8 text-[#60483F]">{t('projectLanding.planDescription')}</p>
             </div>
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#9A503B]">{t('projectLanding.originEyebrow')}</p>
-              <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-[-0.035em] text-[#4A3029] sm:text-5xl">{t('projectLanding.originTitle')}</h2>
-              <p className="mt-6 text-base leading-8 text-[#6B5149]/80">{t('projectLanding.originDescription')}</p>
+              <dl className="border-y border-[#6F4A3D]/20">
+                <PlanRow label={t('projectLanding.scheduleLabel')} value={t('projectLanding.scheduleValue')} />
+                <PlanRow label={t('projectLanding.locationLabel')} value={t('projectLanding.locationValue')} />
+                <PlanRow label={t('projectLanding.prepareLabel')} value={t('projectLanding.prepareValue')} />
+              </dl>
+              <a href={facebookUrl} target="_blank" rel="noreferrer" className="mt-8 inline-flex min-h-13 items-center gap-3 rounded-full bg-[#244239] px-6 text-sm font-bold text-white shadow-[0_14px_34px_rgba(36,66,57,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#19352E]">
+                {t('projectLanding.planCta')}<ArrowIcon direction="external" className="h-4 w-4" />
+              </a>
             </div>
           </div>
         </section>
 
-        <section id="activities" className="scroll-mt-24 bg-[#FBF6EF]">
-          <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24 lg:px-12">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#9A503B]">{t('projectLanding.activitiesEyebrow')}</p>
-              <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-[-0.035em] text-[#4A3029] sm:text-5xl">{t('projectLanding.activitiesTitle')}</h2>
-              <p className="mt-5 text-sm leading-7 text-[#6B5149]/72 sm:text-base">{t('projectLanding.activitiesDescription')}</p>
+        <section id="guide" className="scroll-mt-28 bg-[#244239] text-white" aria-labelledby="guide-heading">
+          <div className="mx-auto grid max-w-[90rem] gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20 lg:px-12 lg:py-28">
+            <div>
+              <h2 id="guide-heading" className="max-w-xl text-4xl font-black leading-[1.08] tracking-[-0.035em] text-balance sm:text-6xl">{t('projectLanding.guideTitle')}</h2>
+              <p className="mt-6 max-w-md text-base leading-8 text-[#E8DED8]">{t('projectLanding.guideDescription')}</p>
+              <Link to="/visit" className="mt-8 inline-flex min-h-13 items-center gap-3 rounded-full bg-[#E7BC8E] px-6 text-sm font-bold text-[#2F302B] transition-colors hover:bg-[#F2CDA8]">
+                {t('projectLanding.guideCta')}<ArrowIcon className="h-4 w-4" />
+              </Link>
             </div>
-            <div className="mt-12 grid gap-5 md:grid-cols-3">
-              <ActivityCard icon={<ConversationIcon />} title={t('projectLanding.conversationTitle')} text={t('projectLanding.conversationText')} accent="bg-[#B86F57]" />
-              <ActivityCard icon={<CultureIcon />} title={t('projectLanding.cultureTitle')} text={t('projectLanding.cultureText')} accent="bg-[#D7AA73]" />
-              <ActivityCard icon={<MeditationIcon />} title={t('projectLanding.meditationTitle')} text={t('projectLanding.meditationText')} accent="bg-[#7B8C78]" />
-            </div>
-          </div>
-        </section>
-
-        <section id="gallery" className="scroll-mt-24 bg-[#FFFDFC]">
-          <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24 lg:px-12">
-            <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
-              <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#9A503B]">{t('projectLanding.galleryEyebrow')}</p>
-                <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-[-0.035em] text-[#4A3029] sm:text-5xl">{t('projectLanding.galleryTitle')}</h2>
-              </div>
-              <div className="max-w-2xl lg:ml-auto">
-                <p className="text-sm leading-7 text-[#6B5149]/72 sm:text-base">{t('projectLanding.galleryDescription')}</p>
-                <p className="mt-3 text-xs font-semibold text-[#7A3E2E]/62">{t('projectLanding.visualNote')}</p>
-              </div>
-            </div>
-            <div className="mt-10 grid auto-rows-[17rem] gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-[20rem_13rem]">
-              <div className="overflow-hidden rounded-[1.6rem] sm:col-span-2 lg:row-span-2">
-                <GalleryVisual src="/images/home/monkchat-meditation-field.webp" label={t('projectLanding.galleryConversation')} position="center 48%" />
-              </div>
-              <div className="overflow-hidden rounded-[1.6rem]">
-                <GalleryVisual src="/images/home/monkchat-meditation-hero.webp" label={t('projectLanding.galleryMeditation')} position="62% center" />
-              </div>
-              <div className="overflow-hidden rounded-[1.6rem]">
-                <GalleryVisual src="/images/home/monkchat-meditation-ruins.webp" label={t('projectLanding.galleryWelcome')} position="60% center" />
-              </div>
+            <div className="border-y border-white/20">
+              <GuideRow icon={<HeadphonesIcon />} title={t('projectLanding.guideAudioTitle')} text={t('projectLanding.guideAudioText')} />
+              <GuideRow icon={<QuestionIcon />} title={t('projectLanding.guideQaTitle')} text={t('projectLanding.guideQaText')} />
+              <GuideRow icon={<CompassIcon />} title={t('projectLanding.guideCenterTitle')} text={t('projectLanding.guideCenterText')} />
             </div>
           </div>
         </section>
 
-        <section id="guide" className="scroll-mt-24 bg-[#53352D] text-white">
-          <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24 lg:px-12">
-            <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
-              <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#E4B88A]">{t('projectLanding.guideEyebrow')}</p>
-                <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-[-0.035em] sm:text-5xl">{t('projectLanding.guideTitle')}</h2>
-                <p className="mt-5 text-sm leading-7 text-white/62 sm:text-base">{t('projectLanding.guideDescription')}</p>
-                <Link to="/visit" className="mt-8 inline-flex min-h-13 items-center justify-center gap-3 rounded-xl bg-[#D7AA73] px-6 py-3.5 text-sm font-bold text-[#4A3029] shadow-[0_12px_30px_rgba(0,0,0,0.16)] transition-all hover:-translate-y-0.5 hover:bg-[#E4BE91]">
-                  {t('projectLanding.guideCta')}
-                  <ArrowIcon className="h-4 w-4" />
-                </Link>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-3">
-                <GuideCard icon={<HeadphonesIcon />} title={t('projectLanding.guideAudioTitle')} text={t('projectLanding.guideAudioText')} />
-                <GuideCard icon={<QuestionIcon />} title={t('projectLanding.guideQaTitle')} text={t('projectLanding.guideQaText')} />
-                <GuideCard icon={<CompassIcon />} title={t('projectLanding.guideCenterTitle')} text={t('projectLanding.guideCenterText')} />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-[#EBCFC2]">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1fr_auto] lg:items-end lg:px-12">
-            <div className="max-w-3xl">
-              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#8A4634]">{t('projectLanding.contactEyebrow')}</p>
-              <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-[-0.035em] text-[#4A3029] sm:text-5xl">{t('projectLanding.contactTitle')}</h2>
-              <p className="mt-5 max-w-2xl text-sm leading-7 text-[#6B5149]/74 sm:text-base">{t('projectLanding.contactDescription')}</p>
+        <section className="bg-[#F6E9E0]" aria-labelledby="contact-heading">
+          <div className="mx-auto grid max-w-[90rem] gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1fr_auto] lg:items-end lg:px-12">
+            <div>
+              <h2 id="contact-heading" className="max-w-3xl text-3xl font-black leading-tight tracking-[-0.03em] text-balance sm:text-5xl">{t('projectLanding.contactTitle')}</h2>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-[#60483F]">{t('projectLanding.contactDescription')}</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-              <a href={facebookUrl} target="_blank" rel="noreferrer" className="group inline-flex min-h-12 items-center justify-between gap-5 rounded-xl bg-[#FFFDFC] px-5 py-3 text-sm font-bold text-[#5B3A31] shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-                {t('projectLanding.facebookLink')} <ArrowIcon className="h-4 w-4 -rotate-45 text-[#8A4634]" />
+              <a href={facebookUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center justify-between gap-6 rounded-2xl bg-white px-5 text-sm font-bold text-[#4B332C] shadow-[0_10px_28px_rgba(88,52,42,0.08)] transition-transform hover:-translate-y-0.5">
+                {t('projectLanding.facebookLink')}<ArrowIcon direction="external" className="h-4 w-4 text-[#8A4C39]" />
               </a>
-              <a href={meditationCenterUrl} target="_blank" rel="noreferrer" className="group inline-flex min-h-12 items-center justify-between gap-5 rounded-xl border border-[#7A3E2E]/12 bg-[#FFFDFC]/58 px-5 py-3 text-sm font-bold text-[#5B3A31] transition-all hover:-translate-y-0.5 hover:bg-[#FFFDFC]">
-                {t('projectLanding.centerLink')} <ArrowIcon className="h-4 w-4 -rotate-45 text-[#8A4634]" />
+              <a href={meditationCenterUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center justify-between gap-6 rounded-2xl border border-[#744A3B]/20 px-5 text-sm font-bold text-[#4B332C] transition-colors hover:bg-white">
+                {t('projectLanding.centerLink')}<ArrowIcon direction="external" className="h-4 w-4 text-[#8A4C39]" />
               </a>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="bg-[#35251F] text-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:grid-cols-[1fr_auto] sm:items-end sm:px-8 lg:px-12">
+      <footer className="bg-[#34251F] text-white">
+        <div className="mx-auto grid max-w-[90rem] gap-8 px-5 py-10 sm:grid-cols-[1fr_auto] sm:items-end sm:px-8 lg:px-12">
           <div className="flex max-w-xl items-start gap-4">
             <img src="/monkchat-placeholder.svg" alt="" className="h-11 w-11 shrink-0 rounded-xl bg-white ring-1 ring-white/15" />
-            <div>
-              <p className="font-bold">Monk Chat Ayutthaya</p>
-              <p className="mt-2 text-xs leading-5 text-white/50">{t('projectLanding.footerDescription')}</p>
-            </div>
+            <div><p className="font-black">Monk Chat Ayutthaya</p><p className="mt-2 text-xs leading-5 text-[#DCCDC5]">{t('projectLanding.footerDescription')}</p></div>
           </div>
-          <div className="flex flex-col gap-2 text-xs text-white/45 sm:text-right">
+          <div className="flex flex-col gap-2 text-xs text-[#CDBCB3] sm:text-right">
             <p>{t('app.footer')}</p>
-            <Link to="/admin/login" className="transition-colors hover:text-[#E4B88A]">{t('projectLanding.teamLogin')}</Link>
+            <Link to="/admin/login" className="transition-colors hover:text-[#E7BC8E]">{t('projectLanding.teamLogin')}</Link>
           </div>
         </div>
       </footer>
