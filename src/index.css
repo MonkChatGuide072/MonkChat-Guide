@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: 'Noto Sans Thai', 'Leelawadee UI', Tahoma, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Georgia, 'Noto Serif Thai', 'Leelawadee UI', 'Th Sarabun New', serif;
   --color-gold-50: #fdfbf7;
   --color-gold-100: #fbf6ec;
   --color-gold-500: #c59b27;
@@ -12,7 +14,7 @@
 
 :root {
   color-scheme: light;
-  font-family: 'Noto Sans Thai', 'Noto Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Noto Sans Thai', 'Leelawadee UI', Tahoma, 'Noto Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: #fffef9;
   color: #11223c;
   font-synthesis: none;
@@ -29,12 +31,41 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #fffef9;
+  background: #d8ccb8;
   overflow-x: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 #root {
   min-height: 100vh;
+}
+
+.monkchat-hero-image {
+  animation: monkchat-hero-reveal 1.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.monkchat-hero-overlay {
+  background:
+    linear-gradient(180deg, rgba(24, 19, 16, 0.46) 0%, rgba(24, 19, 16, 0.06) 30%, rgba(24, 19, 16, 0.2) 56%, rgba(24, 19, 16, 0.84) 100%),
+    linear-gradient(90deg, rgba(24, 19, 16, 0.38) 0%, rgba(24, 19, 16, 0.08) 58%, rgba(24, 19, 16, 0.18) 100%);
+}
+
+@keyframes monkchat-hero-reveal {
+  from {
+    filter: saturate(0.82) brightness(0.94);
+    transform: scale(1.025);
+  }
+
+  to {
+    filter: saturate(1) brightness(1);
+    transform: scale(1);
+  }
 }
 
 ::selection {

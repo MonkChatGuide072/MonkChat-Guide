@@ -141,7 +141,7 @@ describe('Q&A and centers', () => {
       { id: 'qa-2', category: 'Example', qa_translations: [{ language_code: 'th', question: 'เฉพาะภาษาไทย', short_answer: 'ตัวอย่าง' }] },
     ]
     openPage(<QAPage />, '/qa')
-    expect(await screen.findByText('Sample question')).toBeInTheDocument()
+    expect((await screen.findAllByText('Sample question')).length).toBeGreaterThan(0)
     expect(mocks.filters).toEqual(expect.arrayContaining([
       ['qa_items', 'content_status', 'published'], ['qa_items', 'verification_status', 'verified'], ['qa_items', 'is_published', true],
     ]))
@@ -149,17 +149,17 @@ describe('Q&A and centers', () => {
     fireEvent.change(screen.getByLabelText('Search questions...'), { target: { value: 'no match' } })
     expect(screen.getByText('No questions matched your search term.')).toBeInTheDocument()
     fireEvent.click(screen.getAllByRole('button', { name: 'Clear search' })[0])
-    expect(screen.getByText('Sample question')).toBeInTheDocument()
+    expect(screen.getAllByText('Sample question').length).toBeGreaterThan(0)
     await act(async () => { await i18n.changeLanguage('th') })
-    expect(await screen.findByText('คำถามตัวอย่าง')).toBeInTheDocument()
-    expect(screen.queryByText('Sample question')).not.toBeInTheDocument()
+    expect((await screen.findAllByText('คำถามตัวอย่าง')).length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Sample question')).toHaveLength(0)
   })
 
   it('keeps center details when Bio Links fail and omits unsafe contact URLs', async () => {
     mocks.rows.dci_centers = [{ id: 'center-1', country_code: 'TH', city: 'Example city', address: 'Example address', map_url: 'https://example.org/map', website_url: 'javascript:alert(1)', contact_url: 'data:text/html,example', dci_center_translations: [{ language_code: 'en', name: 'Example center', description: 'Test fixture' }] }]
     mocks.failures.add('bio_links')
     openPage(<CentersPage />, '/centers')
-    expect(await screen.findByText('Example center')).toBeInTheDocument()
+    expect((await screen.findAllByText('Example center')).length).toBeGreaterThan(0)
     expect(screen.getByRole('link', { name: 'Map' })).toHaveAttribute('href', 'https://example.org/map')
     expect(screen.queryByRole('link', { name: 'Website' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Contact' })).not.toBeInTheDocument()

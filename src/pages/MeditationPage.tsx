@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { MeditationPlayer } from '../components/MeditationPlayer'
+import { MeditationMark } from '../components/MeditationMark'
 import { VisitorBackLink } from '../components/VisitorBackLink'
 
 interface TrackTranslationRow {
@@ -27,21 +28,13 @@ interface TrackRow {
 
 export function MeditationPage() {
   const { t, i18n } = useTranslation()
-  const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
-    ? 'en'
-    : 'th'
-
+  const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en') ? 'en' : 'th'
   const [searchParams, setSearchParams] = useSearchParams()
   const initialTrackId = searchParams.get('trackId')
-
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [allTracks, setTracks] = useState<TrackRow[]>([])
-  const tracks = allTracks.filter(track =>
-    track.meditation_track_translations.some(translation => translation.language_code === currentLang),
-  )
-
-  // ── Fetch Tracks ───────────────────────────────────────────────────────────
+  const tracks = allTracks.filter(track => track.meditation_track_translations.some(translation => translation.language_code === currentLang))
 
   const fetchTracks = useCallback(async () => {
     if (!supabaseClient) {
@@ -49,10 +42,8 @@ export function MeditationPage() {
       setIsLoading(false)
       return
     }
-
     setIsLoading(true)
     setError(null)
-
     try {
       const { data, error: dbError } = await supabaseClient
         .from('meditation_tracks')
@@ -76,200 +67,113 @@ export function MeditationPage() {
         .eq('content_status', 'published')
         .eq('is_published', true)
         .order('created_at', { ascending: false })
-
       if (dbError) throw dbError
-
-      const fetchedTracks = (data as TrackRow[]) ?? []
-
-      setTracks(fetchedTracks)
-      setIsLoading(false)
+      setTracks((data as TrackRow[]) ?? [])
     } catch {
       setError(t('meditation.errorLoadTracks'))
+    } finally {
       setIsLoading(false)
     }
   }, [t])
 
   useEffect(() => {
-    fetchTracks()
+    void fetchTracks()
   }, [fetchTracks])
 
-  // Derive selection from the URL so links and browser back/forward stay in sync.
   const currentTrack = tracks.find(track => track.id === initialTrackId) ?? tracks[0]
   const selectedTrackId = currentTrack?.id
-  const trackTranslation = currentTrack?.meditation_track_translations.find(
-    translation => translation.language_code === currentLang,
-  )
+  const trackTranslation = currentTrack?.meditation_track_translations.find(translation => translation.language_code === currentLang)
 
   return (
-    <div className="break-words [overflow-wrap:anywhere] space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-6xl mx-auto">
-      {/* Header Banner */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-amber-600">
-              {t('meditation.heroTag')}
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-              {t('meditation.title')}
-            </h1>
-          </div>
+    <div className="space-y-6 break-words [overflow-wrap:anywhere]">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[.68rem] font-bold uppercase tracking-[.16em] text-[#a34e39]">{t('meditation.heroTag')}</p>
+          <h1 className="mt-2 font-serif text-4xl font-bold leading-[1.08] tracking-[-.035em] text-[#30342d] sm:text-5xl">{t('meditation.title')}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#625b50]">{t('meditation.subtitle')}</p>
         </div>
-        <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
-          {t('meditation.subtitle')}
-        </p>
         <VisitorBackLink />
-      </section>
+      </header>
 
-      {/* Loading State */}
       {isLoading && (
-        <div role="status" aria-label={t('meditation.loadingAudio')} className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-600" />
+        <div role="status" aria-label={t('meditation.loadingAudio')} className="flex min-h-72 items-center justify-center rounded-[1.5rem] border border-white/35 bg-white/24">
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#a94732]/20 border-t-[#a94732]" />
         </div>
       )}
 
-      {/* Error State */}
       {!isLoading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
-          <p className="text-red-800 font-semibold">{t('meditation.errorTitle')}</p>
-          <p className="text-red-600 text-sm font-mono break-all">{error}</p>
-          <button
-            type="button"
-            onClick={fetchTracks}
-            className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer"
-          >
-            {t('meditation.retry')}
-          </button>
+        <div className="rounded-[1.5rem] border border-red-900/15 bg-[#f2d9cf]/80 p-7 text-center">
+          <p className="font-semibold text-[#812e24]">{t('meditation.errorTitle')}</p>
+          <p className="mt-2 text-sm text-[#812e24]/75">{error}</p>
+          <button type="button" onClick={() => void fetchTracks()} className="mt-4 min-h-11 rounded-full bg-[#a94732] px-5 text-sm font-bold text-white">{t('meditation.retry')}</button>
         </div>
       )}
 
-      {/* Empty State */}
       {!isLoading && !error && tracks.length === 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-slate-50 flex items-center justify-center text-3xl">
-            <svg aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A86100]" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 14v-3a8 8 0 0116 0v3M4 13H3v7h4v-7H4zm16 0h1v7h-4v-7h3z" /></svg>
-          </div>
-          <h2 className="text-lg font-semibold text-slate-800">
-            {t('meditation.emptyTitle')}
-          </h2>
-          <p className="text-sm text-slate-500 max-w-md mx-auto">
-            {t('meditation.emptyDesc')}
-          </p>
+        <div className="rounded-[1.5rem] border border-white/40 bg-white/28 p-10 text-center backdrop-blur-sm">
+          <h2 className="text-lg font-bold text-[#30342d]">{t('meditation.emptyTitle')}</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-[#625b50]">{t('meditation.emptyDesc')}</p>
         </div>
       )}
 
-      {/* Main Grid */}
-      {!isLoading && !error && tracks.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Track Selection List */}
-          <section className="min-w-0 lg:col-span-4 bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-              <svg aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A86100]" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 14v-3a8 8 0 0116 0v3M4 13H3v7h4v-7H4zm16 0h1v7h-4v-7h3z" /></svg>
-              <span>{t('meditation.selectTrackTitle')}</span>
-            </h2>
-
-            <div className="space-y-3" role="group" aria-label={t('meditation.selectTrackTitle')}>
-              {tracks.map((track) => {
-                const translation = track.meditation_track_translations.find(item => item.language_code === currentLang)
-                const isSelected = track.id === selectedTrackId
-
-                return (
-                  <button
-                    key={track.id}
-                    type="button"
-                    aria-pressed={isSelected}
-                    onClick={() => {
-                      setSearchParams({ trackId: track.id })
-                    }}
-                    className={`w-full text-left p-4 rounded-xl border transition-all duration-200 motion-reduce:transition-none min-h-[48px] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#A86100] ${
-                      isSelected
-                        ? 'bg-amber-50/80 border-amber-400 text-slate-900 shadow-2xs font-medium'
-                        : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="font-semibold text-sm sm:text-base leading-snug">
-                        {translation?.title || t('meditation.untitledTrack', 'Untitled Track')}
-                      </span>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-mono flex-shrink-0">
-                          {Math.round(track.duration_seconds / 60)} {t('meditation.minutes')}
-                        </span>
-                        {track.is_recommended && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-[#A86100]/10 text-[#A86100] font-bold uppercase">
-                            {t('meditation.recommended', 'Recommended')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    {translation?.description && (
-                      <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                        {translation.description}
-                      </p>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          </section>
-
-          {/* Selected Track Audio Player, Transcript & Subtitles */}
-          <div className="min-w-0 lg:col-span-8 space-y-6">
-            <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
-              <div className="space-y-2 border-b border-slate-100 pb-4">
-                <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">
-                  {t('meditation.duration')}: {Math.round((currentTrack?.duration_seconds || 0) / 60)} {t('meditation.minutes')} ({currentTrack?.duration_seconds}s)
-                </span>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  {trackTranslation?.title || t('meditation.untitledTrack', 'Untitled Track')}
-                </h2>
-                {trackTranslation?.description && (
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    {trackTranslation.description}
-                  </p>
-                )}
-                {currentTrack?.speaker_name && (
-                  <p className="text-xs text-slate-500 italic">
-                    {t('meditation.speaker')}: {currentTrack.speaker_name}
-                  </p>
-                )}
-                <div className="pt-2 flex items-center">
-                  <span className="text-xs px-2.5 py-1 rounded-md bg-[#A86100]/10 text-[#A86100] font-bold uppercase tracking-wider">
-                    {t('meditation.audioLanguage', 'Audio Language')}: {currentTrack?.source_language_code || t('meditation.unknownLanguage', 'Unknown')}
-                  </span>
+      {!isLoading && !error && currentTrack && trackTranslation && (
+        <div className="grid items-start gap-5 lg:grid-cols-[1.34fr_.74fr]">
+          <section className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#303a2f] p-5 text-[#fff4df] shadow-[0_24px_60px_rgba(49,55,43,.18)] sm:p-7">
+            <MeditationMark className="pointer-events-none absolute left-1/2 top-1/2 -z-10 w-[25rem] -translate-x-1/2 -translate-y-1/2 text-white/18 sm:w-[31rem]" />
+            <div className="relative z-10">
+              <div className="max-w-2xl">
+                <p className="text-[.66rem] font-bold uppercase tracking-[.14em] text-[#efd070]">
+                  {currentTrack.is_recommended ? t('meditation.recommended') : t('meditation.heroTag')}
+                </p>
+                <h2 className="mt-3 font-serif text-3xl font-bold leading-[1.12] tracking-[-.025em] sm:text-4xl">{trackTranslation.title}</h2>
+                {trackTranslation.description && <p className="mt-3 max-w-xl text-sm leading-6 text-[#fff4df]/72">{trackTranslation.description}</p>}
+                <div className="mt-4 flex flex-wrap gap-2 text-[.68rem] font-semibold text-[#fff4df]/72">
+                  <span className="rounded-full border border-white/14 bg-white/7 px-3 py-1.5">{Math.max(1, Math.round(currentTrack.duration_seconds / 60))} {t('meditation.minutes')}</span>
+                  <span className="rounded-full border border-white/14 bg-white/7 px-3 py-1.5">{t('meditation.audioLanguage')}: {currentTrack.source_language_code.toUpperCase()}</span>
+                  {currentTrack.speaker_name && <span className="rounded-full border border-white/14 bg-white/7 px-3 py-1.5">{t('meditation.speaker')}: {currentTrack.speaker_name}</span>}
                 </div>
               </div>
 
+              <div className="mt-7">
+                <MeditationPlayer
+                  key={JSON.stringify([currentTrack.id, currentLang, currentTrack.audio_storage_path, trackTranslation.subtitle_vtt_storage_path])}
+                  trackId={currentTrack.id}
+                  title={trackTranslation.title}
+                  audioPath={currentTrack.audio_storage_path}
+                  subtitlePath={trackTranslation.subtitle_vtt_storage_path}
+                  tone="dark"
+                />
+              </div>
+            </div>
+          </section>
+
+          <div className="grid gap-5">
+            <section className="rounded-[1.5rem] border border-white/45 bg-[#eadbc1]/86 p-5 shadow-[0_16px_42px_rgba(73,61,45,.08)] backdrop-blur-md sm:p-6">
+              <div className="flex items-end justify-between gap-3 border-b border-[#6b5c48]/15 pb-4">
+                <h2 className="font-serif text-xl font-bold text-[#30342d]">{t('meditation.selectTrackTitle')}</h2>
+                <span className="text-[.65rem] text-[#6b6255]">{tracks.length} {t('qa.itemCount', { count: tracks.length })}</span>
+              </div>
+              <div className="divide-y divide-[#6b5c48]/14" role="group" aria-label={t('meditation.selectTrackTitle')}>
+                {tracks.map((track, index) => {
+                  const translation = track.meditation_track_translations.find(item => item.language_code === currentLang)
+                  const isSelected = track.id === selectedTrackId
+                  return (
+                    <button key={track.id} type="button" aria-pressed={isSelected} onClick={() => setSearchParams({ trackId: track.id })} className={`grid w-full grid-cols-[2rem_1fr_auto] items-center gap-3 py-4 text-left transition-colors ${isSelected ? 'text-[#8e3d2d]' : 'text-[#30342d] hover:text-[#8e3d2d]'}`}>
+                      <span className={`grid h-7 w-7 place-items-center rounded-full text-[.65rem] font-bold ${isSelected ? 'bg-[#a94732] text-white' : 'bg-[#d7c5a6] text-[#5d5448]'}`}>0{index + 1}</span>
+                      <span className="min-w-0"><strong className="block truncate text-sm">{translation?.title || t('meditation.untitledTrack')}</strong><small className="mt-1 block text-[.65rem] text-[#6b6255]">{Math.max(1, Math.round(track.duration_seconds / 60))} {t('meditation.minutes')}</small></span>
+                      <span aria-hidden="true">›</span>
+                    </button>
+                  )
+                })}
+              </div>
             </section>
 
-            {currentTrack && trackTranslation && (
-              <MeditationPlayer
-                key={JSON.stringify([currentTrack.id, currentLang, currentTrack.audio_storage_path, trackTranslation.subtitle_vtt_storage_path])}
-                trackId={currentTrack.id}
-                title={trackTranslation.title}
-                audioPath={currentTrack.audio_storage_path}
-                subtitlePath={trackTranslation.subtitle_vtt_storage_path}
-              />
-            )}
-
-            {/* Transcript Section */}
-            <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-4">
-              <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-                <svg aria-hidden="true" className="h-5 w-5 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="1.8" strokeLinecap="round" d="M6 3h8l4 4v14H6V3zm3 7h6m-6 4h6m-6 4h4" /></svg>
-                <span>{t('meditation.transcriptTitle')}</span>
-              </h3>
-
-              {trackTranslation?.transcript ? (
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                  <p className="text-sm text-slate-700 leading-relaxed font-sans whitespace-pre-wrap">
-                    {trackTranslation.transcript}
-                  </p>
-                </div>
+            <section className="rounded-[1.5rem] border border-white/45 bg-white/28 p-5 backdrop-blur-sm sm:p-6">
+              <h3 className="font-serif text-xl font-bold text-[#30342d]">{t('meditation.transcriptTitle')}</h3>
+              {trackTranslation.transcript ? (
+                <p className="mt-4 max-h-72 overflow-y-auto whitespace-pre-wrap border-l-2 border-[#a94732] pl-4 text-sm leading-7 text-[#514b42]">{trackTranslation.transcript}</p>
               ) : (
-                <div className="p-6 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-center">
-                  <p className="text-sm text-slate-500 italic">
-                    {t('meditation.noTranscript')}
-                  </p>
-                </div>
+                <p className="mt-4 text-sm text-[#6b6255]">{t('meditation.noTranscript')}</p>
               )}
             </section>
           </div>
