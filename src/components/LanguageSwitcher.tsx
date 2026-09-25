@@ -18,7 +18,7 @@ export function LanguageSwitcher({ tone = 'navy' }: { tone?: 'navy' | 'clay' | '
           ? 'border-white/25 bg-white/90 shadow-black/10 backdrop-blur-md'
           : isClay
           ? 'border-[#7A3E2E]/12 bg-[#F7EAE2]/90'
-          : 'border-[#11223C]/10 bg-[#F4EFE5]/90'
+          : 'border-[#354033]/12 bg-[#efe5d2]/90'
       }`}
       role="group"
       aria-label={t('language.label')}
@@ -28,8 +28,8 @@ export function LanguageSwitcher({ tone = 'navy' }: { tone?: 'navy' | 'clay' | '
         onClick={() => setLanguage('th')}
         className={`min-h-9 rounded-full px-3 text-xs font-bold transition-all cursor-pointer ${
           currentLang === 'th'
-            ? `${isClay || isOverlay ? 'bg-[#7A3E2E]' : 'bg-[#11223C]'} text-white shadow-sm`
-            : `${isClay || isOverlay ? 'text-[#5B3A31]/65 hover:text-[#5B3A31]' : 'text-[#11223C]/60 hover:text-[#11223C]'} hover:bg-white`
+            ? `${isClay || isOverlay ? 'bg-[#7A3E2E]' : 'bg-[#354033]'} text-white shadow-sm`
+            : `${isClay || isOverlay ? 'text-[#5B3A31]/65 hover:text-[#5B3A31]' : 'text-[#354033]/65 hover:text-[#354033]'} hover:bg-white`
         }`}
         aria-pressed={currentLang === 'th'}
         aria-label={t('language.switchToTh')}
@@ -41,8 +41,8 @@ export function LanguageSwitcher({ tone = 'navy' }: { tone?: 'navy' | 'clay' | '
         onClick={() => setLanguage('en')}
         className={`min-h-9 rounded-full px-3 text-xs font-bold transition-all cursor-pointer ${
           currentLang === 'en'
-            ? `${isClay || isOverlay ? 'bg-[#7A3E2E]' : 'bg-[#11223C]'} text-white shadow-sm`
-            : `${isClay || isOverlay ? 'text-[#5B3A31]/65 hover:text-[#5B3A31]' : 'text-[#11223C]/60 hover:text-[#11223C]'} hover:bg-white`
+            ? `${isClay || isOverlay ? 'bg-[#7A3E2E]' : 'bg-[#354033]'} text-white shadow-sm`
+            : `${isClay || isOverlay ? 'text-[#5B3A31]/65 hover:text-[#5B3A31]' : 'text-[#354033]/65 hover:text-[#354033]'} hover:bg-white`
         }`}
         aria-pressed={currentLang === 'en'}
         aria-label={t('language.switchToEn')}

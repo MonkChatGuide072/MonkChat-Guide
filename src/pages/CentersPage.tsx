@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
 import { trackUsageEvent } from '../lib/analytics'
@@ -40,19 +40,15 @@ interface BioLinkRow {
 
 export function CentersPage() {
   const { t, i18n } = useTranslation()
-  const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
-    ? 'en'
-    : 'th'
-
+  const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en') ? 'en' : 'th'
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [allCenters, setCenters] = useState<CenterRow[]>([])
   const [allLinks, setBioLinks] = useState<BioLinkRow[]>([])
   const [linksError, setLinksError] = useState(false)
-  const centers = allCenters.filter(center => center.dci_center_translations.some(tr => tr.language_code === currentLang))
-  const bioLinks = allLinks.filter(link => isSafeWebUrl(link.url) && link.bio_link_translations.some(tr => tr.language_code === currentLang))
-
-  // ── Fetch Data ──────────────────────────────────────────────────────────────
+  const centers = allCenters.filter(center => center.dci_center_translations.some(translation => translation.language_code === currentLang))
+  const bioLinks = allLinks.filter(link => isSafeWebUrl(link.url) && link.bio_link_translations.some(translation => translation.language_code === currentLang))
 
   const fetchData = useCallback(async () => {
     if (!supabaseClient) {
@@ -60,238 +56,127 @@ export function CentersPage() {
       setIsLoading(false)
       return
     }
-
     setIsLoading(true)
     setError(null)
     setLinksError(false)
-
     try {
       const [centerResult, linkResult] = await Promise.allSettled([
-        supabaseClient
-          .from('dci_centers')
-          .select(`
-            id,
-            country_code,
-            city,
-            address,
-            map_url,
-            website_url,
-            contact_url,
-            content_status,
-            is_published,
-            dci_center_translations (
-              language_code,
-              name,
-              description
-            )
-          `)
-          .eq('content_status', 'published')
-          .eq('is_published', true)
-          .order('created_at', { ascending: false }),
-        supabaseClient
-          .from('bio_links')
-          .select(`id, url, display_order, image_storage_path, bio_link_translations(language_code, title)`)
-          .eq('content_status', 'published')
-          .eq('is_published', true)
-          .order('display_order', { ascending: true })
+        supabaseClient.from('dci_centers').select(`
+          id, country_code, city, address, map_url, website_url, contact_url,
+          content_status, is_published,
+          dci_center_translations (language_code, name, description)
+        `).eq('content_status', 'published').eq('is_published', true).order('created_at', { ascending: false }),
+        supabaseClient.from('bio_links').select(`id, url, display_order, image_storage_path, bio_link_translations(language_code, title)`).eq('content_status', 'published').eq('is_published', true).order('display_order', { ascending: true }),
       ])
-
       if (centerResult.status === 'rejected') throw centerResult.reason
-      const centersRes = centerResult.value
-      if (centersRes.error) throw centersRes.error
-      const linksRes = linkResult.status === 'fulfilled' ? linkResult.value : null
-      setLinksError(!linksRes || !!linksRes.error)
-
-      setCenters((centersRes.data as CenterRow[]) ?? [])
-
-      const linksData = (linksRes && !linksRes.error ? linksRes.data || [] : []) as BioLinkRow[]
-      setBioLinks(linksData)
-
-      setIsLoading(false)
+      const centersResponse = centerResult.value
+      if (centersResponse.error) throw centersResponse.error
+      const linksResponse = linkResult.status === 'fulfilled' ? linkResult.value : null
+      setLinksError(!linksResponse || !!linksResponse.error)
+      setCenters((centersResponse.data as CenterRow[]) ?? [])
+      setBioLinks((linksResponse && !linksResponse.error ? linksResponse.data ?? [] : []) as BioLinkRow[])
     } catch {
       setError(t('centers.errorLoad'))
+    } finally {
       setIsLoading(false)
     }
   }, [t])
 
   useEffect(() => {
-    fetchData()
+    void fetchData()
   }, [fetchData])
 
+  const selectedCenter = centers.find(center => center.id === selectedId) ?? centers[0]
+  const selectedTranslation = selectedCenter?.dci_center_translations.find(translation => translation.language_code === currentLang)
+
   return (
-    <div className="break-words [overflow-wrap:anywhere] space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto font-['Noto_Sans_Thai']">
-      {/* Banner */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#A86100]">
-              {t('centers.heroTag')}
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#11223C]">
-              {t('centers.title')}
-            </h1>
-          </div>
+    <div className="space-y-6 break-words [overflow-wrap:anywhere]">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[.68rem] font-bold uppercase tracking-[.16em] text-[#a34e39]">{t('centers.heroTag')}</p>
+          <h1 className="mt-2 max-w-3xl font-serif text-4xl font-bold leading-[1.08] tracking-[-.035em] text-[#30342d] sm:text-5xl">{t('centers.title')}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#625b50]">{t('centers.subtitle')}</p>
         </div>
-        <p className="text-sm sm:text-base text-slate-600">
-          {t('centers.subtitle')}
-        </p>
         <VisitorBackLink />
-      </section>
+      </header>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div role="status" aria-label={t('centers.loading')} className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#A86100]" />
-        </div>
-      )}
+      {isLoading && <div role="status" aria-label={t('centers.loading')} className="flex min-h-72 items-center justify-center"><div className="h-10 w-10 animate-spin rounded-full border-2 border-[#a94732]/20 border-t-[#a94732]" /></div>}
 
-      {/* Error State */}
       {!isLoading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
-          <p role="alert" className="text-red-800 font-semibold">{error}</p>
-          <button
-            type="button"
-            onClick={fetchData}
-            className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-[#A86100] hover:bg-amber-800 text-white transition-colors cursor-pointer"
-          >
-            {t('centers.retry')}
-          </button>
+        <div className="rounded-[1.5rem] border border-red-900/15 bg-[#f2d9cf]/80 p-7 text-center">
+          <p role="alert" className="font-semibold text-[#812e24]">{error}</p>
+          <button type="button" onClick={() => void fetchData()} className="mt-4 min-h-11 rounded-full bg-[#a94732] px-5 text-sm font-bold text-white">{t('centers.retry')}</button>
         </div>
       )}
 
-      {/* Centers List */}
-      {!isLoading && !error && centers.length > 0 && (
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-            <h2 className="text-lg font-bold text-[#11223C] flex items-center gap-2">
-              <svg className="w-5 h-5 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              <span>{t('centers.listTitle')}</span>
-            </h2>
-            <span className="text-xs text-slate-500">
-              {centers.length} {t('centers.itemCount', { count: centers.length })}
-            </span>
-          </div>
-
-          <div className="space-y-4">
-            {centers.map((center) => {
-              const translation = center.dci_center_translations.find(tr => tr.language_code === currentLang)
-
-              return (
-                <article
-                  key={center.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-4"
-                >
-                  {/* Header */}
-                  <div className="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-3">
-                    <h3 className="text-base sm:text-lg font-bold text-[#11223C]">
-                      {translation?.name || t('centers.unnamedCenter', 'Unnamed Center')}
-                    </h3>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 flex-shrink-0">
-                      {center.country_code}
-                    </span>
-                  </div>
-
-                  {/* Description */}
-                  {translation?.description && (
-                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
-                      {translation.description}
-                    </p>
-                  )}
-
-                  {/* Location Fields */}
-                  <div className="bg-slate-50 rounded-xl border border-slate-100 p-4 space-y-2 text-sm">
-                    <div className="flex flex-col sm:flex-row gap-1">
-                      <span className="font-semibold text-slate-700 sm:w-24 flex-shrink-0">
-                        {t('centers.fieldCity')}:
-                      </span>
-                      <span className="text-slate-600">{center.city}</span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-1">
-                      <span className="font-semibold text-slate-700 sm:w-24 flex-shrink-0">
-                        {t('centers.fieldAddress')}:
-                      </span>
-                      <span className="text-slate-600 italic">{center.address}</span>
-                    </div>
-                  </div>
-
-                  {/* Links */}
-                  {![center.map_url, center.website_url, center.contact_url].some(isSafeWebUrl) && (
-                    <p className="text-sm text-slate-500">{t('centers.linkPending')}</p>
-                  )}
-                  <div className="flex flex-wrap gap-3 pt-2">
-                    {isSafeWebUrl(center.map_url) && (
-                      <a href={center.map_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
-                        <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                        {t('centers.linkMap')}
-                      </a>
-                    )}
-                    {isSafeWebUrl(center.website_url) && (
-                      <a href={center.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
-                        <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                        {t('centers.linkWebsite')}
-                      </a>
-                    )}
-                    {isSafeWebUrl(center.contact_url) && (
-                      <a href={center.contact_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-lg transition-colors">
-                        <svg className="w-4 h-4 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                        {t('centers.linkContact')}
-                      </a>
-                    )}
-                  </div>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* Empty State */}
       {!isLoading && !error && centers.length === 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 text-[#A86100] flex items-center justify-center text-3xl">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-          </div>
-          <h2 className="text-lg font-semibold text-[#11223C]">
-            {t('centers.empty')}
-          </h2>
+        <div className="rounded-[1.5rem] border border-white/45 bg-white/28 p-10 text-center text-[#625b50]">{t('centers.empty')}</div>
+      )}
+
+      {!isLoading && !error && selectedCenter && selectedTranslation && (
+        <div className="grid gap-5 lg:grid-cols-[1.04fr_.72fr]">
+          <article className="overflow-hidden rounded-[1.75rem] bg-[#9a3f2d] text-[#fff0d8] shadow-[0_24px_60px_rgba(113,49,37,.18)]">
+            <figure className="relative h-56 overflow-hidden sm:h-72">
+              <img src="/images/home/monkchat-slide-3.webp" alt="" className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#9a3f2d] via-[#9a3f2d]/20 to-transparent" />
+              <span className="absolute left-6 top-5 rounded-full border border-white/25 bg-black/20 px-3 py-1.5 text-[.65rem] font-bold uppercase tracking-[.14em] backdrop-blur-sm">Selected center</span>
+            </figure>
+            <div className="p-6 sm:p-8">
+              <h2 className="font-serif text-3xl font-bold leading-[1.12] tracking-[-.025em] sm:text-4xl">{selectedTranslation.name}</h2>
+              {selectedTranslation.description && <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72">{selectedTranslation.description}</p>}
+              <dl className="mt-6 grid gap-3 rounded-[1.25rem] border border-white/18 bg-black/12 p-5 text-sm backdrop-blur-sm sm:grid-cols-2">
+                <div><dt className="text-[.65rem] font-bold uppercase tracking-[.12em] text-[#f3d992]">{t('centers.fieldCity')}</dt><dd className="mt-1 font-semibold">{selectedCenter.city}</dd></div>
+                <div><dt className="text-[.65rem] font-bold uppercase tracking-[.12em] text-[#f3d992]">{t('centers.fieldAddress')}</dt><dd className="mt-1 font-semibold">{selectedCenter.address}</dd></div>
+              </dl>
+              <div className="mt-5 flex flex-wrap gap-3">
+                {isSafeWebUrl(selectedCenter.map_url) && <a href={selectedCenter.map_url} target="_blank" rel="noopener noreferrer" aria-label={t('centers.linkMap')} className="inline-flex min-h-11 items-center rounded-full bg-[#f3d992] px-5 text-sm font-bold text-[#633121]">{t('centers.linkMap')} ↗</a>}
+                {isSafeWebUrl(selectedCenter.website_url) && <a href={selectedCenter.website_url} target="_blank" rel="noopener noreferrer" aria-label={t('centers.linkWebsite')} className="inline-flex min-h-11 items-center rounded-full border border-white/25 px-5 text-sm font-bold">{t('centers.linkWebsite')} ↗</a>}
+                {isSafeWebUrl(selectedCenter.contact_url) && <a href={selectedCenter.contact_url} target="_blank" rel="noopener noreferrer" aria-label={t('centers.linkContact')} className="inline-flex min-h-11 items-center rounded-full border border-white/25 px-5 text-sm font-bold">{t('centers.linkContact')} ↗</a>}
+                {![selectedCenter.map_url, selectedCenter.website_url, selectedCenter.contact_url].some(isSafeWebUrl) && <p className="text-sm text-white/65">{t('centers.linkPending')}</p>}
+              </div>
+            </div>
+          </article>
+
+          <section className="rounded-[1.5rem] border border-white/45 bg-[#eadbc1]/90 p-5 shadow-[0_16px_42px_rgba(73,61,45,.09)] backdrop-blur-md sm:p-6">
+            <div className="flex items-center justify-between gap-3 border-b border-[#6b5c48]/15 pb-4">
+              <h2 className="font-serif text-xl font-bold text-[#30342d]">{t('centers.listTitle')}</h2>
+              <span className="text-[.65rem] text-[#6b6255]">{centers.length} {t('centers.itemCount', { count: centers.length })}</span>
+            </div>
+            <div className="divide-y divide-[#6b5c48]/14">
+              {centers.map(center => {
+                const translation = center.dci_center_translations.find(item => item.language_code === currentLang)
+                const isSelected = center.id === selectedCenter.id
+                return (
+                  <button key={center.id} type="button" aria-pressed={isSelected} onClick={() => setSelectedId(center.id)} className={`grid w-full grid-cols-[1.5rem_1fr_auto] items-center gap-3 py-5 text-left transition-colors ${isSelected ? 'text-[#8e3d2d]' : 'text-[#30342d] hover:text-[#8e3d2d]'}`}>
+                    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" strokeWidth="1.7" /><circle cx="12" cy="10" r="2.5" strokeWidth="1.7" /></svg>
+                    <span><strong className="block text-sm leading-6">{translation?.name || t('centers.unnamedCenter')}</strong><small className="mt-1 block text-[.65rem] text-[#6b6255]">{center.city} · {center.country_code}</small></span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+                )
+              })}
+            </div>
+          </section>
         </div>
       )}
 
-      {/* BioLinks */}
       {!isLoading && !error && linksError && (
-        <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <div role="alert" className="rounded-[1.15rem] border border-[#b17a35]/25 bg-[#f0dfb8]/75 p-4 text-sm text-[#6b4a1b]">
           <p>{t('home.errorLoadLinks')}</p>
-          <button type="button" onClick={fetchData} className="mt-2 min-h-11 rounded-lg border border-amber-300 px-4 font-semibold">{t('home.retry')}</button>
+          <button type="button" onClick={() => void fetchData()} className="mt-2 min-h-11 rounded-full border border-[#b17a35]/35 px-4 font-semibold">{t('home.retry')}</button>
         </div>
       )}
-      {!isLoading && !error && bioLinks.length > 0 && (
-        <section className="bg-slate-50/50 rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
-          <h2 className="text-xl font-bold text-[#11223C] text-center">{t('home.bioLinksTitle')}</h2>
-          <div className="space-y-3">
-            {bioLinks.map(link => {
-              const transTitle = link.bio_link_translations.find(tr => tr.language_code === currentLang)?.title;
-              const imgUrl = getBioLinkImageUrl(link.image_storage_path);
 
+      {!isLoading && !error && bioLinks.length > 0 && (
+        <section className="rounded-[1.5rem] bg-[#354033] p-5 text-[#fff4df] sm:p-7">
+          <h2 className="font-serif text-2xl font-bold">{t('home.bioLinksTitle')}</h2>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {bioLinks.map(link => {
+              const title = link.bio_link_translations.find(translation => translation.language_code === currentLang)?.title
+              const imageUrl = getBioLinkImageUrl(link.image_storage_path)
               return (
-                <a
-                  key={link.id}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => { void trackUsageEvent({ eventType: 'bio_link_click', resourceType: 'bio_link', resourceId: link.id }).catch(() => {}) }}
-                  className="flex items-center justify-between px-5 py-4 bg-white rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs hover:border-[#A86100] transition-all"
-                >
-                  <div className="flex min-w-0 items-center gap-4">
-                    {imgUrl ? (
-                      <img src={imgUrl} alt="" loading="lazy" className="w-10 h-10 shrink-0 object-cover rounded-lg" />
-                    ) : (
-                      <div className="w-10 h-10 shrink-0 bg-amber-50 text-[#A86100] rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                      </div>
-                    )}
-                    <span className="font-semibold text-[#11223C]">{transTitle}</span>
-                  </div>
-                  <svg className="w-5 h-5 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" onClick={() => { void trackUsageEvent({ eventType: 'bio_link_click', resourceType: 'bio_link', resourceId: link.id }).catch(() => {}) }} className="flex min-h-14 items-center gap-3 rounded-xl border border-white/12 bg-white/7 px-4 text-sm font-semibold transition-colors hover:bg-white/12">
+                  {imageUrl ? <img src={imageUrl} alt="" className="h-9 w-9 rounded-lg object-cover" /> : <span className="grid h-9 w-9 place-items-center rounded-lg bg-[#f3d992] text-[#633121]">↗</span>}
+                  <span className="min-w-0 flex-1 truncate">{title}</span>
                 </a>
               )
             })}

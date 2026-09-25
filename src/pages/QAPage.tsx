@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
+import { MeditationMark } from '../components/MeditationMark'
 import { VisitorBackLink } from '../components/VisitorBackLink'
 
 interface QATranslationRow {
@@ -22,16 +23,12 @@ interface QAItemRow {
 
 export function QAPage() {
   const { t, i18n } = useTranslation()
-  const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
-    ? 'en'
-    : 'th'
-
+  const currentLang = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en') ? 'en' : 'th'
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [items, setItems] = useState<QAItemRow[]>([])
-
-  // ── Fetch Q&A Items ────────────────────────────────────────────────────────
 
   const fetchQAItems = useCallback(async () => {
     if (!supabaseClient) {
@@ -39,217 +36,113 @@ export function QAPage() {
       setIsLoading(false)
       return
     }
-
     setIsLoading(true)
     setError(null)
-
     try {
       const { data, error: dbError } = await supabaseClient
         .from('qa_items')
-        .select(`
-          id,
-          category,
-          source_reference,
-          content_status,
-          verification_status,
-          is_published,
-          qa_translations (
-            language_code,
-            question,
-            short_answer,
-            detailed_answer
-          )
-        `)
+        .select(`id, category, source_reference, content_status, verification_status, is_published, qa_translations (language_code, question, short_answer, detailed_answer)`)
         .eq('content_status', 'published')
         .eq('verification_status', 'verified')
         .eq('is_published', true)
         .order('created_at', { ascending: false })
-
       if (dbError) throw dbError
-
       setItems((data as QAItemRow[]) ?? [])
-      setIsLoading(false)
     } catch {
       setError(t('qa.errorLoad'))
+    } finally {
       setIsLoading(false)
     }
   }, [t])
 
   useEffect(() => {
-    fetchQAItems()
+    void fetchQAItems()
   }, [fetchQAItems])
 
-  // Resolve current language translations (Strict Filtering - No Fallback)
-  const itemsWithTranslations = items
-    .map((item) => {
-      const translation = item.qa_translations.find(t => t.language_code === currentLang)
-      return { item, translation }
-    })
-    .filter(x => x.translation != null)
+  const availableItems = items
+    .map(item => ({ item, translation: item.qa_translations.find(translation => translation.language_code === currentLang) }))
+    .filter((entry): entry is { item: QAItemRow; translation: QATranslationRow } => Boolean(entry.translation))
 
-  // Filter items based on search query
-  const query = searchQuery.trim().toLowerCase()
-  const filteredItems = itemsWithTranslations.filter(({ translation }) => {
-    if (!query) return true
-    if (!translation) return false
-    const questionMatch = translation.question.toLowerCase().includes(query)
-    const shortAnsMatch = translation.short_answer.toLowerCase().includes(query)
-    const detailedAnsMatch = translation.detailed_answer?.toLowerCase().includes(query) || false
-    return questionMatch || shortAnsMatch || detailedAnsMatch
+  const normalizedSearch = searchQuery.toLocaleLowerCase(currentLang)
+  const filteredItems = availableItems.filter(({ translation }) => {
+    if (!normalizedSearch) return true
+    return `${translation.question} ${translation.short_answer} ${translation.detailed_answer ?? ''}`.toLocaleLowerCase(currentLang).includes(normalizedSearch)
   })
 
+  const selected = filteredItems.find(entry => entry.item.id === selectedId) ?? filteredItems[0]
+
   return (
-    <div className="break-words [overflow-wrap:anywhere] space-y-6 sm:space-y-8 pt-2 sm:pt-4 max-w-4xl mx-auto font-['Noto_Sans_Thai']">
-      {/* Banner */}
-      <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#A86100]">
-              {t('qa.heroTag')}
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#11223C]">
-              {t('qa.title')}
-            </h1>
-          </div>
+    <div className="space-y-6 break-words [overflow-wrap:anywhere]">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[.68rem] font-bold uppercase tracking-[.16em] text-[#a34e39]">{t('qa.heroTag')}</p>
+          <h1 className="mt-2 max-w-4xl font-serif text-4xl font-bold leading-[1.08] tracking-[-.035em] text-[#30342d] sm:text-5xl">{t('qa.title')}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#625b50]">{t('qa.subtitle')}</p>
         </div>
-        <p className="text-sm sm:text-base text-slate-600">
-          {t('qa.subtitle')}
-        </p>
         <VisitorBackLink />
+      </header>
 
-        {/* Search Field */}
-        <div className="relative pt-2">
-          <label htmlFor="qa-search-input" className="sr-only">
-            {t('qa.searchPlaceholder')}
-          </label>
-          <div className="relative flex items-center">
-            <svg aria-hidden="true" className="absolute left-4 h-5 w-5 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6" /><path strokeLinecap="round" d="m15 15 6 6" /></svg>
-            <input
-              id="qa-search-input"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t('qa.searchPlaceholder')}
-              className="w-full pl-11 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-[#A86100] focus:bg-white transition-all duration-200 min-h-[48px]"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                aria-label={t('qa.clearSearch')}
-                className="absolute right-1 flex h-11 w-11 items-center justify-center text-slate-500 hover:text-slate-700 rounded-lg"
-              >
-                <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6" /></svg>
-              </button>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Official Requirement Notice Banner */}
-      <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs sm:text-sm text-amber-900 leading-relaxed">
-        {t('qa.verificationNotice')}
+      <div className="flex min-h-14 overflow-hidden rounded-[1.15rem] border border-white/50 bg-[#eadbc1]/88 shadow-[0_12px_30px_rgba(73,61,45,.08)] backdrop-blur-md">
+        <span className="grid w-14 shrink-0 place-items-center text-[#a94732]" aria-hidden="true">
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" strokeWidth="1.8" /><path d="m16 16 4 4" strokeWidth="1.8" strokeLinecap="round" /></svg>
+        </span>
+        <input value={searchQuery} onChange={event => setSearchQuery(event.target.value)} aria-label={t('qa.searchPlaceholder')} placeholder={t('qa.searchPlaceholder')} className="min-w-0 flex-1 bg-transparent px-1 text-sm font-medium text-[#30342d] outline-none placeholder:text-[#756d61]" />
+        {searchQuery && <button type="button" onClick={() => setSearchQuery('')} className="px-3 text-xs font-bold text-[#8e3d2d]">{t('qa.clearSearch')}</button>}
+        <button type="button" className="m-1.5 min-w-24 rounded-xl bg-[#a94732] px-4 text-sm font-bold text-white">{t('nav.qa')}</button>
       </div>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div role="status" aria-label={t('qa.loading')} className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#A86100]" />
-        </div>
-      )}
+      {isLoading && <div role="status" aria-label={t('qa.loading')} className="flex min-h-72 items-center justify-center"><div className="h-10 w-10 animate-spin rounded-full border-2 border-[#a94732]/20 border-t-[#a94732]" /></div>}
 
-      {/* Error State */}
       {!isLoading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
-          <p role="alert" className="text-red-800 font-semibold">{error}</p>
-          <button
-            type="button"
-            onClick={fetchQAItems}
-            className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer"
-          >
-            {t('qa.retry')}
-          </button>
+        <div className="rounded-[1.5rem] border border-red-900/15 bg-[#f2d9cf]/80 p-7 text-center">
+          <p role="alert" className="font-semibold text-[#812e24]">{error}</p>
+          <button type="button" onClick={() => void fetchQAItems()} className="mt-4 min-h-11 rounded-full bg-[#a94732] px-5 text-sm font-bold text-white">{t('qa.retry')}</button>
         </div>
       )}
 
-      {/* Empty State */}
-      {!isLoading && !error && itemsWithTranslations.length === 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 text-[#A86100] flex items-center justify-center text-3xl">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-          </div>
-          <h2 className="text-lg font-semibold text-[#11223C]">
-            {t('qa.empty')}
-          </h2>
+      {!isLoading && !error && availableItems.length === 0 && (
+        <div className="rounded-[1.5rem] border border-white/45 bg-white/28 p-10 text-center text-[#625b50]">{t('qa.empty')}</div>
+      )}
+
+      {!isLoading && !error && availableItems.length > 0 && filteredItems.length === 0 && (
+        <div className="rounded-[1.5rem] border border-white/45 bg-white/28 p-10 text-center">
+          <h2 className="font-bold text-[#30342d]">{t('qa.noResults')}</h2>
+          <button type="button" onClick={() => setSearchQuery('')} className="mt-4 min-h-11 rounded-full bg-[#a94732] px-5 text-sm font-bold text-white">{t('qa.clearSearch')}</button>
         </div>
       )}
 
-      {/* Q&A Items List */}
-      {!isLoading && !error && itemsWithTranslations.length > 0 && (
-        <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-200 pb-3">
-            <h2 className="text-lg font-bold text-[#11223C] flex items-center gap-2">
-              <svg className="w-5 h-5 text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-              <span>{t('qa.listTitle')}</span>
-            </h2>
-            <span aria-live="polite" className="text-xs text-slate-500">
-              {filteredItems.length} {t('qa.itemCount', { count: filteredItems.length })}
-            </span>
-          </div>
-
-          {filteredItems.length > 0 ? (
-            <div className="space-y-4 pt-1">
+      {!isLoading && !error && selected && (
+        <div className="grid gap-5 lg:grid-cols-[.72fr_1.28fr]">
+          <section className="rounded-[1.5rem] border border-white/45 bg-[#eadbc1]/88 p-5 shadow-[0_16px_42px_rgba(73,61,45,.08)] backdrop-blur-md sm:p-6">
+            <div className="flex items-center justify-between gap-3 border-b border-[#6b5c48]/15 pb-4">
+              <h2 className="font-serif text-xl font-bold text-[#30342d]">{t('qa.listTitle')}</h2>
+              <span aria-live="polite" className="text-[.65rem] text-[#6b6255]">{filteredItems.length} {t('qa.itemCount', { count: filteredItems.length })}</span>
+            </div>
+            <div className="divide-y divide-[#6b5c48]/14">
               {filteredItems.map(({ item, translation }) => (
-                <article
-                  key={item.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-3"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
-                      {item.category}
-                    </span>
-                    {item.source_reference && (
-                      <span className="text-xs text-slate-500">
-                        {t('qa.sourceRef')} {item.source_reference}
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="text-base sm:text-lg font-bold text-[#11223C] leading-snug">
-                    {translation?.question}
-                  </h3>
-
-                  <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
-                    <p className="font-semibold text-[#A86100] flex items-start gap-1.5">
-                      <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                      <span>{translation?.short_answer}</span>
-                    </p>
-                    {translation?.detailed_answer && (
-                      <details className="border-t border-slate-200/60 pt-1">
-                        <summary className="min-h-11 cursor-pointer py-3 font-semibold text-[#A86100]">{t('qa.readMore')}</summary>
-                        <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">{translation.detailed_answer}</p>
-                      </details>
-                    )}
-                  </div>
-                </article>
+                <button key={item.id} type="button" aria-pressed={item.id === selected.item.id} onClick={() => setSelectedId(item.id)} className={`grid w-full grid-cols-[1fr_auto] gap-4 py-5 text-left transition-colors ${item.id === selected.item.id ? 'text-[#8e3d2d]' : 'text-[#30342d] hover:text-[#8e3d2d]'}`}>
+                  <span><strong className="block text-sm leading-6">{translation.question}</strong><small className="mt-1 block text-[.65rem] text-[#6b6255]">{item.category}</small></span>
+                  <span aria-hidden="true">›</span>
+                </button>
               ))}
             </div>
-          ) : (
-            <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-8 sm:p-12 text-center space-y-3">
-              <svg className="w-12 h-12 mx-auto text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              <h3 className="text-base font-bold text-[#11223C]">
-                {t('qa.noResults')}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200 focus:outline-hidden transition-colors"
-              >
-                {t('qa.clearSearch')}
-              </button>
+          </section>
+
+          <article className="relative isolate min-h-[30rem] overflow-hidden rounded-[1.75rem] bg-[linear-gradient(145deg,#2c362b,#3b4738)] p-6 text-[#fff4df] shadow-[0_24px_60px_rgba(49,55,43,.18)] sm:p-8">
+            <MeditationMark className="pointer-events-none absolute -bottom-44 -right-24 -z-10 w-[26rem] text-white/13" />
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#efd070] px-3 py-1.5 text-[.65rem] font-bold text-[#4b422e]">
+              <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" strokeWidth="1.8" /><path d="m8 12 2.5 2.5L16 9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              {currentLang === 'th' ? 'ผ่านการตรวจแล้ว' : 'Reviewed'}
+            </span>
+            <h2 className="mt-5 max-w-2xl font-serif text-3xl font-bold leading-[1.2] tracking-[-.025em] sm:text-4xl">{selected.translation.question}</h2>
+            <p className="mt-5 max-w-2xl text-sm font-semibold leading-7 text-[#fff4df]/90">{selected.translation.short_answer}</p>
+            {selected.translation.detailed_answer && <p className="mt-4 max-w-2xl whitespace-pre-wrap text-sm leading-7 text-[#fff4df]/72">{selected.translation.detailed_answer}</p>}
+            <div className="mt-8 border-t border-white/15 pt-5 text-xs text-[#fff4df]/55">
+              <strong className="block text-[#fff4df]/75">{t('qa.sourceRef')}</strong>
+              <span className="mt-1 block">{selected.item.source_reference || (currentLang === 'th' ? 'ข้อมูลอ้างอิงอยู่ระหว่างจัดเตรียม' : 'Reference details pending')}</span>
             </div>
-          )}
-        </section>
+          </article>
+        </div>
       )}
     </div>
   )
