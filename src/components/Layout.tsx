@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { MeditationMark } from './MeditationMark'
 import {
   VISITOR_LANGUAGE_SELECTED_EVENT,
   VISITOR_LANGUAGE_SESSION_KEY,
@@ -9,14 +10,6 @@ import {
 
 export function Layout() {
   const { t } = useTranslation()
-
-  const navItems = [
-    { to: '/visit', label: t('nav.home'), end: true },
-    { to: '/meditation', label: t('nav.meditation') },
-    { to: '/qa', label: t('nav.qa') },
-    { to: '/centers', label: t('nav.centers') },
-  ]
-
   const location = useLocation()
   const [hasSessionLang, setHasSessionLang] = useState(
     () => !!sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY),
@@ -35,68 +28,56 @@ export function Layout() {
   const isLanguageGate = location.pathname === '/visit' && !hasSessionLang
 
   if (isProjectInfo || isLanguageGate) {
-    return (
-      <div className="min-h-screen flex flex-col bg-[#fcfbf9] text-slate-800">
-        <main className="flex-1 w-full"><Outlet /></main>
-      </div>
-    )
+    return <Outlet />
   }
 
-  return (
-    <div className="relative isolate flex min-h-screen flex-col overflow-x-clip bg-[#FFFEF9] text-[#11223C]">
-      <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[44rem] bg-[radial-gradient(circle_at_88%_5%,rgba(168,97,0,0.10),transparent_28%),radial-gradient(circle_at_8%_18%,rgba(17,34,60,0.07),transparent_30%)]" />
+  const navItems = [
+    { to: '/visit', label: t('nav.home'), end: true },
+    { to: '/meditation', label: t('nav.meditation') },
+    { to: '/qa', label: t('nav.qa') },
+    { to: '/centers', label: t('nav.centers') },
+  ]
 
-      <header className="sticky top-0 z-30 border-b border-[#11223C]/8 bg-[#FFFEF9]/90 shadow-[0_8px_30px_rgba(17,34,60,0.04)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-8 lg:px-12">
-          <NavLink
-            to="/visit"
-            className="group flex min-w-0 items-center gap-3 text-[#11223C]"
-          >
-            <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 shrink-0 rounded-xl shadow-sm ring-1 ring-[#11223C]/10 transition-transform group-hover:-rotate-3" />
+  return (
+    <div className="relative isolate flex min-h-screen flex-col overflow-x-clip bg-[#d8ccb8] text-[#2c3028]">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_16%_4%,rgba(255,249,235,.82),transparent_34%),radial-gradient(circle_at_88%_18%,rgba(255,255,255,.46),transparent_30%),linear-gradient(155deg,#ddd2bf_0%,#cfc1aa_100%)]" />
+      <MeditationMark className="pointer-events-none fixed -right-24 top-24 -z-10 w-[34rem] text-white/28 sm:-right-10 sm:w-[42rem]" />
+      <MeditationMark className="pointer-events-none fixed -bottom-60 -left-44 -z-10 hidden w-[38rem] rotate-[-10deg] text-white/16 lg:block" showCore={false} />
+
+      <header className="sticky top-0 z-40 border-b border-[#473d2e]/12 bg-[#ded2bd]/88 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[76rem] items-center justify-between gap-4 px-4 py-3 sm:px-7 lg:px-8">
+          <NavLink to="/visit" className="group flex min-w-0 items-center gap-3 text-[#2d322a]">
+            <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 shrink-0 rounded-xl bg-[#303a2f] shadow-sm ring-1 ring-white/30 transition-transform group-hover:-rotate-3" />
             <span className="min-w-0 leading-tight">
-              <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.2em] text-[#A86100]">MonkChat</span>
-              <span className="block truncate text-sm font-extrabold tracking-tight sm:text-base">Guide</span>
+              <span className="block truncate text-sm font-extrabold tracking-tight sm:text-base">MonkChat Guide</span>
+              <span className="mt-1 block text-[.55rem] font-bold uppercase tracking-[.19em] text-[#a34e39]">Inner Peace Companion</span>
             </span>
           </NavLink>
 
-          <nav aria-label={t('nav.mainNavigation')} className="hidden items-center gap-1 rounded-full border border-[#11223C]/8 bg-white/70 p-1 shadow-sm lg:flex">
+          <nav aria-label={t('nav.mainNavigation')} className="hidden items-center gap-7 lg:flex">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
-                className={({ isActive }) =>
-                  `inline-flex min-h-10 items-center rounded-full px-4 text-sm font-bold transition-all ${
-                    isActive
-                      ? 'bg-[#11223C] text-white shadow-md'
-                      : 'text-[#11223C]/60 hover:bg-[#F4EFE5] hover:text-[#11223C]'
-                  }`
-                }
+                className={({ isActive }) => `relative py-3 text-sm transition-colors after:absolute after:inset-x-0 after:-bottom-3 after:h-0.5 after:origin-center after:bg-[#a94732] after:transition-transform ${isActive ? 'font-bold text-[#272b25] after:scale-x-100' : 'font-medium text-[#625b50] after:scale-x-0 hover:text-[#272b25]'}`}
               >
                 {item.label}
               </NavLink>
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center">
-            <LanguageSwitcher />
-          </div>
+          <LanguageSwitcher />
         </div>
 
-        <nav aria-label={t('nav.mainNavigation')} className="border-t border-[#11223C]/6 lg:hidden">
-          <div className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-3 py-2 sm:px-8">
+        <nav aria-label={t('nav.mainNavigation')} className="border-t border-[#473d2e]/9 lg:hidden">
+          <div className="mx-auto flex max-w-[76rem] gap-1 overflow-x-auto px-3 py-2 sm:px-7">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
-                className={({ isActive }) =>
-                  `inline-flex min-h-10 shrink-0 items-center rounded-full px-3.5 text-xs font-bold whitespace-nowrap transition-all sm:text-sm ${
-                    isActive
-                      ? 'bg-[#11223C] text-white shadow-sm'
-                      : 'text-[#11223C]/60 hover:bg-[#F4EFE5] hover:text-[#11223C]'
-                  }`
-                }
+                className={({ isActive }) => `inline-flex min-h-9 shrink-0 items-center rounded-full px-3 text-xs font-bold whitespace-nowrap transition-colors ${isActive ? 'bg-[#354033] text-[#fff4de]' : 'text-[#625b50] hover:bg-white/35 hover:text-[#272b25]'}`}
               >
                 {item.label}
               </NavLink>
@@ -105,25 +86,12 @@ export function Layout() {
         </nav>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-8 sm:py-9 lg:px-12 lg:py-12">
+      <main className="mx-auto w-full max-w-[76rem] flex-1 px-4 py-7 sm:px-7 sm:py-9 lg:px-8 lg:py-10">
         <Outlet />
       </main>
 
-      <footer className="mt-4 bg-[#11223C] py-8 text-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12">
-          <div className="flex items-center gap-3">
-            <img src="/monkchat-placeholder.svg" alt="" className="h-9 w-9 rounded-xl ring-1 ring-white/15" />
-            <div>
-              <p className="text-sm font-bold">MonkChat Guide</p>
-              <p className="mt-0.5 text-xs text-white/55">{t('app.footer')}</p>
-            </div>
-          </div>
-          <div>
-            <NavLink to="/" className="inline-flex min-h-10 items-center rounded-full border border-white/15 px-4 text-xs font-bold text-white/75 transition-colors hover:border-[#DDA756]/50 hover:text-[#DDA756]">
-              {t('nav.aboutProject')}
-            </NavLink>
-          </div>
-        </div>
+      <footer className="mx-auto w-full max-w-[76rem] px-4 pb-5 text-center text-[.65rem] text-[#6f675a] sm:px-7">
+        {t('app.footer')}
       </footer>
     </div>
   )

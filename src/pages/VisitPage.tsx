@@ -10,6 +10,7 @@ import {
 import { trackUsageEvent } from '../lib/analytics'
 import { getBioLinkImageUrl } from '../lib/bioLinkImages'
 import { supabaseClient } from '../lib/supabase'
+import { MeditationMark } from '../components/MeditationMark'
 
 interface TrackTranslationRow {
   language_code: string
@@ -81,57 +82,36 @@ export function VisitPage() {
 
 function LanguageGate({ onSelect }: { onSelect: (language: AppLanguage) => void }) {
   return (
-    <main className="relative isolate min-h-screen overflow-hidden bg-[#0C1B31] px-4 py-6 text-white sm:px-8 sm:py-8">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_10%,rgba(221,167,86,0.22),transparent_30%),radial-gradient(circle_at_12%_88%,rgba(168,97,0,0.18),transparent_32%)]" />
-      <div aria-hidden="true" className="pointer-events-none absolute -right-24 top-16 -z-10 h-80 w-80 rounded-full border border-white/6" />
-      <div aria-hidden="true" className="pointer-events-none absolute -right-10 top-30 -z-10 h-52 w-52 rounded-full border border-[#DDA756]/15" />
+    <main className="relative isolate min-h-screen overflow-hidden bg-[#d8ccb8] px-4 py-5 text-[#30342d] sm:px-8 sm:py-7">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_13%_10%,rgba(255,249,235,.9),transparent_34%),linear-gradient(150deg,#e2d7c4_0%,#cbbca4_100%)]" />
+      <MeditationMark className="pointer-events-none absolute -right-28 top-10 -z-10 w-[34rem] text-white/35 sm:w-[46rem]" />
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
+      <div className="mx-auto flex max-w-6xl items-center justify-between">
         <Link to="/" className="group flex items-center gap-3" aria-label="MonkChat Guide">
-          <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 rounded-xl ring-1 ring-white/15 transition-transform group-hover:-rotate-3" />
-          <span className="leading-tight">
-            <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.22em] text-[#DDA756]">MonkChat</span>
-            <span className="block text-sm font-extrabold">Guide</span>
-          </span>
+          <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 rounded-xl bg-[#354033] ring-1 ring-white/30 transition-transform group-hover:-rotate-3" />
+          <span className="leading-tight"><span className="block text-sm font-extrabold">MonkChat Guide</span><span className="mt-1 block text-[.55rem] font-bold uppercase tracking-[.2em] text-[#a34e39]">Inner Peace Companion</span></span>
         </Link>
-        <Link to="/" className="inline-flex min-h-10 items-center rounded-full border border-white/15 px-4 text-xs font-bold text-white/70 transition-colors hover:border-[#DDA756]/45 hover:text-[#DDA756]">
-          โครงการ / About
-        </Link>
+        <Link to="/" className="inline-flex min-h-10 items-center rounded-full border border-[#4b4337]/15 bg-white/24 px-4 text-xs font-bold text-[#595248] backdrop-blur-sm transition-colors hover:bg-white/40">โครงการ / About</Link>
       </div>
 
-      <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-12 py-12 lg:grid-cols-[1fr_0.82fr] lg:gap-20">
+      <div className="mx-auto grid min-h-[calc(100vh_-_4.75rem)] max-w-6xl items-center gap-10 py-10 lg:grid-cols-[1fr_.78fr] lg:gap-16">
         <div className="max-w-2xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#DDA756]/25 bg-[#DDA756]/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#F2C887]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#DDA756]" />
-            Welcome to MonkChat
-          </span>
-          <h1 className="mt-7 text-4xl font-bold leading-tight tracking-[-0.04em] text-balance sm:text-6xl">
-            ฟัง เรียนรู้ และเดินทางต่ออย่างสงบ
-          </h1>
-          <p className="mt-6 max-w-xl text-sm leading-7 text-white/62 sm:text-base">
-            Meditation audio, trusted answers, and DCI centers—all in one calm space for your visit.
-          </p>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#a94732]/18 bg-[#a94732]/8 px-3 py-1.5 text-[.65rem] font-bold uppercase tracking-[.18em] text-[#8e3d2d]"><span className="h-1.5 w-1.5 rounded-full bg-[#a94732]" />Welcome to MonkChat</span>
+          <h1 className="mt-6 font-serif text-4xl font-bold leading-[1.08] tracking-[-.04em] text-balance sm:text-6xl">ฟัง เรียนรู้ และเดินทางต่ออย่างสงบ</h1>
+          <p className="mt-5 max-w-xl text-sm leading-7 text-[#625b50] sm:text-base">Meditation audio, trusted answers, and DCI centers—all in one calm space for your visit.</p>
         </div>
 
-        <section aria-labelledby="language-gate-title" className="rounded-[2rem] border border-white/10 bg-[#FFFEF9] p-6 text-[#11223C] shadow-[0_30px_90px_rgba(0,0,0,0.28)] sm:p-8">
-          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#A86100]/10 text-[#A86100]">
-            <svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.2-2.3 3.3-5.3 3.3-9S14.2 5.3 12 3m0 18c-2.2-2.3-3.3-5.3-3.3-9S9.8 5.3 12 3M3.5 9h17m-17 6h17" />
-            </svg>
-          </span>
-          <p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-[#A86100]">Your language</p>
-          <h2 id="language-gate-title" className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-            เลือกภาษา / Choose language
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-[#11223C]/60">
-            ระบบจะจดจำภาษาสำหรับการเข้าชมครั้งนี้<br />Choose the language for this visit.
-          </p>
+        <section aria-labelledby="language-gate-title" className="rounded-[1.75rem] border border-white/55 bg-[#eadbc1]/86 p-6 shadow-[0_28px_70px_rgba(73,61,45,.16)] backdrop-blur-xl sm:p-8">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#a94732] text-white"><svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.2-2.3 3.3-5.3 3.3-9S14.2 5.3 12 3m0 18c-2.2-2.3-3.3-5.3-3.3-9S9.8 5.3 12 3M3.5 9h17m-17 6h17" /></svg></span>
+          <p className="mt-6 text-[.65rem] font-bold uppercase tracking-[.2em] text-[#a34e39]">Your language</p>
+          <h2 id="language-gate-title" className="mt-2 font-serif text-2xl font-bold tracking-tight sm:text-3xl">เลือกภาษา / Choose language</h2>
+          <p className="mt-3 text-sm leading-6 text-[#625b50]">ระบบจะจดจำภาษาสำหรับการเข้าชมครั้งนี้<br />Choose the language for this visit.</p>
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
           <button
             type="button"
             onClick={() => onSelect('th')}
             aria-label="ภาษาไทย"
-            className="group flex min-h-20 items-center gap-4 rounded-2xl bg-[#A86100] px-5 py-4 text-left text-white shadow-[0_12px_30px_rgba(168,97,0,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#8D5200]"
+            className="group flex min-h-20 items-center gap-4 rounded-2xl bg-[#a94732] px-5 py-4 text-left text-white shadow-[0_12px_28px_rgba(142,61,45,.2)] transition-all hover:-translate-y-0.5 hover:bg-[#8e3d2d]"
           >
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/15 text-xs font-extrabold">TH</span>
             <span><span className="block font-bold">ภาษาไทย</span><span className="mt-0.5 block text-xs text-white/65">ดำเนินการต่อ</span></span>
@@ -140,10 +120,10 @@ function LanguageGate({ onSelect }: { onSelect: (language: AppLanguage) => void 
             type="button"
             onClick={() => onSelect('en')}
             aria-label="English"
-            className="group flex min-h-20 items-center gap-4 rounded-2xl border border-[#11223C]/12 bg-white px-5 py-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#A86100]/35 hover:shadow-md"
+            className="group flex min-h-20 items-center gap-4 rounded-2xl border border-[#4b4337]/14 bg-white/55 px-5 py-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#a94732]/35 hover:bg-white/70"
           >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#11223C]/6 text-xs font-extrabold">EN</span>
-            <span><span className="block font-bold">English</span><span className="mt-0.5 block text-xs text-[#11223C]/50">Continue</span></span>
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#354033]/8 text-xs font-extrabold">EN</span>
+            <span><span className="block font-bold">English</span><span className="mt-0.5 block text-xs text-[#625b50]">Continue</span></span>
           </button>
           </div>
         </section>
@@ -250,226 +230,126 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
   )
 
   return (
-    <div className="space-y-10 pb-5 sm:space-y-14">
-      <section className="relative isolate overflow-hidden rounded-[2rem] bg-[#11223C] px-6 py-9 text-white shadow-[0_24px_70px_rgba(17,34,60,0.18)] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_20%,rgba(221,167,86,0.2),transparent_28%)]" />
-        <div aria-hidden="true" className="absolute -right-10 -top-24 -z-10 h-80 w-80 rounded-full border border-white/8" />
-        <div aria-hidden="true" className="absolute right-8 top-10 -z-10 hidden h-44 w-44 rounded-full border border-[#DDA756]/18 md:block" />
-        <div className="max-w-2xl space-y-4">
-          <p className="text-xs font-bold uppercase tracking-[0.22em] text-amber-300">
-            {t('visitor.heroTag')}
-          </p>
-          <h1 className="text-3xl font-bold leading-tight tracking-[-0.035em] text-balance sm:text-5xl">
+    <div className="space-y-5 pb-3">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[.68rem] font-bold uppercase tracking-[.18em] text-[#a34e39]">{t('visitor.heroTag')}</p>
+          <h1 className="mt-2 max-w-3xl font-serif text-4xl font-bold leading-[1.08] tracking-[-.035em] text-[#30342d] sm:text-5xl">
             {t('visitor.title')}
           </h1>
-          <p className="max-w-xl text-sm leading-7 text-slate-200 sm:text-base">
-            {t('visitor.subtitle')}
-          </p>
         </div>
-      </section>
+        <p className="max-w-md text-sm leading-6 text-[#6b6255] sm:text-right">{t('visitor.subtitle')}</p>
+      </header>
 
-      <section aria-labelledby="recommended-heading" className="rounded-[1.75rem] border border-[#11223C]/8 bg-white/85 p-5 shadow-[0_18px_55px_rgba(17,34,60,0.07)] backdrop-blur sm:p-8">
-        <div className="flex flex-col gap-2 border-b border-slate-100 pb-5 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#A86100]">
-              {t('visitor.recommendedTag')}
-            </p>
-            <h2 id="recommended-heading" className="mt-2 text-xl font-bold text-[#11223C] sm:text-2xl">
+      <div className="grid gap-5 lg:grid-cols-[1.34fr_.8fr]">
+        <section aria-labelledby="recommended-heading" className="relative isolate min-h-[31rem] overflow-hidden rounded-[1.75rem] bg-[#303a2f] text-[#fff4df] shadow-[0_22px_60px_rgba(49,55,43,.18)]">
+          <div className="absolute inset-y-0 right-0 hidden w-[42%] overflow-hidden md:block">
+            <img src="/images/home/monkchat-slide-2.webp" alt="" className="h-full w-full object-cover opacity-85" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#303a2f] via-[#303a2f]/25 to-transparent" />
+          </div>
+          <div className="relative z-10 flex h-full max-w-[64%] flex-col p-6 sm:p-8 max-md:max-w-none">
+            <p className="text-[.66rem] font-bold uppercase tracking-[.15em] text-[#efd070]">{t('visitor.recommendedTag')}</p>
+            <h2 id="recommended-heading" className="mt-4 max-w-lg font-serif text-3xl font-bold leading-[1.12] tracking-[-.025em] sm:text-4xl">
               {t('visitor.recommendedTitle')}
             </h2>
-          </div>
-          <p className="max-w-md text-sm text-slate-500 sm:text-right">
-            {t('visitor.recommendedSubtitle')}
-          </p>
-        </div>
+            <p className="mt-3 max-w-md text-sm leading-6 text-[#fff4df]/68">{t('visitor.recommendedSubtitle')}</p>
 
-        {isTrackLoading ? (
-          <LoadingState label={t('visitor.loadingRecommended')} />
-        ) : trackError ? (
-          <ErrorState message={trackError} onRetry={fetchRecommendedTracks} retryLabel={t('home.retry')} />
-        ) : !selectedTrack || !selectedTranslation ? (
-          <EmptyState message={t('visitor.noRecommended')} />
-        ) : (
-          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-            <div className="min-w-0">
-              {recommendedTracks.length > 1 && (
-                <div className="mb-4 flex flex-wrap gap-2" aria-label={t('visitor.selectRecommended')}>
-                  {recommendedTracks.map((track) => {
-                    const translation = track.meditation_track_translations.find(
-                      (item) => item.language_code === currentLang,
-                    )
-                    return (
-                      <button
-                        key={track.id}
-                        type="button"
-                        onClick={() => setSelectedTrackId(track.id)}
-                        className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
-                          track.id === selectedTrack.id
-                            ? 'bg-[#11223C] text-white'
-                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                        }`}
-                      >
-                        {translation?.title}
-                      </button>
-                    )
-                  })}
+            <div className="mt-auto pt-8">
+              {isTrackLoading ? (
+                <LoadingState label={t('visitor.loadingRecommended')} inverse />
+              ) : trackError ? (
+                <ErrorState message={trackError} onRetry={fetchRecommendedTracks} retryLabel={t('home.retry')} />
+              ) : !selectedTrack || !selectedTranslation ? (
+                <EmptyState message={t('visitor.noRecommended')} inverse />
+              ) : (
+                <div className="rounded-[1.25rem] border border-white/15 bg-black/14 p-5 backdrop-blur-md">
+                  {recommendedTracks.length > 1 && (
+                    <div className="mb-4 flex flex-wrap gap-2" aria-label={t('visitor.selectRecommended')}>
+                      {recommendedTracks.map((track) => {
+                        const translation = track.meditation_track_translations.find((item) => item.language_code === currentLang)
+                        return (
+                          <button key={track.id} type="button" onClick={() => setSelectedTrackId(track.id)} className={`rounded-full px-3 py-1.5 text-xs font-semibold ${track.id === selectedTrack.id ? 'bg-[#efd070] text-[#393427]' : 'bg-white/10 text-white/70 hover:bg-white/15'}`}>
+                            {translation?.title}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                  <h3 className="text-base font-bold">{selectedTranslation.title}</h3>
+                  {selectedTranslation.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-[#fff4df]/68">{selectedTranslation.description}</p>}
+                  <div className="mt-4 flex items-center justify-between gap-4">
+                    <span className="text-xs text-[#fff4df]/62">{Math.max(1, Math.round(selectedTrack.duration_seconds / 60))} {t('meditation.minutes')} · {selectedTrack.source_language_code?.toUpperCase()}</span>
+                    <Link to={`/meditation?trackId=${selectedTrack.id}`} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#bd4e33] px-5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
+                      <PlayIcon />{t('visitor.playNow')}
+                    </Link>
+                  </div>
                 </div>
               )}
-              <h3 className="text-xl font-bold text-[#11223C]">{selectedTranslation.title}</h3>
-              {selectedTranslation.description && (
-                <p className="mt-2 text-sm leading-6 text-slate-600">{selectedTranslation.description}</p>
-              )}
-              <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
-                <span className="rounded-md bg-slate-100 px-2.5 py-1.5 text-slate-700">
-                  {Math.max(1, Math.round(selectedTrack.duration_seconds / 60))} {t('meditation.minutes')}
-                </span>
-                <span className="rounded-md bg-amber-50 px-2.5 py-1.5 text-amber-800">
-                  {t('meditation.audioLanguage')}: {selectedTrack.source_language_code?.toUpperCase() || t('meditation.unknownLanguage')}
-                </span>
-              </div>
             </div>
-            <Link
-              to={`/meditation?trackId=${selectedTrack.id}`}
-              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#A86100] px-6 py-3 font-bold text-white transition-colors hover:bg-amber-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 lg:w-auto"
-            >
-              <svg aria-hidden="true" className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.56 7.17A1 1 0 008 8v4a1 1 0 001.56.83l3-2a1 1 0 000-1.66l-3-2z" clipRule="evenodd" />
-              </svg>
-              {t('visitor.playNow')}
+          </div>
+        </section>
+
+        <div className="grid gap-5">
+          <section className="rounded-[1.5rem] border border-white/35 bg-[#eadbc1]/82 p-5 shadow-[0_14px_40px_rgba(73,61,45,.09)] backdrop-blur-md sm:p-6">
+            <p className="text-[.65rem] font-bold uppercase tracking-[.13em] text-[#a34e39]">Q&amp;A · {t('qa.verificationNotice')}</p>
+            <h2 className="mt-3 font-serif text-2xl font-bold text-[#30342d]">{t('visitor.qaTitle')}</h2>
+            <Link to="/qa" className="mt-5 flex min-h-12 items-center justify-between rounded-xl border border-[#6b5c48]/20 bg-white/38 px-4 text-sm font-semibold text-[#625b50] transition-colors hover:bg-white/60">
+              <span>{t('qa.searchPlaceholder')}</span><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#a94732] text-white"><QuestionIcon /></span>
             </Link>
-          </div>
-        )}
-      </section>
+          </section>
 
-      <section aria-labelledby="visitor-actions-heading">
-        <div className="mb-5">
-          <h2 id="visitor-actions-heading" className="text-xl font-bold text-[#11223C] sm:text-2xl">
-            {t('visitor.chooseTitle')}
-          </h2>
-          <p className="mt-1 text-sm text-slate-600">{t('visitor.chooseSubtitle')}</p>
+          <section aria-labelledby="bio-links-heading" className="rounded-[1.5rem] bg-[#354033] p-5 text-[#fff4df] shadow-[0_16px_42px_rgba(49,55,43,.14)] sm:p-6">
+            <h2 id="bio-links-heading" className="text-sm font-bold">{t('visitor.chooseTitle')}</h2>
+            <div className="mt-3 divide-y divide-white/15">
+              <GuideLinkRow to="/qa" title={t('visitor.qaTitle')} description={t('visitor.qaDesc')} icon={<QuestionIcon />} />
+              <GuideLinkRow to="/centers" title={t('visitor.centersTitle')} description={t('visitor.centersDesc')} icon={<LocationIcon />} />
+              <GuideLinkRow to="/meditation" title={t('visitor.meditationTitle')} description={t('visitor.meditationDesc')} icon={<PlayIcon />} />
+            </div>
+
+            {areLinksLoading ? (
+              <LoadingState label={t('home.loadingLinks')} inverse />
+            ) : linksError ? (
+              <ErrorState message={linksError} onRetry={fetchBioLinks} retryLabel={t('home.retry')} />
+            ) : bioLinks.length > 0 ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {bioLinks.slice(0, 3).map((link) => {
+                  const title = link.bio_link_translations.find((translation) => translation.language_code === currentLang)?.title
+                  const imageUrl = getBioLinkImageUrl(link.image_storage_path)
+                  return (
+                    <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" aria-label={title} onClick={() => { void trackUsageEvent({ eventType: 'bio_link_click', resourceType: 'bio_link', resourceId: link.id }) }} className="inline-flex min-h-10 items-center gap-2 rounded-full bg-white/10 px-3 text-xs font-semibold text-white/78 hover:bg-white/16">
+                      {imageUrl ? <img src={imageUrl} alt="" className="h-6 w-6 rounded-full object-cover" /> : <LinkIcon />}{title}<ExternalLinkIcon />
+                    </a>
+                  )
+                })}
+              </div>
+            ) : null}
+          </section>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          <VisitorActionCard
-            to="/meditation"
-            title={t('visitor.meditationTitle')}
-            description={t('visitor.meditationDesc')}
-            action={t('visitor.meditationAction')}
-            icon={<PlayIcon />}
-            tone="gold"
-          />
-          <VisitorActionCard
-            to="/qa"
-            title={t('visitor.qaTitle')}
-            description={t('visitor.qaDesc')}
-            action={t('visitor.qaAction')}
-            icon={<QuestionIcon />}
-            tone="navy"
-          />
-          <VisitorActionCard
-            to="/centers"
-            title={t('visitor.centersTitle')}
-            description={t('visitor.centersDesc')}
-            action={t('visitor.centersAction')}
-            icon={<LocationIcon />}
-            tone="sand"
-          />
-        </div>
-      </section>
+      </div>
 
-      <section aria-labelledby="bio-links-heading" className="rounded-[1.75rem] border border-[#11223C]/8 bg-[#F2E9D8]/55 p-5 sm:p-8 lg:p-10">
-        <div className="text-center">
-          <h2 id="bio-links-heading" className="text-xl font-bold text-[#11223C] sm:text-2xl">
-            {t('home.bioLinksTitle')}
-          </h2>
-          <p className="mt-2 text-sm text-slate-600">{t('home.bioLinksSubtitle')}</p>
-        </div>
-
-        {areLinksLoading ? (
-          <LoadingState label={t('home.loadingLinks')} />
-        ) : linksError ? (
-          <ErrorState message={linksError} onRetry={fetchBioLinks} retryLabel={t('home.retry')} />
-        ) : bioLinks.length === 0 ? (
-          <EmptyState message={t('home.emptyLinks')} />
-        ) : (
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {bioLinks.map((link) => {
-              const title = link.bio_link_translations.find(
-                (translation) => translation.language_code === currentLang,
-              )?.title
-              const imageUrl = getBioLinkImageUrl(link.image_storage_path)
-
-              return (
-                <a
-                  key={link.id}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    void trackUsageEvent({
-                      eventType: 'bio_link_click',
-                      resourceType: 'bio_link',
-                      resourceId: link.id,
-                    })
-                  }}
-                  className="group flex min-w-0 items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs transition-all hover:border-amber-600 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
-                >
-                  {imageUrl ? (
-                    <img src={imageUrl} alt="" className="h-11 w-11 shrink-0 rounded-lg object-cover" />
-                  ) : (
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-[#A86100]">
-                      <LinkIcon />
-                    </span>
-                  )}
-                  <span className="min-w-0 flex-1 break-words font-semibold text-[#11223C]">{title}</span>
-                  <ExternalLinkIcon />
-                </a>
-              )
-            })}
-          </div>
-        )}
+      <section className="grid gap-4 rounded-[1.35rem] bg-[#8e3d2d] px-5 py-4 text-[#fff1d7] shadow-[0_15px_36px_rgba(113,49,37,.15)] sm:grid-cols-[1fr_1fr_auto] sm:items-center sm:px-7">
+        <div><strong className="block text-sm">กิจกรรมจริง · จันทร์และศุกร์</strong><span className="mt-1 block text-xs text-white/70">13.15 น. เป็นต้นไป</span></div>
+        <div className="border-white/20 sm:border-l sm:pl-6"><strong className="block text-sm">วัดมหาธาตุ · อยุธยา</strong><span className="mt-1 block text-xs text-white/70">ตรวจสอบจุดนัดหมายก่อนมา</span></div>
+        <Link to="/" className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f3d992] px-5 text-sm font-bold text-[#633121] transition-transform hover:-translate-y-0.5">Ayutthaya Monk Chat ↗</Link>
       </section>
     </div>
   )
 }
 
-function VisitorActionCard({ to, title, description, action, icon, tone }: {
-  to: string
-  title: string
-  description: string
-  action: string
-  icon: ReactNode
-  tone: 'gold' | 'navy' | 'sand'
-}) {
-  const toneClasses = {
-    gold: 'bg-[#A86100]/10 text-[#A86100] group-hover:bg-[#A86100] group-hover:text-white',
-    navy: 'bg-[#11223C]/8 text-[#11223C] group-hover:bg-[#11223C] group-hover:text-white',
-    sand: 'bg-[#DDA756]/20 text-[#8D5200] group-hover:bg-[#DDA756] group-hover:text-[#11223C]',
-  }
-
+function GuideLinkRow({ to, title, description, icon }: { to: string; title: string; description: string; icon: ReactNode }) {
   return (
-    <Link
-      to={to}
-      className="group flex min-h-64 flex-col rounded-[1.5rem] border border-[#11223C]/8 bg-white/90 p-6 shadow-[0_12px_35px_rgba(17,34,60,0.05)] transition-all hover:-translate-y-1 hover:border-[#A86100]/30 hover:shadow-[0_22px_55px_rgba(17,34,60,0.1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700"
-    >
-      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-colors ${toneClasses[tone]}`}>
-        {icon}
-      </span>
-      <h3 className="mt-5 text-lg font-bold text-[#11223C]">{title}</h3>
-      <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">{description}</p>
-      <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-[#A86100]">
-        {action}
-        <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </span>
+    <Link to={to} className="group flex items-center gap-3 py-4">
+      <span className="text-[#e9c66b]">{icon}</span>
+      <span className="min-w-0 flex-1"><strong className="block text-sm">{title}</strong><small className="mt-1 block truncate text-[.68rem] text-white/55">{description}</small></span>
+      <span className="text-white/60 transition-transform group-hover:translate-x-1">↗</span>
     </Link>
   )
 }
 
-function LoadingState({ label }: { label: string }) {
+function LoadingState({ label, inverse = false }: { label: string; inverse?: boolean }) {
   return (
-    <div className="flex items-center justify-center gap-3 py-10 text-sm text-slate-500" role="status">
-      <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-[#A86100]" />
+    <div className={`flex items-center justify-center gap-3 py-8 text-sm ${inverse ? 'text-white/65' : 'text-slate-500'}`} role="status">
+      <span className={`h-5 w-5 animate-spin rounded-full border-2 ${inverse ? 'border-white/20 border-t-[#efd070]' : 'border-slate-200 border-t-[#A86100]'}`} />
       {label}
     </div>
   )
@@ -494,9 +374,9 @@ function ErrorState({ message, retryLabel, onRetry }: {
   )
 }
 
-function EmptyState({ message }: { message: string }) {
+function EmptyState({ message, inverse = false }: { message: string; inverse?: boolean }) {
   return (
-    <div className="mt-6 rounded-xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center text-sm text-slate-500">
+    <div className={`mt-4 rounded-xl border border-dashed px-5 py-7 text-center text-sm ${inverse ? 'border-white/20 bg-white/5 text-white/65' : 'border-slate-300 bg-white text-slate-500'}`}>
       {message}
     </div>
   )
