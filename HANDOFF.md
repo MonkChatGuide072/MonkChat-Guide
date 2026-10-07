@@ -1,16 +1,16 @@
 # MonkChat Guide - Project Handoff
 
-## Local agent relay compatibility fix — 2026-10-07
+## Local agent relay Windows smoke-test fix — 2026-10-07
 
 - Branch: `chore/local-agent-relay`; pull request: #9 (Draft). Merge and deployment remain explicitly prohibited.
-- Windows smoke testing exposed three compatibility failures: Codex CLI rejected `--ask-for-approval`, Antigravity CLI rejected `--cwd`, and Antigravity's default headless mode denied file writes.
-- The relay now removes the unsupported flags and launches Antigravity with `--mode=accept-edits`, the documented mode for automatically approving workspace file edits.
-- Antigravity is instructed to use workspace file tools only. It must not run terminal, Git, npm, browser, MCP, or network tools. The relay runs lint, tests, and build after the edit.
-- Review diffs now use `git diff HEAD` so staged and unstaged tracked changes are both visible to Codex.
-- Codex, Antigravity, lint, test, and build subprocesses now have time limits to prevent indefinite hangs.
-- Relay JavaScript syntax passed after the compatibility update. A final guarded live Windows smoke test is still required before PR #9 can be considered ready.
+- First updated Windows smoke run proved Antigravity headless writing works: it returned `READY_FOR_REVIEW` and created only `docs/RELAY_SMOKE_TEST.md`.
+- Round 1 then blocked because Windows command discovery selected the extensionless `npm` shim instead of `npm.cmd`, causing lint/test/build to fail, and Codex attempted prohibited file-inspection tools instead of relying on supplied evidence.
+- The relay now prefers Windows `.exe`, `.cmd`, or `.bat` command wrappers; supplies the mandatory project documents directly to Codex; explicitly prevents Codex tool calls; filters the expected `.agent-sync/TASK.md` input from review status; and includes failed-check logs in the review prompt.
+- Unsupported Codex `--ask-for-approval` and Antigravity `--cwd` flags remain removed. Antigravity runs with `--mode=accept-edits` and workspace file tools only.
+- Review diffs use `git diff HEAD`; agent and verification subprocesses have time limits; blocker details now print directly in the terminal.
+- Relay JavaScript syntax passed after this fix. A clean second Windows smoke run is required before PR #9 can be considered ready.
 - Production, Supabase, Cloudflare production, environment files, and application source code are unchanged.
-- Exact next step: pull the updated PR branch in the disposable Windows relay checkout and run `npm run agents:relay -- --execute`. Do not merge.
+- Exact next step: remove only the generated smoke-test file from the disposable checkout, pull this branch, and rerun the same relay task. Do not merge.
 
 ## Production release completed — 2026-09-23
 
