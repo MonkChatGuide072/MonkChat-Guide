@@ -5,7 +5,7 @@ This relay lets Codex review and Google Antigravity implement a focused task in 
 ## Roles
 
 - **Codex** is read-only. It creates the initial plan and reviews the Git diff and verification results.
-- **Antigravity** is the only source-code writer during a relay run. It implements Codex's plan, runs focused checks, and responds to review feedback.
+- **Antigravity** is the only source-code writer during a relay run. It implements Codex's plan and responds to review feedback. The relay—not Antigravity—runs the deterministic checks.
 - **The relay** runs deterministic project checks and stops when Codex reports `PASS`, an agent reports a blocker, or the round limit is reached.
 - **The Project Owner** remains the only approval authority for commit, push, pull request, merge, deployment, Supabase, Cloudflare, secrets, and production changes.
 
@@ -35,16 +35,9 @@ The first version runs at most two implementation/review rounds by default. It a
 4. Work starts on a dedicated feature branch created from the current `origin/main`.
 5. The working tree is clean except for `.agent-sync/TASK.md`.
 6. `npm ci` has already completed for the checkout.
-7. Antigravity CLI uses its sandboxed permission preset so safe local edits can proceed without approving every command:
+7. No unrestricted permission mode is required. The relay launches Antigravity headlessly with `--mode=accept-edits`, which auto-approves workspace file edits. The implementation prompt forbids terminal, Git, npm, browser, MCP, and network tools; the relay runs lint, tests, and build itself.
 
-```json
-{
-  "toolPermission": "proceed-in-sandbox",
-  "enableTerminalSandbox": true
-}
-```
-
-Keep that setting in the Antigravity CLI user settings. Do not use an unrestricted or YOLO-style permission mode for this relay.
+Do not add `--dangerously-skip-permissions` and do not grant broad global permissions.
 
 Check the commands from PowerShell:
 
@@ -64,7 +57,7 @@ git status -sb
 npm run agents:relay
 ```
 
-3. Start the guarded two-round relay:
+3. Start the guarded two-round relay. From this point Codex and Antigravity exchange the plan, implementation report, review feedback, and revision automatically:
 
 ```powershell
 npm run agents:relay -- --execute
