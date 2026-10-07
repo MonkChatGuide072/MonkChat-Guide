@@ -5,6 +5,7 @@
 - PR #9 now includes the earlier scope and exact-decision guard at `aa2f846` and remains Draft; no merge or production change occurred.
 - A focused follow-up closes two review gaps: changed symbolic links or non-regular files are blocked before content inspection, and tracked binary diffs are blocked before Codex review.
 - In a disposable Linux repository with mock agents, an allowed text file reached `ready_for_owner`; a symlink pointing at an ignored `.env.local` and a tracked binary change both blocked without the secret appearing in runtime evidence.
+- Final diff review found that prose inside `## Scope` could accidentally authorize a path mentioned in a prohibition. The parser now requires one exact path per bullet and blocks ambiguous lines before invoking agents; a focused negative case passed.
 - Lint, all 32 automated tests, production build, JavaScript syntax, and whitespace checks passed in the local checkout. These checks do not substitute for a real Windows relay run with the latest guard.
 - Next step: run one Windows documentation smoke test on the latest branch and inspect state, diff, and logs. Do not merge without separate owner approval.
 

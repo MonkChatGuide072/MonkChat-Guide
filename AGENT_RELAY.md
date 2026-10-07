@@ -33,7 +33,7 @@ The first version runs at most two implementation/review rounds by default. It a
 2. Codex CLI is installed and signed in with the approved ChatGPT account.
 3. Antigravity CLI is installed and signed in with the approved Google account.
 4. Work starts on a dedicated feature branch created from the current `origin/main`.
-5. The working tree is clean except for `.agent-sync/TASK.md`. Its `## Scope` section lists exact repository-relative file paths; directories end in `/`. If no paths are listed, execution stops.
+5. The working tree is clean except for `.agent-sync/TASK.md`. Its `## Scope` section contains only bullet lines with one exact repository-relative path per line; directories end in `/`. Put prohibitions in `## Out of Scope`, not beside an allowed path. Empty or ambiguous scope stops execution.
 6. `npm ci` has already completed for the checkout.
 7. No unrestricted permission mode is required. The relay launches Antigravity headlessly with `--mode=accept-edits`, which auto-approves workspace file edits. The implementation prompt forbids terminal, Git, npm, browser, MCP, and network tools; the relay runs lint, tests, and build itself.
 

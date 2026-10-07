@@ -122,24 +122,22 @@ function parseAllowedPaths(taskText) {
   const scopeSection = taskText
     .split(/\r?\n##\s+/)
     .find((section) => /^Scope\s*\r?\n/i.test(section));
-  if (!scopeSection) return [];
+  if (!scopeSection) return { paths: [], invalid: [] };
 
   const scope = scopeSection.replace(/^Scope\s*\r?\n/i, "");
-  const candidates = [
-    ...Array.from(scope.matchAll(/`([^`]+)`/g), (match) => match[1]),
-    ...Array.from(
-      scope.matchAll(/(?:^|\s)([A-Za-z0-9._-]+(?:[\\/][A-Za-z0-9._-]+)+[\\/]?)(?=$|[\s),;])/gm),
-      (match) => match[1],
-    ),
-  ];
-  return [...new Set(candidates
-    .map((candidate) => candidate.replaceAll("\\", "/").replace(/^\.\//, ""))
-    .filter((candidate) =>
-      /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*\/?$/.test(candidate) &&
-      !candidate.split("/").includes("..") &&
-      candidate !== "." &&
-      candidate !== "/"
-    ))];
+  const paths = [];
+  const invalid = [];
+  for (const line of scope.split(/\r?\n/).map((item) => item.trim()).filter(Boolean)) {
+    const match = /^[-*]\s+(?:`([^`]+)`|([^\s`]+))$/.exec(line);
+    const candidate = (match?.[1] ?? match?.[2] ?? "").replaceAll("\\", "/").replace(/^\.\//, "");
+    if (!/^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*\/?$/.test(candidate) ||
+        candidate.split("/").includes("..") || candidate === "." || candidate === "/") {
+      invalid.push(line);
+      continue;
+    }
+    paths.push(candidate);
+  }
+  return { paths: [...new Set(paths)], invalid };
 }
 
 function isForbiddenPath(file) {
@@ -411,13 +409,16 @@ const baselineHead = runGit(["rev-parse", "HEAD"]);
 
 const taskOriginal = readFileSync(taskPath, "utf8");
 const task = taskOriginal.trim();
-const allowedPaths = parseAllowedPaths(task);
+const { paths: allowedPaths, invalid: invalidScopeLines } = parseAllowedPaths(task);
 const taskIsTemplate =
   !task ||
   task.includes("Replace this template") ||
   task.includes("Describe the exact result you want");
 if (execute && taskIsTemplate) {
   fail("Complete .agent-sync/TASK.md before starting the relay.");
+}
+if (execute && invalidScopeLines.length > 0) {
+  fail("## Scope must contain only bullet lines with one exact path each. Move prohibitions to ## Out of Scope.");
 }
 if (execute && allowedPaths.length === 0) {
   fail("List explicit file paths under ## Scope in .agent-sync/TASK.md before starting the relay.");
