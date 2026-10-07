@@ -8,7 +8,7 @@
 - The relay now prefers Windows `.exe`, `.cmd`, or `.bat` command wrappers; supplies the mandatory project documents directly to Codex; explicitly prevents Codex tool calls; filters the expected `.agent-sync/TASK.md` input from review status; and includes failed-check logs in the review prompt.
 - Unsupported Codex `--ask-for-approval` and Antigravity `--cwd` flags remain removed. Antigravity runs with `--mode=accept-edits` and workspace file tools only.
 - Review diffs use `git diff HEAD`; agent and verification subprocesses have time limits; blocker details now print directly in the terminal.
-- Relay JavaScript syntax passed after this fix. A clean second Windows smoke run is required before PR #9 can be considered ready.
+- Second Windows smoke run confirmed Antigravity and Codex handoff now works, but Node could not launch `npm.cmd` directly (`EINVAL`). Verification now runs npm through the Windows shell only; relay JavaScript syntax passed. One clean rerun is still required before PR #9 can be considered ready.
 - Production, Supabase, Cloudflare production, environment files, and application source code are unchanged.
 - Exact next step: remove only the generated smoke-test file from the disposable checkout, pull this branch, and rerun the same relay task. Do not merge.
 
