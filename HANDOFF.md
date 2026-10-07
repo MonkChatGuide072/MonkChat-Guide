@@ -1,16 +1,16 @@
 # MonkChat Guide - Project Handoff
 
-## Local agent relay draft — 2026-10-07
+## Local agent relay compatibility fix — 2026-10-07
 
-- Branch: `chore/local-agent-relay`, created from `origin/main` commit `c93437006334165bcca3c5339e3b7536de5b6e89` in a fresh checkout.
-- Added a local Codex-to-Antigravity relay draft: Codex plans/reviews read-only, Antigravity is the sole source-code writer, and the agents run sequentially for at most two rounds by default.
-- Safety gates refuse `main`/`master`, unexpected pre-existing changes, blank task templates, branch/HEAD changes, and prohibited release work. The relay stops before commit, push, merge, deployment, Supabase, Cloudflare, secrets, billing, or production changes.
-- Added dry-run-first commands, a PowerShell wrapper, task template, ignored runtime evidence directory, deterministic lint/test/build checks, and review coverage for tracked and untracked files.
-- Verification passed locally: relay JavaScript syntax, relay dry-run, application lint, 32 tests, production build, and `git diff --check`.
-- Environment limitation: Codex CLI, Antigravity CLI, and PowerShell are not installed in this checkout environment, so a live two-agent round and the PowerShell wrapper still require validation on the owner's Windows machine.
-- The owner approved committing and pushing this relay branch and opening a pull request on 2026-10-07. Merge and deployment remain explicitly prohibited.
-- Nothing has been merged, deployed, or applied to Supabase/Cloudflare. Production is unchanged.
-- Exact next step: review the relay pull request, then validate one guarded live round on the owner's Windows checkout before considering merge approval.
+- Branch: `chore/local-agent-relay`; pull request: #9 (Draft). Merge and deployment remain explicitly prohibited.
+- Windows smoke testing exposed three compatibility failures: Codex CLI rejected `--ask-for-approval`, Antigravity CLI rejected `--cwd`, and Antigravity's default headless mode denied file writes.
+- The relay now removes the unsupported flags and launches Antigravity with `--mode=accept-edits`, the documented mode for automatically approving workspace file edits.
+- Antigravity is instructed to use workspace file tools only. It must not run terminal, Git, npm, browser, MCP, or network tools. The relay runs lint, tests, and build after the edit.
+- Review diffs now use `git diff HEAD` so staged and unstaged tracked changes are both visible to Codex.
+- Codex, Antigravity, lint, test, and build subprocesses now have time limits to prevent indefinite hangs.
+- Relay JavaScript syntax passed after the compatibility update. A final guarded live Windows smoke test is still required before PR #9 can be considered ready.
+- Production, Supabase, Cloudflare production, environment files, and application source code are unchanged.
+- Exact next step: pull the updated PR branch in the disposable Windows relay checkout and run `npm run agents:relay -- --execute`. Do not merge.
 
 ## Production release completed — 2026-09-23
 
