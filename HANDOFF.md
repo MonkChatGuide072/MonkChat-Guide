@@ -1,5 +1,17 @@
 # MonkChat Guide - Project Handoff
 
+## Local agent relay draft — 2026-10-07
+
+- Branch: `chore/local-agent-relay`, created from `origin/main` commit `c93437006334165bcca3c5339e3b7536de5b6e89` in a fresh checkout.
+- Added a local Codex-to-Antigravity relay draft: Codex plans/reviews read-only, Antigravity is the sole source-code writer, and the agents run sequentially for at most two rounds by default.
+- Safety gates refuse `main`/`master`, unexpected pre-existing changes, blank task templates, branch/HEAD changes, and prohibited release work. The relay stops before commit, push, merge, deployment, Supabase, Cloudflare, secrets, billing, or production changes.
+- Added dry-run-first commands, a PowerShell wrapper, task template, ignored runtime evidence directory, deterministic lint/test/build checks, and review coverage for tracked and untracked files.
+- Verification passed locally: relay JavaScript syntax, relay dry-run, application lint, 32 tests, production build, and `git diff --check`.
+- Environment limitation: Codex CLI, Antigravity CLI, and PowerShell are not installed in this checkout environment, so a live two-agent round and the PowerShell wrapper still require validation on the owner's Windows machine.
+- The owner approved committing and pushing this relay branch and opening a pull request on 2026-10-07. Merge and deployment remain explicitly prohibited.
+- Nothing has been merged, deployed, or applied to Supabase/Cloudflare. Production is unchanged.
+- Exact next step: review the relay pull request, then validate one guarded live round on the owner's Windows checkout before considering merge approval.
+
 ## Production release completed — 2026-09-23
 
 - Owner approval covered production database/server/frontend installation and commit/push. Migration `20260923020015_cms_account_access.sql` is applied; hosted read-only checks confirm the active-profile role predicate and both guard triggers. No real content or team account was created/edited.
