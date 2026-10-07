@@ -37,7 +37,7 @@ The first version runs at most two implementation/review rounds by default. It a
 6. `npm ci` has already completed for the checkout.
 7. No unrestricted permission mode is required. The relay launches Antigravity headlessly with `--mode=accept-edits`, which auto-approves workspace file edits. The implementation prompt forbids terminal, Git, npm, browser, MCP, and network tools; the relay runs lint, tests, and build itself.
 
-Do not add `--dangerously-skip-permissions` and do not grant broad global permissions. After each writer round, the relay checks tracked and untracked file paths, verifies that the task input did not change, and compares `.env` file metadata without reading secret values. It blocks out-of-scope changes but does not undo them or prevent a separately configured agent from attempting external actions. Use a disposable checkout and review the diff before approving any release.
+Do not add `--dangerously-skip-permissions` and do not grant broad global permissions. After each writer round, the relay checks tracked and untracked file paths, rejects changed symbolic links and other non-regular files, verifies that the task input did not change, and compares `.env` file metadata without reading secret values. It blocks binary and oversized changes from automatic review. It blocks out-of-scope changes but does not undo them or prevent a separately configured agent from attempting external actions. Use a disposable checkout and review the diff before approving any release.
 
 Check the commands from PowerShell:
 
@@ -93,6 +93,10 @@ Possible final statuses:
 - `blocked`: a command, agent, or safety precondition failed.
 
 None of these statuses means the work is deployed or approved. Review `git diff HEAD`, untracked files, and runtime evidence before requesting owner approval.
+
+## Verification gate for the current guard
+
+The owner's Windows documentation smoke test reached `ready_for_owner` on `e938e2e`. The scope and exact-decision guard added in `aa2f846` needs a fresh end-to-end Windows run before this PR is considered verified. In a disposable checkout, pull this branch, run the documentation smoke task with `npm run agents:relay -- --execute`, and inspect the final state, changed paths, and lint/test/build logs. A result from the earlier commit does not verify the new guard.
 
 ## Recovery
 

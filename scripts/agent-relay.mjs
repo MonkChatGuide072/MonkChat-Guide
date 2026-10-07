@@ -6,7 +6,6 @@ import {
   readdirSync,
   readFileSync,
   rmSync,
-  statSync,
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
@@ -179,6 +178,18 @@ function changedPaths() {
     .filter((file) => file !== ".agent-sync/TASK.md" && !file.startsWith(".agent-sync/runtime/"));
 }
 
+function nonRegularChangedPaths(paths) {
+  return paths.filter((file) => {
+    const absolute = path.join(repoRoot, file);
+    try {
+      return !lstatSync(absolute).isFile();
+    } catch (error) {
+      if (error.code === "ENOENT") return false; // A tracked deletion is safe to review.
+      throw error;
+    }
+  });
+}
+
 function envMetadata() {
   const metadata = new Map();
   const pending = [repoRoot];
@@ -222,23 +233,32 @@ function collectReviewDiff() {
     .filter(Boolean)
     .filter((file) => file !== ".agent-sync/TASK.md" && !file.startsWith(".agent-sync/runtime/"));
   const additions = [];
+  let unsafe = /^(?:GIT binary patch|Binary files .* differ)$/m.test(trackedDiff);
 
   for (const file of untracked) {
     const absolutePath = path.join(repoRoot, file);
-    const size = statSync(absolutePath).size;
+    const fileStat = lstatSync(absolutePath);
+    if (!fileStat.isFile()) {
+      unsafe = true;
+      additions.push(`--- UNTRACKED NON-REGULAR FILE: ${file} ---`);
+      continue;
+    }
+    const size = fileStat.size;
     if (size > maxUntrackedReviewBytes) {
+      unsafe = true;
       additions.push(`--- UNTRACKED LARGE FILE: ${file} (${size} bytes; content omitted) ---`);
       continue;
     }
     const buffer = readFileSync(absolutePath);
     if (buffer.includes(0)) {
+      unsafe = true;
       additions.push(`--- UNTRACKED BINARY FILE: ${file} (${buffer.length} bytes) ---`);
       continue;
     }
     additions.push(`--- UNTRACKED FILE: ${file} ---\n${buffer.toString("utf8")}`);
   }
 
-  return [trackedDiff, ...additions].filter(Boolean).join("\n\n");
+  return { text: [trackedDiff, ...additions].filter(Boolean).join("\n\n"), unsafe };
 }
 
 function writeText(filePath, content) {
@@ -544,15 +564,16 @@ Then summarize changed files and any remaining uncertainty.
     }
 
     const outOfScope = findUnexpectedPaths(changedPaths(), allowedPaths);
+    const nonRegular = nonRegularChangedPaths(changedPaths());
     const envChanges = changedEnvPaths(envBefore, envMetadata());
     const taskChanged = readFileSync(taskPath, "utf8") !== taskOriginal;
-    if (outOfScope.length || envChanges.length || taskChanged) {
+    if (outOfScope.length || nonRegular.length || envChanges.length || taskChanged) {
       state.status = "blocked";
       state.completedAt = new Date().toISOString();
       saveState(runDir, state);
       console.log(
-        "BLOCKED: Files outside the task scope or protected files changed. Inspect the working tree; the relay did not undo edits. " +
-        [...outOfScope, ...envChanges, ...(taskChanged ? [".agent-sync/TASK.md"] : [])].join(", ")
+        "BLOCKED: An out-of-scope, protected, or non-regular file changed. Inspect the working tree; the relay did not undo edits. " +
+        [...outOfScope, ...nonRegular, ...envChanges, ...(taskChanged ? [".agent-sync/TASK.md"] : [])].join(", ")
       );
       process.exitCode = 1;
       break;
@@ -577,24 +598,23 @@ Then summarize changed files and any remaining uncertainty.
 
     const checks = verification(runDir, round);
     const outOfScopeAfterChecks = findUnexpectedPaths(changedPaths(), allowedPaths);
+    const nonRegularAfterChecks = nonRegularChangedPaths(changedPaths());
     const envChangesAfterChecks = changedEnvPaths(envBefore, envMetadata());
-    if (outOfScopeAfterChecks.length || envChangesAfterChecks.length ||
+    if (outOfScopeAfterChecks.length || nonRegularAfterChecks.length || envChangesAfterChecks.length ||
         readFileSync(taskPath, "utf8") !== taskOriginal) {
       state.status = "blocked";
       state.completedAt = new Date().toISOString();
       saveState(runDir, state);
-      console.log("BLOCKED: Verification changed a protected or out-of-scope file. Inspect the working tree.");
+      console.log("BLOCKED: Verification changed a protected, out-of-scope, or non-regular file. Inspect the working tree.");
       process.exitCode = 1;
       break;
     }
-    const diff = collectReviewDiff();
-    if (diff.length > maxDiffChars ||
-        diff.includes("--- UNTRACKED LARGE FILE:") ||
-        diff.includes("--- UNTRACKED BINARY FILE:")) {
+    const { text: diff, unsafe: unsafeDiff } = collectReviewDiff();
+    if (diff.length > maxDiffChars || unsafeDiff) {
       state.status = "blocked";
       state.completedAt = new Date().toISOString();
       saveState(runDir, state);
-      console.log("BLOCKED: The change is too large or binary for complete Codex review.");
+      console.log("BLOCKED: The change is too large, binary, or non-regular for complete Codex review.");
       process.exitCode = 1;
       break;
     }
