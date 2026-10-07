@@ -80,6 +80,7 @@ function run(command, args, options = {}) {
     maxBuffer: 10 * 1024 * 1024,
     timeout: options.timeout,
     killSignal: "SIGTERM",
+    shell: options.shell ?? false,
     windowsHide: true,
   });
 
@@ -248,7 +249,10 @@ function verification(runDir, round) {
   let passed = true;
 
   for (const [name, args] of commands) {
-    const result = run("npm", args, { timeout: 10 * 60 * 1000 });
+    const result = run("npm", args, {
+      timeout: 10 * 60 * 1000,
+      shell: process.platform === "win32",
+    });
     const log = [`$ npm ${args.join(" ")}`, result.stdout, result.stderr]
       .filter(Boolean)
       .join("\n");
