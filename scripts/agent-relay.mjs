@@ -437,7 +437,7 @@ const planPreview = {
   branch,
   maxRounds,
   taskPath: path.relative(repoRoot, taskPath),
-  taskReady: !taskIsTemplate && allowedPaths.length > 0,
+  taskReady: !taskIsTemplate && invalidScopeLines.length === 0 && allowedPaths.length > 0,
   allowedPaths,
   codexRole: "read-only planner and reviewer",
   antigravityRole: "sole source-code writer",
@@ -448,8 +448,8 @@ const planPreview = {
 console.log(JSON.stringify(planPreview, null, 2));
 
 if (!execute) {
-  if (taskIsTemplate) {
-    console.log("NEXT: complete .agent-sync/TASK.md before using --execute.");
+  if (!planPreview.taskReady) {
+    console.log("NEXT: list one exact path per bullet under ## Scope before using --execute.");
   }
   console.log("DRY RUN COMPLETE: no agent was invoked and no project file was changed.");
   process.exit(0);
