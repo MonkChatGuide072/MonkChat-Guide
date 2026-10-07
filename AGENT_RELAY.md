@@ -6,14 +6,14 @@ This relay lets Codex review and Google Antigravity implement a focused task in 
 
 - **Codex** is read-only. It creates the initial plan and reviews the Git diff and verification results.
 - **Antigravity** is the only source-code writer during a relay run. It implements Codex's plan and responds to review feedback. The relay—not Antigravity—runs the deterministic checks.
-- **The relay** runs deterministic project checks and stops when Codex reports `PASS`, an agent reports a blocker, or the round limit is reached.
+- **The relay** checks the changed file paths against the task scope, runs lint/test/build, and stops when Codex's first-line decision is `PASS`, an agent reports a blocker, or the round limit is reached.
 - **The Project Owner** remains the only approval authority for commit, push, pull request, merge, deployment, Supabase, Cloudflare, secrets, and production changes.
 
 The agents run sequentially. They never edit the project concurrently.
 
 ## Permanent Safety Boundaries
 
-The relay must never:
+The orchestrator does not intentionally perform the following actions, and instructs both agents to avoid them:
 
 - run on `main` or `master`;
 - commit, push, pull, merge, rebase, reset, stash, switch branches, or create tags;
@@ -33,11 +33,11 @@ The first version runs at most two implementation/review rounds by default. It a
 2. Codex CLI is installed and signed in with the approved ChatGPT account.
 3. Antigravity CLI is installed and signed in with the approved Google account.
 4. Work starts on a dedicated feature branch created from the current `origin/main`.
-5. The working tree is clean except for `.agent-sync/TASK.md`.
+5. The working tree is clean except for `.agent-sync/TASK.md`. Its `## Scope` section lists exact repository-relative file paths; directories end in `/`. If no paths are listed, execution stops.
 6. `npm ci` has already completed for the checkout.
 7. No unrestricted permission mode is required. The relay launches Antigravity headlessly with `--mode=accept-edits`, which auto-approves workspace file edits. The implementation prompt forbids terminal, Git, npm, browser, MCP, and network tools; the relay runs lint, tests, and build itself.
 
-Do not add `--dangerously-skip-permissions` and do not grant broad global permissions.
+Do not add `--dangerously-skip-permissions` and do not grant broad global permissions. After each writer round, the relay checks tracked and untracked file paths, verifies that the task input did not change, and compares `.env` file metadata without reading secret values. It blocks out-of-scope changes but does not undo them or prevent a separately configured agent from attempting external actions. Use a disposable checkout and review the diff before approving any release.
 
 Check the commands from PowerShell:
 
@@ -88,11 +88,11 @@ Each execution creates an ignored directory under `.agent-sync/runtime/` contain
 
 Possible final statuses:
 
-- `ready_for_owner`: checks passed and Codex returned `PASS`;
+- `ready_for_owner`: checks and scope checks passed, and Codex's first line was `RELAY_DECISION: PASS`;
 - `revision_limit`: the task still needs work after the allowed rounds;
 - `blocked`: a command, agent, or safety precondition failed.
 
-None of these statuses means the work is deployed or approved. Review `git diff` and the runtime evidence before requesting owner approval.
+None of these statuses means the work is deployed or approved. Review `git diff HEAD`, untracked files, and runtime evidence before requesting owner approval.
 
 ## Recovery
 

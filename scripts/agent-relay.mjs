@@ -1,7 +1,9 @@
 import { spawnSync } from "node:child_process";
 import {
   existsSync,
+  lstatSync,
   mkdirSync,
+  readdirSync,
   readFileSync,
   rmSync,
   statSync,
@@ -115,6 +117,93 @@ function collectProjectContext() {
   return files
     .map((file) => `--- ${file} ---\n${readFileSync(path.join(repoRoot, file), "utf8")}`)
     .join("\n\n");
+}
+
+function parseAllowedPaths(taskText) {
+  const scopeSection = taskText
+    .split(/\r?\n##\s+/)
+    .find((section) => /^Scope\s*\r?\n/i.test(section));
+  if (!scopeSection) return [];
+
+  const scope = scopeSection.replace(/^Scope\s*\r?\n/i, "");
+  const candidates = [
+    ...Array.from(scope.matchAll(/`([^`]+)`/g), (match) => match[1]),
+    ...Array.from(
+      scope.matchAll(/(?:^|\s)([A-Za-z0-9._-]+(?:[\\/][A-Za-z0-9._-]+)+[\\/]?)(?=$|[\s),;])/gm),
+      (match) => match[1],
+    ),
+  ];
+  return [...new Set(candidates
+    .map((candidate) => candidate.replaceAll("\\", "/").replace(/^\.\//, ""))
+    .filter((candidate) =>
+      /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*\/?$/.test(candidate) &&
+      !candidate.split("/").includes("..") &&
+      candidate !== "." &&
+      candidate !== "/"
+    ))];
+}
+
+function isForbiddenPath(file) {
+  const parts = file.split("/");
+  return parts.some((part) => /^\.env(?:\.|$)/i.test(part)) ||
+    file === ".git" || file.startsWith(".git/") ||
+    file === "supabase" || file.startsWith("supabase/") ||
+    file === ".agent-sync/TASK.md" || file.startsWith(".agent-sync/runtime/");
+}
+
+function findUnexpectedPaths(changedPaths, allowedPaths) {
+  return changedPaths.filter((file) =>
+    isForbiddenPath(file) ||
+    !allowedPaths.some((allowed) =>
+      allowed.endsWith("/") ? file.startsWith(allowed) : file === allowed
+    )
+  );
+}
+
+function firstDecision(report) {
+  const firstLine = report.trimStart().split(/\r?\n/, 1)[0]?.trim() ?? "";
+  return /^RELAY_DECISION: (PASS|REVISE|BLOCKED)$/.exec(firstLine)?.[1] ?? null;
+}
+
+function firstWriterStatus(report) {
+  const firstLine = report.trimStart().split(/\r?\n/, 1)[0]?.trim() ?? "";
+  return /^RELAY_STATUS: (READY_FOR_REVIEW|BLOCKED)$/.exec(firstLine)?.[1] ?? null;
+}
+
+function changedPaths() {
+  const tracked = runGitRaw(["diff", "--name-only", "--no-renames", "-z", "HEAD"])
+    .split("\0").filter(Boolean);
+  const untracked = runGitRaw(["ls-files", "--others", "--exclude-standard", "-z"])
+    .split("\0").filter(Boolean);
+  return [...new Set([...tracked, ...untracked])]
+    .filter((file) => file !== ".agent-sync/TASK.md" && !file.startsWith(".agent-sync/runtime/"));
+}
+
+function envMetadata() {
+  const metadata = new Map();
+  const pending = [repoRoot];
+  while (pending.length) {
+    const directory = pending.pop();
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const absolute = path.join(directory, entry.name);
+      const relative = path.relative(repoRoot, absolute).replaceAll("\\", "/");
+      if (entry.isDirectory()) {
+        if (entry.name === ".git" || entry.name === "node_modules" ||
+            relative === ".agent-sync/runtime" || entry.name === "dist") continue;
+        pending.push(absolute);
+      }
+      if (/^\.env(?:\.|$)/i.test(entry.name)) {
+        const stat = lstatSync(absolute);
+        metadata.set(relative, `${stat.size}:${stat.mtimeMs}:${stat.ctimeMs}:${stat.mode}`);
+      }
+    }
+  }
+  return metadata;
+}
+
+function changedEnvPaths(before, after) {
+  return [...new Set([...before.keys(), ...after.keys()])]
+    .filter((file) => before.get(file) !== after.get(file));
 }
 
 function collectReviewDiff() {
@@ -300,13 +389,21 @@ if (!branch || branch === "main" || branch === "master") {
 }
 const baselineHead = runGit(["rev-parse", "HEAD"]);
 
-const task = readFileSync(taskPath, "utf8").trim();
+const taskOriginal = readFileSync(taskPath, "utf8");
+const task = taskOriginal.trim();
+const allowedPaths = parseAllowedPaths(task);
 const taskIsTemplate =
   !task ||
   task.includes("Replace this template") ||
   task.includes("Describe the exact result you want");
 if (execute && taskIsTemplate) {
   fail("Complete .agent-sync/TASK.md before starting the relay.");
+}
+if (execute && allowedPaths.length === 0) {
+  fail("List explicit file paths under ## Scope in .agent-sync/TASK.md before starting the relay.");
+}
+if (execute && allowedPaths.some(isForbiddenPath)) {
+  fail("The task scope includes a prohibited path (.env, .git, Supabase, or relay runtime).");
 }
 
 const dirtyLines = runGitRaw(["status", "--porcelain"])
@@ -319,7 +416,8 @@ const planPreview = {
   branch,
   maxRounds,
   taskPath: path.relative(repoRoot, taskPath),
-  taskReady: !taskIsTemplate,
+  taskReady: !taskIsTemplate && allowedPaths.length > 0,
+  allowedPaths,
   codexRole: "read-only planner and reviewer",
   antigravityRole: "sole source-code writer",
   checks: ["npm run lint", "npm run test", "npm run build"],
@@ -353,6 +451,7 @@ lockOwned = true;
 const runDir = path.join(runtimeRoot, timestamp());
 mkdirSync(runDir, { recursive: true });
 writeText(path.join(runDir, "task.md"), task);
+const envBefore = envMetadata();
 
 const state = {
   status: "running",
@@ -444,7 +543,22 @@ Then summarize changed files and any remaining uncertainty.
       break;
     }
 
-    if (/RELAY_STATUS:\s*BLOCKED/i.test(antigravityReport)) {
+    const outOfScope = findUnexpectedPaths(changedPaths(), allowedPaths);
+    const envChanges = changedEnvPaths(envBefore, envMetadata());
+    const taskChanged = readFileSync(taskPath, "utf8") !== taskOriginal;
+    if (outOfScope.length || envChanges.length || taskChanged) {
+      state.status = "blocked";
+      state.completedAt = new Date().toISOString();
+      saveState(runDir, state);
+      console.log(
+        "BLOCKED: Files outside the task scope or protected files changed. Inspect the working tree; the relay did not undo edits. " +
+        [...outOfScope, ...envChanges, ...(taskChanged ? [".agent-sync/TASK.md"] : [])].join(", ")
+      );
+      process.exitCode = 1;
+      break;
+    }
+
+    if (firstWriterStatus(antigravityReport) === "BLOCKED") {
       state.status = "blocked";
       state.completedAt = new Date().toISOString();
       saveState(runDir, state);
@@ -452,7 +566,7 @@ Then summarize changed files and any remaining uncertainty.
       process.exitCode = 1;
       break;
     }
-    if (!/RELAY_STATUS:\s*READY_FOR_REVIEW/i.test(antigravityReport)) {
+    if (firstWriterStatus(antigravityReport) !== "READY_FOR_REVIEW") {
       state.status = "blocked";
       state.completedAt = new Date().toISOString();
       saveState(runDir, state);
@@ -462,7 +576,28 @@ Then summarize changed files and any remaining uncertainty.
     }
 
     const checks = verification(runDir, round);
+    const outOfScopeAfterChecks = findUnexpectedPaths(changedPaths(), allowedPaths);
+    const envChangesAfterChecks = changedEnvPaths(envBefore, envMetadata());
+    if (outOfScopeAfterChecks.length || envChangesAfterChecks.length ||
+        readFileSync(taskPath, "utf8") !== taskOriginal) {
+      state.status = "blocked";
+      state.completedAt = new Date().toISOString();
+      saveState(runDir, state);
+      console.log("BLOCKED: Verification changed a protected or out-of-scope file. Inspect the working tree.");
+      process.exitCode = 1;
+      break;
+    }
     const diff = collectReviewDiff();
+    if (diff.length > maxDiffChars ||
+        diff.includes("--- UNTRACKED LARGE FILE:") ||
+        diff.includes("--- UNTRACKED BINARY FILE:")) {
+      state.status = "blocked";
+      state.completedAt = new Date().toISOString();
+      saveState(runDir, state);
+      console.log("BLOCKED: The change is too large or binary for complete Codex review.");
+      process.exitCode = 1;
+      break;
+    }
     const status =
       runGitRaw(["status", "--short"])
         .split("\n")
@@ -510,7 +645,8 @@ Then give concise evidence and, for REVISE, a numbered correction list for Antig
 `;
     feedback = runCodex(reviewPrompt, reviewPath);
 
-    if (/RELAY_DECISION:\s*PASS/i.test(feedback) && checks.passed) {
+    const decision = firstDecision(feedback);
+    if (decision === "PASS" && checks.passed) {
       state.status = "ready_for_owner";
       state.completedAt = new Date().toISOString();
       saveState(runDir, state);
@@ -518,7 +654,8 @@ Then give concise evidence and, for REVISE, a numbered correction list for Antig
       break;
     }
 
-    if (/RELAY_DECISION:\s*BLOCKED/i.test(feedback)) {
+    if (decision === "BLOCKED" || decision === null ||
+        (decision === "PASS" && !checks.passed)) {
       state.status = "blocked";
       state.completedAt = new Date().toISOString();
       saveState(runDir, state);

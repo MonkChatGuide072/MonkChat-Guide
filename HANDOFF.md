@@ -1,16 +1,15 @@
 # MonkChat Guide - Project Handoff
 
-## Local agent relay Windows smoke-test fix — 2026-10-07
+## Local agent relay code review — 2026-10-07
 
-- Branch: `chore/local-agent-relay`; pull request: #9 (Draft). Merge and deployment remain explicitly prohibited.
-- First updated Windows smoke run proved Antigravity headless writing works: it returned `READY_FOR_REVIEW` and created only `docs/RELAY_SMOKE_TEST.md`.
-- Round 1 then blocked because Windows command discovery selected the extensionless `npm` shim instead of `npm.cmd`, causing lint/test/build to fail, and Codex attempted prohibited file-inspection tools instead of relying on supplied evidence.
-- The relay now prefers Windows `.exe`, `.cmd`, or `.bat` command wrappers; supplies the mandatory project documents directly to Codex; explicitly prevents Codex tool calls; filters the expected `.agent-sync/TASK.md` input from review status; and includes failed-check logs in the review prompt.
-- Unsupported Codex `--ask-for-approval` and Antigravity `--cwd` flags remain removed. Antigravity runs with `--mode=accept-edits` and workspace file tools only.
-- Review diffs use `git diff HEAD`; agent and verification subprocesses have time limits; blocker details now print directly in the terminal.
-- Second Windows smoke run confirmed Antigravity and Codex handoff now works, but Node could not launch `npm.cmd` directly (`EINVAL`). Verification now runs npm through the Windows shell only; relay JavaScript syntax passed. One clean rerun is still required before PR #9 can be considered ready.
-- Production, Supabase, Cloudflare production, environment files, and application source code are unchanged.
-- Exact next step: remove only the generated smoke-test file from the disposable checkout, pull this branch, and rerun the same relay task. Do not merge.
+- Branch: `chore/local-agent-relay`; PR #9 remains Draft. Merge and deployment remain explicitly prohibited.
+- The owner reported a successful Windows documentation smoke test: `READY FOR OWNER REVIEW` after the two agents and lint/test/build. The runtime logs and local generated file are on the owner's Windows checkout, not in GitHub.
+- Review found two blockers in the relay: scope restrictions were prompt-only and ignored `.env` edits could be missed; a quoted `RELAY_DECISION: PASS` anywhere in Codex's response could produce a false pass.
+- The update requires exact repository-relative paths under the task's `## Scope`, checks tracked and untracked changed paths after each writer round and after verification, compares `.env` metadata without reading secrets, and blocks if the task input changes. It reads only the first line of the agent status and reviewer decision.
+- The runner reports and preserves out-of-scope edits for inspection; it cannot undo them or guarantee that an externally configured CLI never attempts remote actions. Use a disposable local checkout and keep release approval separate.
+- Guard logic was checked with focused cases for the existing documentation task, an out-of-scope page, protected paths, and conflicting decision text. JavaScript syntax passed. The updated full Windows relay has not yet been rerun.
+- No application source, production data, Supabase, or Cloudflare production was changed.
+- Exact next step: review the updated PR and run one guarded Windows smoke test only if validating this revised safety logic before merge. Do not merge without separate owner approval.
 
 ## Production release completed — 2026-09-23
 

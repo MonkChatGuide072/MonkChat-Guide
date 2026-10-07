@@ -8,7 +8,7 @@ Replace this template with one focused task before running the relay.
 
 ## Scope
 
-- List the pages, components, or files that may change.
+- List exact repository-relative file paths that may change. For directories, end the path with `/`. The relay blocks other file changes.
 
 ## Acceptance Criteria
 
