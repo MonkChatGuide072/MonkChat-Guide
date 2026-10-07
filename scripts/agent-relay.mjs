@@ -71,6 +71,8 @@ function run(command, args, options = {}) {
     encoding: "utf8",
     input: options.input,
     maxBuffer: 10 * 1024 * 1024,
+    timeout: options.timeout,
+    killSignal: "SIGTERM",
     windowsHide: true,
   });
 
@@ -104,6 +106,7 @@ function runGit(args) {
 function collectReviewDiff() {
   const trackedDiff = runGit([
     "diff",
+    "HEAD",
     "--no-ext-diff",
     "--binary",
     "--",
@@ -175,13 +178,11 @@ function runCodex(prompt, outputPath) {
       "exec",
       "--sandbox",
       "read-only",
-      "--ask-for-approval",
-      "never",
       "--output-last-message",
       outputPath,
       "-",
     ],
-    { input: truncate(prompt, maxPromptChars) },
+    { input: truncate(prompt, maxPromptChars), timeout: 16 * 60 * 1000 },
   );
 
   if (result.status !== 0) {
@@ -197,7 +198,19 @@ function runCodex(prompt, outputPath) {
 }
 
 function runAntigravity(prompt, outputPath) {
-  const result = run(process.env.AGY_BIN || "agy", ["-p", truncate(prompt, maxPromptChars), "--cwd", repoRoot]);
+  const result = run(
+    process.env.AGY_BIN || "agy",
+    [
+      "-p",
+      truncate(prompt, maxPromptChars),
+      "--mode=accept-edits",
+      "--output-format",
+      "text",
+      "--print-timeout",
+      "15m",
+    ],
+    { timeout: 16 * 60 * 1000 },
+  );
   writeText(outputPath, result.stdout || "Antigravity returned no standard output.");
 
   if (result.stderr.trim()) {
@@ -220,7 +233,7 @@ function verification(runDir, round) {
   let passed = true;
 
   for (const [name, args] of commands) {
-    const result = run("npm", args);
+    const result = run("npm", args, { timeout: 10 * 60 * 1000 });
     const log = [`$ npm ${args.join(" ")}`, result.stdout, result.stderr]
       .filter(Boolean)
       .join("\n");
@@ -356,13 +369,18 @@ ${plan}
 Latest Codex feedback:
 ${feedback}
 
-Inspect the current working tree, make only the changes needed for this task, and run focused local checks when useful.
+Use only Antigravity's built-in workspace file reading and writing tools.
+Do not use terminal, shell, command execution, Git, npm, browser, MCP, or network tools.
+Read the required project documents using workspace file tools only.
+Make only the requested workspace file changes.
 Do not edit files under .agent-sync/runtime.
-Finish with exactly one status line:
+Do not run checks yourself; the relay runs deterministic checks after your edit.
+Start your final response with exactly one of these lines:
 RELAY_STATUS: READY_FOR_REVIEW
 or
 RELAY_STATUS: BLOCKED
-Then summarize changed files, checks run, and any remaining uncertainty.
+
+Then summarize changed files and any remaining uncertainty.
 `;
     const antigravityReport = runAntigravity(implementationPrompt, antigravityPath);
 
