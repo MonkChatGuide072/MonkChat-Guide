@@ -80,7 +80,6 @@ function run(command, args, options = {}) {
     maxBuffer: 10 * 1024 * 1024,
     timeout: options.timeout,
     killSignal: "SIGTERM",
-    shell: options.shell ?? false,
     windowsHide: true,
   });
 
@@ -238,6 +237,25 @@ function runAntigravity(prompt, outputPath) {
   return result.stdout;
 }
 
+function runNpm(args, options = {}) {
+  const resolvedNpm = resolveCommand("npm");
+  const npmCliCandidates = [
+    process.env.npm_execpath,
+    path.join(path.dirname(resolvedNpm), "node_modules", "npm", "bin", "npm-cli.js"),
+  ].filter(Boolean);
+  const npmCli = npmCliCandidates.find((candidate) => existsSync(candidate));
+
+  if (!npmCli) {
+    return {
+      status: 1,
+      stdout: "",
+      stderr: "Unable to locate npm-cli.js for deterministic verification.",
+    };
+  }
+
+  return run(process.execPath, [npmCli, ...args], options);
+}
+
 function verification(runDir, round) {
   const commands = [
     ["lint", ["run", "lint"]],
@@ -249,10 +267,7 @@ function verification(runDir, round) {
   let passed = true;
 
   for (const [name, args] of commands) {
-    const result = run("npm", args, {
-      timeout: 10 * 60 * 1000,
-      shell: process.platform === "win32",
-    });
+    const result = runNpm(args, { timeout: 10 * 60 * 1000 });
     const log = [`$ npm ${args.join(" ")}`, result.stdout, result.stderr]
       .filter(Boolean)
       .join("\n");
