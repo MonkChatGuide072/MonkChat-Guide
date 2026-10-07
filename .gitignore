@@ -34,3 +34,6 @@ Thumbs.db
 
 # Supabase
 supabase/.temp/
+
+# Local agent relay runtime (prompts, logs, and lock files)
+.agent-sync/runtime/

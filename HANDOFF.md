@@ -1,5 +1,25 @@
 # MonkChat Guide - Project Handoff
 
+## Relay guard follow-up — 2026-10-07
+
+- PR #9 now includes the earlier scope and exact-decision guard at `aa2f846` and remains Draft; no merge or production change occurred.
+- A focused follow-up closes two review gaps: changed symbolic links or non-regular files are blocked before content inspection, and tracked binary diffs are blocked before Codex review.
+- In a disposable Linux repository with mock agents, an allowed text file reached `ready_for_owner`; a symlink pointing at an ignored `.env.local` and a tracked binary change both blocked without the secret appearing in runtime evidence.
+- Final diff review found that prose inside `## Scope` could accidentally authorize a path mentioned in a prohibition. The parser now requires one exact path per bullet and blocks ambiguous lines before invoking agents; a focused negative case passed.
+- Lint, all 32 automated tests, production build, JavaScript syntax, and whitespace checks passed in the local checkout. These checks do not substitute for a real Windows relay run with the latest guard.
+- Next step: run one Windows documentation smoke test on the latest branch and inspect state, diff, and logs. Do not merge without separate owner approval.
+
+## Local agent relay code review — 2026-10-07
+
+- Branch: `chore/local-agent-relay`; PR #9 remains Draft. Merge and deployment remain explicitly prohibited.
+- The owner reported a successful Windows documentation smoke test: `READY FOR OWNER REVIEW` after the two agents and lint/test/build. The runtime logs and local generated file are on the owner's Windows checkout, not in GitHub.
+- Review found two blockers in the relay: scope restrictions were prompt-only and ignored `.env` edits could be missed; a quoted `RELAY_DECISION: PASS` anywhere in Codex's response could produce a false pass.
+- The update requires exact repository-relative paths under the task's `## Scope`, checks tracked and untracked changed paths after each writer round and after verification, compares `.env` metadata without reading secrets, and blocks if the task input changes. It reads only the first line of the agent status and reviewer decision.
+- The runner reports and preserves out-of-scope edits for inspection; it cannot undo them or guarantee that an externally configured CLI never attempts remote actions. Use a disposable local checkout and keep release approval separate.
+- Guard logic was checked with focused cases for the existing documentation task, an out-of-scope page, protected paths, and conflicting decision text. JavaScript syntax passed. The updated full Windows relay has not yet been rerun.
+- No application source, production data, Supabase, or Cloudflare production was changed.
+- Exact next step: review the updated PR and run one guarded Windows smoke test only if validating this revised safety logic before merge. Do not merge without separate owner approval.
+
 ## Production release completed — 2026-09-23
 
 - Owner approval covered production database/server/frontend installation and commit/push. Migration `20260923020015_cms_account_access.sql` is applied; hosted read-only checks confirm the active-profile role predicate and both guard triggers. No real content or team account was created/edited.
