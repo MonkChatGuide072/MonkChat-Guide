@@ -19,7 +19,7 @@ let lockOwned = false;
 const execute = process.argv.includes("--execute");
 const maxRoundsArg = process.argv.find((arg) => arg.startsWith("--max-rounds="));
 const maxRounds = Number(maxRoundsArg?.split("=")[1] ?? 2);
-const maxPromptChars = 28_000;
+const maxPromptChars = 160_000;
 const maxDiffChars = 80_000;
 const maxUntrackedReviewBytes = 1_000_000;
 const resolvedCommands = new Map();
@@ -59,7 +59,14 @@ function resolveCommand(command) {
     encoding: "utf8",
     windowsHide: true,
   });
-  const resolved = lookup.status === 0 ? lookup.stdout.split(/\r?\n/).find(Boolean)?.trim() : null;
+  const candidates =
+    lookup.status === 0
+      ? lookup.stdout.split(/\r?\n/).map((item) => item.trim()).filter(Boolean)
+      : [];
+  const resolved =
+    candidates.find((candidate) => /\.(exe|cmd|bat)$/i.test(candidate)) ??
+    candidates[0] ??
+    null;
   const value = resolved || command;
   resolvedCommands.set(command, value);
   return value;
@@ -101,6 +108,13 @@ function runGitRaw(args) {
 
 function runGit(args) {
   return runGitRaw(args).trim();
+}
+
+function collectProjectContext() {
+  const files = ["AGENTS.md", "REQUIREMENTS.md", "DECISIONS.md", "HANDOFF.md", "AGENT_RELAY.md"];
+  return files
+    .map((file) => `--- ${file} ---\n${readFileSync(path.join(repoRoot, file), "utf8")}`)
+    .join("\n\n");
 }
 
 function collectReviewDiff() {
@@ -230,6 +244,7 @@ function verification(runDir, round) {
     ["build", ["run", "build"]],
   ];
   const summaries = [];
+  const details = [];
   let passed = true;
 
   for (const [name, args] of commands) {
@@ -239,10 +254,17 @@ function verification(runDir, round) {
       .join("\n");
     writeText(path.join(runDir, `round-${round}-${name}.log`), log);
     summaries.push(`${name}: ${result.status === 0 ? "PASS" : "FAIL"}`);
-    if (result.status !== 0) passed = false;
+    if (result.status !== 0) {
+      passed = false;
+      details.push(`--- ${name} failure ---\n${truncate(log, 6_000)}`);
+    }
   }
 
-  return { passed, summary: summaries.join("\n") };
+  return {
+    passed,
+    summary: summaries.join("\n"),
+    details: details.length > 0 ? details.join("\n\n") : "No failed checks.",
+  };
 }
 
 if (!Number.isInteger(maxRounds) || maxRounds < 1 || maxRounds > 3) {
@@ -323,6 +345,7 @@ const state = {
 };
 saveState(runDir, state);
 
+const projectContext = truncate(collectProjectContext(), 55_000);
 const safetyRules = `
 Permanent constraints:
 - Read AGENTS.md, REQUIREMENTS.md, DECISIONS.md, HANDOFF.md, and AGENT_RELAY.md first.
@@ -332,12 +355,19 @@ Permanent constraints:
 - Stay on the current branch and inside this repository.
 - Respect the task scope. If the task requires a prohibited action or missing owner decision, report BLOCKED.
 `;
+const codexSafetyRules = safetyRules.replace(
+  "- Read AGENTS.md, REQUIREMENTS.md, DECISIONS.md, HANDOFF.md, and AGENT_RELAY.md first.",
+  "- The mandatory project documents are supplied below. Do not call tools, run commands, or inspect files.",
+);
 
 try {
   const planPath = path.join(runDir, "codex-plan.md");
   const planPrompt = `
-You are the read-only planner for MonkChat Guide. Do not edit files.
-${safetyRules}
+You are the read-only planner for MonkChat Guide. Do not edit files or call tools.
+${codexSafetyRules}
+
+Mandatory project documents:
+${projectContext}
 
 Current task:
 ${task}
@@ -414,11 +444,19 @@ Then summarize changed files and any remaining uncertainty.
 
     const checks = verification(runDir, round);
     const diff = collectReviewDiff();
-    const status = runGitRaw(["status", "--short"]);
+    const status =
+      runGitRaw(["status", "--short"])
+        .split("\n")
+        .filter(Boolean)
+        .filter((line) => !isAllowedDirtyPath(line))
+        .join("\n") || "(clean outside relay task/runtime files)";
     const reviewPath = path.join(runDir, `round-${round}-codex-review.md`);
     const reviewPrompt = `
-You are the read-only reviewer for MonkChat Guide. Do not edit files.
-${safetyRules}
+You are the read-only reviewer for MonkChat Guide. Do not edit files or call tools.
+${codexSafetyRules}
+
+Mandatory project documents:
+${projectContext}
 
 Task:
 ${task}
@@ -431,6 +469,9 @@ ${antigravityReport}
 
 Deterministic checks:
 ${checks.summary}
+
+Failed-check evidence:
+${checks.details}
 
 Git status:
 ${status}
@@ -462,7 +503,7 @@ Then give concise evidence and, for REVISE, a numbered correction list for Antig
       state.status = "blocked";
       state.completedAt = new Date().toISOString();
       saveState(runDir, state);
-      console.log(`BLOCKED: Codex reported a blocker in round ${round}.`);
+      console.log(`BLOCKED: Codex reported a blocker in round ${round}.\n${feedback.trim()}`);
       process.exitCode = 1;
       break;
     }
