@@ -4,6 +4,8 @@ This bridge is a local process on the owner's Windows PC. It checks GitHub Issue
 
 The bridge does not use a GitHub Actions self-hosted runner. It does not run arbitrary commands from an Issue. It accepts an open Issue only when the author and active `gh` account are `MonkChatGuide072`, its title begins `[relay] `, the body begins with the exact marker below, and `## Scope` lists exact allowed repository paths. It ignores pull requests and all other issues. The existing relay enforces scope and stops before commit, push, merge, or deployment. **An owner-authored Issue is permission to run a scoped local task, not permission to publish or release changes.** Because the repository is public, never put credentials or private material in the Issue.
 
+When Antigravity reaches its print timeout, the result comment includes a fixed timeout label without posting raw logs or local paths. The checkout stays available for focused recovery; the bridge does not rerun the job automatically.
+
 ## One-time setup on the owner's Windows PC
 
 1. Install GitHub CLI if it is missing: `winget install --id GitHub.cli --source winget`. Sign in interactively with `gh auth login`, then check `gh auth status`. Use the same GitHub account as the repository owner. Never paste an access token into an Issue or this repository.

@@ -1,6 +1,11 @@
 export const taskMarker = "<!-- monkchat-agent-bridge-task-v1 -->";
 export const resultMarker = (number) => `<!-- monkchat-agent-bridge-result-v1:${number} -->`;
 
+// Only return fixed labels. Agent stderr can contain task text or private local paths.
+export function classifyBlocker(stderr) {
+  return /\[agy\] print timeout after \d+[mh]/.test(stderr) ? "antigravity_timeout" : null;
+}
+
 const forbidden = (file) => file.split("/").some((part) => /^\.env(?:\.|$)/i.test(part)) ||
   file === ".git" || file.startsWith(".git/") ||
   file === "supabase" || file.startsWith("supabase/") ||
@@ -38,6 +43,8 @@ export function resultComment(number, result) {
     `- Round: ${result.round ?? 0}`,
     `- Checks: lint ${checks.lint ?? "not reached"}, test ${checks.test ?? "not reached"}, build ${checks.build ?? "not reached"}`,
     `- Codex review: ${result.review ?? "not reached"}`,
+    ...(result.status === "blocked" && result.blocker === "antigravity_timeout"
+      ? ["- Blocker: Antigravity timed out; local edits were preserved for review."] : []),
     `- Changed files (${(result.files ?? []).length}):`,
     ...(files.length ? files : ["- (none)"]),
     "- Local edits remain in the isolated Windows job checkout for owner review.",

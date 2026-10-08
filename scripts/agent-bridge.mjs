@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmdirSync, writeFileS
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { eligibleTask, resultComment, resultMarker, taskMarker } from "./agent-bridge-core.mjs";
+import { classifyBlocker, eligibleTask, resultComment, resultMarker, taskMarker } from "./agent-bridge-core.mjs";
 
 const owner = "MonkChatGuide072";
 const repo = `${owner}/MonkChat-Guide`;
@@ -97,10 +97,13 @@ function relayEvidence(checkout) {
     ? readFileSync(reviewFile, "utf8").trimStart().split(/\r?\n/, 1)[0] : "";
   const review = /^RELAY_DECISION: (PASS|REVISE|BLOCKED)$/.test(firstLine)
     ? firstLine : "not reached";
+  const agentStderr = dir && round ? path.join(dir, `round-${round}-antigravity.md.stderr.log`) : null;
+  const blocker = state.status === "blocked" && agentStderr && existsSync(agentStderr)
+    ? classifyBlocker(readFileSync(agentStderr, "utf8").slice(-4096)) : null;
   if (state.status === "ready_for_owner") {
     for (const name of ["lint", "test", "build"]) checks[name] = "PASS";
   }
-  return { status: state.status || "blocked", round, checks, review };
+  return { status: state.status || "blocked", round, checks, review, blocker };
 }
 
 function executeIssue(issue, job) {
