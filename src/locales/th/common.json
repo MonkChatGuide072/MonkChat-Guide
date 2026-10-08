@@ -81,7 +81,11 @@
     "noRecommended": "ขณะนี้ยังไม่มีเสียงแนะนำในภาษานี้ คุณยังเปิดดูรายการเสียงทั้งหมดได้",
     "selectRecommended": "เลือกรายการเสียงแนะนำ",
     "playNow": "เปิดเสียงนำสมาธิ",
-    "backToHome": "กลับหน้าผู้มาเยือน"
+    "backToHome": "กลับหน้าผู้มาเยือน",
+    "activityDays": "กิจกรรมจริง · จันทร์และศุกร์",
+    "activityTime": "13.15 น. เป็นต้นไป",
+    "activityLocation": "วัดมหาธาตุ · อยุธยา",
+    "activityGuidance": "ตรวจสอบจุดนัดหมายก่อนมา"
   },
   "meditation": {
     "heroTag": "GUIDED MEDITATION",

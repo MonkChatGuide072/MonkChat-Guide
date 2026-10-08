@@ -81,7 +81,11 @@
     "noRecommended": "No recommended track is available in this language yet. You can still browse all meditation tracks.",
     "selectRecommended": "Choose a recommended track",
     "playNow": "Open guided meditation",
-    "backToHome": "Back to visitor home"
+    "backToHome": "Back to visitor home",
+    "activityDays": "In-person activity · Monday & Friday",
+    "activityTime": "13:15 onwards",
+    "activityLocation": "Wat Mahathat · Ayutthaya",
+    "activityGuidance": "Check meeting point before visiting"
   },
   "meditation": {
     "heroTag": "GUIDED MEDITATION",

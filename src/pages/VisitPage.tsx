@@ -328,8 +328,14 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
       </div>
 
       <section className="grid gap-4 rounded-[1.35rem] bg-[#8e3d2d] px-5 py-4 text-[#fff1d7] shadow-[0_15px_36px_rgba(113,49,37,.15)] sm:grid-cols-[1fr_1fr_auto] sm:items-center sm:px-7">
-        <div><strong className="block text-sm">กิจกรรมจริง · จันทร์และศุกร์</strong><span className="mt-1 block text-xs text-white/70">13.15 น. เป็นต้นไป</span></div>
-        <div className="border-white/20 sm:border-l sm:pl-6"><strong className="block text-sm">วัดมหาธาตุ · อยุธยา</strong><span className="mt-1 block text-xs text-white/70">ตรวจสอบจุดนัดหมายก่อนมา</span></div>
+        <div>
+          <strong className="block text-sm">{t('visitor.activityDays')}</strong>
+          <span className="mt-1 block text-xs text-white/70">{t('visitor.activityTime')}</span>
+        </div>
+        <div className="border-white/20 sm:border-l sm:pl-6">
+          <strong className="block text-sm">{t('visitor.activityLocation')}</strong>
+          <span className="mt-1 block text-xs text-white/70">{t('visitor.activityGuidance')}</span>
+        </div>
         <Link to="/" className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f3d992] px-5 text-sm font-bold text-[#633121] transition-transform hover:-translate-y-0.5">Ayutthaya Monk Chat ↗</Link>
       </section>
     </div>
