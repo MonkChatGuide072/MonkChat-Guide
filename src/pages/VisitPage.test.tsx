@@ -3,6 +3,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router'
 import { VisitPage } from './VisitPage'
 import { VISITOR_LANGUAGE_SESSION_KEY } from '../lib/language'
+import th from '../locales/th/common.json'
+import en from '../locales/en/common.json'
+
+const activityTranslations: Record<string, { th: string; en: string }> = {
+  'visitor.activityDays': { th: th.visitor.activityDays, en: en.visitor.activityDays },
+  'visitor.activityTime': { th: th.visitor.activityTime, en: en.visitor.activityTime },
+  'visitor.activityLocation': { th: th.visitor.activityLocation, en: en.visitor.activityLocation },
+  'visitor.activityGuidance': { th: th.visitor.activityGuidance, en: en.visitor.activityGuidance },
+}
 
 type LanguageListener = (language: string) => void
 
@@ -91,6 +100,9 @@ describe('VisitPage', () => {
     sessionStorage.clear()
     fakeI18n.language = 'en'
     fakeI18n.resolvedLanguage = 'en'
+    translate.mockImplementation((key: string, fallback?: string) =>
+      activityTranslations[key]?.[fakeI18n.language as 'th' | 'en'] ?? fallback ?? key,
+    )
     queryResults.tracks = { data: [], error: null }
     queryResults.links = { data: [], error: null }
   })
@@ -209,5 +221,24 @@ describe('VisitPage', () => {
     expect(await screen.findByText('เสียงภาษาไทย')).toBeInTheDocument()
     expect(screen.queryByText('English Track')).not.toBeInTheDocument()
     expect(fromMock).toHaveBeenCalledWith('bio_links')
+  })
+
+  it('shows the activity schedule and location in the chosen language', async () => {
+    sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
+    renderVisitPage()
+
+    for (const { en: english } of Object.values(activityTranslations)) {
+      expect(screen.getByText(english)).toBeInTheDocument()
+    }
+
+    await act(async () => {
+      await fakeI18n.changeLanguage('th')
+    })
+
+    for (const { th: thai, en: english } of Object.values(activityTranslations)) {
+      expect(screen.getByText(thai)).toBeInTheDocument()
+      expect(screen.queryByText(english)).not.toBeInTheDocument()
+    }
+    expect(screen.getByRole('link', { name: /Ayutthaya Monk Chat/ })).toHaveAttribute('href', '/')
   })
 })
