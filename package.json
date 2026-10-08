@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "agents:relay": "node scripts/agent-relay.mjs",
+    "agents:bridge": "node scripts/agent-bridge.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",

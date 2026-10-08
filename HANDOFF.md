@@ -1,5 +1,18 @@
 # MonkChat Guide - Project Handoff
 
+## Windows bridge live run and timeout follow-up — 2026-10-09
+
+- Owner-authored Issue #12 reached the Windows bridge. Antigravity changed the four scoped visitor-language files but returned no final status before its 15-minute print timeout; lint/test/build and Codex review were not reached in the relay.
+- The local changes were recovered and reviewed. A test-only unused variable blocked the initial build. The completed language-switch test, localization, and successful lint, 33 tests, build, and whitespace check are in Draft PR #13 based on `main`; no merge or deployment occurred.
+- This bridge follow-up reports the fixed `antigravity_timeout` label in blocked Issue comments without exposing stderr or local paths. The Windows bridge must pull the updated PR #10 branch and restart before it can use this reporting improvement.
+
+## Local Windows bridge proposal — 2026-10-08
+
+- In `feature/local-agent-bridge` (based on relay PR #9), a local Windows worker now polls owner-authored GitHub Issues with explicit scope and runs the existing relay in a new job checkout. It reports bounded status to an Issue comment and stops before commit/push/merge/deploy.
+- The worker and its tests are local, not pushed or installed on the owner's PC. `AGENT_BRIDGE.md` contains the one-time setup and task format. The bridge is not live until the branch is reviewed, delivered to Windows, authenticated with GitHub CLI, and started there.
+- Verification in this checkout: bridge validation tests and the existing suite passed (34 tests total), lint and production build passed, and the staged diff whitespace check passed. A real GitHub polling run and Windows end-to-end run remain unverified; this sandbox has no access to the owner's PC.
+- Review the diff and test results before requesting owner approval to share the branch. Keep relay PR #9 unmerged unless separately authorized.
+
 ## Relay guard follow-up — 2026-10-07
 
 - PR #9 now includes the earlier scope and exact-decision guard at `aa2f846` and remains Draft; no merge or production change occurred.
