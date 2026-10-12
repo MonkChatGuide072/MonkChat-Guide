@@ -18,6 +18,7 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ defa
 
 // Protected CMS Routes (Lazy)
 const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })))
+const AdminHomePage = lazy(() => import('./pages/admin/AdminHomePage').then(m => ({ default: m.AdminHomePage })))
 const AdminMeditationPage = lazy(() => import('./pages/admin/AdminMeditationPage').then(m => ({ default: m.AdminMeditationPage })))
 const AdminMeditationNewPage = lazy(() => import('./pages/admin/AdminMeditationNewPage').then(m => ({ default: m.AdminMeditationNewPage })))
 const AdminMeditationEditPage = lazy(() => import('./pages/admin/AdminMeditationEditPage').then(m => ({ default: m.AdminMeditationEditPage })))
@@ -58,6 +59,7 @@ function App() {
             <Route path="admin" element={<ProtectedRoute />}>
               <Route element={<AdminLayout />}>
                 <Route index element={<AdminDashboardPage />} />
+                <Route path="home" element={<OwnerRoute><AdminHomePage /></OwnerRoute>} />
                 <Route path="meditation" element={<AdminMeditationPage />} />
                 <Route path="meditation/new" element={<AdminMeditationNewPage />} />
                 <Route path="meditation/:trackId/edit" element={<AdminMeditationEditPage />} />

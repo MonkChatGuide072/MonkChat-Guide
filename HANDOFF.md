@@ -1,5 +1,14 @@
 # MonkChat Guide - Project Handoff
 
+## Admin clarity draft — 2026-10-12
+
+- Branch `feature/admin-clarity` starts from `main` commit `c934370`. This is a review branch; no migration, upload, or frontend change has been applied to production.
+- Admin landing now groups live content modules by destination, with direct add links. The team page explains actual Owner/Team Member access. It does not introduce per-person or per-module permissions; new accounts still receive Team Member access.
+- Added an Owner-only Home image editor for the four existing carousel slots. A new `home_media` table and `home-photos` Storage bucket require migration `20261012222703_home_media_cms.sql` before uploads can work. The public Home keeps bundled images for unconfigured/unpublished slots or when that data cannot load. No real project image has been uploaded.
+- Code checks passed locally: lint, 34 tests, TypeScript/build and whitespace. Authenticated Owner upload/publish, team authorization, database migration and mobile browser layouts have not been verified against hosted services. Review and deployment are separate next steps.
+
+---
+
 ## Production release completed — 2026-09-23
 
 - Owner approval covered production database/server/frontend installation and commit/push. Migration `20260923020015_cms_account_access.sql` is applied; hosted read-only checks confirm the active-profile role predicate and both guard triggers. No real content or team account was created/edited.

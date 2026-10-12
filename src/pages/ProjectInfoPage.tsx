@@ -2,13 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
-
-const slides = [
-  '/images/home/monkchat-slide-1.webp',
-  '/images/home/monkchat-slide-2.webp',
-  '/images/home/monkchat-slide-3.webp',
-  '/images/home/monkchat-slide-4.webp',
-]
+import { supabaseClient } from '../lib/supabase'
+import { bundledHomeSlides, resolvedHomeSlides, type HomeMediaRow } from '../lib/homeMedia'
 
 function ArrowIcon({ direction = 'right' }: { direction?: 'left' | 'right' }) {
   return (
@@ -31,10 +26,22 @@ function DetailIcon({ type }: { type: 'time' | 'place' | 'experience' }) {
 export function ProjectInfoPage() {
   const { t, i18n } = useTranslation()
   const [activeSlide, setActiveSlide] = useState(0)
+  const [slides, setSlides] = useState(bundledHomeSlides)
   const isEnglish = (i18n.resolvedLanguage || i18n.language).startsWith('en')
-  const labels = isEnglish
-    ? ['Inner peace', 'Guided closely', 'Open conversation', 'An Ayutthaya memory']
-    : ['ความสงบภายใน', 'สมาธิใกล้ชิด', 'สนทนาอย่างเป็นกันเอง', 'ความทรงจำจากอยุธยา']
+  const labels = slides.map((slide) => isEnglish ? slide.en : slide.th)
+
+  useEffect(() => {
+    if (!supabaseClient) return
+    let mounted = true
+    void supabaseClient.from('home_media')
+      .select('id,slot,storage_path,caption_th,caption_en,is_published')
+      .eq('is_published', true)
+      .order('slot')
+      .then(({ data, error }) => {
+        if (mounted && !error && data) setSlides(resolvedHomeSlides(data as HomeMediaRow[]))
+      })
+    return () => { mounted = false }
+  }, [])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -42,7 +49,7 @@ export function ProjectInfoPage() {
       setActiveSlide((current) => (current + 1) % slides.length)
     }, 6500)
     return () => window.clearInterval(timer)
-  }, [])
+  }, [slides.length])
 
   const showSlide = (next: number) => {
     setActiveSlide((next + slides.length) % slides.length)
@@ -53,8 +60,8 @@ export function ProjectInfoPage() {
       <div className="absolute inset-0 -z-30" aria-live="polite">
         {slides.map((slide, index) => (
           <img
-            key={slide}
-            src={slide}
+            key={slide.url}
+            src={slide.url}
             alt=""
             aria-hidden={index !== activeSlide}
             decoding={index === 0 ? 'sync' : 'async'}

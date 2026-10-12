@@ -211,6 +211,7 @@
   "admin": {
     "nav": {
       "dashboard": "Dashboard",
+      "home": "Home images",
       "meditation": "Meditation Tracks",
       "qa": "Q&A Management",
       "centers": "DCI Centers",
@@ -242,7 +243,7 @@
       },
       "qa": {
         "title": "Meditation & Buddhism Q&A",
-        "description": "Manage Q&A items, translations, verification status, and publication",
+        "description": "Add questions and translations; send them to the Owner for verification and publishing",
         "placeholder": "Q&A management & verification module (CMS CRUD - under development)"
       },
       "centers": {
@@ -252,7 +253,7 @@
       },
       "bioLinks": {
         "title": "BioPage Links",
-        "description": "Manage key activity links, display order, and main page publishing",
+        "description": "Add activity links with supporting images, organize them and publish",
         "placeholder": "BioPage links management module (CMS CRUD - under development)"
       },
       "languages": {
