@@ -4,7 +4,8 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmdirSync, writeFileS
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { classifyBlocker, eligibleTask, resultComment, resultMarker, taskMarker } from "./agent-bridge-core.mjs";
+import { classifyBlocker, eligibleTask, resultComment, resultMarker, scopePaths, taskMarker } from "./agent-bridge-core.mjs";
+import { buildReviewPatch } from "./agent-bridge-review.mjs";
 
 const owner = "MonkChatGuide072";
 const repo = `${owner}/MonkChat-Guide`;
@@ -66,8 +67,10 @@ function alreadyReported(number) {
 
 function postResult(number, state, job) {
   if (!alreadyReported(number)) {
-    // Arguments are passed directly to gh. Issue text is never interpreted as a shell command.
-    run("gh", ["api", `repos/${repo}/issues/${number}/comments`, "-X", "POST", "-f", `body=${resultComment(number, state.result)}`]);
+    // Keep the bounded review patch out of the Windows command line.
+    const bodyFile = path.join(job, "result-comment.md");
+    writeFileSync(bodyFile, resultComment(number, state.result), "utf8");
+    run("gh", ["issue", "comment", String(number), "--repo", repo, "--body-file", bodyFile]);
   }
   saveState(job, { ...state, phase: "reported" });
 }
@@ -125,7 +128,9 @@ function executeIssue(issue, job) {
   if (relay.error) throw new Error(`relay failed: ${relay.error.message}`);
   const evidence = relayEvidence(checkout);
   if (relay.status !== 0 && evidence.status === "ready_for_owner") evidence.status = "blocked";
-  return { ...evidence, baseCommit, files: changedFiles(checkout) };
+  const files = changedFiles(checkout);
+  return { ...evidence, baseCommit, files,
+    reviewPatch: buildReviewPatch(checkout, scopePaths(issue), files) };
 }
 
 function processIssue(issue) {
@@ -144,6 +149,10 @@ function processIssue(issue) {
       ...relayEvidence(checkout),
     };
     result.status = "blocked";
+    try {
+      result.files = changedFiles(checkout);
+      result.reviewPatch = buildReviewPatch(checkout, scopePaths(issue), result.files);
+    } catch { /* keep the blocked summary without a patch */ }
     const state = { phase: "report_pending", issue: issue.number, result };
     saveState(job, state);
     postResult(issue.number, state, job);
@@ -165,6 +174,7 @@ function processIssue(issue) {
     result = {
       ...relayEvidence(checkout), status: "blocked",
       baseCommit, files,
+      reviewPatch: buildReviewPatch(checkout, scopePaths(issue), files),
     };
     console.error(`Issue #${issue.number}: ${error.message}`);
   }

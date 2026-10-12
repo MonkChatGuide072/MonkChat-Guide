@@ -11,23 +11,28 @@ const forbidden = (file) => file.split("/").some((part) => /^\.env(?:\.|$)/i.tes
   file === "supabase" || file.startsWith("supabase/") ||
   file === ".agent-sync/TASK.md" || file.startsWith(".agent-sync/runtime/");
 
+export function scopePaths(issue) {
+  if (typeof issue.body !== "string" || !issue.body.startsWith(taskMarker + "\n")) return [];
+  const task = issue.body.slice(taskMarker.length).trim();
+  const section = task.split(/\r?\n##\s+/).find((part) => /^Scope\s*\r?\n/i.test(part));
+  if (!section) return [];
+  const lines = section.replace(/^Scope\s*\r?\n/i, "").split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+  if (lines.length < 1 || lines.length > 20) return [];
+  const paths = lines.map((line) => {
+    const match = /^[-*]\s+(?:`([^`]+)`|([^\s`]+))$/.exec(line);
+    const file = match?.[1] ?? match?.[2] ?? "";
+    return /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*\/?$/.test(file) &&
+      !file.split("/").includes("..") && file !== "." && !forbidden(file) ? file : null;
+  });
+  return paths.every(Boolean) ? paths : [];
+}
+
 export function eligibleTask(issue, owner) {
   if (!Number.isSafeInteger(issue.number) || issue.number < 1 || issue.pull_request ||
       issue.state !== "open" || issue.user?.login?.toLowerCase() !== owner.toLowerCase() ||
       !issue.title?.startsWith("[relay] ") || typeof issue.body !== "string" ||
-      !issue.body.startsWith(taskMarker + "\n") || issue.body.length > 12_000) return false;
-
-  const task = issue.body.slice(taskMarker.length).trim();
-  const section = task.split(/\r?\n##\s+/).find((part) => /^Scope\s*\r?\n/i.test(part));
-  if (!section) return false;
-  const lines = section.replace(/^Scope\s*\r?\n/i, "").split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
-  if (lines.length < 1 || lines.length > 20) return false;
-  return lines.every((line) => {
-    const match = /^[-*]\s+(?:`([^`]+)`|([^\s`]+))$/.exec(line);
-    const file = match?.[1] ?? match?.[2] ?? "";
-    return /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*\/?$/.test(file) &&
-      !file.split("/").includes("..") && file !== "." && !forbidden(file);
-  });
+      issue.body.length > 12_000) return false;
+  return scopePaths(issue).length > 0;
 }
 
 export function resultComment(number, result) {
@@ -47,6 +52,9 @@ export function resultComment(number, result) {
       ? ["- Blocker: Antigravity timed out; local edits were preserved for review."] : []),
     `- Changed files (${(result.files ?? []).length}):`,
     ...(files.length ? files : ["- (none)"]),
+    ...(result.reviewPatch
+      ? ["- Scoped review patch (automatically published for review):", "~~~~~diff", result.reviewPatch, "~~~~~"]
+      : ["- Scoped review patch: withheld or unavailable; inspect the local checkout."]),
     "- Local edits remain in the isolated Windows job checkout for owner review.",
     "- No commit, push, merge, deployment, or production update was performed.",
   ].join("\n");

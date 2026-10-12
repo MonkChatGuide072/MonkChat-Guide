@@ -1,5 +1,10 @@
 # MonkChat Guide - Project Handoff
 
+## Automatic Windows bridge startup and review patch proposal — 2026-10-12
+
+- Added a one-time double-click installer, per-user Windows Startup shortcut, and supervisor for the local Bridge. It waits for the old worker, removes stale locks only when no worker remains, fast-forwards only a clean owner checkout, and restarts after an exit. An interrupted job is reported as blocked while its checkout is preserved. A small, scoped text diff can now accompany the Issue result automatically when safety checks pass; otherwise the diff is withheld. No production services are involved.
+- The scripts are prepared in PR #10 but cannot be installed on the owner's Windows PC from this cloud workspace. Windows execution remains unverified until the owner runs the installer once. The existing manual Bridge can keep processing tasks in the meantime.
+
 ## Windows bridge live run and timeout follow-up — 2026-10-09
 
 - Owner-authored Issue #12 reached the Windows bridge. Antigravity changed the four scoped visitor-language files but returned no final status before its 15-minute print timeout; lint/test/build and Codex review were not reached in the relay.
