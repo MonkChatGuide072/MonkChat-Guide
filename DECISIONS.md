@@ -71,7 +71,7 @@ This document records the confirmed decisions made during the project's lifecycl
 ## 11. Third-Party API Limits
 - **Decision**: No paid APIs or AI APIs inside the deployed application.
 - **Reason**: Ensures the project remains strictly within the 0 THB budget and prevents overage spending.
-- **Status**: ✅ CONFIRMED
+- **Status**: 🔄 SUPERSEDED by Decision 26
 - **Date**: 2026-08-12
 
 ## 12. Out of Scope Features
@@ -168,3 +168,9 @@ This document records the confirmed decisions made during the project's lifecycl
 - **Reason**: Keeps the application aligned with its confirmed purpose: supporting monk students in leading meditation and providing basic information to international visitors.
 - **Status**: ✅ CONFIRMED
 - **Date**: 2026-08-19
+
+## 26. Real AI Assistant in the Submitted Prototype
+- **Decision**: The submitted prototype must include a working AI assistant for authenticated monk students and team members. A Cloudflare Pages Function uses a Workers AI Free binding to draft Thai or English replies. It first consults published, Owner-verified Q&A; replies remain provisional for monk review and are never automatically published as verified public Q&A. If the free allocation ends, the assistant reports unavailability rather than incurring charges.
+- **Reason**: The Project Owner explicitly confirmed on 2026-10-14 that the advisor's AI chatbot proposal must actually work in the submitted prototype while the 0 THB budget remains in force.
+- **Status**: ✅ CONFIRMED
+- **Date**: 2026-10-14

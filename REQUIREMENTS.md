@@ -49,6 +49,7 @@ The application must include a private management area. Each team member must ha
 - **Public User**: Views public content without logging in.
 
 After logging in, authorized team members must be able to:
+- Ask a real AI assistant questions in Thai or English during MonkChat activities. The assistant consults published, Owner-verified Q&A and clearly labels generated replies as drafts for monk-student review, including when no approved source matches.
 - Add, edit, and remove meditation tracks.
 - Upload and manage audio files.
 - Set a meditation track as recommended (Owner only, max 1 per spoken language).
@@ -108,6 +109,7 @@ After logging in, authorized team members must be able to:
 - Plan to use the existing GitHub account and a new repository named “monkchat-guide”.
 - The system must remain within the free-tier limits.
 - Do not use paid APIs (no OpenAI, Gemini, etc. inside the deployed application).
+- The authenticated assistant may use Cloudflare Workers AI on the Workers Free plan through a Pages Function binding. Requests must stop when the free allocation is exhausted; no paid-plan upgrade or overage is permitted.
 - Do not require a paid domain or billing information.
 - Do not enable automatic paid upgrades or overage spending.
 
@@ -143,11 +145,10 @@ After logging in, authorized team members must be able to:
 ## Out-of-Scope Features
 - Paid subscriptions or in-app purchases.
 - Complex approval workflows for content publishing.
-- AI chatbot functionality directly inside the app.
 - Real-time meditation rooms.
 - Matchmaking.
 - User ranking.
 - Integration with the JodJai application.
 - Live audio or video streaming.
 - Native Play Store or App Store applications.
-- AI-generated Buddhist answers inside the deployed application.
+- Automatically publishing AI-generated Buddhist answers to the public Q&A.

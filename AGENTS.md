@@ -19,7 +19,7 @@ These are the permanent instructions for every AI agent working on this reposito
 ## Coding Quality Expectations
 - Write clean, modular, and well-documented code.
 - Ensure all components are responsive and mobile-first.
-- Do NOT use paid APIs (no OpenAI, Gemini, or other AI APIs inside the deployed app).
+- Do NOT use paid APIs. The Owner approved one exception to the former no-AI rule: Cloudflare Workers AI on the Free plan through a server-side Pages binding for the authenticated monk-student assistant. Never upgrade to a paid plan or enable overage billing.
 - Do not require a paid domain or billing information.
 - Do not enable automatic paid upgrades or overage spending.
 

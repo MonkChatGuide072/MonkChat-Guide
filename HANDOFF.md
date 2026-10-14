@@ -1,5 +1,16 @@
 # MonkChat Guide - Project Handoff
 
+## Real AI assistant prototype — 2026-10-14
+
+- The Owner explicitly required a working AI chatbot in the submitted prototype, superseding the earlier no-AI rule. Budget remains 0 THB. This work is isolated on `feature/monk-ai-prototype` from `c934370`; it does not include the pending admin-clarity PR.
+- Added a team-only `/admin/assistant` interface and a same-origin `/api/monk-assistant` Cloudflare Pages Function. The function validates a Supabase access token and active Owner/Team Member profile, fetches only published verified Q&A, calls Cloudflare Workers AI, and returns provisional answers for monk review. No question or name is saved by the application.
+- The model is `@cf/aisingapore/gemma-sea-lion-v4-27b-it`, chosen for Thai and English. The function requires a Cloudflare Pages Workers AI binding named `AI` in both Preview and Production. It also requires runtime variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (or the existing `VITE_` equivalents). Add the binding in Cloudflare Workers & Pages > project > Settings > each environment > Bindings, then redeploy. Confirm the account is on Workers Free and do not upgrade to Workers Paid.
+- The endpoint deliberately returns 503 if the binding/configuration/model is unavailable or the free daily allowance is exhausted. A live authenticated round trip in the hosted preview and content review by the Owner are still required before calling this feature ready to submit.
+- Local lint, 36 tests, TypeScript/build, and whitespace checks pass. The AI call is mocked in tests; a live inference has not been performed. Automatic approval review rejected the attempted push of this new branch because publishing the repository to GitHub was not explicitly authorized for this branch. Do not push through another route without that authorization.
+- The Owner explicitly authorized pushing `feature/monk-ai-prototype`, opening a Draft PR, configuring the Workers AI binding for the Cloudflare preview, and testing a live reply on 2026-10-14. GitHub connector confirmed the repository belongs to the connected `MonkChatGuide072` account and that the remote `main` matches the local base. The local Git push has no HTTPS credentials, so use the connected GitHub app for the authorized branch update.
+
+---
+
 ## Production release completed — 2026-09-23
 
 - Owner approval covered production database/server/frontend installation and commit/push. Migration `20260923020015_cms_account_access.sql` is applied; hosted read-only checks confirm the active-profile role predicate and both guard triggers. No real content or team account was created/edited.

@@ -36,6 +36,7 @@ const AdminBioLinksEditPage = lazy(() => import('./pages/admin/AdminBioLinksEdit
 const AdminLanguagesPage = lazy(() => import('./pages/admin/AdminLanguagesPage').then(m => ({ default: m.AdminLanguagesPage })))
 const AdminTeamPage = lazy(() => import('./pages/admin/AdminTeamPage').then(m => ({ default: m.AdminTeamPage })))
 const AdminAnalyticsPage = lazy(() => import('./pages/admin/AdminAnalyticsPage').then(m => ({ default: m.AdminAnalyticsPage })))
+const AdminAssistantPage = lazy(() => import('./pages/admin/AdminAssistantPage').then(m => ({ default: m.AdminAssistantPage })))
 
 function App() {
   return (
@@ -65,6 +66,7 @@ function App() {
                 <Route path="meditation/:trackId/transcript" element={<AdminMeditationTranscriptPage />} />
                 <Route path="meditation/:trackId/subtitles" element={<AdminMeditationSubtitlesPage />} />
                 <Route path="qa" element={<AdminQAPage />} />
+                <Route path="assistant" element={<AdminAssistantPage />} />
                 <Route path="qa/new" element={<AdminQANewPage />} />
                 <Route path="qa/:qaId/edit" element={<AdminQAEditPage />} />
                 <Route path="centers" element={<AdminCentersPage />} />
