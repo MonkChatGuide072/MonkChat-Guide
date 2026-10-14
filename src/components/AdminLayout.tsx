@@ -23,6 +23,7 @@ export function AdminLayout() {
 
   const navItems = [
     { path: '/admin', label: t('admin.nav.dashboard'), end: true },
+    ...(isOwner ? [{ path: '/admin/home', label: t('admin.nav.home') }] : []),
     { path: '/admin/meditation', label: t('admin.nav.meditation') },
     { path: '/admin/qa', label: t('admin.nav.qa') },
     { path: '/admin/centers', label: t('admin.nav.centers') },
@@ -33,18 +34,18 @@ export function AdminLayout() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+    <div className="min-h-screen bg-[#f5f0e8] flex flex-col font-sans text-[#293029]">
       {signOutError && <p role="alert" className="bg-red-50 p-4 text-center text-red-800">{t('management.signOutError')}</p>}
       {/* Top Header */}
-      <header className="bg-slate-900 text-white sticky top-0 z-30 shadow-md">
+      <header className="bg-[#293029] text-white sticky top-0 z-30 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Brand / Title */}
             <div className="flex items-center space-x-3">
-              <Link to="/admin" className="font-bold text-lg text-amber-400 hover:text-amber-300 flex items-center gap-2">
+              <Link to="/admin" className="font-bold text-lg text-[#eec590] hover:text-white flex items-center gap-2">
                 <span>MonkChat CMS</span>
               </Link>
-              <span className="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-white/10 text-[#eec590] border border-white/20 px-2 py-0.5 rounded-full font-medium">
                 {t('admin.adminBadge', 'Admin')}
               </span>
             </div>
@@ -55,7 +56,7 @@ export function AdminLayout() {
                 <p className="text-sm font-semibold text-slate-100 leading-tight">
                   {profile?.display_name || 'Team Member'}
                 </p>
-                <p className="text-xs text-amber-400 font-medium">
+                <p className="text-xs text-[#eec590] font-medium">
                   {isOwner ? t('admin.dashboard.ownerBadge') : t('admin.dashboard.teamBadge')}
                 </p>
               </div>
@@ -72,7 +73,7 @@ export function AdminLayout() {
 
               <button
                 onClick={handleSignOut}
-                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#a65338] hover:bg-[#8f402a] text-white transition-colors cursor-pointer"
               >
                 {t('admin.nav.signOut')}
               </button>
@@ -106,7 +107,7 @@ export function AdminLayout() {
               <p className="text-sm font-semibold text-slate-100">
                 {profile?.display_name || 'Team Member'}
               </p>
-              <p className="text-xs text-amber-400 font-medium">
+              <p className="text-xs text-[#eec590] font-medium">
                 {isOwner ? t('admin.dashboard.ownerBadge') : t('admin.dashboard.teamBadge')}
               </p>
             </div>
@@ -121,7 +122,7 @@ export function AdminLayout() {
                   className={({ isActive }) =>
                     `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-amber-600 text-white'
+                        ? 'bg-[#a65338] text-white'
                         : 'text-slate-300 hover:bg-slate-700 hover:text-white'
                     }`
                   }
@@ -151,7 +152,7 @@ export function AdminLayout() {
       </header>
 
       {/* Secondary Desktop Navigation Bar */}
-      <nav className="hidden md:block bg-white border-b border-slate-200 shadow-xs">
+      <nav className="hidden md:block bg-[#fffcf7] border-b border-[#ded3c3] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-1 overflow-x-auto py-2">
             {navItems.map((item) => (
@@ -162,8 +163,8 @@ export function AdminLayout() {
                 className={({ isActive }) =>
                   `px-3.5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                     isActive
-                      ? 'bg-amber-50 text-amber-800 font-semibold border border-amber-200'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      ? 'bg-[#f7e7d5] text-[#763a26] font-semibold border border-[#e7c7b0]'
+                      : 'text-[#464c42] hover:text-[#293029] hover:bg-[#f6eee3]'
                   }`
                 }
               >

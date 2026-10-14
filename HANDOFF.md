@@ -1,5 +1,16 @@
 # MonkChat Guide - Project Handoff
 
+## Admin clarity draft — 2026-10-12
+
+- Branch `feature/admin-clarity` starts from `main` commit `c934370`. This is a review branch; no migration, upload, or frontend change has been applied to production.
+- Admin landing now groups live content modules by destination, with direct add links. The team page explains actual Owner/Team Member access. It does not introduce per-person or per-module permissions; new accounts still receive Team Member access.
+- Added an Owner-only Home image editor for the four existing carousel slots. A new `home_media` table and `home-photos` Storage bucket require migration `20261012222703_home_media_cms.sql` before uploads can work. The public Home keeps bundled images for unconfigured/unpublished slots or when that data cannot load. No real project image has been uploaded.
+- Code checks passed locally: lint, 34 tests, TypeScript/build and whitespace. Authenticated Owner upload/publish, team authorization, database migration and mobile browser layouts have not been verified against hosted services. Review and deployment are separate next steps.
+- Review correction (2026-10-14): Draft saves now retain the live image and captions in separate fields until explicit publication; the original single-row draft update could unpublish a live image. The migration has not been applied, so its initial schema was adjusted. Lint, 35 tests, TypeScript/build and whitespace pass locally. Authenticated Owner/Team Member flows, hosted migration, and responsive browser checks remain unverified. Do not merge or deploy until those checks and image rights are resolved.
+- Follow-up verification (2026-10-14): Extended `scripts/check-cms-security.mjs` to load the pending Home image migration against an isolated PostgreSQL runtime. All 27 checks pass, including Owner draft/publish and audit, denied Team Member writes, denied anonymous uploads, and published-column-only anonymous reads. No hosted migration has been applied. Browser installation failed in this environment, so responsive visual checks and authenticated browser flows are still open.
+
+---
+
 ## Production release completed — 2026-09-23
 
 - Owner approval covered production database/server/frontend installation and commit/push. Migration `20260923020015_cms_account_access.sql` is applied; hosted read-only checks confirm the active-profile role predicate and both guard triggers. No real content or team account was created/edited.

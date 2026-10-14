@@ -39,6 +39,16 @@ try {
     await db.query('INSERT INTO public.profiles(id,display_name,role,is_active) VALUES ($1,$2,$3,$4)', [id, role, role, active])
   }
   await db.exec(await readFile(new URL('../supabase/migrations/20260923020015_cms_account_access.sql', import.meta.url), 'utf8'))
+  // Minimal Storage metadata shim for isolated Home photo RLS checks.
+  await db.exec(`
+    CREATE SCHEMA storage;
+    CREATE TABLE storage.buckets(id text PRIMARY KEY, name text, public boolean, file_size_limit bigint, allowed_mime_types text[]);
+    CREATE TABLE storage.objects(id uuid PRIMARY KEY DEFAULT gen_random_uuid(), bucket_id text, name text);
+    GRANT USAGE ON SCHEMA storage TO anon, authenticated;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON storage.objects TO anon, authenticated;
+    ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+  `)
+  await db.exec(await readFile(new URL('../supabase/migrations/20261012222703_home_media_cms.sql', import.meta.url), 'utf8'))
   await asUser('anon')
   await check('public can read languages', async () => assert.equal((await db.query('SELECT * FROM public.languages')).rows.length, 2))
   await check('public cannot write languages', async () => assert.rejects(db.exec("INSERT INTO public.languages VALUES ('ja','日本語',true)")))
@@ -69,6 +79,40 @@ try {
     await db.query('UPDATE public.profiles SET is_active=false WHERE id=$1', [member])
     await asUser('authenticated', member)
     assert.equal((await db.query('SELECT private.get_user_role() AS role')).rows[0].role, null)
+  })
+  await asUser('authenticated', owner)
+  await check('owner can save a Home image draft and upload its object', async () => {
+    await db.query(`INSERT INTO public.home_media(slot,draft_storage_path,draft_caption_th,draft_caption_en,updated_by)
+      VALUES (1,'1/draft.webp','ร่าง','Draft',$1)`, [owner])
+    await db.exec("INSERT INTO storage.objects(bucket_id,name) VALUES ('home-photos','1/draft.webp')")
+  })
+  await asUser('anon')
+  await check('public cannot read Home drafts', async () => {
+    assert.equal((await db.query('SELECT slot,storage_path FROM public.home_media')).rows.length, 0)
+  })
+  await check('public cannot upload Home objects', async () => {
+    await assert.rejects(db.exec("INSERT INTO storage.objects(bucket_id,name) VALUES ('home-photos','1/public.webp')"))
+  })
+  await asUser('authenticated', newMember)
+  await check('team member cannot read draft or upload Home image', async () => {
+    assert.equal((await db.query('SELECT slot FROM public.home_media')).rows.length, 0)
+    await assert.rejects(db.exec("INSERT INTO storage.objects(bucket_id,name) VALUES ('home-photos','1/member.webp')"))
+  })
+  await check('team member cannot change Home draft', async () => {
+    assert.equal((await db.query("UPDATE public.home_media SET draft_caption_en='Changed' WHERE slot=1 RETURNING slot")).rows.length, 0)
+  })
+  await asUser('authenticated', owner)
+  await check('owner can publish Home image with audit history', async () => {
+    await db.query(`UPDATE public.home_media SET storage_path=draft_storage_path,
+      caption_th=draft_caption_th, caption_en=draft_caption_en,
+      draft_storage_path=NULL, draft_caption_th=NULL, draft_caption_en=NULL,
+      is_published=true, updated_by=$1 WHERE slot=1`, [owner])
+    assert.ok((await db.query("SELECT id FROM public.admin_audit_logs WHERE entity_type='home_media'")).rows.length >= 2)
+  })
+  await asUser('anon')
+  await check('public reads published fields but cannot read draft columns', async () => {
+    assert.equal((await db.query('SELECT slot,storage_path,caption_th,caption_en FROM public.home_media')).rows[0].storage_path, '1/draft.webp')
+    await assert.rejects(db.exec('SELECT draft_storage_path FROM public.home_media'))
   })
   console.log(`${checks} isolated database checks passed`)
 } finally { await db.close() }

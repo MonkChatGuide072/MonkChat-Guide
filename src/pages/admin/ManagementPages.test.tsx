@@ -59,7 +59,7 @@ describe('CMS management pages', () => {
     mocks.invoke.mockResolvedValue({ data: null, error: new Error('not deployed') })
     render(<AdminTeamPage />)
     await screen.findByText('management.serviceUnavailable')
-    expect(screen.getByRole('button', { name: 'management.addMember' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '+ management.addMember' })).toBeDisabled()
   })
 
   it('does not contact account management for a team member or inactive owner', async () => {
