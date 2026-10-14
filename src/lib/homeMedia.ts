@@ -5,9 +5,12 @@ export const HOME_PHOTOS_BUCKET = 'home-photos'
 export interface HomeMediaRow {
   id: string
   slot: number
-  storage_path: string
-  caption_th: string
-  caption_en: string
+  storage_path: string | null
+  caption_th: string | null
+  caption_en: string | null
+  draft_storage_path: string | null
+  draft_caption_th: string | null
+  draft_caption_en: string | null
   is_published: boolean
 }
 
@@ -44,10 +47,21 @@ export async function removeHomePhoto(path: string): Promise<void> {
   if (error) throw error
 }
 
+export function homeMediaValues(row: HomeMediaRow | undefined, path: string, th: string, en: string, publish: boolean) {
+  return publish ? {
+    storage_path: path, caption_th: th, caption_en: en, is_published: true,
+    draft_storage_path: null, draft_caption_th: null, draft_caption_en: null,
+  } : {
+    storage_path: row?.storage_path ?? null, caption_th: row?.caption_th ?? null,
+    caption_en: row?.caption_en ?? null, is_published: row?.is_published ?? false,
+    draft_storage_path: path, draft_caption_th: th, draft_caption_en: en,
+  }
+}
+
 export function resolvedHomeSlides(rows: HomeMediaRow[]) {
   return bundledHomeSlides.map((fallback, index) => {
     const row = rows.find((item) => item.slot === index + 1 && item.is_published)
-    const url = row && homePhotoUrl(row.storage_path)
-    return row && url ? { url, th: row.caption_th, en: row.caption_en } : fallback
+    const url = row?.storage_path && homePhotoUrl(row.storage_path)
+    return row && url && row.caption_th && row.caption_en ? { url, th: row.caption_th, en: row.caption_en } : fallback
   })
 }

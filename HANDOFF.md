@@ -6,6 +6,7 @@
 - Admin landing now groups live content modules by destination, with direct add links. The team page explains actual Owner/Team Member access. It does not introduce per-person or per-module permissions; new accounts still receive Team Member access.
 - Added an Owner-only Home image editor for the four existing carousel slots. A new `home_media` table and `home-photos` Storage bucket require migration `20261012222703_home_media_cms.sql` before uploads can work. The public Home keeps bundled images for unconfigured/unpublished slots or when that data cannot load. No real project image has been uploaded.
 - Code checks passed locally: lint, 34 tests, TypeScript/build and whitespace. Authenticated Owner upload/publish, team authorization, database migration and mobile browser layouts have not been verified against hosted services. Review and deployment are separate next steps.
+- Review correction (2026-10-14): Draft saves now retain the live image and captions in separate fields until explicit publication; the original single-row draft update could unpublish a live image. The migration has not been applied, so its initial schema was adjusted. Lint, 35 tests, TypeScript/build and whitespace pass locally. Authenticated Owner/Team Member flows, hosted migration, and responsive browser checks remain unverified. Do not merge or deploy until those checks and image rights are resolved.
 
 ---
 
