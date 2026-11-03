@@ -4,7 +4,7 @@ import type { AppLanguage } from '../lib/language'
 const shortcuts = [
   { to: '/', th: 'หน้าแรก', en: 'Home', path: 'M3 11.5 12 4l9 7.5M5.5 10v10h5v-6h3v6h5V10' },
   { to: '/activities', th: 'กิจกรรม', en: 'Activities', path: 'M8 3v4m8-4v4M4 10h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Zm3 9h2m4 0h2m-8 3h2' },
-  { to: '/meditation', th: 'สมาธิ', en: 'Meditation', path: 'M12 20c-4-3-6-7 0-15 6 8 4 12 0 15Zm0 0C6 20 3 16 3 10c5 1 8 4 9 10Zm0 0c6 0 9-4 9-10-5 1-8 4-9 10Z' },
+  { to: '/meditation', th: 'สมาธิ', en: 'Meditate', path: 'M12 20c-4-3-6-7 0-15 6 8 4 12 0 15Zm0 0C6 20 3 16 3 10c5 1 8 4 9 10Zm0 0c6 0 9-4 9-10-5 1-8 4-9 10Z' },
   { to: '/qa', th: 'ถาม–ตอบ', en: 'Q&A', path: 'M5 18 3 21v-6a8 8 0 1 1 4 4l-2-1Zm3-7h.01M12 11h.01M16 11h.01' },
   { to: '/centers', th: 'ศูนย์', en: 'Centers', path: 'M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' },
 ]
@@ -21,7 +21,7 @@ export function HomeHeroIntro({ language }: { language: AppLanguage }) {
         width={1672}
         height={941}
         fetchPriority="high"
-        className="block h-[240px] w-full object-cover object-[center_62%] sm:h-[340px] lg:h-[440px]"
+        className="block h-[240px] w-full object-cover object-[center_35%] sm:h-[360px] sm:object-[center_30%] lg:h-[460px] lg:object-[center_28%] xl:h-[500px] xl:object-[center_26%]"
       />
 
       <div className="mx-auto max-w-[76rem] px-4 pb-1 pt-5 text-center sm:px-6 sm:pt-6 lg:px-8">
@@ -33,18 +33,18 @@ export function HomeHeroIntro({ language }: { language: AppLanguage }) {
           {isEnglish ? 'Join Monk Chat and guided meditation at Wat Mahathat, Ayutthaya.' : 'ร่วมสนทนาธรรมและฝึกสมาธิ ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
         </p>
 
-        <nav aria-label={isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก'} className="mx-auto mt-5 grid max-w-2xl grid-cols-5 gap-1.5 sm:mt-6 sm:gap-3">
+        <nav aria-label={isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก'} className="mx-auto mt-5 grid max-w-2xl grid-cols-5 gap-1 min-[390px]:gap-1.5 sm:mt-6 sm:gap-3">
           {shortcuts.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               aria-current={item.to === '/' ? 'page' : undefined}
-              className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl border px-1 py-3 text-[0.7rem] font-semibold leading-tight transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#681B16] sm:min-h-[88px] sm:text-sm ${item.to === '/' ? 'border-[#A43D1D] bg-[#A43D1D] text-white shadow-sm hover:bg-[#8E3317]' : 'border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] hover:border-[#A43D1D] hover:bg-[#FAF0E1]'}`}
+              className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl border px-1 py-2.5 text-xs font-semibold leading-tight transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#681B16] sm:min-h-[88px] sm:px-2 sm:py-3 sm:text-sm ${item.to === '/' ? 'border-[#A43D1D] bg-[#A43D1D] text-white shadow-sm hover:bg-[#8E3317]' : 'border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] hover:border-[#A43D1D] hover:bg-[#FAF0E1]'}`}
             >
               <svg aria-hidden="true" className="h-6 w-6 shrink-0 sm:h-7 sm:w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.65} strokeLinecap="round" strokeLinejoin="round">
                 <path d={item.path} />
               </svg>
-              <span className={isEnglish ? 'text-[0.65rem] min-[390px]:text-[0.7rem] sm:text-sm' : undefined}>{isEnglish ? item.en : item.th}</span>
+              <span className="text-center text-xs font-semibold leading-tight tracking-tight sm:text-sm sm:tracking-normal">{isEnglish ? item.en : item.th}</span>
             </Link>
           ))}
         </nav>
