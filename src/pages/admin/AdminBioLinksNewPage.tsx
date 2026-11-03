@@ -137,7 +137,7 @@ export function AdminBioLinksNewPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <Link
             to="/admin/bio-links"
@@ -145,7 +145,7 @@ export function AdminBioLinksNewPage() {
           >
             ← {t('admin.bioLinks.create.backToList')}
           </Link>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-medium text-slate-900">
             {t('admin.bioLinks.create.title')}
           </h1>
           <p className="text-sm text-slate-500">
@@ -164,48 +164,48 @@ export function AdminBioLinksNewPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Core Metadata */}
         <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
-          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+          <h2 className="text-base font-medium text-slate-900 border-b border-slate-100 pb-2">
             {t('admin.bioLinks.create.secMetadata')}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="cms-adminbiolinksnewpage-1" className="block text-sm font-medium text-slate-700 mb-1">
                 {t('admin.bioLinks.create.labelUrl')} *
               </label>
-              <input
+              <input id="cms-adminbiolinksnewpage-1"
                 type="text"
                 required
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder={t('admin.bioLinks.create.phUrl')}
-                className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-600 focus:border-emerald-600"
+                className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-brand-terracotta focus:border-brand-terracotta"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="cms-adminbiolinksnewpage-2" className="block text-sm font-medium text-slate-700 mb-1">
                 {t('admin.bioLinks.create.labelOrder')} *
               </label>
-              <input
+              <input id="cms-adminbiolinksnewpage-2"
                 type="number"
                 required
                 min={1}
                 value={displayOrder}
                 onChange={(e) => setDisplayOrder(e.target.value)}
                 placeholder={t('admin.bioLinks.create.phOrder')}
-                className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-600 focus:border-emerald-600"
+                className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-brand-terracotta focus:border-brand-terracotta"
               />
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-3">
-          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+          <h2 className="text-base font-medium text-slate-900 border-b border-slate-100 pb-2">
             {t('admin.bioLinks.create.secImage')}
           </h2>
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1" htmlFor="bio-link-image">
+            <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="bio-link-image">
               {t('admin.bioLinks.create.labelImage')}
             </label>
             <input
@@ -239,47 +239,47 @@ export function AdminBioLinksNewPage() {
 
         {/* Thai Translation */}
         <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
-          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+          <h2 className="text-base font-medium text-slate-900 border-b border-slate-100 pb-2">
             {t('admin.bioLinks.create.secThai')}
           </h2>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label htmlFor="cms-adminbiolinksnewpage-3" className="block text-sm font-medium text-slate-700 mb-1">
               {t('admin.bioLinks.create.labelTitle')} (TH) *
             </label>
-            <input
+            <input id="cms-adminbiolinksnewpage-3"
               type="text"
               required
               value={thTitle}
               onChange={(e) => setThTitle(e.target.value)}
               placeholder={t('admin.bioLinks.create.phThTitle')}
-              className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-600 focus:border-emerald-600"
+              className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-brand-terracotta focus:border-brand-terracotta"
             />
           </div>
         </div>
 
         {/* English Translation */}
         <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
-          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+          <h2 className="text-base font-medium text-slate-900 border-b border-slate-100 pb-2">
             {t('admin.bioLinks.create.secEnglish')}
           </h2>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label htmlFor="cms-adminbiolinksnewpage-4" className="block text-sm font-medium text-slate-700 mb-1">
               {t('admin.bioLinks.create.labelTitle')} (EN)
             </label>
-            <input
+            <input id="cms-adminbiolinksnewpage-4"
               type="text"
               value={enTitle}
               onChange={(e) => setEnTitle(e.target.value)}
               placeholder={t('admin.bioLinks.create.phEnTitle')}
-              className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-emerald-600 focus:border-emerald-600"
+              className="w-full text-sm border border-slate-200 rounded-lg p-2 bg-slate-50 focus:bg-white focus:outline-brand-terracotta focus:border-brand-terracotta"
             />
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-wrap justify-end gap-3">
           <Link
             to="/admin/bio-links"
             className="px-5 py-2.5 text-sm font-semibold rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-colors"
@@ -289,7 +289,7 @@ export function AdminBioLinksNewPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors disabled:opacity-50"
+            className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white  transition-colors disabled:opacity-50"
           >
             {isLoading ? t('admin.bioLinks.create.saving') : t('admin.bioLinks.create.submit')}
           </button>

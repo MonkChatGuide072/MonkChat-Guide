@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { GuideIcon } from '../../components/GuideIcon'
 import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
 
@@ -224,7 +225,7 @@ export function AdminCentersPage() {
           className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
             canEdit
               ? 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer'
-              : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+              : 'border-slate-200 text-slate-500 bg-slate-50 cursor-not-allowed'
           }`}
         >
           {t('admin.centers.actions.edit')}
@@ -280,10 +281,10 @@ export function AdminCentersPage() {
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 ">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-medium text-slate-900">
               {t('admin.modules.centers.title')}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -301,7 +302,7 @@ export function AdminCentersPage() {
             </button>
             <Link
               to="/admin/centers/new"
-              className="px-4 py-2 text-sm font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              className="px-4 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white  transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
               {t('admin.centers.addCenter')}
             </Link>
@@ -333,14 +334,14 @@ export function AdminCentersPage() {
 
       {/* Success Alert State */}
       {actionSuccessMsg && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex items-center justify-between">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex flex-wrap items-center justify-between gap-3">
           <p className="font-semibold">✓ {actionSuccessMsg}</p>
           <button
             type="button"
-            onClick={() => setActionSuccessMsg(null)}
+            aria-label={t('management.dismiss')} onClick={() => setActionSuccessMsg(null)}
             className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer"
           >
-            ✕
+            <GuideIcon name="close" />
           </button>
         </div>
       )}
@@ -362,8 +363,8 @@ export function AdminCentersPage() {
 
       {/* Results List */}
       {!isLoading && !error && items.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="bg-white rounded-xl border border-slate-200  overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
             <p className="text-sm font-semibold text-slate-700">
               {t('admin.centers.centerCount', { count: items.length })}
             </p>
@@ -376,7 +377,7 @@ export function AdminCentersPage() {
               return (
                 <div key={item.id} className="p-4 space-y-3">
                   <div className="flex justify-between items-start gap-2">
-                    <span className="font-bold text-slate-900 leading-tight">
+                    <span className="font-medium text-slate-900 leading-tight">
                       {name}
                     </span>
                     {renderBadges(item)}
@@ -396,7 +397,7 @@ export function AdminCentersPage() {
                       </p>
                     )}
                   </div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-slate-500">
                     {t('admin.centers.updatedAt')}: {formatDate(item.updated_at, currentLang)}
                   </div>
                   <div className="pt-2">
@@ -411,7 +412,7 @@ export function AdminCentersPage() {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold text-xs uppercase">
+                <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold text-xs ">
                   <th className="px-6 py-3">{t('admin.centers.colName')}</th>
                   <th className="px-6 py-3">{t('admin.centers.colLocation')}</th>
                   <th className="px-6 py-3">{t('admin.centers.colLinks')}</th>
@@ -441,7 +442,7 @@ export function AdminCentersPage() {
                         {item.website_url && (
                           <p>
                             <a href={item.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                              🌐 {t('admin.centers.websiteUrl')}
+                              {t('admin.centers.websiteUrl')}
                             </a>
                           </p>
                         )}
@@ -454,7 +455,7 @@ export function AdminCentersPage() {
                         )}
                       </td>
                       <td className="px-6 py-4">{renderBadges(item)}</td>
-                      <td className="px-6 py-4 text-xs text-slate-400">{formatDate(item.updated_at, currentLang)}</td>
+                      <td className="px-6 py-4 text-xs text-slate-500">{formatDate(item.updated_at, currentLang)}</td>
                       <td className="px-6 py-4 text-right">{renderActionButtons(item)}</td>
                     </tr>
                   )

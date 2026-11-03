@@ -10,3 +10,7 @@
 .cms-shell th { font-weight: 500; }
 .cms-shell td { vertical-align: top; }
 .cms-shell :is(button,input,select,textarea,a):focus-visible { outline: 2px solid #681B16; outline-offset: 3px; }
+
+.cms-shell input[type="file"] { max-width: 100%; min-height: 48px; font-size: 16px; }
+.cms-shell input[type="file"]::file-selector-button { min-height: 44px; }
+.cms-shell :is(time,[class*="font-mono"]) { font-variant-numeric: tabular-nums; }

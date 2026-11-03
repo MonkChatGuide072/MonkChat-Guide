@@ -150,3 +150,14 @@ Added 16 sibling label associations, named the audio file control and grouped su
 ## CMS Q&A phase — three pages
 
 Direction: distinguish draft editing from approved publication; careful, readable, exact; the same neutral workspace; actual question/answer and review metadata are the moments; consistent language groups. Audit: detached tiny bold labels, uppercase status/table headings, shadows, emoji notices, small actions and unnamed dismiss control. Passes follow the CMS spacing/color/icon/copy/type/layout/details/visual/motion rules above, adding 16 explicit label associations and a named outline dismiss control. Existing verification/publication labels, reviewer/source fields, fixed draft notices and lock behavior remain. Seven handlers/effects compared equal to base. 69 tests / 12 files, lint and TypeScript/PWA build passed. Synthetic fixture TH/EN at 360/1440 for all three pages: no document overflow, visible buttons >=44px, text/select/textarea fields 16px and named. No real record saved, approved or published.
+
+
+## CMS Centers phase — three pages
+
+Direction: maintain real center contact/location records; clear, careful, readable; the same neutral workspace; actual address and localized name are the moments; the shared language grouping is the signature. Audit: green primary actions, tiny bold form labels, mono URL labels, uppercase headings and emoji. Nine passes apply common spacing, single brick action accent, redundant icon removal, preserved plain copy, readable weights, wrapping actions, explicit labels, no new imagery and color-only feedback. Added 20 label/control associations; original publication/archiving and URL validation remain.
+
+## CMS BioLinks phase — three pages
+
+Direction: maintain the destination and order of visitor links; exact, calm, readable; the same workspace; actual link title/image is the moment; the shared language grouping remains. Audit: same type/action inconsistencies, unnamed inline order fields and dismiss controls. Added 8 label associations plus contextual names to both mobile/desktop order inputs, named dismiss controls, neutral sizing and 44px file-selector buttons. Sixteen Centers/BioLinks handlers/effects compared equal to base; no save, URL, storage or publication behavior changed.
+
+Both modules: 69 tests / 12 files, lint and TypeScript/PWA build passed. Synthetic TH/EN 360/1440 six-page matrix has no document overflow or visible button under 44px. Inline order fields were found unnamed in the first English pass, fixed and rechecked in Thai; final cross-page pass checks the final English state. Text/select/textarea fields are 16px. No real data saved, uploaded, archived or published.

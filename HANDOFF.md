@@ -1,5 +1,13 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับ UI ทีละหน้า: CMS Centers / BioLinks 6 หน้า — 4 พฤศจิกายน 2569
+
+- ต่อจาก Q&A 82c034e17a43c9af421ee9fb686b2db0eeb19610 ตรวจรายการ/สร้าง/แก้ไขศูนย์ แล้วรายการ/สร้าง/แก้ไขลิงก์ ปรับ typography, primary action, notices และระยะปุ่มร่วม เชื่อม label ฟอร์ม 28 จุด เพิ่มชื่อช่องลำดับลิงก์พร้อมชื่อรายการ และปุ่มปิดข้อความ ใช้ file selector 44px
+- handlers/effects 16 ชุดเทียบฐานตรงกัน ไม่เปลี่ยน URL checks, draft/publication/archive/restore, confirm, storage หรือ write payloads
+- รันเอง 69 tests / 12 files, lint, TypeScript/PWA build ผ่าน ตรวจ synthetic fixture TH/EN 360/1440 ทั้ง 6 หน้า ไม่ล้นและปุ่มไม่ต่ำกว่า 44px พบช่องลำดับลิงก์ไม่มีชื่อในรอบแรกจึงแก้และตรวจซ้ำ ทุกช่อง text/select/textarea 16px ไม่มีการสร้าง/แก้/เผยแพร่ข้อมูลจริง
+- ถัดไปภาษา ทีมงาน สถิติ ผู้ช่วยส่วนตัว และตรวจรวมรอบท้าย ไม่มี merge/deploy
+
+
 ## ปรับ UI ทีละหน้า: CMS Q&A 3 หน้า — 4 พฤศจิกายน 2569
 
 - ต่อจาก CMS Meditation c79d3f70b26b5f29165a3d669b53a546073cfa57 ตรวจรายการ สร้าง และแก้ไข ปรับน้ำหนักฟอนต์ ปุ่มสูง 44px สี primary เดียว ลด uppercase/emoji/เงา เชื่อม label กับ control 16 จุด และตั้งชื่อปุ่มปิดข้อความ คงสถานะ verification/content/publication แหล่งอ้างอิงและ notice ทั้งหมด
