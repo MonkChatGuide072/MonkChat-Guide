@@ -1,5 +1,34 @@
 # MonkChat Guide — Current Handoff
 
+## รับงานและรวมงานเสร็จสมบูรณ์จาก Windows — 4 พฤศจิกายน 2569
+
+- **Branch งานร่วม**: `sync/anti-reviewed-20261103` สำหรับ PR #17 (https://github.com/MonkChatGuide072/MonkChat-Guide/pull/17)
+- **การรับงานจาก Git**: ดึง branch `sync/anti-reviewed-20261103` มาเปิด worktree แยก เปรียบเทียบกับงาน Windows ล่าสุด และรวมส่วนที่ขาดอย่างรอบคอบโดยไม่ reset หรือเขียนทับงานเดิม
+- **งานหน้าตาส่วนบน Home ที่รวม**:
+  - ใช้ `src/components/HomeHeroIntro.tsx`: ภาพแนวนอนเต็มความกว้างจอ (`monkchat-meditation-ruins.webp`), ชื่อและคำอธิบายอยู่ใต้ภาพ, และทางลัด 5 ปุ่มแบบไอคอนอยู่เหนือชื่อ รองรับทั้ง TH และ EN
+  - ปรับ `src/components/Layout.tsx`: กำหนด `<main>` ให้เต็มความกว้างเฉพาะเส้นทาง `/` และ `/visit` เพื่อให้ภาพ Hero บนหน้าแรกกว้างชิดขอบจอตามบรีฟ โดยคง container และ padding ของหน้าอื่นและเนื้อหาท่อนล่างไว้เหมือนเดิม
+- **การรักษางาน Windows ล่าสุด**:
+  - **อัตลักษณ์และตราสัญลักษณ์ทางการ**: ติดตั้งโลโก้ทางการ (ต้นพระศรีมหาโพธิ์สีทอง ธรรมจักร และพระภิกษุนั่งสมาธิ) ที่ `public/images/logo/ayutthaya-monk-chat-logo.png` และ `public/logo.png`, ติดตั้งในแถบเมนู (Navbar Header), ปรับ Favicon และ Meta tags ใน `index.html`
+  - **ชื่อทางการ**: กำหนดชื่อโครงการเป็น "อยุธยา มังค์แชท" (TH) และ "Ayutthaya Monk Chat" (EN) ใน `src/locales/th/common.json`, `src/locales/en/common.json`, และ `index.html`
+  - **แถบนำทาง (Navbar Header)**: เมนู 5 รายการชัดเจน ทั้ง Desktop และ Mobile drawer: 1. หน้าแรก (`/`), 2. กิจกรรม (`/activities`), 3. นำสมาธิ (`/meditation`), 4. ถาม-ตอบ (`/qa`), 5. ศูนย์ปฏิบัติธรรม (`/centers`)
+  - **หน้ากิจกรรม (`ActivitiesPage.tsx`)**: แสดงเฉพาะกิจกรรมที่ได้รับการยืนยัน (Monk Chat ณ วัดมหาธาตุ เวลา 13:15 น. เป็นต้นไป, ฝึกสมาธิกำหนดลมหายใจ 5–10 นาที) ตัดเวลาสิ้นสุด 15:30 น. ที่เติมเองออก และแยกข้อเสนอร่างที่ยังไม่ยืนยันไว้ใน `docs/content-review/` ภายใน ไม่เผยแพร่สู่หน้าสาธารณะ
+  - **ระบบถาม-ตอบและแชทบอท**: คงหน้า `/qa` และการ์ดแชทบอทสาธารณะ (`ChatbotServiceCard.tsx`) ตอบจากคลัง Q&A ที่ verified/published เท่านั้น ไม่เรียก AI และไม่แสดง source_reference
+  - **ผู้ช่วยส่วนตัวหลังบ้าน (`/admin/assistant`)**: คืนหน้าและระบบตรวจสิทธิ์สำหรับพระนิสิต พร้อม `functions/api/monk-assistant.js` และชุดการทดสอบ
+  - **เส้นทาง `/visit`**: คง alias สำหรับรองรับป้าย QR Code เดิมและลิงก์ภายนอก
+- **ผลการทดสอบระบบ (Verification Results)**:
+  - **Automated Tests**: ผ่านครบทุกรายการ **115/115 tests passed** จาก 22 ไฟล์ทดสอบ (`npm test -- --run`)
+  - **Lint Check**: **0 errors, 0 warnings** บน 182 ไฟล์ (`npm run lint` / `oxlint`)
+  - **Production Build**: ผ่านสมบูรณ์ (`tsc -b && vite build`) สร้าง PWA Service Worker สำเร็จใน 288ms
+  - **In-Browser Responsive Verification**: ตรวจสอบเว็บจริงบน localhost:5173 ผ่าน Chrome DevTools Protocol ครบ 5 ขนาดหน้าจอ (360px, 390px, 768px, 1024px, 1440px) ทั้งภาษาไทยและภาษาอังกฤษ:
+    - ส่วนบน Home: ภาพเต็มความกว้างจอ, ชื่อ/คำอธิบายใต้ภาพ, ทางลัด 5 ปุ่มพร้อมไอคอนเหนือชื่อ แสดงผลสมบูรณ์
+    - ไม่พบการเลื่อนแนวนอน (`scrollWidth <= clientWidth`) ในทุก viewport
+    - ตรวจสอบเส้นทาง `/visit`, `/activities`, `/meditation`, `/qa`, `/centers` โหลดและแสดงผลถูกต้อง
+- **สิ่งที่ยังค้าง / ข้อจำกัดตามจริง**:
+  - เสียงนำสมาธิ: ไฟล์เสียงจริงยาว 5:26 นาที ส่วนคำบรรยาย VTT ยาว 5:00 นาที; จุดตัด Cue 19 ที่ 04:12 vs 04:15 ยังรอการตรวจเทียบกับไฟล์เสียงจริงจากพระอาจารย์
+  - Cloudflare Workers AI: ผ่านการทดสอบระดับ mock suite ยังไม่ได้เชื่อมโยงบัญชี live inference จริง
+  - นโยบายความปลอดภัยและงบประมาณ 0 บาท: ไม่มีการแตะต้องฐานข้อมูลจริง, ไม่มีการเปิด API เสียเงิน, ไม่มีการ merge เข้า main หรือ deploy production
+
+
 ## ส่งงานขึ้น GitHub สำเร็จ — 3 พฤศจิกายน 2569
 
 - Draft PR #17: https://github.com/MonkChatGuide072/MonkChat-Guide/pull/17

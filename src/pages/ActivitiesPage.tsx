@@ -30,7 +30,7 @@ export function ActivitiesPage() {
         : 'การนำนั่งสมาธิกำหนดลมหายใจเบื้องต้นโดยพระสงฆ์ในพื้นที่ หรือฝึกฝนด้วยตนเองผ่านเสียงนำสมาธิในเว็บแอปพลิเคชัน เหมาะสำหรับผู้เริ่มต้นทุกเชื้อชาติและศาสนา',
       image: '/images/home/monkchat-meditation-hero.webp',
       badge: isEnglish ? 'Meditation Practice' : 'การฝึกสมาธิที่ยืนยันแล้ว',
-      ctaText: isEnglish ? 'Try Guided Audio' : 'ฟังเสียงนำสมาธิ',
+      ctaText: isEnglish ? 'Try Guided Audio' : 'ฟังเสียงนำสมาธิ 5 นาที',
       ctaLink: '/meditation',
     },
   ]

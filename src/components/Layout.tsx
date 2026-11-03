@@ -10,7 +10,8 @@ import {
 } from '../lib/language'
 
 export function Layout() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
   const location = useLocation()
   const [hasSessionLang, setHasSessionLang] = useState(
     () => !!sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY),
@@ -119,21 +120,21 @@ export function Layout() {
           {/* Logo & Brand */}
           <NavLink
             to="/"
-            className="group flex min-w-0 shrink items-center gap-2 sm:gap-3 text-[#681B16] transition-transform"
+            className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3 text-[#681B16] transition-transform"
           >
-            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8E3317] to-[#681B16] shadow-xs ring-1 ring-[#D5BD94]/50 sm:h-10 sm:w-10">
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#FFFDF7] p-0.5 shadow-xs ring-1 ring-[#D5BD94]/70 transition-transform group-hover:scale-105 sm:h-11 sm:w-11">
               <img
-                src="/monkchat-placeholder.svg"
-                alt=""
-                className="h-5 w-5 brightness-200 invert sm:h-6 sm:w-6"
+                src="/images/logo/ayutthaya-monk-chat-logo.png"
+                alt="อยุธยา มังค์แชท — Ayutthaya Monk Chat"
+                className="h-full w-full object-contain"
               />
             </div>
             <span className="min-w-0 leading-tight">
               <span className="block truncate font-serif text-sm font-bold tracking-tight text-[#681B16] sm:text-base lg:text-lg">
-                MonkChat Guide
+                {isEnglish ? 'Ayutthaya Monk Chat' : 'อยุธยา มังค์แชท'}
               </span>
-              <span className="hidden text-[0.6rem] font-semibold tracking-wider text-[#A43D1D]/80 sm:block">
-                Ayutthaya · Inner Peace
+              <span className="hidden text-[0.62rem] font-semibold tracking-wider text-[#A43D1D] sm:block">
+                {isEnglish ? 'Ayutthaya Monk Chat Guide' : 'คู่มือสมาธิและสนทนาธรรม'}
               </span>
             </span>
           </NavLink>
@@ -210,9 +211,13 @@ export function Layout() {
       </header>
 
       {/* Main Content Area */}
-      <main className={location.pathname === '/' || location.pathname === '/visit'
-        ? 'w-full flex-1'
-        : 'mx-auto w-full max-w-[76rem] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8'}>
+      <main
+        className={
+          location.pathname === '/' || location.pathname === '/visit'
+            ? 'w-full flex-1'
+            : 'mx-auto w-full max-w-[76rem] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8'
+        }
+      >
         <Outlet />
       </main>
 
@@ -221,7 +226,7 @@ export function Layout() {
         <div className="mx-auto max-w-[76rem] px-4 sm:px-6">
           <p>{t('app.footer')}</p>
           <p className="mt-1 text-[0.7rem] text-[#A43D1D]/80">
-            Monk Chat Ayutthaya · Mahachulalongkornrajavidyalaya University (MCU)
+            อยุธยา มังค์แชท (Ayutthaya Monk Chat) · Mahachulalongkornrajavidyalaya University (MCU)
           </p>
         </div>
       </footer>

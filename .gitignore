@@ -43,4 +43,7 @@ node_modules
 
 # Review screenshots require explicit public-upload authorization.
 docs/review-evidence/**/*.jpg
+docs/review-evidence/**/*.png
+docs/review-evidence/**/*.webp
 docs/chatbot-service-card-preview.png
+

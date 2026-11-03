@@ -1,10 +1,10 @@
 {
   "app": {
-    "title": "MonkChat Guide",
-    "heading": "Meditation Guide for Monk Students and Visitors",
+    "title": "Ayutthaya Monk Chat",
+    "heading": "Ayutthaya Monk Chat Guide",
     "status": "Under Development",
-    "description": "A web application that helps monk students guide meditation and share essential information with international visitors.",
-    "footer": "© 2026 MonkChat Guide. All rights reserved."
+    "description": "Ayutthaya Monk Chat web application that helps monk students guide meditation and share essential information with international visitors.",
+    "footer": "© 2026 Ayutthaya Monk Chat. All rights reserved."
   },
   "nav": {
     "home": "Home",
@@ -60,8 +60,8 @@
     "retry": "Retry"
   },
   "visitor": {
-    "heroTag": "MONKCHAT GUIDE",
-    "title": "Welcome to MonkChat Guide",
+    "heroTag": "AYUTTHAYA MONK CHAT · WAT MAHATHAT",
+    "title": "Ayutthaya Monk Chat",
     "subtitle": "Begin learning and practising meditation at your own pace. Choose what you would like to explore below.",
     "chooseTitle": "What would you like to do?",
     "chooseSubtitle": "Choose a section to begin right away.",
@@ -688,7 +688,7 @@
         "errorUpdateTh": "Failed to update Thai translation.",
         "errorUpdateEn": "Failed to update English translation.",
         "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged.",
-        "errorVerified": "This verified answer is locked. Ask the Owner to return it to draft from the Q&A list, then review it again before publishing."
+        "errorVerified": "This verified answer is locked. An owner must return it to draft from the list before editing, then verify it again before publishing."
       },
       "actions": {
         "edit": "Edit",
@@ -784,7 +784,8 @@
         "errorUpdateCore": "Failed to update core metadata.",
         "errorUpdateTh": "Failed to update Thai translation.",
         "errorUpdateEn": "Failed to update English translation.",
-        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged."
+        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged.",
+        "errorVerified": "This verified answer is locked. An owner must return it to draft from the list before editing, then verify it again before publishing."
       },
       "actions": {
         "edit": "Edit",
@@ -862,7 +863,8 @@
         "errorUpdateCore": "Failed to update core metadata.",
         "errorUpdateTh": "Failed to update Thai translation.",
         "errorUpdateEn": "Failed to update English translation.",
-        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged."
+        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged.",
+        "errorVerified": "This verified answer is locked. An owner must return it to draft from the list before editing, then verify it again before publishing."
       },
       "actions": {
         "edit": "Edit",
