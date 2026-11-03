@@ -379,7 +379,7 @@ export function AdminQAPage() {
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 ">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-medium text-slate-900">
@@ -437,7 +437,7 @@ export function AdminQAPage() {
 
       {/* Error State */}
       {!isLoading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
           <p className="text-red-800 font-semibold">{t('admin.qa.errorTitle')}</p>
           <p className="text-red-600 text-sm font-mono break-all">{error}</p>
           <button
@@ -457,7 +457,7 @@ export function AdminQAPage() {
           <button
             type="button"
             aria-label={t('management.dismiss')} onClick={() => setActionSuccessMsg(null)}
-            className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer"
+            className="text-xs text-emerald-800 hover:text-emerald-800 font-semibold cursor-pointer"
           >
             <GuideIcon name="close" />
           </button>
@@ -467,16 +467,14 @@ export function AdminQAPage() {
       {/* Empty State */}
       {!isLoading && !error && items.length === 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 flex items-center justify-center text-3xl">
-            ❓
-          </div>
+
           <h2 className="text-lg font-semibold text-slate-800">
             {t('admin.qa.emptyTitle')}
           </h2>
           <p className="text-sm text-slate-500 max-w-md mx-auto">
             {t('admin.qa.emptyDesc')}
           </p>
-          <p className="text-xs text-slate-500 ">
+          <p className="text-xs text-slate-500">
             {t('admin.qa.emptyHint')}
           </p>
         </div>
@@ -484,7 +482,7 @@ export function AdminQAPage() {
 
       {/* Results List */}
       {!isLoading && !error && items.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200  overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-slate-700">
               {t('admin.qa.itemCount', { count: items.length })}
@@ -539,7 +537,7 @@ export function AdminQAPage() {
                   ].map((key) => (
                     <th
                       key={key}
-                      className="px-4 py-3 text-left text-xs font-semibold text-slate-500  "
+                      className="px-4 py-3 text-left text-xs font-semibold text-slate-500"
                     >
                       {t(key)}
                     </th>

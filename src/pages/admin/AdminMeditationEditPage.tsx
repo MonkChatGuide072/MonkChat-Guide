@@ -274,7 +274,7 @@ export function AdminMeditationEditPage() {
   if (loadError || !trackData) {
     return (
       <div className="max-w-xl mx-auto bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4">
-        
+
         <h1 className="text-xl font-medium text-slate-900">
           {t('admin.meditation.edit.notFoundTitle')}
         </h1>
@@ -294,7 +294,7 @@ export function AdminMeditationEditPage() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6  flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-medium text-slate-900">
             {t('admin.meditation.edit.title')}
@@ -331,7 +331,7 @@ export function AdminMeditationEditPage() {
           </div>
           <div>
             <span className="text-slate-500 block">{t('admin.meditation.edit.fieldAudio')}</span>
-            <span className={trackData.audio_storage_path ? 'font-medium text-emerald-600' : 'font-medium text-amber-600'}>
+            <span className={trackData.audio_storage_path ? 'font-medium text-emerald-800' : 'font-medium text-amber-800'}>
               {trackData.audio_storage_path ? `✓ ${t('admin.meditation.audioExists')}` : `${t('admin.meditation.audioMissing')}`}
             </span>
           </div>
@@ -340,14 +340,14 @@ export function AdminMeditationEditPage() {
 
       {/* Error Alert */}
       {formError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
           <p className="font-semibold">{t('admin.meditation.edit.errorHeader')}</p>
           <p className="text-xs mt-1 font-mono break-all">{formError}</p>
         </div>
       )}
 
       {/* Edit Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
         <AudioLanguageField value={sourceLanguage} onChange={setSourceLanguage} disabled={isSubmitting} />
         {/* Thai Section */}
         <div className="space-y-4 pt-2 border-b border-slate-100 pb-6">
@@ -403,7 +403,7 @@ export function AdminMeditationEditPage() {
               className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
             />
             {hadEnTranslation && !enTitle.trim() && (
-              <p className="text-xs text-amber-700 mt-1 ">
+              <p className="text-xs text-amber-700 mt-1">
                 {t('admin.meditation.edit.enPreserveNotice')}
               </p>
             )}

@@ -141,7 +141,7 @@ export function AdminBioLinksNewPage() {
         <div>
           <Link
             to="/admin/bio-links"
-            className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 mb-1"
+            className="text-xs font-semibold text-brand-maroon hover:text-brand-terracotta-dark flex items-center gap-1 mb-1"
           >
             ← {t('admin.bioLinks.create.backToList')}
           </Link>
@@ -155,7 +155,7 @@ export function AdminBioLinksNewPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800 space-y-1 font-mono">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800 space-y-1 font-mono">
           <p className="font-semibold">{t('admin.bioLinks.create.errorHeader')}:</p>
           <p className="break-all">{error}</p>
         </div>
@@ -289,7 +289,7 @@ export function AdminBioLinksNewPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white  transition-colors disabled:opacity-50"
+            className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors disabled:opacity-50"
           >
             {isLoading ? t('admin.bioLinks.create.saving') : t('admin.bioLinks.create.submit')}
           </button>

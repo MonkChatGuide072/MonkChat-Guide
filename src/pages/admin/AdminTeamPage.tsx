@@ -74,7 +74,7 @@ export function AdminTeamPage() {
   const selected = editing && editing !== 'new' ? editing : null
   return (
     <div className="mx-auto max-w-4xl space-y-5 [overflow-wrap:anywhere]">
-      <header className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7"><h1 className="text-2xl font-bold text-[#11223C]">{t('management.teamTitle')}</h1><p className="mt-2 text-sm text-slate-600">{t('management.teamDescription')}</p><p className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{t('management.teamNote')}</p></header>
+      <header className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7"><h1 className="text-2xl font-medium text-[#11223C]">{t('management.teamTitle')}</h1><p className="mt-2 text-sm text-slate-600">{t('management.teamDescription')}</p><p className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{t('management.teamNote')}</p></header>
       {error && <div role="alert" className="rounded-xl bg-red-50 p-4 text-red-800"><p>{t(error)}</p><button type="button" onClick={load} disabled={busy} className={buttonClass}>{t('management.retry')}</button></div>}
       {notice && <p role="status" className="rounded-xl bg-emerald-50 p-4 text-emerald-800">{t(notice)}</p>}
       <div className="flex flex-wrap gap-3"><button type="button" disabled={!ready || busy || loading} onClick={() => { setEditing('new'); setError(''); setNotice('') }} className={buttonClass}>{t('management.addMember')}</button><button type="button" disabled={busy || loading} onClick={load} className={buttonClass}>{t('management.refresh')}</button></div>

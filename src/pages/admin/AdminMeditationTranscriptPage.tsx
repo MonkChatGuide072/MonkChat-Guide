@@ -216,7 +216,7 @@ export function AdminMeditationTranscriptPage() {
   if (loadError || !trackData) {
     return (
       <div className="max-w-xl mx-auto bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4">
-        
+
         <h1 className="text-xl font-medium text-slate-900">
           {t('admin.meditation.transcript.notFoundTitle')}
         </h1>
@@ -236,7 +236,7 @@ export function AdminMeditationTranscriptPage() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6  flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-medium text-slate-900">
             {t('admin.meditation.transcript.title')}
@@ -254,9 +254,9 @@ export function AdminMeditationTranscriptPage() {
       </div>
 
       {/* Target Track Information Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6  space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
         <div className="border-b border-slate-100 pb-4">
-          <span className="text-xs font-medium text-slate-500  ">
+          <span className="text-xs font-medium text-slate-500">
             {t('admin.meditation.colTitle')}
           </span>
           <h2 className="text-lg font-medium text-slate-900 mt-0.5">
@@ -271,7 +271,7 @@ export function AdminMeditationTranscriptPage() {
         <div className="grid grid-cols-2 gap-4 text-xs">
           <div>
             <span className="text-slate-500 block">{t('admin.meditation.audio.currentAudioStatus')}</span>
-            <span className={trackData.audio_storage_path ? 'font-semibold text-emerald-600' : 'font-semibold text-amber-600'}>
+            <span className={trackData.audio_storage_path ? 'font-semibold text-emerald-800' : 'font-semibold text-amber-800'}>
               {trackData.audio_storage_path
                 ? `✓ ${t('admin.meditation.audio.audioExists')}`
                 : `${t('admin.meditation.audio.audioMissing')}`}
@@ -300,14 +300,14 @@ export function AdminMeditationTranscriptPage() {
 
       {/* Error Alert */}
       {formError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
           <p className="font-semibold">{t('admin.meditation.transcript.errorHeader')}</p>
           <p className="text-xs mt-1 font-mono break-all">{formError}</p>
         </div>
       )}
 
       {/* Transcript Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
         {/* Thai Section */}
         <div className="space-y-3 pb-6 border-b border-slate-100">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
@@ -365,7 +365,7 @@ export function AdminMeditationTranscriptPage() {
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
-              <span>💬</span> {t('admin.meditation.transcript.vttSectionTitle')}
+              {t('admin.meditation.transcript.vttSectionTitle')}
             </h3>
             <Link
               to={`/admin/meditation/${trackId}/subtitles`}

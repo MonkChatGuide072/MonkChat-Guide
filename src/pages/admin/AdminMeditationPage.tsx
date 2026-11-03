@@ -220,7 +220,7 @@ export function AdminMeditationPage() {
   const renderRecommendedBadge = (isRecommended: boolean) => {
     if (!isRecommended) return null
     return (
-      <span className="px-2 py-0.5 text-xs font-medium rounded bg-[#A86100]/10 text-[#A86100] border border-[#A86100]/20  ml-2">
+      <span className="px-2 py-0.5 text-xs font-medium rounded bg-[#A86100]/10 text-brand-maroon border border-[#A86100]/20 ml-2">
         {t('meditation.recommended')}
       </span>
     )
@@ -231,7 +231,7 @@ export function AdminMeditationPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 ">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-medium text-slate-900">
@@ -258,7 +258,7 @@ export function AdminMeditationPage() {
             {/* Add track button */}
             <Link
               to="/admin/meditation/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white  transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -293,7 +293,7 @@ export function AdminMeditationPage() {
 
       {/* Error state */}
       {!isLoading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
           <p className="text-red-800 font-semibold">{t('admin.meditation.errorTitle')}</p>
           <p className="text-red-600 text-sm font-mono break-all">{error}</p>
           <button
@@ -308,14 +308,14 @@ export function AdminMeditationPage() {
       {/* Empty state */}
       {!isLoading && !error && tracks.length === 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          
+
           <h2 className="text-lg font-semibold text-slate-800">
             {t('admin.meditation.emptyTitle')}
           </h2>
           <p className="text-sm text-slate-500 max-w-md mx-auto">
             {t('admin.meditation.emptyDesc')}
           </p>
-          <p className="text-xs text-slate-500 ">
+          <p className="text-xs text-slate-500">
             {t('admin.meditation.emptyHint')}
           </p>
         </div>
@@ -323,7 +323,7 @@ export function AdminMeditationPage() {
 
       {/* Results table */}
       {!isLoading && !error && tracks.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200  overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-slate-700">
               {t('admin.meditation.trackCount', { count: tracks.length })}
@@ -343,7 +343,7 @@ export function AdminMeditationPage() {
                   {statusBadge(track.content_status, track.is_published)}
                   <div className="flex items-center gap-4 text-xs text-slate-500">
                     <span>{t('admin.meditation.duration')}: {formatDuration(track.duration_seconds)}</span>
-                    <span className={track.audio_storage_path ? 'text-emerald-600' : 'text-amber-600'}>
+                    <span className={track.audio_storage_path ? 'text-emerald-800' : 'text-amber-800'}>
                       {track.audio_storage_path ? `✓ ${t('admin.meditation.audioExists')}` : `${t('admin.meditation.audioMissing')}`}
                     </span>
                   </div>
@@ -374,7 +374,7 @@ export function AdminMeditationPage() {
                       <button
                         onClick={() => handleAction(track, 'set_recommended')}
                         disabled={actionLoadingId === track.id}
-                        className="px-2.5 py-1 text-xs font-semibold rounded border border-[#A86100]/30 text-[#A86100] bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer disabled:opacity-50"
+                        className="px-2.5 py-1 text-xs font-semibold rounded border border-[#A86100]/30 text-brand-maroon bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer disabled:opacity-50"
                       >
                         {actionLoadingId === track.id ? '...' : 'Set Recommended'}
                       </button>
@@ -424,7 +424,7 @@ export function AdminMeditationPage() {
                   ].map((key) => (
                     <th
                       key={key}
-                      className="px-4 py-3 text-left text-xs font-semibold text-slate-500  "
+                      className="px-4 py-3 text-left text-xs font-semibold text-slate-500"
                     >
                       {t(key)}
                     </th>
@@ -447,7 +447,7 @@ export function AdminMeditationPage() {
                         {statusBadge(track.content_status, track.is_published)}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <span className={track.audio_storage_path ? 'text-emerald-600 font-medium' : 'text-amber-600 font-medium'}>
+                        <span className={track.audio_storage_path ? 'text-emerald-800 font-medium' : 'text-amber-800 font-medium'}>
                           {track.audio_storage_path
                             ? `✓ ${t('admin.meditation.audioExists')}`
                             : `${t('admin.meditation.audioMissing')}`}
@@ -480,7 +480,7 @@ export function AdminMeditationPage() {
                             <button
                               onClick={() => handleAction(track, 'set_recommended')}
                               disabled={actionLoadingId === track.id}
-                              className="px-2.5 py-1 text-xs font-semibold rounded border border-[#A86100]/30 text-[#A86100] bg-amber-50 hover:bg-amber-100 transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+                              className="px-2.5 py-1 text-xs font-semibold rounded border border-[#A86100]/30 text-brand-maroon bg-amber-50 hover:bg-amber-100 transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
                             >
                               {actionLoadingId === track.id ? '...' : 'Set Recommended'}
                             </button>

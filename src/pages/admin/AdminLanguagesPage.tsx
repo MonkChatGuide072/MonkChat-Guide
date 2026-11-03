@@ -57,7 +57,7 @@ export function AdminLanguagesPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-5 [overflow-wrap:anywhere]">
       <header className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
-        <h1 className="text-2xl font-bold text-[#11223C]">{t('management.languagesTitle')}</h1>
+        <h1 className="text-2xl font-medium text-[#11223C]">{t('management.languagesTitle')}</h1>
         <p className="mt-2 text-sm text-slate-600">{t('management.languagesDescription')}</p>
         <p className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{t('management.languageNote')}</p>
       </header>

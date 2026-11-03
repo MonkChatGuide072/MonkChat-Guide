@@ -245,7 +245,8 @@
     "retry": "Retry",
     "empty": "No published centers available yet.",
     "itemCount": "center(s)",
-    "loading": "Loading centers..."
+    "loading": "Loading centers...",
+    "unnamedCenter": "Unnamed center"
   },
   "admin": {
     "nav": {
@@ -376,17 +377,17 @@
       }
     },
     "meditation": {
-      "subtitle": "Meditation tracks in the database (read-only)",
+      "subtitle": "Manage audio tracks, transcripts and captions",
       "refresh": "Refresh",
       "addTrack": "+ Add Track",
       "comingSoon": "This feature will be available in the next step",
-      "readOnlyNotice": "This page is currently read-only. Content management buttons will be enabled in the next step.",
+      "readOnlyNotice": "New tracks start as drafts. Check audio and translations before publishing.",
       "errorNoClient": "Supabase connection is not configured. Please check your .env.local file.",
       "errorTitle": "Error loading tracks",
       "retry": "Retry",
       "emptyTitle": "No meditation tracks in the database yet",
       "emptyDesc": "There are currently no meditation tracks in the database. Records will appear here once the first track is added.",
-      "emptyHint": "The add track feature will be available in the next step.",
+      "emptyHint": "Choose Add Track to create a draft",
       "trackCount": "{{count}} meditation track(s)",
       "duration": "Duration",
       "audioExists": "Audio file exists",
@@ -587,10 +588,11 @@
         "errorGeneric": "An unexpected error occurred. Please try again.",
         "notFoundTitle": "Meditation Track Not Found",
         "successUpload": "VTT Subtitle uploaded successfully"
-      }
+      },
+      "errorNoUser": "No user session found. Please sign in again."
     },
     "qa": {
-      "subtitle": "List of Buddhist Q&A items in database (Read-only)",
+      "subtitle": "Manage questions, answers and review status",
       "refresh": "Refresh",
       "addQA": "+ Add Q&A",
       "policyNoticeTitle": "Q&A Content Policy & Verification Notice",
@@ -601,7 +603,7 @@
       "retry": "Retry",
       "emptyTitle": "No Q&A items in database",
       "emptyDesc": "There are currently no Q&A items in the database. Items will appear here once created.",
-      "emptyHint": "Feature to create Q&A items will be enabled in the next step.",
+      "emptyHint": "Choose Add Q&A to create a draft",
       "itemCount": "{{count}} Q&A items",
       "category": "Category",
       "hasSourceRef": "Has reference",
@@ -710,6 +712,7 @@
     },
     "centers": {
       "subtitle": "Manage DCI Meditation Centers metadata and locations (CMS)",
+      "errorHeader": "Could not load centers",
       "refresh": "Refresh",
       "addCenter": "+ Add DCI Center",
       "emptyTitle": "No DCI centers in database",
@@ -771,7 +774,8 @@
         "errorEnDescRequired": "English description is required if English name is provided.",
         "errorNoUser": "User session not found. Please sign in again.",
         "errorNoClient": "Supabase connection is not configured.",
-        "errorGeneric": "An unexpected error occurred. Please try again."
+        "errorGeneric": "An unexpected error occurred. Please try again.",
+        "optional": "Optional"
       },
       "edit": {
         "title": "Edit DCI Meditation Center",
@@ -799,7 +803,9 @@
         "restoreConfirm": "Are you sure you want to restore this archived center?",
         "errorUpdate": "Failed to update status.",
         "successMsg": "Status updated successfully."
-      }
+      },
+      "errorNoClient": "Supabase connection is not configured.",
+      "errorGeneric": "An unexpected error occurred. Please try again."
     },
     "bioLinks": {
       "subtitle": "Manage links displayed on the BioPage (CMS)",
@@ -878,7 +884,9 @@
         "restoreConfirm": "Are you sure you want to restore this archived link?",
         "errorUpdate": "Failed to update status.",
         "successMsg": "Status updated successfully."
-      }
+      },
+      "errorNoClient": "Supabase connection is not configured.",
+      "errorGeneric": "An unexpected error occurred. Please try again."
     }
   }
 }

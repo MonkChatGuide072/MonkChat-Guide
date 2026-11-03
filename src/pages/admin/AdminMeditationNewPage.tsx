@@ -147,7 +147,7 @@ export function AdminMeditationNewPage() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6  flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-medium text-slate-900">
             {t('admin.meditation.new.title')}
@@ -176,14 +176,14 @@ export function AdminMeditationNewPage() {
 
       {/* Error alert */}
       {formError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
           <p className="font-semibold">{t('admin.meditation.new.errorHeader')}</p>
           <p className="text-xs mt-1 font-mono">{formError}</p>
         </div>
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
         <AudioLanguageField value={sourceLanguage} onChange={setSourceLanguage} disabled={isSubmitting} />
         {/* Thai Section */}
         <div className="space-y-4 pt-2 border-b border-slate-100 pb-6">

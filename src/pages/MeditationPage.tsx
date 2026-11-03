@@ -183,7 +183,7 @@ export function MeditationPage() {
       {/* 2. AUDIO PLAYER SECTION (STEP 2) */}
       <div id="meditation-audio" className="scroll-mt-24 space-y-5">
         <div className="flex items-center gap-2.5">
-          
+
           <h2 className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
             {isEnglish ? 'Meditation audio' : 'ฟังเสียงสมาธิ'}
           </h2>
@@ -364,7 +364,7 @@ export function MeditationPage() {
           className="scroll-mt-24 space-y-4 rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6"
         >
           <div className="flex items-center gap-2.5">
-            
+
             <h2 className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
               {t('meditation.transcriptTitle')}
             </h2>

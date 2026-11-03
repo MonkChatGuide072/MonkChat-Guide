@@ -251,7 +251,7 @@ export function ActivitiesPage() {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <div className="rounded-xl border border-[#EADCC6] bg-[#FFF8EE] p-4">
-            
+
             <h3 className="mt-2 text-sm font-medium text-[#681B16]">
               {isEnglish ? 'Dress Modestly' : 'การแต่งกายสุภาพ'}
             </h3>
@@ -263,7 +263,7 @@ export function ActivitiesPage() {
           </div>
 
           <div className="rounded-xl border border-[#EADCC6] bg-[#FFF8EE] p-4">
-            
+
             <h3 className="mt-2 text-sm font-medium text-[#681B16]">
               {isEnglish ? 'Remove Footwear' : 'ถอดรองเท้า'}
             </h3>
@@ -275,7 +275,7 @@ export function ActivitiesPage() {
           </div>
 
           <div className="rounded-xl border border-[#EADCC6] bg-[#FFF8EE] p-4">
-            
+
             <h3 className="mt-2 text-sm font-medium text-[#681B16]">
               {isEnglish ? 'Respectful Presence' : 'กิริยาที่สงบสำรวม'}
             </h3>

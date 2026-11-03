@@ -434,7 +434,7 @@ export function AdminMeditationSubtitlesPage() {
 
   if (loadError || !trackData) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
+      <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
         <p className="text-red-800 font-semibold">{t('admin.meditation.subtitles.notFoundTitle')}</p>
         <p className="text-red-600 text-sm font-mono break-all">{loadError}</p>
         <Link
@@ -459,14 +459,14 @@ export function AdminMeditationSubtitlesPage() {
       <div className="flex flex-wrap items-center justify-between gap-3 gap-4">
         <Link
           to="/admin/meditation"
-          className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-amber-700 transition-colors"
+          className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-brand-terracotta-dark transition-colors"
         >
           <span>←</span> {t('admin.meditation.subtitles.backToList')}
         </Link>
       </div>
 
       {/* Header Info Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6  space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-medium text-slate-900">{trackData.title}</h1>
@@ -474,8 +474,8 @@ export function AdminMeditationSubtitlesPage() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-              ⏱ {formatDuration(trackData.duration_seconds)}
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              <GuideIcon name="clock" /> {formatDuration(trackData.duration_seconds)}
             </span>
             <span
               className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
@@ -519,7 +519,7 @@ export function AdminMeditationSubtitlesPage() {
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1">
             <p className="font-semibold text-slate-700 flex flex-wrap items-center justify-between gap-3">
               <span>{t('admin.meditation.subtitles.thSubtitleStatus')}</span>
-              <span className={thVttPath ? 'text-emerald-600 font-medium' : 'text-amber-600 font-medium'}>
+              <span className={thVttPath ? 'text-emerald-800 font-medium' : 'text-amber-800 font-medium'}>
                 {thVttPath ? `✓ ${t('admin.meditation.subtitles.statusAttached')}` : `${t('admin.meditation.subtitles.statusMissing')}`}
               </span>
             </p>
@@ -533,11 +533,11 @@ export function AdminMeditationSubtitlesPage() {
             <p className="font-semibold text-slate-700 flex flex-wrap items-center justify-between gap-3">
               <span>{t('admin.meditation.subtitles.enSubtitleStatus')}</span>
               {trackData.enTrans ? (
-                <span className={enVttPath ? 'text-emerald-600 font-medium' : 'text-amber-600 font-medium'}>
+                <span className={enVttPath ? 'text-emerald-800 font-medium' : 'text-amber-800 font-medium'}>
                   {enVttPath ? `✓ ${t('admin.meditation.subtitles.statusAttached')}` : `${t('admin.meditation.subtitles.statusMissing')}`}
                 </span>
               ) : (
-                <span className="text-slate-500 ">
+                <span className="text-slate-500">
                   {t('admin.meditation.subtitles.enUnavailable')}
                 </span>
               )}
@@ -566,7 +566,7 @@ export function AdminMeditationSubtitlesPage() {
           <button
             type="button"
             aria-label={t('management.dismiss')} onClick={() => setSuccessMessage(null)}
-            className="text-emerald-600 hover:text-emerald-800 text-xs font-medium cursor-pointer"
+            className="text-emerald-800 hover:text-emerald-800 text-xs font-medium cursor-pointer"
           >
             <GuideIcon name="close" />
           </button>
@@ -593,14 +593,14 @@ export function AdminMeditationSubtitlesPage() {
 
       {/* Error Alert */}
       {formError && !pendingUploadedPath && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
           <p className="font-semibold">{t('admin.meditation.subtitles.errorHeader')}</p>
           <p className="text-xs mt-1 font-mono break-all">{formError}</p>
         </div>
       )}
 
       {/* Upload Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
         <h2 className="text-lg font-medium text-slate-900">
           {t('admin.meditation.subtitles.title')}
         </h2>
@@ -624,7 +624,7 @@ export function AdminMeditationSubtitlesPage() {
               }}
               className={`px-4 py-2 text-xs font-semibold rounded-lg border transition-colors cursor-pointer ${
                 selectedLang === 'th'
-                  ? 'bg-brand-terracotta text-white border-amber-600'
+                  ? 'bg-brand-terracotta text-white border-brand-terracotta'
                   : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
               }`}
             >
@@ -633,6 +633,7 @@ export function AdminMeditationSubtitlesPage() {
 
             <button
               type="button"
+              aria-pressed={selectedLang === 'en'}
               disabled={!trackData.enTrans}
               onClick={() => {
                 if (trackData.enTrans) {
@@ -648,7 +649,7 @@ export function AdminMeditationSubtitlesPage() {
                 !trackData.enTrans
                   ? 'bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed'
                   : selectedLang === 'en'
-                  ? 'bg-blue-600 text-white border-blue-600 cursor-pointer'
+                  ? 'bg-brand-terracotta text-white border-brand-terracotta cursor-pointer'
                   : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 cursor-pointer'
               }`}
             >
@@ -688,7 +689,7 @@ export function AdminMeditationSubtitlesPage() {
                 type="checkbox"
                 checked={confirmReplace}
                 onChange={(e) => setConfirmReplace(e.target.checked)}
-                className="mt-0.5 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
+                className="mt-0.5 rounded border-amber-300 text-amber-800 focus:ring-amber-500"
               />
               <span>{t('admin.meditation.subtitles.confirmReplace')}</span>
             </label>

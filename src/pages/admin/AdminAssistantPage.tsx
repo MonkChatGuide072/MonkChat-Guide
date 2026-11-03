@@ -72,33 +72,33 @@ export function AdminAssistantPage() {
   }
 
   return <div className="mx-auto max-w-3xl space-y-6 pb-12">
-    <header className="rounded-3xl bg-[#293029] px-5 py-7 text-white sm:px-8">
-      <p className="text-xs font-bold uppercase tracking-widest text-[#eec590]">MonkChat Guide · AI</p>
-      <h1 className="mt-3 text-2xl font-bold sm:text-3xl">{copy.title}</h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80">{copy.intro}</p>
+    <header className="rounded-2xl border border-neutral-200 bg-white p-6 text-neutral-900">
+      <p className="text-sm text-neutral-600">MonkChat Guide</p>
+      <h1 className="mt-3 text-2xl font-medium sm:text-3xl">{copy.title}</h1>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600">{copy.intro}</p>
     </header>
-    <p className="rounded-2xl border border-[#ddc492] bg-[#fff4d9] p-4 text-sm leading-6 text-[#594525]">{copy.review}</p>
-    <div className="min-h-44 space-y-4" aria-live="polite">
+    <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-[#594525]">{copy.review}</p>
+    <div className="space-y-4" aria-live="polite">
       {messages.length === 0 && <p className="rounded-2xl border border-[#ded3c3] bg-white p-6 text-sm text-[#5d6058]">{copy.empty}</p>}
-      {messages.map((item, index) => <article key={index} className={`rounded-2xl border p-5 ${item.role === 'user' ? 'ml-4 border-[#d5dace] bg-[#eef1e7]' : 'mr-4 border-[#ded3c3] bg-white'}`}>
-        <h2 className="text-xs font-bold uppercase tracking-wide text-[#91402b]">{item.role === 'user' ? copy.question : copy.answer}</h2>
+      {messages.map((item, index) => <article key={index} className={`rounded-2xl border p-5 ${item.role === 'user' ? 'ml-4 border-neutral-200 bg-neutral-100' : 'mr-4 border-[#ded3c3] bg-white'}`}>
+        <h2 className="text-sm font-medium text-brand-maroon">{item.role === 'user' ? copy.question : copy.answer}</h2>
         <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-[#293029]">{item.content}</p>
-        {item.role === 'assistant' && !item.hasApprovedContext && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-xs leading-6 text-[#594525]">{copy.noSource}</p>}
-        {item.sources && item.sources.length > 0 && <div className="mt-4 border-t border-[#e6ddcf] pt-3 text-xs leading-5 text-[#5d6058]">
-          <p className="font-bold">{copy.sources}</p>
+        {item.role === 'assistant' && !item.hasApprovedContext && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm leading-6 text-[#594525]">{copy.noSource}</p>}
+        {item.sources && item.sources.length > 0 && <div className="mt-4 border-t border-[#e6ddcf] pt-3 text-sm leading-6 text-[#5d6058]">
+          <p className="font-medium">{copy.sources}</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">{item.sources.map(source => <li key={source.id}><Link className="underline underline-offset-2" to="/qa">{source.title}</Link>{source.reference ? ` — ${source.reference}` : ''}</li>)}</ul>
         </div>}
       </article>)}
       {busy && <p role="status" className="text-sm text-[#5d6058]">{copy.working}</p>}
     </div>
     {error && <p role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-800">{error}</p>}
-    <form onSubmit={event => void ask(event)} className="rounded-2xl border border-[#ded3c3] bg-white p-4 shadow-sm">
-      <label className="sr-only" htmlFor="assistant-question">{copy.placeholder}</label>
+    <form onSubmit={event => void ask(event)} className="rounded-2xl border border-[#ded3c3] bg-white p-4">
+      <label className="mb-2 block text-sm font-medium" htmlFor="assistant-question">{copy.question}</label>
       <textarea id="assistant-question" required minLength={2} maxLength={600} rows={3} value={question}
         onChange={event => setQuestion(event.target.value)} placeholder={copy.placeholder}
         className="min-h-24 w-full resize-y rounded-xl border border-[#ded3c3] p-3 text-sm outline-none focus:border-[#a86100]" />
       <div className="mt-3 flex justify-end"><button type="submit" disabled={busy || !question.trim()}
-        className="min-h-11 rounded-full bg-[#293029] px-6 text-sm font-bold text-white disabled:opacity-50">{copy.ask}</button></div>
+        className="min-h-11 rounded-lg bg-brand-terracotta transition-colors hover:bg-brand-terracotta-dark px-6 text-sm font-medium text-white disabled:opacity-50">{copy.ask}</button></div>
     </form>
   </div>
 }

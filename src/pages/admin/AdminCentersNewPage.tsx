@@ -149,7 +149,7 @@ export function AdminCentersNewPage() {
         <div>
           <Link
             to="/admin/centers"
-            className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 mb-1"
+            className="text-xs font-semibold text-brand-maroon hover:text-brand-terracotta-dark flex items-center gap-1 mb-1"
           >
             ← {t('admin.centers.create.backToList')}
           </Link>
@@ -163,7 +163,7 @@ export function AdminCentersNewPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800 space-y-1 font-mono">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800 space-y-1 font-mono">
           <p className="font-semibold">{t('admin.centers.create.errorHeader')}:</p>
           <p className="break-all">{error}</p>
         </div>
@@ -223,7 +223,7 @@ export function AdminCentersNewPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label htmlFor="cms-admincentersnewpage-4" className="block text-sm font-medium text-slate-700 mb-1 font-mono">
+              <label htmlFor="cms-admincentersnewpage-4" className="block text-sm font-medium text-slate-700 mb-1">
                 {t('admin.centers.create.labelMapUrl')} ({t('admin.centers.create.optional')})
               </label>
               <input id="cms-admincentersnewpage-4"
@@ -236,7 +236,7 @@ export function AdminCentersNewPage() {
             </div>
 
             <div>
-              <label htmlFor="cms-admincentersnewpage-5" className="block text-sm font-medium text-slate-700 mb-1 font-mono">
+              <label htmlFor="cms-admincentersnewpage-5" className="block text-sm font-medium text-slate-700 mb-1">
                 {t('admin.centers.create.labelWebsiteUrl')} ({t('admin.centers.create.optional')})
               </label>
               <input id="cms-admincentersnewpage-5"
@@ -249,7 +249,7 @@ export function AdminCentersNewPage() {
             </div>
 
             <div>
-              <label htmlFor="cms-admincentersnewpage-6" className="block text-sm font-medium text-slate-700 mb-1 font-mono">
+              <label htmlFor="cms-admincentersnewpage-6" className="block text-sm font-medium text-slate-700 mb-1">
                 {t('admin.centers.create.labelContactUrl')} ({t('admin.centers.create.optional')})
               </label>
               <input id="cms-admincentersnewpage-6"
@@ -342,7 +342,7 @@ export function AdminCentersNewPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white  transition-colors disabled:opacity-50"
+            className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors disabled:opacity-50"
           >
             {isLoading ? t('admin.centers.create.saving') : t('admin.centers.create.submit')}
           </button>

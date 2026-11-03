@@ -1,5 +1,25 @@
 # MonkChat Guide — Current Handoff
 
+## รอบ UI ครบเส้นทางและส่งตรวจรวม — 4 พฤศจิกายน 2569
+
+- ต่อจาก Centers/BioLinks fb086c847e567aec0d0083ddcca6fba58d9bac8a เก็บภาษา ทีมงาน สถิติ ผู้ช่วยส่วนตัว และสถานะปฏิเสธสิทธิ์ พร้อมตรวจรวมหน้าสาธารณะ 5 หน้า + Login/404 + หลังบ้าน 20 หน้า รวม 27 page components (Home มี alias /visit)
+- CMS ใช้ neutral workspace, accent อิฐ, โลโก้เดิม, ปุ่ม 44px/ช่องกรอก 16px/48px; Analytics เลิกสีรุ้งประจำตัวเลขและบอกช่วงที่เลือกด้วย aria-pressed; ผู้ช่วยใช้หัวเรื่อง/คำถาม/คำตอบร่างอ่านง่าย คง review/no-source notices ทั้งหมด ไม่เปลี่ยน AI endpoint หรือพฤติกรรมเผยแพร่
+- ตรวจ error/empty แล้วพบข้อความ read-only/next step ที่ล้าสมัยและคีย์แปลขาด จึงแก้ข้อความ UI TH/EN ให้ตรงฟังก์ชัน เพิ่มชื่อ optional/error/session ที่หาย ถอด emoji ที่ตกค้างและกำหนด role=alert ให้แผง error การสแกน static translation keys ของ pages/components ไม่พบคีย์ขาด
+- ตรวจ source: handlers/effects 57 ชุดตรงกับฐาน, auth.tsx/supabase.ts/functions/api/monk-assistant.js ไม่เปลี่ยน และเงื่อนไข ProtectedRoute/OwnerRoute ตรงเดิม (เปลี่ยนเฉพาะ loading/denial presentation)
+- ผลรันเองล่าสุด: 69 tests / 12 files, lint, TypeScript/PWA build ผ่าน จำนวนเพิ่มจากฐาน 65 เพราะ regression 4 ข้อ (Centers 1 และ Admin navigation 3) ไม่ได้สแกนสำเนาสำรองเพิ่ม; หลังจากนั้นมีเพียง trim whitespace และเอกสาร
+- Chrome: หลังบ้านทั้ง 20 หน้า TH/EN ที่ 360/768/1440 รวม 120 สถานะ ไม่มี document overflow, ปุ่มที่แสดงไม่ต่ำกว่า 44px และทุก input/select/textarea ที่แสดงมีชื่อ ช่องข้อความ/เลือก/ไฟล์/textarea 16px ตรวจเปิดฟอร์มภาษา/ทีมทั้งสองภาษา, 30-day range, error/empty/verified-lock/Team read-only/Owner denial และคำตอบร่างจำลองพร้อม no-source notice แล้ว เก็บ targeted rechecks หลังแก้ข้อความและคีย์แปล
+- CMS ใช้ isolated visual fixture นอก source แอป ด้วยข้อมูล/บัญชี/คำตอบจำลองและปฏิเสธ mutation ไม่ใช่การล็อกอินบัญชีจริงหรือ live AI; ไม่มี fixture ใน production bundle ส่วน /admin ของแอปจริงใน QA preview ทดสอบ guest แล้ว redirect /admin/login ได้ ไม่มี bypass auth ใน source
+- รายละเอียด audit/direction/แต่ละหน้าอยู่ docs/UNSLOP_REVIEW_2026-11-04.md ภาพและ JSON เก็บภายใน ไม่อัปโหลดภาพ/.env หรือรหัสลับขึ้น GitHub ไม่ merge/deploy/แก้ฐานข้อมูล และยังไม่อ้างว่า Windows/Anti รับงานแล้ว
+
+### งานรับต่อก่อนเผยแพร่
+
+1. Antigravity อ่านหัว branch sync/anti-reviewed-20261103 และเอกสารนี้ แล้วเทียบกับงาน Windows ผ่าน worktree ตาม WORKFLOW.md ไม่แตก ZIP ทับงาน
+2. ทดสอบบัญชีจริง Owner/Team: เข้า–ออกระบบ สร้าง/แก้ร่าง อัปโหลดเสียง/ซับ สิทธิ์เผยแพร่และล็อก Q&A รวม private AI แบบใช้งานจริงในสภาพแวดล้อมทดสอบ (รอบ UI นี้ยังไม่ยืนยัน RLS/gateway/live inference)
+3. ตรวจเสียง 326s กับ VTT 300s, cue 19, สิทธิ์สื่อ/ผู้บรรยาย และตัดสิน Draft เนื้อหาสมาธิที่ยังค้าง ก่อนอ้างว่าพร้อมเผยแพร่
+4. ตรวจโทรศัพท์/iPad จริงและรวมผล ก่อนพิจารณา merge/deploy production แยกจากรอบ UI นี้
+
+
+
 ## ปรับ UI ทีละหน้า: CMS Centers / BioLinks 6 หน้า — 4 พฤศจิกายน 2569
 
 - ต่อจาก Q&A 82c034e17a43c9af421ee9fb686b2db0eeb19610 ตรวจรายการ/สร้าง/แก้ไขศูนย์ แล้วรายการ/สร้าง/แก้ไขลิงก์ ปรับ typography, primary action, notices และระยะปุ่มร่วม เชื่อม label ฟอร์ม 28 จุด เพิ่มชื่อช่องลำดับลิงก์พร้อมชื่อรายการ และปุ่มปิดข้อความ ใช้ file selector 44px

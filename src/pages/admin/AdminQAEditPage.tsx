@@ -254,14 +254,14 @@ export function AdminQAEditPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           to="/admin/qa"
-          className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-amber-700 transition-colors"
+          className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-brand-terracotta-dark transition-colors"
         >
           <span>←</span> {t('admin.qa.edit.backToList')}
         </Link>
       </div>
 
       {/* Header Info */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6  space-y-2">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-2">
         <h1 className="text-2xl font-medium text-slate-900">
           {t('admin.qa.edit.title')}
         </h1>
@@ -284,14 +284,14 @@ export function AdminQAEditPage() {
 
       {/* Error Alert */}
       {formError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
           <p className="font-semibold">{t('admin.qa.create.errorHeader')}</p>
           <p className="text-xs mt-1 font-mono break-all">{formError}</p>
         </div>
       )}
 
       {/* Edit Form */}
-      {isEditable && <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
+      {isEditable && <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
         {/* Core Metadata */}
         <div className="space-y-4">
           <h2 className="text-base font-medium text-slate-900 border-b border-slate-100 pb-2">

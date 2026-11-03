@@ -9,13 +9,13 @@ Review approach: adapted from **unslop by Damir Sokolovsky (@heydamir), CC BY 4.
 | Order | Area | Status |
 | --- | --- | --- |
 | 1 | Home `/`, `/visit`, initial language selection | Implemented and checked as described below |
-| Shared | Navigation, footer clearance, public chatbot | Changed for Home usability; cross-page checks continue with each page |
+| Shared | Navigation, footer clearance, public chatbot | Implemented and checked; policy preserved |
 | 2 | Activities | Implemented and checked |
 | 3 | Meditation and its supporting sections | Implemented and checked |
 | 4 | Q&A and public chatbot states | Implemented and checked |
 | 5 | Centers | Implemented and checked |
-| 6 | Login and missing-page state | Next |
-| 7 | Authenticated administration and private assistant | Pending; distinguish source review from a real authenticated session |
+| 6 | Login and missing-page state | Implemented and checked |
+| 7 | Administration and private assistant (20 pages) | UI implemented and checked with isolated fixtures; real account/live service validation pending |
 
 ## Home: audit and direction
 
@@ -161,3 +161,30 @@ Direction: maintain real center contact/location records; clear, careful, readab
 Direction: maintain the destination and order of visitor links; exact, calm, readable; the same workspace; actual link title/image is the moment; the shared language grouping remains. Audit: same type/action inconsistencies, unnamed inline order fields and dismiss controls. Added 8 label associations plus contextual names to both mobile/desktop order inputs, named dismiss controls, neutral sizing and 44px file-selector buttons. Sixteen Centers/BioLinks handlers/effects compared equal to base; no save, URL, storage or publication behavior changed.
 
 Both modules: 69 tests / 12 files, lint and TypeScript/PWA build passed. Synthetic TH/EN 360/1440 six-page matrix has no document overflow or visible button under 44px. Inline order fields were found unnamed in the first English pass, fixed and rechecked in Thai; final cross-page pass checks the final English state. Text/select/textarea fields are 16px. No real data saved, uploaded, archived or published.
+
+
+## Languages, team, analytics and private assistant phases
+
+Languages direction: help owners maintain supported content languages; exact, readable, steady; the same neutral workspace; real language/native-name rows carry detail; shared label/control rhythm. Audit: navy heading and dense bold interface text. Kept read-only Team behavior, core-language locks, notices and forms; aligned type, spacing, primary actions and field sizes.
+
+Team direction: let owners recognize team members and account state; careful, clear, restrained; the same workspace; names and active/inactive states carry information; shared label/control rhythm. Audit: dense title/type and unrelated action treatment. Retained all owner/self-protection, account-creation validation and private password-delivery guidance. No real accounts created or changed.
+
+Analytics direction: read anonymous usage for the selected period; exact, quiet, comparable; neutral instruments with brick as the single action accent; actual figures and the two meaningful chart series are the moments; tabular figures. Audit: rainbow borders per statistic, heavy headings, uppercase table labels, 10px chart labels, no selected-period state for assistive technology. Removed rainbow borders, use readable type and aria-pressed on range controls; preserve actual queries, calculations, series and owner-only audit log. Wide data tables retain an internal scroll area on mobile rather than hiding fields. Selecting 30 days reports pressed=true in the fixture; no real analytics was altered.
+
+Private assistant direction: help monk students review a draft answer; readable, careful, calm; the same neutral workspace; question, answer and source caveat are the moments; clear draft labeling. Audit: dark green hero, uppercase tiny badge/roles, large empty reservation, tiny caveats and pill action. Quiet header, visible question label, 16px textarea, clear message roles and preserved review/no-source guidance. The 57 handlers/effects across all CMS pages and the audio-language component compare equal to base; auth client, Supabase module and AI endpoint are unchanged. Fixture conversation uses a synthetic response, explicitly labeled as such, to test layout and the no-source notice. This is not live inference.
+
+Owner/Protected states: change only loading/denial presentation; compare if-conditions equal to base. An unauthenticated visit to the real QA app at /admin redirects to /admin/login and displays Team Login. No credentials were entered or inspected.
+
+## Final cross-page evidence and limits
+
+- Scope: 27 routed page components (5 public, Login, missing page, 20 CMS); /visit remains a Home alias. All UI phases are implemented. Existing official assets/fonts and approved Home composition remain.
+- Final commands: 69 tests / 12 files passed, lint passed, TypeScript and production/PWA build passed. Four meaningful regressions added over the 65-test base: exact center filtering/reset, and three CMS navigation/error cases. No backup-folder inflation. Later changes are whitespace/documentation only.
+- CMS matrix: TH/EN at 360/768/1440 across all 20 pages, 120 states. No document horizontal overflow, no visible main button under 44px, all rendered fields named; text/select/file/textarea controls 16px. This uses desktop Chrome iframe widths, not real devices.
+- Additional checks: new language/team forms opened in both languages on 360px without submitting; 30-day selection; load-error, empty list, verified-Q&A lock, Team language read-only, Team account-page denial, Team analytics without owner audit; synthetic draft response with no-source caveat. Targeted rechecks after the final text/icon corrections found no raw translation keys, stale next-step copy or document overflow.
+- Error-state review found old read-only/next-step claims and missing translation keys. Replaced with factual existing draft/edit context, supplied missing TH/EN optional/configuration/session/error labels, named error panels with role=alert, removed remaining emoji/empty icon bubbles. Static translation-key scan over pages/components now returns zero missing keys. Context/source/publication policy is unchanged.
+- Public flows were checked in each earlier phase. Login was checked at TH/EN 360/768/1440 with 16px/48px fields; 404 recovery and its Home link worked. Static route copies exercise React routes in local QA; they do not certify deployed hosting fallback/HTTP statuses.
+- Source integrity: 57 CMS handlers/effects equal to base; auth.tsx, supabase.ts and functions/api/monk-assistant.js equal to base; ProtectedRoute/OwnerRoute guard conditions equal to base. No database migration, dependency, paid service, account/permission change, merge or deployment.
+- Evidence: internal screenshots and JSON, including unslop-final-cms-responsive.json and unslop-final-cms-state-checks.json. Isolated CMS fixture is outside repository/application source, uses synthetic data and rejects mutations; never ship it as the authenticated app. Screenshots are not uploaded to the public repository.
+- Remaining release gates: real Owner/Team sign-in/write/upload/publication flows and gateway/RLS; live private AI/free-tier behavior; real phone/iPad; audio 326s versus VTT 300s, cue 19 and media rights/speaker; project approval/removal of public Draft meditation content. No claim that these were solved by presentation changes.
+
+Next handoff: Antigravity should fetch the shared branch into a separate worktree, compare Windows work and follow HANDOFF.md/WORKFLOW.md. No ZIP replacement, force push or silent overwrite. The shared PR is for review; no claim is made that Windows has fetched it.

@@ -281,7 +281,7 @@ export function AdminCentersPage() {
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 ">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-medium text-slate-900">
@@ -302,7 +302,7 @@ export function AdminCentersPage() {
             </button>
             <Link
               to="/admin/centers/new"
-              className="px-4 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white  transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              className="px-4 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
               {t('admin.centers.addCenter')}
             </Link>
@@ -319,7 +319,7 @@ export function AdminCentersPage() {
 
       {/* Error State */}
       {!isLoading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
           <p className="text-red-800 font-semibold">{t('admin.centers.errorHeader')}</p>
           <p className="text-red-600 text-sm font-mono break-all">{error}</p>
           <button
@@ -339,7 +339,7 @@ export function AdminCentersPage() {
           <button
             type="button"
             aria-label={t('management.dismiss')} onClick={() => setActionSuccessMsg(null)}
-            className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer"
+            className="text-xs text-emerald-800 hover:text-emerald-800 font-semibold cursor-pointer"
           >
             <GuideIcon name="close" />
           </button>
@@ -349,9 +349,7 @@ export function AdminCentersPage() {
       {/* Empty State */}
       {!isLoading && !error && items.length === 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-slate-50 flex items-center justify-center text-3xl">
-            🏛️
-          </div>
+
           <h2 className="text-lg font-semibold text-slate-800">
             {t('admin.centers.emptyTitle')}
           </h2>
@@ -363,7 +361,7 @@ export function AdminCentersPage() {
 
       {/* Results List */}
       {!isLoading && !error && items.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200  overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
             <p className="text-sm font-semibold text-slate-700">
               {t('admin.centers.centerCount', { count: items.length })}
@@ -391,7 +389,7 @@ export function AdminCentersPage() {
                     </p>
                     {item.map_url && (
                       <p>
-                        <a href={item.map_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                        <a href={item.map_url} target="_blank" rel="noopener noreferrer" className="text-brand-maroon underline">
                           {t('admin.centers.mapUrl')}
                         </a>
                       </p>
@@ -412,7 +410,7 @@ export function AdminCentersPage() {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold text-xs ">
+                <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold text-xs">
                   <th className="px-6 py-3">{t('admin.centers.colName')}</th>
                   <th className="px-6 py-3">{t('admin.centers.colLocation')}</th>
                   <th className="px-6 py-3">{t('admin.centers.colLinks')}</th>
@@ -434,22 +432,22 @@ export function AdminCentersPage() {
                       <td className="px-6 py-4 text-xs space-y-1">
                         {item.map_url && (
                           <p>
-                            <a href={item.map_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                              🗺️ {t('admin.centers.mapUrl')}
+                            <a href={item.map_url} target="_blank" rel="noopener noreferrer" className="text-brand-maroon hover:underline">
+                              {t('admin.centers.mapUrl')}
                             </a>
                           </p>
                         )}
                         {item.website_url && (
                           <p>
-                            <a href={item.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                            <a href={item.website_url} target="_blank" rel="noopener noreferrer" className="text-brand-maroon hover:underline">
                               {t('admin.centers.websiteUrl')}
                             </a>
                           </p>
                         )}
                         {item.contact_url && (
                           <p>
-                            <a href={item.contact_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                              ✉️ {t('admin.centers.contactUrl')}
+                            <a href={item.contact_url} target="_blank" rel="noopener noreferrer" className="text-brand-maroon hover:underline">
+                              {t('admin.centers.contactUrl')}
                             </a>
                           </p>
                         )}

@@ -295,7 +295,7 @@ export function AdminMeditationAudioPage() {
   if (loadError || !trackData) {
     return (
       <div className="max-w-xl mx-auto bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4">
-        
+
         <h1 className="text-xl font-medium text-slate-900">
           {t('admin.meditation.audio.notFoundTitle')}
         </h1>
@@ -317,7 +317,7 @@ export function AdminMeditationAudioPage() {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6  flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-medium text-slate-900">
             {t('admin.meditation.audio.title')}
@@ -335,9 +335,9 @@ export function AdminMeditationAudioPage() {
       </div>
 
       {/* Target Track Information Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6  space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
         <div className="border-b border-slate-100 pb-4">
-          <span className="text-xs font-medium text-slate-500  ">
+          <span className="text-xs font-medium text-slate-500">
             {t('admin.meditation.colTitle')}
           </span>
           <h2 className="text-lg font-medium text-slate-900 mt-0.5">
@@ -352,7 +352,7 @@ export function AdminMeditationAudioPage() {
         <div className="grid grid-cols-2 gap-4 text-xs">
           <div>
             <span className="text-slate-500 block">{t('admin.meditation.audio.currentAudioStatus')}</span>
-            <span className={trackData.audio_storage_path ? 'font-semibold text-emerald-600' : 'font-semibold text-amber-600'}>
+            <span className={trackData.audio_storage_path ? 'font-semibold text-emerald-800' : 'font-semibold text-amber-800'}>
               {trackData.audio_storage_path
                 ? `✓ ${t('admin.meditation.audio.audioExists')}`
                 : `${t('admin.meditation.audio.audioMissing')}`}
@@ -392,7 +392,7 @@ export function AdminMeditationAudioPage() {
               type="checkbox"
               checked={confirmReplace}
               onChange={(e) => setConfirmReplace(e.target.checked)}
-              className="w-4 h-4 rounded text-amber-600 border-amber-300 focus:ring-amber-500"
+              className="w-4 h-4 rounded text-amber-800 border-amber-300 focus:ring-amber-500"
             />
             {t('admin.meditation.audio.confirmReplaceCheckbox')}
           </label>
@@ -421,7 +421,7 @@ export function AdminMeditationAudioPage() {
 
       {/* Error Alert */}
       {formError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800 space-y-2">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800 space-y-2">
           <p className="font-semibold">{t('admin.meditation.audio.errorHeader')}</p>
           <p className="text-xs font-mono break-all">{formError}</p>
           {pendingUploadedPath && (
@@ -440,7 +440,7 @@ export function AdminMeditationAudioPage() {
       )}
 
       {/* Upload Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
         <div>
           <label htmlFor="cms-audio-file" className="block text-sm font-semibold text-slate-900 mb-1">
             {t('admin.meditation.audio.selectFileLabel')} <span className="text-red-500">*</span>
