@@ -1,5 +1,13 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับ UI ทีละหน้า: CMS Q&A 3 หน้า — 4 พฤศจิกายน 2569
+
+- ต่อจาก CMS Meditation c79d3f70b26b5f29165a3d669b53a546073cfa57 ตรวจรายการ สร้าง และแก้ไข ปรับน้ำหนักฟอนต์ ปุ่มสูง 44px สี primary เดียว ลด uppercase/emoji/เงา เชื่อม label กับ control 16 จุด และตั้งชื่อปุ่มปิดข้อความ คงสถานะ verification/content/publication แหล่งอ้างอิงและ notice ทั้งหมด
+- เทียบ handlers/effects 7 ชุดกับฐานตรงกัน ไม่เปลี่ยน filtered writes, stale-load/verified-content locks หรือสิทธิ์
+- รันเอง 69 tests / 12 files, lint, TypeScript/PWA build ผ่าน ตรวจ fixture TH/EN 360/1440 ครบ 3 หน้า รวม 12 สถานะ ไม่ล้นหน้า ไม่มีปุ่มต่ำกว่า 44px ทุก text/select/textarea 16px และมี label ไม่มีการบันทึก/เผยแพร่คำตอบจริง
+- คิวถัดไป Centers → BioLinks → ภาษา/ทีม/Analytics → ผู้ช่วยส่วนตัว ไม่มี merge/deploy
+
+
 ## ปรับ UI ทีละหน้า: CMS Meditation 6 หน้า — 4 พฤศจิกายน 2569
 
 - ต่อจาก Admin shell 74fbc219cc23796079397323da01e70aabb42f80 ตรวจรายการ สร้าง แก้ไข อัปโหลดเสียง ถอดความ และซับทีละหน้า ปรับหัวเรื่อง/ปุ่ม/notice ให้สอดคล้องกัน ลดตัวหนา ป้าย uppercase ตัวอักษร 10/11px และเงา เปลี่ยน Recommended ให้แปลตามภาษา เชื่อม label กับ control รวม 16 จุดพร้อม label เลือกไฟล์เสียงและกลุ่มภาษาซับ

@@ -251,7 +251,7 @@ export function AdminQAEditPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           to="/admin/qa"
           className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-amber-700 transition-colors"
@@ -261,8 +261,8 @@ export function AdminQAEditPage() {
       </div>
 
       {/* Header Info */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-2">
-        <h1 className="text-2xl font-bold text-slate-900">
+      <div className="bg-white rounded-xl border border-slate-200 p-6  space-y-2">
+        <h1 className="text-2xl font-medium text-slate-900">
           {t('admin.qa.edit.title')}
         </h1>
         <p className="text-sm text-slate-500">
@@ -273,7 +273,7 @@ export function AdminQAEditPage() {
       {/* System State Notice */}
       <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 text-xs space-y-2">
         <p className="font-semibold flex items-center gap-1.5 text-sm text-slate-900">
-          <span>ℹ️</span> {t('admin.qa.edit.statusTitle')}
+          {t('admin.qa.edit.statusTitle')}
         </p>
         <div className="pt-2 border-t border-slate-200 flex flex-wrap gap-3 font-mono text-slate-700">
           <span>{t('admin.qa.create.fixedStatus')}: <strong>{contentStatus}</strong></span>
@@ -291,37 +291,37 @@ export function AdminQAEditPage() {
       )}
 
       {/* Edit Form */}
-      {isEditable && <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
+      {isEditable && <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
         {/* Core Metadata */}
         <div className="space-y-4">
-          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+          <h2 className="text-base font-medium text-slate-900 border-b border-slate-100 pb-2">
             1. {t('admin.qa.create.secMetadata')}
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="cms-adminqaeditpage-1" className="block text-sm font-semibold text-slate-700 mb-1">
                 {t('admin.qa.create.labelCategory')} <span className="text-red-500">*</span>
               </label>
-              <input
+              <input id="cms-adminqaeditpage-1"
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder={t('admin.qa.create.phCategory')}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="cms-adminqaeditpage-2" className="block text-sm font-semibold text-slate-700 mb-1">
                 {t('admin.qa.create.labelSourceRef')} ({t('admin.qa.create.optional')})
               </label>
-              <input
+              <input id="cms-adminqaeditpage-2"
                 type="text"
                 value={sourceReference}
                 onChange={(e) => setSourceReference(e.target.value)}
                 placeholder={t('admin.qa.create.phSourceRef')}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
               />
             </div>
           </div>
@@ -329,8 +329,8 @@ export function AdminQAEditPage() {
 
         {/* Thai Translation (Required) */}
         <div className="space-y-4 pt-2">
-          <div className="border-b border-slate-100 pb-2 flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">
+          <div className="border-b border-slate-100 pb-2 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-base font-medium text-slate-900">
               2. {t('admin.qa.create.secThai')} <span className="text-red-500">*</span>
             </h2>
             <span className="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold">
@@ -339,49 +339,49 @@ export function AdminQAEditPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="cms-adminqaeditpage-3" className="block text-sm font-semibold text-slate-700 mb-1">
               {t('admin.qa.create.labelQuestion')} (TH) <span className="text-red-500">*</span>
             </label>
-            <input
+            <input id="cms-adminqaeditpage-3"
               type="text"
               value={thQuestion}
               onChange={(e) => setThQuestion(e.target.value)}
               placeholder={t('admin.qa.create.phThQuestion')}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="cms-adminqaeditpage-4" className="block text-sm font-semibold text-slate-700 mb-1">
               {t('admin.qa.create.labelShortAnswer')} (TH) <span className="text-red-500">*</span>
             </label>
-            <textarea
+            <textarea id="cms-adminqaeditpage-4"
               rows={3}
               value={thShortAnswer}
               onChange={(e) => setThShortAnswer(e.target.value)}
               placeholder={t('admin.qa.create.phThShortAnswer')}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 resize-y"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta resize-y"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="cms-adminqaeditpage-5" className="block text-sm font-semibold text-slate-700 mb-1">
               {t('admin.qa.create.labelDetailedAnswer')} (TH - {t('admin.qa.create.optional')})
             </label>
-            <textarea
+            <textarea id="cms-adminqaeditpage-5"
               rows={4}
               value={thDetailedAnswer}
               onChange={(e) => setThDetailedAnswer(e.target.value)}
               placeholder={t('admin.qa.create.phThDetailedAnswer')}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 resize-y"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta resize-y"
             />
           </div>
         </div>
 
         {/* English Translation (Optional) */}
         <div className="space-y-4 pt-2">
-          <div className="border-b border-slate-100 pb-2 flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">
+          <div className="border-b border-slate-100 pb-2 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-base font-medium text-slate-900">
               3. {t('admin.qa.create.secEnglish')} ({t('admin.qa.create.optional')})
             </h2>
             <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">
@@ -391,15 +391,15 @@ export function AdminQAEditPage() {
 
           {enTranslationId && (
             <p className="text-xs text-amber-800 bg-amber-50 p-3 rounded-lg border border-amber-200 leading-relaxed">
-              ℹ️ {t('admin.qa.edit.enPreserveNotice')}
+              {t('admin.qa.edit.enPreserveNotice')}
             </p>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="cms-adminqaeditpage-6" className="block text-sm font-semibold text-slate-700 mb-1">
               {t('admin.qa.create.labelQuestion')} (EN)
             </label>
-            <input
+            <input id="cms-adminqaeditpage-6"
               type="text"
               value={enQuestion}
               onChange={(e) => setEnQuestion(e.target.value)}
@@ -409,10 +409,10 @@ export function AdminQAEditPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="cms-adminqaeditpage-7" className="block text-sm font-semibold text-slate-700 mb-1">
               {t('admin.qa.create.labelShortAnswer')} (EN)
             </label>
-            <textarea
+            <textarea id="cms-adminqaeditpage-7"
               rows={3}
               value={enShortAnswer}
               onChange={(e) => setEnShortAnswer(e.target.value)}
@@ -422,10 +422,10 @@ export function AdminQAEditPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="cms-adminqaeditpage-8" className="block text-sm font-semibold text-slate-700 mb-1">
               {t('admin.qa.create.labelDetailedAnswer')} (EN - {t('admin.qa.create.optional')})
             </label>
-            <textarea
+            <textarea id="cms-adminqaeditpage-8"
               rows={4}
               value={enDetailedAnswer}
               onChange={(e) => setEnDetailedAnswer(e.target.value)}
@@ -447,7 +447,7 @@ export function AdminQAEditPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors disabled:opacity-50 cursor-pointer"
+            className="px-5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting
               ? t('admin.qa.edit.saving')
