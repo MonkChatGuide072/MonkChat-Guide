@@ -16,9 +16,10 @@
   - **ผู้ช่วยส่วนตัวหลังบ้าน (`/admin/assistant`)**: คืนหน้าและระบบตรวจสิทธิ์สำหรับพระนิสิต พร้อม `functions/api/monk-assistant.js` และชุดการทดสอบ
   - **เส้นทาง `/visit`**: คง alias สำหรับรองรับป้าย QR Code เดิมและลิงก์ภายนอก
 - **ผลการทดสอบระบบ (Verification Results)**:
-  - **Automated Tests**: ผ่านครบทุกรายการ **115/115 tests passed** จาก 22 ไฟล์ทดสอบ (`npm test -- --run`)
+  - **Automated Tests**: ผ่านครบทุกรายการ **65/65 tests passed** จาก 11 ไฟล์ทดสอบ (`npm test -- --run`) (หมายเหตุ: ตัวเลข 115 tests ในรายงานรอบก่อนหน้าเกิดจาก vitest เผลอสแกนโฟลเดอร์สำรองในเครื่อง Windows ได้ตั้งค่า exclude ใน `vite.config.ts` เรียบร้อยแล้ว ยืนยันว่าชุดทดสอบจริงมี 65 tests / 11 files ตรงกันสมบูรณ์ทุกประการ)
+  - **Favicon MIME Type**: แก้ไขใน `index.html` จาก `image/svg+xml` เป็น `type="image/png"` สำหรับ `/images/logo/ayutthaya-monk-chat-logo.png`
   - **Lint Check**: **0 errors, 0 warnings** บน 182 ไฟล์ (`npm run lint` / `oxlint`)
-  - **Production Build**: ผ่านสมบูรณ์ (`tsc -b && vite build`) สร้าง PWA Service Worker สำเร็จใน 288ms
+  - **Production Build**: ผ่านสมบูรณ์ (`tsc -b && vite build`) สร้าง PWA Service Worker สำเร็จใน 289ms
   - **In-Browser Responsive Verification**: ตรวจสอบเว็บจริงบน localhost:5173 ผ่าน Chrome DevTools Protocol ครบ 5 ขนาดหน้าจอ (360px, 390px, 768px, 1024px, 1440px) ทั้งภาษาไทยและภาษาอังกฤษ:
     - ส่วนบน Home: ภาพเต็มความกว้างจอ, ชื่อ/คำอธิบายใต้ภาพ, ทางลัด 5 ปุ่มพร้อมไอคอนเหนือชื่อ แสดงผลสมบูรณ์
     - ไม่พบการเลื่อนแนวนอน (`scrollWidth <= clientWidth`) ในทุก viewport

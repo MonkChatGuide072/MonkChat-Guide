@@ -58,5 +58,6 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
+    exclude: ['**/node_modules/**', '**/dist/**', 'MonkChat-Guide-Anti-start-20261103/**'],
   },
 })
