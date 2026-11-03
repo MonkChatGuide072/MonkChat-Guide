@@ -11,8 +11,8 @@ Review approach: adapted from **unslop by Damir Sokolovsky (@heydamir), CC BY 4.
 | 1 | Home `/`, `/visit`, initial language selection | Implemented and checked as described below |
 | Shared | Navigation, footer clearance, public chatbot | Changed for Home usability; cross-page checks continue with each page |
 | 2 | Activities | Implemented and checked |
-| 3 | Meditation and its supporting sections | Next |
-| 4 | Q&A and public chatbot states | Pending |
+| 3 | Meditation and its supporting sections | Implemented and checked |
+| 4 | Q&A and public chatbot states | Next |
 | 5 | Centers | Pending |
 | 6 | Login and missing-page state | Pending |
 | 7 | Authenticated administration and private assistant | Pending; distinguish source review from a real authenticated session |
@@ -80,3 +80,17 @@ Nine passes: (1) 48/64px section rhythm, 24px panels and 44px actions; (2) keep 
 Verification: 65 tests / 11 files passed; lint and TypeScript/PWA build passed. Chrome desktop and TH/EN iframe widths 360/390/768/1024/1440: two activity cards and no document horizontal overflow. Mobile schedule has all five fields and no clipped field widths. Opened project details; verified the schedule link points to the existing section. Route entry was observed at scroll position zero. Screenshots/JSON stay local. QA-only route index copies support direct frame loading; production routing was not changed or certified by those copies. No draft proposals restored and no real content/DB changes.
 
 Next: Meditation, including player controls, transcript, preparation and supplementary sections. Preserve audio, subtitle timing, text and publication rules; keep content concerns visible in the handoff rather than inventing replacements.
+
+## Meditation phase
+
+Direction: make listening, reading captions and finding preparation guidance straightforward; steady, clear, unhurried; the same temple/brick world; the existing meditation image and the working audio are the two moments; the outline lotus marks the practice entry. The audio source, caption timings, transcript, translations and draft content have not been rewritten.
+
+Audit: long hero with many pills and decorative circle; 2/1/3/4 navigation numbering; repeated numbered headings; emoji in metadata and stars as save icons; tiny captions/labels; heavy heading weights; colored shadows; repeated thumbnail competing on phones; zooming and rising practice cards; full transcript confined to a second small scroll area; large fixed background mark behind the player.
+
+Nine passes: (1) consistent section/control spacing and 44px actions; (2) quiet cream/brick surfaces, no colored shadows; (3) common outline icons; (4) Listen/Prepare/Transcript/Practice tips navigation and unnumbered audio heading; (5) body 14px, meta >=12px, weights 500/600, no small negative tracking or italic transcript; (6) compact split hero, phone image above text, mobile 2-column section navigation, compact practice rows and normally flowing full transcript; (7) save aria-pressed and guide aria-controls; (8) original scene retained, decorative repeat thumbnail hidden on mobile, large fixed meditation mark moved to faint footer treatment; (9) remove practice-card hover zoom/rise, retain purposeful loading/player behavior.
+
+Verification: 65 tests / 11 files, lint and TypeScript/PWA build passed. Two existing test assertions were updated only for the deliberately renamed audio heading; audio/seek/caption/language/filter assertions remain. Player fetch and media event logic compared equal to the base. Chrome playback reached 12.913 seconds, readyState 4, duration 326.147483 seconds and no media error; paused successfully. Opened full transcript, saved/unsaved a track and collapsed preparation. TH/EN at 360/390/768/1024/1440: no document, audio or preparation-grid horizontal overflow and all four section links exist. This is desktop browser/iframe verification, not physical devices. Share was not sent to another app or person.
+
+Limit: this visual pass does not certify every caption cue. The 326s audio versus 300s VTT discrepancy, cue 19 and public Draft for Review sections still need the project's content decision before release. Draft badges remain visible; no reviewer approval has been invented.
+
+Next: Q&A, including search/category/accordion states and the existing reviewed-answer chatbot; preserve verified/published filtering and avoid generative answers.

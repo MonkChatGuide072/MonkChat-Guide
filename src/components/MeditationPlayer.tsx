@@ -84,15 +84,15 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
         className={`min-w-0 rounded-2xl border p-4 sm:p-5 ${
           isDark
             ? 'border-white/15 bg-black/12 text-[#fff4df] backdrop-blur-sm'
-            : 'border-[#EADCC6] bg-[#FFFDF7] text-[#30251E] shadow-2xs'
+            : 'border-[#EADCC6] bg-[#FFFDF7] text-[#30251E] '
         }`}
         aria-label={t('meditation.audioPlayerTitle')}
       >
-        <h3 className={`mb-3 font-serif font-bold ${isDark ? 'text-[#fff4df]' : 'text-[#681B16]'}`}>
+        <h3 className={`mb-3 text-sm font-medium ${isDark ? 'text-[#fff4df]' : 'text-[#681B16]'}`}>
           {t('meditation.audioPlayerTitle')}
         </h3>
-        {audioState === 'loading' && <p role="status" className={`text-sm ${isDark ? 'text-white/65' : 'text-[#7D6B5D]'}`}>{t('meditation.loadingAudio')}</p>}
-        {audioState === 'missing' && <p className={`text-sm ${isDark ? 'text-white/65' : 'text-[#7D6B5D]'}`}>{t('meditation.audioUnavailableNotice')}</p>}
+        {audioState === 'loading' && <p role="status" className={`text-sm ${isDark ? 'text-white/65' : 'text-brand-muted'}`}>{t('meditation.loadingAudio')}</p>}
+        {audioState === 'missing' && <p className={`text-sm ${isDark ? 'text-white/65' : 'text-brand-muted'}`}>{t('meditation.audioUnavailableNotice')}</p>}
         {audioState === 'error' && (
           <div role="alert" className="space-y-2 rounded-xl bg-red-50 p-4 text-sm text-red-800">
             <p>{t('meditation.playbackError')}</p>
@@ -120,15 +120,15 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
         className={`min-w-0 rounded-2xl border p-4 sm:p-5 ${
           isDark
             ? 'border-white/12 bg-white/8 text-[#fff4df]'
-            : 'border-[#EADCC6] bg-[#FFFDF7] text-[#30251E] shadow-2xs'
+            : 'border-[#EADCC6] bg-[#FFFDF7] text-[#30251E] '
         }`}
         aria-label={t('meditation.subtitlesTitle')}
       >
-        <h3 className={`mb-3 font-serif font-bold ${isDark ? 'text-[#fff4df]' : 'text-[#681B16]'}`}>
+        <h3 className={`mb-3 text-sm font-medium ${isDark ? 'text-[#fff4df]' : 'text-[#681B16]'}`}>
           {t('meditation.subtitlesTitle')}
         </h3>
-        {subtitleState === 'loading' && <p role="status" className={`text-sm ${isDark ? 'text-white/65' : 'text-[#7D6B5D]'}`}>{t('meditation.loadingSubtitles')}</p>}
-        {subtitleState === 'missing' && <p className={`text-sm ${isDark ? 'text-white/65' : 'text-[#7D6B5D]'}`}>{t('meditation.noSubtitles')}</p>}
+        {subtitleState === 'loading' && <p role="status" className={`text-sm ${isDark ? 'text-white/65' : 'text-brand-muted'}`}>{t('meditation.loadingSubtitles')}</p>}
+        {subtitleState === 'missing' && <p className={`text-sm ${isDark ? 'text-white/65' : 'text-brand-muted'}`}>{t('meditation.noSubtitles')}</p>}
         {subtitleState === 'error' && (
           <div role="alert" className="space-y-2 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
             <p>{t('meditation.subtitleError')}</p>
@@ -148,7 +148,7 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
               {activeCues.length ? activeCues.map(cue => cue.text).join('\n') : t('meditation.captionWaiting')}
             </div>
             <details className="mt-4">
-              <summary className={`cursor-pointer py-2 text-sm font-semibold transition-colors ${isDark ? 'text-[#efd070]' : 'text-[#A43D1D] hover:underline'}`}>
+              <summary className={`min-h-11 cursor-pointer py-3 text-sm font-semibold transition-colors ${isDark ? 'text-[#efd070]' : 'text-[#A43D1D] hover:underline'}`}>
                 {t('meditation.allCaptions')}
               </summary>
               <ol className="mt-3 max-h-80 space-y-2 overflow-y-auto pr-1">
@@ -159,10 +159,10 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
                     className={`rounded-xl border p-3 text-sm transition-colors ${
                       isDark
                         ? (time >= cue.start && time < cue.end ? 'border-[#efd070]/50 bg-white/14' : 'border-white/10 bg-white/5')
-                        : (time >= cue.start && time < cue.end ? 'border-[#A43D1D]/50 bg-[#FDF4E3] font-semibold text-[#681B16]' : 'border-[#EADCC6]/60 bg-white text-[#5A4B40]')
+                        : (time >= cue.start && time < cue.end ? 'border-[#A43D1D]/50 bg-[#FDF4E3] font-semibold text-[#681B16]' : 'border-[#EADCC6]/60 bg-white text-brand-muted')
                     }`}
                   >
-                    <span className={`text-xs font-bold ${isDark ? 'text-[#efd070]' : 'text-[#A43D1D]'}`}>
+                    <span className={`text-sm font-medium ${isDark ? 'text-[#efd070]' : 'text-[#A43D1D]'}`}>
                       {formatMediaTime(cue.start)} – {formatMediaTime(cue.end)}
                     </span>
                     <p className="mt-1 whitespace-pre-wrap">{cue.text}</p>

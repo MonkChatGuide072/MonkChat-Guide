@@ -104,17 +104,6 @@ export function Layout() {
 
   return (
     <div className="relative isolate flex min-h-screen flex-col overflow-x-clip bg-[#FFF8EE] text-[#30251E]">
-      {/* Subtle background ambient gradients and meditation mark safely clipped */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_16%_6%,rgba(255,243,224,0.7),transparent_35%),radial-gradient(circle_at_85%_20%,rgba(255,249,235,0.8),transparent_40%),linear-gradient(180deg,#FFF8EE_0%,#FFF6E9_100%)]"
-      />
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <MeditationMark
-          className="absolute -right-24 top-20 w-[32rem] text-[#B77A24]/6 sm:-right-10 sm:w-[40rem]"
-        />
-      </div>
-
       {/* Sticky Navigation Header */}
       <header className="sticky top-0 z-40 w-full border-b border-[#EADCC6] bg-[#FFFDF7]/95 shadow-[0_2px_12px_rgba(104,27,22,0.03)] backdrop-blur-md">
         <div className="mx-auto flex max-w-[76rem] items-center justify-between gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3 lg:px-8">
@@ -223,7 +212,8 @@ export function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#EADCC6] bg-[#FFFDF7] pb-24 pt-6 text-center text-xs text-[#7D6B5D]">
+      <footer className="relative isolate overflow-hidden border-t border-[#EADCC6] bg-[#FFFDF7] pb-24 pt-6 text-center text-xs text-[#7D6B5D]">
+        <MeditationMark className="pointer-events-none absolute -bottom-16 right-0 -z-10 w-64 text-brand-gold/5" />
         <div className="mx-auto max-w-[76rem] px-4 sm:px-6">
           <p>{t('app.footer')}</p>
           <p className="mt-1 text-xs text-[#A43D1D]/80">

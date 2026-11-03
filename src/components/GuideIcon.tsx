@@ -20,6 +20,9 @@ const paths = {
   clipboard: 'M9 4H6a1 1 0 0 0-1 1v15h14V5a1 1 0 0 0-1-1h-3M9 3h6v4H9V3Zm0 9h6m-6 4h6',
   close: 'm6 6 12 12M6 18 18 6',
   globe: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z',
+  bookmark: 'M6 3h12v18l-6-4-6 4V3Z',
+  share: 'M15 8 9 11m6 5-6-3M21 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM9 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM21 19a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
+  user: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM5 21a7 7 0 0 1 14 0',
 } as const
 
 export type GuideIconName = keyof typeof paths

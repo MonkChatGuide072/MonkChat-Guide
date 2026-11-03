@@ -138,7 +138,7 @@ describe('Meditation flow', () => {
     expect(screen.getByLabelText('Meditation Audio Player: Track B')).toHaveAttribute('src', 'https://example.org/b.mp3')
   })
 
-  it('renders the 4-step sequence: beginner guide, audio, transcript, and supplementary resources with review draft notice', async () => {
+  it('renders audio, preparation, transcript and supplementary resources with the draft notice', async () => {
     openPage(<MeditationPage />, '/meditation?trackId=a')
     // Step 1: Beginner Guide
     expect(await screen.findByRole('heading', { name: 'Preparation Steps Before Practicing' })).toBeInTheDocument()
@@ -156,7 +156,7 @@ describe('Meditation flow', () => {
     expect(screen.getByText('1. Prepare Your Space & Body')).toBeInTheDocument()
 
     // Step 2: Audio Player
-    expect(screen.getByRole('heading', { name: '2. Main Audio' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Meditation audio' })).toBeInTheDocument()
     expect(await screen.findByLabelText('Meditation Audio Player: Track A')).toBeInTheDocument()
 
     // Step 3: Transcript
@@ -174,7 +174,7 @@ describe('Meditation flow', () => {
     expect(await screen.findByRole('heading', { name: 'ขั้นตอนการเตรียมตัวก่อนเริ่มฝึก' })).toBeInTheDocument()
     expect(screen.getAllByText('ร่างรอตรวจ (Draft for Review)').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('1. เตรียมพื้นที่และร่างกาย')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '2. ฟังเสียงสมาธิ' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'ฟังเสียงสมาธิ' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'ข้อความถอดความ (Transcript)' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'ข้อแนะนำการปฏิบัติเพิ่มเติม' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /กลับหน้าหลักผู้มาเยือน \(Home\)/ })).toHaveAttribute('href', '/visit')
