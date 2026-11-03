@@ -10,8 +10,8 @@ Review approach: adapted from **unslop by Damir Sokolovsky (@heydamir), CC BY 4.
 | --- | --- | --- |
 | 1 | Home `/`, `/visit`, initial language selection | Implemented and checked as described below |
 | Shared | Navigation, footer clearance, public chatbot | Changed for Home usability; cross-page checks continue with each page |
-| 2 | Activities | Next |
-| 3 | Meditation and its supporting sections | Pending |
+| 2 | Activities | Implemented and checked |
+| 3 | Meditation and its supporting sections | Next |
 | 4 | Q&A and public chatbot states | Pending |
 | 5 | Centers | Pending |
 | 6 | Login and missing-page state | Pending |
@@ -68,3 +68,15 @@ Signs found:
 ## Next handoff
 
 Review Activities using the same palette, typography and outline icons. Keep only the existing confirmed activities, dates and conditions; do not restore draft proposals. Finish and verify one page before editing the next. Preserve the shared Git workflow; commit code and this record together, without image uploads or secrets.
+
+## Activities phase
+
+Direction: help visitors choose a session and find its schedule; calm/direct; the same shaded-temple world and existing warm palette; the two existing activity photos carry the detail; a quiet calendar outline marks schedule information. Mode: polish.
+
+Audit: blurred gold blob in the header; repeated official/confirmed badges and green status dot; emoji mixed with SVG; tiny tracked capitals; a large three-color callout gradient; hover zoom and colored shadows; location/time written over pictures; a wide five-column table on phones; controls without consistent touch heights. Navigation also retained the previous page's scroll position.
+
+Nine passes: (1) 48/64px section rhythm, 24px panels and 44px actions; (2) keep original warm neutral/brick colors and replace callout gradient with a quiet surface; (3) shared outline icons replace emoji; (4) shorter schedule labels, original two confirmed activity records and all schedule/condition values retained; (5) 14px readable body and weights 500/600; (6) mobile definition list / desktop table from the same data, location on a plain surface; (7) column header scopes and accordion controls, new pages scroll to top while hash anchors are excluded; (8) keep the original activity images without text overlays; (9) remove image hover zoom, use color-only feedback.
+
+Verification: 65 tests / 11 files passed; lint and TypeScript/PWA build passed. Chrome desktop and TH/EN iframe widths 360/390/768/1024/1440: two activity cards and no document horizontal overflow. Mobile schedule has all five fields and no clipped field widths. Opened project details; verified the schedule link points to the existing section. Route entry was observed at scroll position zero. Screenshots/JSON stay local. QA-only route index copies support direct frame loading; production routing was not changed or certified by those copies. No draft proposals restored and no real content/DB changes.
+
+Next: Meditation, including player controls, transcript, preparation and supplementary sections. Preserve audio, subtitle timing, text and publication rules; keep content concerns visible in the handoff rather than inventing replacements.

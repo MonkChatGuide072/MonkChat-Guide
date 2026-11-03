@@ -30,7 +30,8 @@ export function Layout() {
   // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false)
-  }, [location.pathname])
+    if (!location.hash) window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [location.pathname, location.hash])
 
   // Close mobile menu on Escape key
   useEffect(() => {
