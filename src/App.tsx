@@ -8,8 +8,8 @@ import { UsageTracker } from './components/UsageTracker'
 import { AuthProvider } from './lib/auth'
 
 // Public Routes (Lazy)
-const ProjectInfoPage = lazy(() => import('./pages/ProjectInfoPage').then(m => ({ default: m.ProjectInfoPage })))
-const VisitPage = lazy(() => import('./pages/VisitPage').then(m => ({ default: m.VisitPage })))
+const HomePage = lazy(() => import('./pages/VisitPage').then(m => ({ default: m.VisitPage })))
+const ActivitiesPage = lazy(() => import('./pages/ActivitiesPage').then(m => ({ default: m.ActivitiesPage })))
 const MeditationPage = lazy(() => import('./pages/MeditationPage').then(m => ({ default: m.MeditationPage })))
 const QAPage = lazy(() => import('./pages/QAPage').then(m => ({ default: m.QAPage })))
 const CentersPage = lazy(() => import('./pages/CentersPage').then(m => ({ default: m.CentersPage })))
@@ -37,6 +37,8 @@ const AdminLanguagesPage = lazy(() => import('./pages/admin/AdminLanguagesPage')
 const AdminTeamPage = lazy(() => import('./pages/admin/AdminTeamPage').then(m => ({ default: m.AdminTeamPage })))
 const AdminAnalyticsPage = lazy(() => import('./pages/admin/AdminAnalyticsPage').then(m => ({ default: m.AdminAnalyticsPage })))
 
+const AdminAssistantPage = lazy(() => import('./pages/admin/AdminAssistantPage').then(m => ({ default: m.AdminAssistantPage })))
+
 function App() {
   return (
     <AuthProvider>
@@ -46,8 +48,9 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Layout />}>
-              <Route index element={<ProjectInfoPage />} />
-              <Route path="visit" element={<VisitPage />} />
+              <Route index element={<HomePage />} />
+              <Route path="activities" element={<ActivitiesPage />} />
+              <Route path="visit" element={<HomePage />} />
               <Route path="meditation" element={<MeditationPage />} />
               <Route path="qa" element={<QAPage />} />
               <Route path="centers" element={<CentersPage />} />
@@ -65,6 +68,7 @@ function App() {
                 <Route path="meditation/:trackId/transcript" element={<AdminMeditationTranscriptPage />} />
                 <Route path="meditation/:trackId/subtitles" element={<AdminMeditationSubtitlesPage />} />
                 <Route path="qa" element={<AdminQAPage />} />
+              <Route path="assistant" element={<AdminAssistantPage />} />
                 <Route path="qa/new" element={<AdminQANewPage />} />
                 <Route path="qa/:qaId/edit" element={<AdminQAEditPage />} />
                 <Route path="centers" element={<AdminCentersPage />} />

@@ -502,10 +502,11 @@ export function AdminQAPage() {
                     <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
                       {t('admin.qa.category')}: {item.category || '—'}
                     </span>
-                    <span className={item.source_reference ? 'text-emerald-700' : 'text-slate-400'}>
-                      {item.source_reference ? `✓ ${t('admin.qa.hasSourceRef')}` : `— ${t('admin.qa.noSourceRef')}`}
-                    </span>
                   </div>
+
+                  <p className="text-xs leading-5 text-slate-600 break-words [overflow-wrap:anywhere]">
+                    <strong>{t('admin.qa.colSource')}:</strong> {item.source_reference || '—'}
+                  </p>
 
                   {renderBadges(item)}
 
@@ -560,10 +561,8 @@ export function AdminQAPage() {
                       <td className="px-4 py-3">
                         {renderBadges(item)}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-xs">
-                        <span className={item.source_reference ? 'text-emerald-700 font-medium' : 'text-slate-400'}>
-                          {item.source_reference ? `✓ ${t('admin.qa.hasSourceRef')}` : `— ${t('admin.qa.noSourceRef')}`}
-                        </span>
+                      <td className="max-w-xs px-4 py-3 text-xs leading-5 text-slate-600 break-words [overflow-wrap:anywhere]">
+                        {item.source_reference || '—'}
                       </td>
                       <td className="px-4 py-3 text-slate-500 whitespace-nowrap text-xs">
                         {formatDate(item.updated_at, currentLang)}

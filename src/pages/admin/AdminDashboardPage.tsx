@@ -1,14 +1,17 @@
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../lib/auth'
+import { assistantCopy } from '../../locales/monkAssistant'
 
 export function AdminDashboardPage() {
   const { profile } = useAuth()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const assistant = assistantCopy[(i18n.resolvedLanguage || i18n.language).startsWith('en') ? 'en' : 'th']
 
   const isOwner = profile?.role === 'owner'
 
   const modules = [
+    { key: 'assistant', title: assistant.nav, description: assistant.intro, path: '/admin/assistant', color: 'border-l-amber-500' },
     {
       key: 'meditation',
       title: t('admin.modules.meditation.title'),

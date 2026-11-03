@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { MeditationMark } from './MeditationMark'
+import { ChatbotServiceCard } from './ChatbotServiceCard'
 import {
   VISITOR_LANGUAGE_SELECTED_EVENT,
   VISITOR_LANGUAGE_SESSION_KEY,
@@ -14,6 +15,7 @@ export function Layout() {
   const [hasSessionLang, setHasSessionLang] = useState(
     () => !!sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY),
   )
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     setHasSessionLang(!!sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY))
@@ -24,75 +26,208 @@ export function Layout() {
     return () => window.removeEventListener(VISITOR_LANGUAGE_SELECTED_EVENT, handleLanguageSelected)
   }, [])
 
-  const isProjectInfo = location.pathname === '/'
-  const isLanguageGate = location.pathname === '/visit' && !hasSessionLang
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [location.pathname])
 
-  if (isProjectInfo || isLanguageGate) {
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false)
+      }
+    }
+    if (isMobileMenuOpen) {
+      window.addEventListener('keydown', handleKeyDown)
+      return () => window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isMobileMenuOpen])
+
+  const isLanguageGate = (location.pathname === '/' || location.pathname === '/visit') && !hasSessionLang
+
+  if (isLanguageGate) {
     return <Outlet />
   }
 
   const navItems = [
-    { to: '/visit', label: t('nav.home'), end: true },
-    { to: '/meditation', label: t('nav.meditation') },
-    { to: '/qa', label: t('nav.qa') },
-    { to: '/centers', label: t('nav.centers') },
+    {
+      to: '/',
+      label: t('nav.home', 'หน้าแรก'),
+      end: true,
+      icon: (
+        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+      ),
+    },
+    {
+      to: '/activities',
+      label: t('nav.activities', 'กิจกรรม'),
+      icon: (
+        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
+      to: '/meditation',
+      label: t('nav.meditation', 'นำสมาธิ'),
+      icon: (
+        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+    },
+    {
+      to: '/qa',
+      label: t('nav.qa', 'ถาม-ตอบ'),
+      icon: (
+        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+      ),
+    },
+    {
+      to: '/centers',
+      label: t('nav.centers', 'ศูนย์ปฏิบัติธรรม'),
+      icon: (
+        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+    },
   ]
 
   return (
-    <div className="relative isolate flex min-h-screen flex-col overflow-x-clip bg-[#d8ccb8] text-[#2c3028]">
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_16%_4%,rgba(255,249,235,.82),transparent_34%),radial-gradient(circle_at_88%_18%,rgba(255,255,255,.46),transparent_30%),linear-gradient(155deg,#ddd2bf_0%,#cfc1aa_100%)]" />
-      <MeditationMark className="pointer-events-none fixed -right-24 top-24 -z-10 w-[34rem] text-white/28 sm:-right-10 sm:w-[42rem]" />
-      <MeditationMark className="pointer-events-none fixed -bottom-60 -left-44 -z-10 hidden w-[38rem] rotate-[-10deg] text-white/16 lg:block" showCore={false} />
+    <div className="relative isolate flex min-h-screen flex-col overflow-x-clip bg-[#FFF8EE] text-[#30251E]">
+      {/* Subtle background ambient gradients and meditation mark safely clipped */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_16%_6%,rgba(255,243,224,0.7),transparent_35%),radial-gradient(circle_at_85%_20%,rgba(255,249,235,0.8),transparent_40%),linear-gradient(180deg,#FFF8EE_0%,#FFF6E9_100%)]"
+      />
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <MeditationMark
+          className="absolute -right-24 top-20 w-[32rem] text-[#B77A24]/6 sm:-right-10 sm:w-[40rem]"
+        />
+      </div>
 
-      <header className="sticky top-0 z-40 border-b border-[#473d2e]/12 bg-[#ded2bd]/88 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[76rem] items-center justify-between gap-4 px-4 py-3 sm:px-7 lg:px-8">
-          <NavLink to="/visit" className="group flex min-w-0 items-center gap-3 text-[#2d322a]">
-            <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 shrink-0 rounded-xl bg-[#303a2f] shadow-sm ring-1 ring-white/30 transition-transform group-hover:-rotate-3" />
+      {/* Sticky Navigation Header */}
+      <header className="sticky top-0 z-40 w-full border-b border-[#EADCC6] bg-[#FFFDF7]/95 shadow-[0_2px_12px_rgba(104,27,22,0.03)] backdrop-blur-md">
+        <div className="mx-auto flex max-w-[76rem] items-center justify-between gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3 lg:px-8">
+          {/* Logo & Brand */}
+          <NavLink
+            to="/"
+            className="group flex min-w-0 shrink items-center gap-2 sm:gap-3 text-[#681B16] transition-transform"
+          >
+            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8E3317] to-[#681B16] shadow-xs ring-1 ring-[#D5BD94]/50 sm:h-10 sm:w-10">
+              <img
+                src="/monkchat-placeholder.svg"
+                alt=""
+                className="h-5 w-5 brightness-200 invert sm:h-6 sm:w-6"
+              />
+            </div>
             <span className="min-w-0 leading-tight">
-              <span className="block truncate text-sm font-extrabold tracking-tight sm:text-base">MonkChat Guide</span>
-              <span className="mt-1 block text-[.55rem] font-bold uppercase tracking-[.19em] text-[#a34e39]">Inner Peace Companion</span>
+              <span className="block truncate font-serif text-sm font-bold tracking-tight text-[#681B16] sm:text-base lg:text-lg">
+                MonkChat Guide
+              </span>
+              <span className="hidden text-[0.6rem] font-semibold tracking-wider text-[#A43D1D]/80 sm:block">
+                Ayutthaya · Inner Peace
+              </span>
             </span>
           </NavLink>
 
-          <nav aria-label={t('nav.mainNavigation')} className="hidden items-center gap-7 lg:flex">
+          {/* Desktop Navigation Links */}
+          <nav aria-label={t('nav.mainNavigation')} className="hidden items-center gap-6 md:flex lg:gap-8">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
-                className={({ isActive }) => `relative py-3 text-sm transition-colors after:absolute after:inset-x-0 after:-bottom-3 after:h-0.5 after:origin-center after:bg-[#a94732] after:transition-transform ${isActive ? 'font-bold text-[#272b25] after:scale-x-100' : 'font-medium text-[#625b50] after:scale-x-0 hover:text-[#272b25]'}`}
+                className={({ isActive }) =>
+                  `relative inline-flex items-center gap-1.5 py-1.5 text-sm font-semibold transition-colors ${
+                    isActive
+                      ? 'text-[#A43D1D] after:absolute after:inset-x-0 after:-bottom-2.5 after:h-0.5 after:bg-[#A43D1D]'
+                      : 'text-[#4A3B32] hover:text-[#A43D1D]'
+                  }`
+                }
               >
-                {item.label}
+                <span className="opacity-80">{item.icon}</span>
+                <span>{item.label}</span>
               </NavLink>
             ))}
           </nav>
 
-          <LanguageSwitcher />
+          {/* Right actions: Language Switcher & Mobile menu toggle */}
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+            <LanguageSwitcher tone="terracotta" />
+
+            {/* Mobile Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-expanded={isMobileMenuOpen}
+              aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] shadow-xs transition-colors hover:bg-[#FDF4E3] md:hidden cursor-pointer"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <nav aria-label={t('nav.mainNavigation')} className="border-t border-[#473d2e]/9 lg:hidden">
-          <div className="mx-auto flex max-w-[76rem] gap-1 overflow-x-auto px-3 py-2 sm:px-7">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.end}
-                className={({ isActive }) => `inline-flex min-h-9 shrink-0 items-center rounded-full px-3 text-xs font-bold whitespace-nowrap transition-colors ${isActive ? 'bg-[#354033] text-[#fff4de]' : 'text-[#625b50] hover:bg-white/35 hover:text-[#272b25]'}`}
-              >
-                {item.label}
-              </NavLink>
-            ))}
+        {/* Mobile Navigation Drawer */}
+        {isMobileMenuOpen && (
+          <div className="border-t border-[#EADCC6] bg-[#FFFDF7] px-4 py-4 shadow-lg md:hidden">
+            <nav aria-label={t('nav.mainNavigation')} className="flex flex-col gap-1">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex min-h-11 items-center gap-3 rounded-xl px-4 text-sm font-bold transition-colors ${
+                      isActive
+                        ? 'bg-[#A43D1D] text-white shadow-xs'
+                        : 'text-[#4A3B32] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'
+                    }`
+                  }
+                >
+                  <span className="shrink-0">{item.icon}</span>
+                  <span>{item.label}</span>
+                </NavLink>
+              ))}
+            </nav>
           </div>
-        </nav>
+        )}
       </header>
 
-      <main className="mx-auto w-full max-w-[76rem] flex-1 px-4 py-7 sm:px-7 sm:py-9 lg:px-8 lg:py-10">
+      {/* Main Content Area */}
+      <main className={location.pathname === '/' || location.pathname === '/visit'
+        ? 'w-full flex-1'
+        : 'mx-auto w-full max-w-[76rem] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8'}>
         <Outlet />
       </main>
 
-      <footer className="mx-auto w-full max-w-[76rem] px-4 pb-5 text-center text-[.65rem] text-[#6f675a] sm:px-7">
-        {t('app.footer')}
+      {/* Footer */}
+      <footer className="border-t border-[#EADCC6] bg-[#FFFDF7] py-6 text-center text-xs text-[#7D6B5D]">
+        <div className="mx-auto max-w-[76rem] px-4 sm:px-6">
+          <p>{t('app.footer')}</p>
+          <p className="mt-1 text-[0.7rem] text-[#A43D1D]/80">
+            Monk Chat Ayutthaya · Mahachulalongkornrajavidyalaya University (MCU)
+          </p>
+        </div>
       </footer>
+
+      {/* Floating verified chatbot card */}
+      <ChatbotServiceCard />
     </div>
   )
 }

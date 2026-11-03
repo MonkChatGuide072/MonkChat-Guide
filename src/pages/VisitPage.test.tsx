@@ -110,7 +110,7 @@ describe('VisitPage', () => {
 
     expect(sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY)).toBe('en')
     expect(fakeI18n.changeLanguage).toHaveBeenCalledWith('en')
-    expect(await screen.findByText('visitor.title')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Ayutthaya Monk Chat' })).toBeInTheDocument()
   })
 
   it('shows only tracks and Bio Links that are safe and translated for the active language', async () => {

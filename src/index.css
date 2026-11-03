@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Noto Sans Thai', 'Leelawadee UI', Tahoma, ui-sans-serif, system-ui, sans-serif;
-  --font-serif: Georgia, 'Noto Serif Thai', 'Leelawadee UI', 'Th Sarabun New', serif;
+  --font-sans: 'Noto Sans Thai', 'Inter', 'Leelawadee UI', Tahoma, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Cinzel', 'Noto Serif Thai', Georgia, 'Times New Roman', serif;
   --color-gold-50: #fdfbf7;
   --color-gold-100: #fbf6ec;
   --color-gold-500: #c59b27;
@@ -10,13 +10,25 @@
   --color-gold-700: #8c6813;
   --color-navy-800: #1e293b;
   --color-navy-900: #0f172a;
+
+  --color-brand-cream: #FFF8EE;
+  --color-brand-surface: #FFFDF7;
+  --color-brand-border: #EADCC6;
+  --color-brand-border-dark: #D5BD94;
+  --color-brand-maroon: #681B16;
+  --color-brand-terracotta: #A43D1D;
+  --color-brand-terracotta-dark: #8E3317;
+  --color-brand-gold: #B77A24;
+  --color-brand-gold-soft: #F9F1E2;
+  --color-brand-text: #30251E;
+  --color-brand-muted: #6B5C48;
 }
 
 :root {
   color-scheme: light;
-  font-family: 'Noto Sans Thai', 'Leelawadee UI', Tahoma, 'Noto Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background-color: #fffef9;
-  color: #11223c;
+  font-family: 'Noto Sans Thai', 'Inter', 'Leelawadee UI', Tahoma, 'Noto Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #FFF8EE;
+  color: #30251E;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -31,7 +43,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #d8ccb8;
+  background-color: #FFF8EE;
+  color: #30251E;
   overflow-x: hidden;
 }
 
@@ -69,12 +82,12 @@ select {
 }
 
 ::selection {
-  background: rgba(168, 97, 0, 0.2);
-  color: #11223c;
+  background: rgba(164, 61, 29, 0.2);
+  color: #681B16;
 }
 
 *:focus-visible {
-  outline: 2px solid #c59b27;
+  outline: 2px solid #A43D1D;
   outline-offset: 2px;
 }
 

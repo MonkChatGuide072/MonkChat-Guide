@@ -13,6 +13,7 @@ export function AdminQAEditPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
+  const [isEditable, setIsEditable] = useState(false)
 
   // System states (readonly)
   const [contentStatus, setContentStatus] = useState('draft')
@@ -35,8 +36,24 @@ export function AdminQAEditPage() {
   const [enDetailedAnswer, setEnDetailedAnswer] = useState('')
 
   useEffect(() => {
+    let cancelled = false
     async function loadItem() {
-      if (!qaId || !supabaseClient) return
+      setIsEditable(false)
+      setIsLoading(true)
+      setFormError(null)
+      setThTranslationId(null)
+      setThQuestion('')
+      setThShortAnswer('')
+      setThDetailedAnswer('')
+      setEnTranslationId(null)
+      setEnQuestion('')
+      setEnShortAnswer('')
+      setEnDetailedAnswer('')
+      if (!qaId || !supabaseClient) {
+        setFormError(t(!qaId ? 'admin.qa.edit.errorNotFound' : 'admin.qa.edit.errorNoClient'))
+        setIsLoading(false)
+        return
+      }
 
       try {
         const { data: item, error: fetchErr } = await supabaseClient
@@ -54,17 +71,25 @@ export function AdminQAEditPage() {
           .eq('id', qaId)
           .single()
 
+        if (cancelled) return
+
         if (fetchErr || !item) {
           throw new Error(t('admin.qa.edit.errorNotFound'))
-        }
-
-        if (item.content_status === 'archived') {
-          throw new Error(t('admin.qa.edit.errorArchived'))
         }
 
         setContentStatus(item.content_status)
         setVerificationStatus(item.verification_status)
         setIsPublished(item.is_published)
+
+        if (item.content_status === 'archived') {
+          throw new Error(t('admin.qa.edit.errorArchived'))
+        }
+        if (item.verification_status === 'verified') {
+          throw new Error(t('admin.qa.edit.errorVerified'))
+        }
+        if (item.content_status !== 'draft' || item.is_published) {
+          throw new Error(t('admin.qa.edit.errorRequiresDraft'))
+        }
 
         setCategory(item.category || '')
         setSourceReference(item.source_reference || '')
@@ -84,19 +109,21 @@ export function AdminQAEditPage() {
           setEnShortAnswer(en.short_answer || '')
           setEnDetailedAnswer(en.detailed_answer || '')
         }
+        setIsEditable(true)
       } catch (err: any) {
-        setFormError(err.message)
+        if (!cancelled) setFormError(err.message)
       } finally {
-        setIsLoading(false)
+        if (!cancelled) setIsLoading(false)
       }
     }
 
     loadItem()
+    return () => { cancelled = true }
   }, [qaId, t])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (isSubmitting || !qaId) return
+    if (isSubmitting || !qaId || !isEditable) return
 
     setFormError(null)
 
@@ -120,8 +147,21 @@ export function AdminQAEditPage() {
     setIsSubmitting(true)
 
     try {
+      // Preserve the Windows stale-tab check. The filtered write and database
+      // triggers also enforce this if verification changes after this read.
+      const { data: current, error: statusError } = await supabaseClient
+        .from('qa_items')
+        .select('content_status, verification_status, is_published')
+        .eq('id', qaId)
+        .single()
+      if (statusError || !current) throw new Error(t('admin.qa.edit.errorNotFound'))
+      if (current.content_status !== 'draft' || current.verification_status !== 'unverified' || current.is_published) {
+        setIsEditable(false)
+        throw new Error(t(current.verification_status === 'verified' ? 'admin.qa.edit.errorVerified' : 'admin.qa.edit.errorRequiresDraft'))
+      }
+
       // 1. Update Core
-      const { error: coreErr } = await supabaseClient
+      const { data: updatedItem, error: coreErr } = await supabaseClient
         .from('qa_items')
         .update({
           category: cat,
@@ -130,8 +170,17 @@ export function AdminQAEditPage() {
           updated_at: new Date().toISOString()
         })
         .eq('id', qaId)
+        .eq('content_status', 'draft')
+        .eq('verification_status', 'unverified')
+        .eq('is_published', false)
+        .select('id')
+        .single()
 
-      if (coreErr) {
+      if (coreErr?.code === '23514') {
+        setIsEditable(false)
+        throw new Error(t('admin.qa.edit.errorVerified'))
+      }
+      if (coreErr || !updatedItem) {
         throw new Error(t('admin.qa.edit.errorUpdateCore'))
       }
 
@@ -145,10 +194,16 @@ export function AdminQAEditPage() {
       }
       if (thTranslationId) {
         const { error: thErr } = await supabaseClient.from('qa_translations').update(thPayload).eq('id', thTranslationId)
-        if (thErr) throw new Error(t('admin.qa.edit.errorUpdateTh'))
+        if (thErr) {
+          if (thErr.code === '23514') setIsEditable(false)
+          throw new Error(t(thErr.code === '23514' ? 'admin.qa.edit.errorVerified' : 'admin.qa.edit.errorUpdateTh'))
+        }
       } else {
         const { error: thErr } = await supabaseClient.from('qa_translations').insert([thPayload])
-        if (thErr) throw new Error(t('admin.qa.edit.errorUpdateTh'))
+        if (thErr) {
+          if (thErr.code === '23514') setIsEditable(false)
+          throw new Error(t(thErr.code === '23514' ? 'admin.qa.edit.errorVerified' : 'admin.qa.edit.errorUpdateTh'))
+        }
       }
 
       // 3. Upsert English (Only when valid question + short answer provided)
@@ -162,10 +217,16 @@ export function AdminQAEditPage() {
         }
         if (enTranslationId) {
           const { error: enErr } = await supabaseClient.from('qa_translations').update(enPayload).eq('id', enTranslationId)
-          if (enErr) throw new Error(t('admin.qa.edit.errorUpdateEn'))
+          if (enErr) {
+            if (enErr.code === '23514') setIsEditable(false)
+            throw new Error(t(enErr.code === '23514' ? 'admin.qa.edit.errorVerified' : 'admin.qa.edit.errorUpdateEn'))
+          }
         } else {
           const { error: enErr } = await supabaseClient.from('qa_translations').insert([enPayload])
-          if (enErr) throw new Error(t('admin.qa.edit.errorUpdateEn'))
+          if (enErr) {
+            if (enErr.code === '23514') setIsEditable(false)
+            throw new Error(t(enErr.code === '23514' ? 'admin.qa.edit.errorVerified' : 'admin.qa.edit.errorUpdateEn'))
+          }
         }
       }
       // If all English fields are empty, do nothing:
@@ -230,7 +291,7 @@ export function AdminQAEditPage() {
       )}
 
       {/* Edit Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
+      {isEditable && <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
         {/* Core Metadata */}
         <div className="space-y-4">
           <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
@@ -393,7 +454,7 @@ export function AdminQAEditPage() {
               : t('admin.qa.edit.submit')}
           </button>
         </div>
-      </form>
+      </form>}
     </div>
   )
 }

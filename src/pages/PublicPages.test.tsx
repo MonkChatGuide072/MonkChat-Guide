@@ -7,7 +7,9 @@ import th from '../locales/th/common.json'
 import en from '../locales/en/common.json'
 import { MeditationPage } from './MeditationPage'
 import { QAPage } from './QAPage'
+import { ChatbotServiceCard } from '../components/ChatbotServiceCard'
 import { CentersPage } from './CentersPage'
+import { ActivitiesPage } from './ActivitiesPage'
 
 const mocks = vi.hoisted(() => ({
   from: vi.fn(),
@@ -27,6 +29,7 @@ vi.mock('../lib/supabase', () => ({
 }))
 vi.mock('../lib/analytics', () => ({ trackUsageEvent: mocks.analytics }))
 vi.mock('../lib/bioLinkImages', () => ({ getBioLinkImageUrl: () => null }))
+vi.mock('../lib/auth', () => ({ useAuth: () => ({ session: null, profile: null, isLoading: false }) }))
 
 const i18n = createInstance()
 await i18n.use(initReactI18next).init({ lng: 'en', fallbackLng: 'th', resources: { th: { translation: th }, en: { translation: en } }, interpolation: { escapeValue: false } })
@@ -117,7 +120,9 @@ describe('Meditation flow', () => {
     fireEvent.error(await screen.findByLabelText('Meditation Audio Player: Track A'))
     const alert = await screen.findByRole('alert')
     expect(alert).toHaveTextContent('Failed to load audio')
-    expect(screen.getByText('Track A transcript')).toBeInTheDocument()
+    expect(screen.queryByText(/Gently close your eyes, if that feels comfortable/)).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'View Full Transcript →' }))
+    expect(screen.getByText('Track A transcript', { selector: 'p' })).toBeVisible()
     fireEvent.click(within(alert).getByRole('button', { name: 'Retry' }))
     expect(await screen.findByLabelText('Meditation Audio Player: Track A')).toBeInTheDocument()
     expect(mocks.signed).toHaveBeenCalledTimes(2)
@@ -132,27 +137,121 @@ describe('Meditation flow', () => {
     await act(async () => { finishFirst({ data: { signedUrl: 'https://example.org/a.mp3' }, error: null }) })
     expect(screen.getByLabelText('Meditation Audio Player: Track B')).toHaveAttribute('src', 'https://example.org/b.mp3')
   })
+
+  it('renders the 4-step sequence: beginner guide, audio, transcript, and supplementary resources with review draft notice', async () => {
+    openPage(<MeditationPage />, '/meditation?trackId=a')
+    // Step 1: Beginner Guide
+    expect(await screen.findByRole('heading', { name: 'Preparation Steps Before Practicing' })).toBeInTheDocument()
+    expect(screen.getAllByText('Draft for Review').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('1. Prepare Your Space & Body')).toBeInTheDocument()
+    expect(screen.getByText('3. Relax & Center Your Mind')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Listen to Main Audio/ })).toHaveAttribute('href', '#meditation-audio')
+
+    // Test collapse & expand
+    const toggleBtn = screen.getByRole('button', { name: /Hide steps/ })
+    fireEvent.click(toggleBtn)
+    expect(screen.queryByText('1. Prepare Your Space & Body')).not.toBeInTheDocument()
+    expect(screen.getByText(/01 Space & Body · 02 Posture · 03 Relax & Center/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /View steps/ }))
+    expect(screen.getByText('1. Prepare Your Space & Body')).toBeInTheDocument()
+
+    // Step 2: Audio Player
+    expect(screen.getByRole('heading', { name: '2. Main Audio' })).toBeInTheDocument()
+    expect(await screen.findByLabelText('Meditation Audio Player: Track A')).toBeInTheDocument()
+
+    // Step 3: Transcript
+    expect(screen.getByRole('heading', { name: 'Transcript' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'View Full Transcript →' }))
+    expect(screen.getByText('Track A transcript', { selector: 'p' })).toBeVisible()
+
+    // Step 4: Supplementary tips & exit to home
+    expect(screen.getByRole('heading', { name: 'Additional Practice Tips' })).toBeInTheDocument()
+    expect(screen.getByText('When Thoughts Wander')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Back to Visitor Home/ })).toHaveAttribute('href', '/visit')
+
+    // Switch to Thai and check Thai translations
+    await act(async () => { await i18n.changeLanguage('th') })
+    expect(await screen.findByRole('heading', { name: 'ขั้นตอนการเตรียมตัวก่อนเริ่มฝึก' })).toBeInTheDocument()
+    expect(screen.getAllByText('ร่างรอตรวจ (Draft for Review)').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('1. เตรียมพื้นที่และร่างกาย')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '2. ฟังเสียงสมาธิ' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'ข้อความถอดความ (Transcript)' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'ข้อแนะนำการปฏิบัติเพิ่มเติม' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /กลับหน้าหลักผู้มาเยือน \(Home\)/ })).toHaveAttribute('href', '/visit')
+  })
 })
 
-describe('Q&A and centers', () => {
-  it('queries only verified published Q&A and searches the selected translation', async () => {
-    mocks.rows.qa_items = [
-      { id: 'qa-1', category: 'Example', source_reference: 'Test fixture', qa_translations: [{ language_code: 'en', question: 'Sample question', short_answer: 'Sample answer', detailed_answer: 'Extended explanation' }, { language_code: 'th', question: 'คำถามตัวอย่าง', short_answer: 'คำตอบตัวอย่าง' }] },
-      { id: 'qa-2', category: 'Example', qa_translations: [{ language_code: 'th', question: 'เฉพาะภาษาไทย', short_answer: 'ตัวอย่าง' }] },
-    ]
-    openPage(<QAPage />, '/qa')
-    expect((await screen.findAllByText('Sample question')).length).toBeGreaterThan(0)
-    expect(mocks.filters).toEqual(expect.arrayContaining([
-      ['qa_items', 'content_status', 'published'], ['qa_items', 'verification_status', 'verified'], ['qa_items', 'is_published', true],
-    ]))
-    expect(screen.queryByText('เฉพาะภาษาไทย')).not.toBeInTheDocument()
-    fireEvent.change(screen.getByLabelText('Search questions...'), { target: { value: 'no match' } })
-    expect(screen.getByText('No questions matched your search term.')).toBeInTheDocument()
-    fireEvent.click(screen.getAllByRole('button', { name: 'Clear search' })[0])
-    expect(screen.getAllByText('Sample question').length).toBeGreaterThan(0)
+describe('reviewed chatbot and centers', () => {
+  it('limits activity listings to project sessions without an invented end time', async () => {
+    openPage(<ActivitiesPage />, '/activities')
+    expect(screen.getByRole('heading', { name: 'Monk Chat at Wat Mahathat' })).toBeInTheDocument()
+    expect(screen.queryByText(/15:30|Friday Evening Chanting|Heritage Walk|First Sunday/)).not.toBeInTheDocument()
     await act(async () => { await i18n.changeLanguage('th') })
-    expect((await screen.findAllByText('คำถามตัวอย่าง')).length).toBeGreaterThan(0)
-    expect(screen.queryAllByText('Sample question')).toHaveLength(0)
+    expect(screen.getByRole('heading', { name: 'สนทนาธรรม Monk Chat ณ วัดมหาธาตุ' })).toBeInTheDocument()
+    expect(screen.queryByText(/15:30|สวดมนต์ทำวัตรเย็นวันศุกร์|พิธีบุญประจำวันอาทิตย์/)).not.toBeInTheDocument()
+  })
+
+  it('keeps the searchable Q&A page and offers a separate service card', async () => {
+    mocks.rows.qa_items = [{ id: 'qa-1', category: 'Meditation', source_reference: 'Reviewed guide', qa_translations: [
+      { language_code: 'en', question: 'What is meditation?', short_answer: 'A practice of attention.', detailed_answer: null },
+      { language_code: 'th', question: 'สมาธิคืออะไร', short_answer: 'การฝึกใจให้ตั้งมั่น', detailed_answer: null },
+    ] }]
+    openPage(<><QAPage /><ChatbotServiceCard /></>, '/qa')
+    expect(await screen.findByRole('heading', { name: 'Meditation & Buddhism Q&A' })).toBeInTheDocument()
+    expect(screen.queryByText('Reviewed')).not.toBeInTheDocument()
+    expect(mocks.selects.some(value => value.includes('source_reference'))).toBe(false)
+    expect(screen.queryByText('Reviewed guide')).not.toBeInTheDocument()
+    expect(screen.queryByText(/A simple way to start meditation is to focus on your breath/)).not.toBeInTheDocument()
+    const questionToggle = screen.getByRole('button', { name: /What is meditation/ })
+    fireEvent.click(questionToggle)
+    await waitFor(() => expect(questionToggle).toHaveAttribute('aria-expanded', 'false'))
+    fireEvent.click(questionToggle)
+    const search = screen.getByRole('textbox', { name: 'Search questions...' })
+    fireEvent.change(search, { target: { value: 'missing phrase' } })
+    expect(screen.getByRole('heading', { name: 'No questions matched your search term.' })).toBeInTheDocument()
+    fireEvent.change(search, { target: { value: '' } })
+    expect(screen.getByRole('heading', { name: 'What is meditation?' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Ask the chatbot' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Ask the chatbot' }))
+    expect(await screen.findByRole('heading', { name: 'Ask the chatbot' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Close chatbot' }))
+    expect(screen.getByRole('heading', { name: 'Meditation & Buddhism Q&A' })).toBeInTheDocument()
+    await act(async () => { await i18n.changeLanguage('th') })
+    expect(screen.getByRole('heading', { name: 'คำถาม-คำตอบธรรมะและสมาธิ' })).toBeInTheDocument()
+    expect(screen.queryByText('ผ่านการตรวจแล้ว')).not.toBeInTheDocument()
+    expect(screen.queryByText('ผ่านการตรวจรับรอง')).not.toBeInTheDocument()
+    expect(screen.queryByText('ตรวจทานโดยพระอาจารย์และอาจารย์ผู้ทรงคุณวุฒิ')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'สมาธิคืออะไร' })).toBeInTheDocument()
+  })
+
+  it('answers from reviewed published Q&A without sign-in and declines unknown questions', async () => {
+    const network = vi.spyOn(globalThis, 'fetch')
+    mocks.rows.qa_items = [{ id: 'qa-1', category: 'Meditation', source_reference: 'Reviewed guide', qa_translations: [
+      { language_code: 'en', question: 'What is meditation?', short_answer: 'A practice of attention.', detailed_answer: null },
+      { language_code: 'th', question: 'สมาธิคืออะไร', short_answer: 'การฝึกใจให้ตั้งมั่น', detailed_answer: null },
+    ] }]
+    openPage(<ChatbotServiceCard />, '/qa')
+    fireEvent.click(screen.getByRole('button', { name: 'Ask the chatbot' }))
+    expect(screen.queryByText(/does not generate new answers with AI/)).not.toBeInTheDocument()
+    expect(mocks.from).toHaveBeenCalledWith('qa_items')
+    expect(mocks.filters).toContainEqual(['qa_items', 'content_status', 'published'])
+    expect(mocks.filters).toContainEqual(['qa_items', 'verification_status', 'verified'])
+    expect(mocks.filters).toContainEqual(['qa_items', 'is_published', true])
+    fireEvent.click(await screen.findByRole('button', { name: 'What is meditation?' }))
+    expect(screen.getByText('A practice of attention.')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Answer' })).toBeInTheDocument()
+    expect(screen.queryByText(/Reviewed guide/)).not.toBeInTheDocument()
+    expect(mocks.selects.some(value => value.includes('source_reference'))).toBe(false)
+    fireEvent.change(screen.getByLabelText('Type your question'), { target: { value: 'What is the weather tomorrow?' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Send question' }))
+    expect(screen.getByText(/There is no answer for this question yet/)).toBeInTheDocument()
+    await act(async () => { await i18n.changeLanguage('th') })
+    expect(screen.getByRole('heading', { name: 'แชทบอทช่วยตอบ' })).toBeInTheDocument()
+    expect(screen.queryByText(/ไม่สร้างคำตอบใหม่ด้วย AI/)).not.toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'สมาธิคืออะไร' })).toBeInTheDocument()
+    expect(screen.queryByText('A practice of attention.')).not.toBeInTheDocument()
+    expect(network.mock.calls.some(([input]) => String(input).includes('/api/monk-assistant'))).toBe(false)
+    network.mockRestore()
   })
 
   it('keeps center details when Bio Links fail and omits unsafe contact URLs', async () => {
@@ -161,6 +260,10 @@ describe('Q&A and centers', () => {
     openPage(<CentersPage />, '/centers')
     expect((await screen.findAllByText('Example center')).length).toBeGreaterThan(0)
     expect(screen.getByRole('link', { name: 'Map' })).toHaveAttribute('href', 'https://example.org/map')
+    expect(screen.getByText('1 center')).toBeInTheDocument()
+    expect(screen.queryByText('4 centers')).not.toBeInTheDocument()
+    expect(screen.queryByText('🌱 Beginner-friendly')).not.toBeInTheDocument()
+    expect(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: /Example city/ })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Website' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Contact' })).not.toBeInTheDocument()
     expect(screen.getByRole('alert')).toHaveTextContent('Could not load links')

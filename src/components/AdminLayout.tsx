@@ -3,10 +3,12 @@ import { Outlet, NavLink, Link, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../lib/auth'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { assistantCopy } from '../locales/monkAssistant'
 
 export function AdminLayout() {
   const { profile, signOut } = useAuth()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const assistantLabel = assistantCopy[(i18n.resolvedLanguage || i18n.language).startsWith('en') ? 'en' : 'th'].nav
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [signOutError, setSignOutError] = useState(false)
@@ -25,6 +27,7 @@ export function AdminLayout() {
     { path: '/admin', label: t('admin.nav.dashboard'), end: true },
     { path: '/admin/meditation', label: t('admin.nav.meditation') },
     { path: '/admin/qa', label: t('admin.nav.qa') },
+    { path: '/admin/assistant', label: assistantLabel },
     { path: '/admin/centers', label: t('admin.nav.centers') },
     { path: '/admin/bio-links', label: t('admin.nav.bioLinks') },
     { path: '/admin/languages', label: t('admin.nav.languages') },
