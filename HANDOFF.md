@@ -1,5 +1,14 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับ UI ทีละหน้า: Admin shell / Dashboard — 4 พฤศจิกายน 2569
+
+- ต่อจาก Login/404 6411476c4776f4a1e4ac3a63f4d4317d88758656 เปลี่ยนเมนูคอมเป็น sidebar 240px และ drawer ต่ำกว่า 1024px มี aria-expanded/controls, Escape คืนโฟกัสและปิดเมื่อเปลี่ยนเส้นทาง ใช้โลโก้จริง พื้น neutral กับสีอิฐเป็น accent เดียว ลบแถบนำทางแนวนอนและสีรุ้งประจำโมดูล
+- เพิ่ม AdminLayout.css เฉพาะ CMS ให้ปุ่ม 44px ช่องกรอก 16px/48px focus ชัด เนื้อหายาวตัดบรรทัด ไม่กระทบหน้าสาธารณะ คงรายการเมนู เงื่อนไข Owner และ handler signOut เดิม
+- เพิ่ม 3 regression tests: Escape/focus/route close, ไม่แสดงเมนู Owner ให้ Team และไม่ย้ายหน้าเมื่อ signOut ล้มเหลว รวม 69 tests / 12 files ผ่าน lint และ TypeScript/PWA build ผ่าน
+- เปิด Dashboard ด้วย isolated visual fixture ที่ใช้ข้อมูลจำลองและปฏิเสธ mutation ไม่มี credentials/network ไปฐานข้อมูล เห็นภาพคอมจริง ตรวจจอ 360px ไม่ล้น เปิดเมนูครบ 9 ลิงก์และ Escape คืนโฟกัสได้ นี่ไม่ใช่หลักฐานล็อกอิน CMS บัญชีจริง
+- ถัดไปตรวจรายการและฟอร์ม Meditation → Q&A → Centers → BioLinks → ภาษา/ทีม/Analytics → ผู้ช่วยส่วนตัวทีละโมดูล ไม่ merge/deploy หรือเขียนฐานข้อมูลจริง
+
+
 ## ปรับ UI ทีละหน้า: Login และ 404 — 4 พฤศจิกายน 2569
 
 - ต่อจาก Centers 542b8cf ปรับ LoginPage ให้ใช้โลโก้จริง โทนเดียวกับเว็บ เลิกป้าย Owner access ที่ไม่ตรงกับบัญชีทีม ปรับช่องกรอก 16px / สูง 48px ปุ่มและสถานะปฏิเสธอ่านง่าย เอาวงกลมตกแต่ง เงาสี และ hover movement ออก Layout ไม่แสดงแชทสาธารณะในเส้นทาง admin/login

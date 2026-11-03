@@ -1,0 +1,12 @@
+/* CMS interaction rules are scoped; public pages keep their own presentation. */
+.cms-shell button { min-height: 44px; }
+.cms-shell main a[class*="px-"] { min-height: 44px; display: inline-flex; align-items: center; }
+.cms-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.cms-shell select { min-height: 48px; min-width: 0; font-size: 16px; }
+.cms-shell textarea { min-width: 0; font-size: 16px; line-height: 1.75; }
+.cms-shell input[type="checkbox"], .cms-shell input[type="radio"] { accent-color: #A43D1D; }
+.cms-shell label:has(input[type="checkbox"]), .cms-shell label:has(input[type="radio"]) { min-height: 44px; }
+.cms-shell main { overflow-wrap: anywhere; }
+.cms-shell th { font-weight: 500; }
+.cms-shell td { vertical-align: top; }
+.cms-shell :is(button,input,select,textarea,a):focus-visible { outline: 2px solid #681B16; outline-offset: 3px; }

@@ -131,3 +131,10 @@ Verification: 66 tests / 11 files, lint and TypeScript/PWA build passed. Auth ho
 ## Missing-page phase
 
 Direction: help a visitor recover a missing route; clear, calm, familiar; the same project palette; official mark only; the outline Home action. Audit: oversized amber 404 as primary heading, small recovery control, unrelated slate/amber colors. Changed to descriptive H1, quiet 404 metadata, readable explanation, language control and 48px Home action. No content promises or new recovery features. The QA route is a static index copy to exercise React's wildcard, not a real hosting HTTP404/fallback check.
+
+
+## CMS shell and dashboard phase
+
+Direction: help authorized project members manage content without distraction; steady, exact, readable; paper/ink with the existing brick accent; the content and official mark are the moments; a quiet maroon selected navigation row is the signature. Audit: navy header, amber badge, undersized actions, tablet horizontal menu, missing menu state/Escape, rainbow module borders and hover shadows. Passes: consistent 16/24/32 rhythm, neutral surfaces and one action accent, official mark and 18px outline menu, contextual labels, weights 400/500/600, desktop 240px sidebar/mobile drawer, 44px controls plus ARIA/focus, remove filler, color-only feedback.
+
+Dashboard uses the same modules and owner gating. AdminLayout.css scopes form font/targets/focus to CMS. Three meaningful navigation/error regressions bring the suite to 69 tests / 12 files; lint and TypeScript/PWA build passed. Read-only visual fixture imports actual page components with synthetic auth/data adapters, rejects mutations and is outside application source. It has no credentials and is not included in production build. Desktop rendered; 360px document width equals scroll width (345px after scrollbar), all 9 owner links fit the scrollable drawer; Escape closes and returns focus. Actual account sign-in, RLS/gateway, saved forms and live AI remain unverified.
