@@ -13,8 +13,8 @@ Review approach: adapted from **unslop by Damir Sokolovsky (@heydamir), CC BY 4.
 | 2 | Activities | Implemented and checked |
 | 3 | Meditation and its supporting sections | Implemented and checked |
 | 4 | Q&A and public chatbot states | Implemented and checked |
-| 5 | Centers | Next |
-| 6 | Login and missing-page state | Pending |
+| 5 | Centers | Implemented and checked |
+| 6 | Login and missing-page state | Next |
 | 7 | Authenticated administration and private assistant | Pending; distinguish source review from a real authenticated session |
 
 ## Home: audit and direction
@@ -106,3 +106,15 @@ Nine passes: (1) consistent spacing and 44/48px controls; (2) original cream/bri
 Verification: 65 tests / 11 files, lint and TypeScript/PWA build passed. Existing Q&A flow test now checks submit focus and recovery from an empty category; it awaits the asynchronously loaded question control instead of assuming it appears with the static page title. No assertion about verified/published filters or non-generative behavior was removed. The loading/filter/matching logic compared unchanged to the base. Chrome: search for an unmatched phrase, Search focuses qa-results-heading, Show all questions restores four loaded questions, accordion closes, chatbot returns a stored answer and declines an unknown question. Ten TH/EN layout states at 360/390/768/1024/1440 showed four questions, categories fitting and no document horizontal overflow. Final mobile check confirmed a 16px input, 14px category labels and 16px/500 question controls after the font reset correction. No real-device/IME certification is claimed.
 
 Next: Centers, including region selection, complete center details, safe outgoing links and no-results recovery.
+
+## Centers phase
+
+Direction: find a real center and its contact options; practical, clear, calm; the same heritage brand surrounding geographic/address information; the existing introductory activity photo and actual center names/content carry the page; the outline pin marks location choices.
+
+Audit: the same Ayutthaya image was labeled as every foreign center; decorative card selection changed only a border and was mouse-only; descriptions were clamped; category names were in a narrow horizontal strip; a Search button did nothing; no explicit no-results recovery; city substring matching could make York include New York despite separate counts; emoji, tiny labels, large shadows and hover lift; resources promised video/articles where links opened audio/Q&A.
+
+Nine passes: (1) consistent padding/spacing, 44/48px actions; (2) existing quiet cream/brick palette; (3) outline icons; (4) search wording matches name/city/address, resource names match their destinations, no unsupported media claims; (5) 14px body/labels and medium weights, 16px fields; (6) cards use actual city/country/name/address rather than invented center photos, show full descriptions, native region select on phones and wrapping buttons above 640px; (7) exact city filtering, real search-submit focus, recovery clears both search/region, center link descriptions identify their card; removed purely decorative container selection while keeping all real outgoing actions; (8) retained the existing introductory photo and removed misleading repeated card photographs; (9) no card hover lift or enlarged shadows.
+
+Verification: 66 tests / 11 files, lint and TypeScript/PWA build passed. One new regression test covers York vs New York, search-submit focus and restoring both records from an empty result. Fetch logic and published-only filters compared unchanged to the base; safe-URL checks remain and existing partial-data/error assertions still pass. Chrome: Singapore filter yields one real record, unmatched query shows recovery, Show all centers restores four, native phone selection of Singapore also works. All ten TH/EN layout states at 360/390/768/1024/1440 show four records and no document overflow; phone select has five options and 16px text, larger-screen buttons fit. Map/website/contact hrefs and noopener checked from the page; remote venue addresses and external-site availability were not independently certified. No live records or schema were changed.
+
+Next: login, then the missing-page state; afterwards inspect the authenticated shell and management pages. Public visual work does not certify real authenticated CMS or live private inference.

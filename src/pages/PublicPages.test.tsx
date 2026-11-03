@@ -260,6 +260,25 @@ describe('reviewed chatbot and centers', () => {
     network.mockRestore()
   })
 
+  it('matches an exact city and restores all centers after an empty search', async () => {
+    mocks.rows.dci_centers = [
+      { id: 'york', country_code: 'GB', city: 'York', address: 'York address', map_url: null, website_url: null, contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'York Center', description: 'York fixture' }] },
+      { id: 'new-york', country_code: 'US', city: 'New York', address: 'New York address', map_url: null, website_url: null, contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'New York Center', description: 'New York fixture' }] },
+    ]
+    openPage(<CentersPage />, '/centers')
+    await screen.findByRole('heading', { name: 'York Center' })
+    fireEvent.click(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: 'York' }))
+    expect(screen.getByRole('heading', { name: 'York Center' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'New York Center' })).not.toBeInTheDocument()
+    fireEvent.change(screen.getByRole('textbox', { name: 'Search centers' }), { target: { value: 'no matching place' } })
+    fireEvent.submit(screen.getByRole('search'))
+    expect(screen.getByRole('heading', { name: 'Meditation centers' })).toHaveFocus()
+    expect(screen.getByRole('heading', { name: 'No centers match your search' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Show all centers' }))
+    expect(screen.getByRole('heading', { name: 'York Center' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'New York Center' })).toBeInTheDocument()
+  })
+
   it('keeps center details when Bio Links fail and omits unsafe contact URLs', async () => {
     mocks.rows.dci_centers = [{ id: 'center-1', country_code: 'TH', city: 'Example city', address: 'Example address', map_url: 'https://example.org/map', website_url: 'javascript:alert(1)', contact_url: 'data:text/html,example', dci_center_translations: [{ language_code: 'en', name: 'Example center', description: 'Test fixture' }] }]
     mocks.failures.add('bio_links')
