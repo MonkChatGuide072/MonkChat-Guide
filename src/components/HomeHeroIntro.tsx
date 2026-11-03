@@ -1,15 +1,16 @@
 import { Link } from 'react-router'
 import type { AppLanguage } from '../lib/language'
+import { GuideIcon, type GuideIconName } from './GuideIcon'
 
 const shortcuts = [
-  { to: '/', th: 'หน้าแรก', en: 'Home', path: 'M3 11.5 12 4l9 7.5M5.5 10v10h5v-6h3v6h5V10' },
-  { to: '/activities', th: 'กิจกรรม', en: 'Activities', path: 'M8 3v4m8-4v4M4 10h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Zm3 9h2m4 0h2m-8 3h2' },
-  { to: '/meditation', th: 'สมาธิ', en: 'Meditate', path: 'M12 20c-4-3-6-7 0-15 6 8 4 12 0 15Zm0 0C6 20 3 16 3 10c5 1 8 4 9 10Zm0 0c6 0 9-4 9-10-5 1-8 4-9 10Z' },
-  { to: '/qa', th: 'ถาม–ตอบ', en: 'Q&A', path: 'M5 18 3 21v-6a8 8 0 1 1 4 4l-2-1Zm3-7h.01M12 11h.01M16 11h.01' },
-  { to: '/centers', th: 'ศูนย์', en: 'Centers', path: 'M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' },
+  { to: '/', th: 'หน้าแรก', en: 'Home', icon: 'home' },
+  { to: '/activities', th: 'กิจกรรม', en: 'Activities', icon: 'calendar' },
+  { to: '/meditation', th: 'สมาธิ', en: 'Meditate', icon: 'lotus' },
+  { to: '/qa', th: 'ถาม–ตอบ', en: 'Q&A', icon: 'chat' },
+  { to: '/centers', th: 'ศูนย์', en: 'Centers', icon: 'pin' },
 ]
 
-/** Home-only introduction; keep the shared header and lower visitor content unchanged. */
+/** Preserve the approved full-width scene, title below it and five shortcuts. */
 export function HomeHeroIntro({ language }: { language: AppLanguage }) {
   const isEnglish = language === 'en'
 
@@ -24,27 +25,25 @@ export function HomeHeroIntro({ language }: { language: AppLanguage }) {
         className="block h-[240px] w-full object-cover object-[center_35%] sm:h-[360px] sm:object-[center_30%] lg:h-[460px] lg:object-[center_28%] xl:h-[500px] xl:object-[center_26%]"
       />
 
-      <div className="mx-auto max-w-[76rem] px-4 pb-1 pt-5 text-center sm:px-6 sm:pt-6 lg:px-8">
-        <h1 id="home-intro-title" className="font-serif text-[1.9rem] font-bold leading-snug text-[#681B16] sm:text-4xl lg:text-[2.75rem]">
+      <div className="mx-auto max-w-[76rem] px-4 pb-2 pt-6 text-center sm:px-6 lg:px-8">
+        <h1 id="home-intro-title" className="font-serif text-[2rem] font-semibold leading-snug text-brand-maroon sm:text-4xl lg:text-[2.75rem]">
           {isEnglish ? 'Ayutthaya Monk Chat' : 'อยุธยา มังค์แชท'}
         </h1>
-        {!isEnglish && <p lang="en" className="mt-1 text-xs font-medium tracking-[0.08em] text-[#A43D1D] sm:text-sm">AYUTTHAYA MONK CHAT</p>}
-        <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-[#5A4B40] sm:text-base">
+        {!isEnglish && <p lang="en" className="mt-2 text-sm text-brand-muted">Ayutthaya Monk Chat</p>}
+        <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base">
           {isEnglish ? 'Join Monk Chat and guided meditation at Wat Mahathat, Ayutthaya.' : 'ร่วมสนทนาธรรมและฝึกสมาธิ ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
         </p>
 
-        <nav aria-label={isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก'} className="mx-auto mt-5 grid max-w-2xl grid-cols-5 gap-1 min-[390px]:gap-1.5 sm:mt-6 sm:gap-3">
+        <nav aria-label={isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก'} className="mx-auto mt-6 grid max-w-2xl grid-cols-5 gap-1 min-[390px]:gap-2 sm:gap-3">
           {shortcuts.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               aria-current={item.to === '/' ? 'page' : undefined}
-              className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl border px-1 py-2.5 text-xs font-semibold leading-tight transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#681B16] sm:min-h-[88px] sm:px-2 sm:py-3 sm:text-sm ${item.to === '/' ? 'border-[#A43D1D] bg-[#A43D1D] text-white shadow-sm hover:bg-[#8E3317]' : 'border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] hover:border-[#A43D1D] hover:bg-[#FAF0E1]'}`}
+              className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-2 rounded-xl border px-0 py-3 text-xs font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-maroon sm:min-h-[88px] sm:px-2 sm:text-sm ${item.to === '/' ? 'border-brand-terracotta bg-brand-terracotta text-white hover:bg-brand-terracotta-dark' : 'border-brand-border bg-brand-surface text-brand-maroon hover:border-brand-terracotta hover:bg-brand-gold-soft'}`}
             >
-              <svg aria-hidden="true" className="h-6 w-6 shrink-0 sm:h-7 sm:w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.65} strokeLinecap="round" strokeLinejoin="round">
-                <path d={item.path} />
-              </svg>
-              <span className="text-center text-xs font-semibold leading-tight tracking-tight sm:text-sm sm:tracking-normal">{isEnglish ? item.en : item.th}</span>
+              <GuideIcon name={item.icon as GuideIconName} className="h-6 w-6" />
+              <span className="text-center text-xs leading-4 tracking-normal sm:text-sm sm:leading-5">{isEnglish ? item.en : item.th}</span>
             </Link>
           ))}
         </nav>

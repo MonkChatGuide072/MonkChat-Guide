@@ -1,5 +1,15 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับ UI ทีละหน้า: Home — 4 พฤศจิกายน 2569
+
+- เจ้าของอนุมัติให้ตรวจและปรับทุกส่วนของเว็บด้วย unslop ทีละหน้าแล้ว ข้อจำกัดเก่า “เฉพาะส่วนบน Home” ถูกแทนที่สำหรับ UI ดู CURRENT_SCOPE.md และ docs/UNSLOP_REVIEW_2026-11-04.md
+- รอบ Home เปลี่ยน VisitPage.tsx, HomeHeroIntro.tsx และเพิ่ม GuideIcon.tsx: แก้วันเวลา/สถานที่โดนตัด ปรับ body 14px / meta อย่างน้อย 12px ลดน้ำหนักฟอนต์และ uppercase เปลี่ยนอีโมจิเป็นเส้นไอคอน จัด resource descriptions ให้ตัดบรรทัด คงทุก section และข้อมูลเดิม คงภาพเต็มขอบ/ชื่อใต้ภาพ/ทางลัด 5 ช่องและค่า crop เดิม
+- หน้าเลือกภาษาใช้โลโก้/ชื่อจริง โดยเก็บ logic เลือกภาษาเดิม ส่วนร่วม Layout.tsx / LanguageSwitcher.tsx ปรับเมนูให้ใช้ drawer ต่ำกว่า 1024px ปุ่มสัมผัส 44px และระยะท้ายหน้า; ChatbotServiceCard.tsx ใช้พื้นครีม/สีอิฐ ปุ่มเปิดเล็กลง พร้อม Escape และคืนโฟกัส ไม่มีการเปลี่ยนคลังคำตอบ/กติกาบอท
+- ผลรันเอง: 65 tests / 11 files, lint, TypeScript/build ผ่าน ตรวจ query/state ของ VisitorHome เทียบฐานแล้วไม่เปลี่ยน เปิด Chrome และกรอบ iframe 360/390/768/1024/1440 TH/EN ป้ายทางลัดพอดี ไม่มี horizontal overflow; กด project info, เมนูมือถือ, เปิด/ปิดแชท และตรวจคืนโฟกัสได้ ไม่ใช่การทดสอบอุปกรณ์จริง
+- ภาพ/ผลวัดเก็บในสำเนาตรวจและแชต ไม่ส่งภาพหรือ .env ขึ้น GitHub รอบนี้ตรวจ Home เป็นหน้าแรก หน้าอื่นยังอยู่ในคิว ไม่อ้างว่าเสร็จทั้งเว็บไซต์
+- งานถัดไป: Activities ตาม audit ก่อนแก้ แล้ว Meditation → Q&A → Centers → login/404 → หลังบ้าน สถานะรายหน้าอยู่ docs/UNSLOP_REVIEW_2026-11-04.md พระ/เจ้าของยังต้องตรวจเนื้อหาธรรมะและเสียง/ซับก่อนเผยแพร่
+- ฐาน source 6c44295641f1a11ef0ee84619d4aa3e609a82ff8 บน sync/anti-reviewed-20261103; ไม่มี merge main, deploy production, ข้อมูลจริง หรือ API เสียเงิน ไม่อ้างว่า Windows ดึงงานแล้ว
+
 ## ChatGPT ตรวจรับส่วนบน Home จาก 6ceed4c — 4 พฤศจิกายน 2569
 
 - ตรวจ source commit `6ceed4ce9a6e0cdf777d139181487d5f10f5a637` จาก GitHub ในสำเนาทดสอบแยก; diff จาก `cf93b4d` มีเฉพาะ `src/components/HomeHeroIntro.tsx` และ `HANDOFF.md` ไม่เปลี่ยนเนื้อหาตั้งแต่แถบวันเวลาลงไป

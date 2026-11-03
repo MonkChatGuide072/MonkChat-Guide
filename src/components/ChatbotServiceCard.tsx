@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
 import { matchReviewedQuestion, type ReviewedQuestion } from '../lib/qaMatch'
 import { reviewedChatbotCopy } from '../locales/monkAssistant'
+import { GuideIcon } from './GuideIcon'
 
 interface QATranslationRow {
   language_code: string
@@ -26,17 +27,26 @@ export function ChatbotServiceCard() {
   const language = (i18n.resolvedLanguage || i18n.language).startsWith('en') ? 'en' : 'th'
   const copy = reviewedChatbotCopy[language]
   const [isOpen, setIsOpen] = useState(false)
-  return <aside className="fixed bottom-4 right-4 z-50 w-[min(25rem,calc(100vw-2rem))] text-[#293029] sm:bottom-6 sm:right-6" aria-label={copy.serviceTitle}>
-    {isOpen ? <section id="reviewed-chatbot-panel" className="flex max-h-[min(78dvh,42rem)] flex-col overflow-hidden rounded-3xl border border-[#d5bd94] bg-[#f9f4ea] shadow-[0_20px_70px_rgba(35,43,34,.3)]">
-      <div className="flex shrink-0 items-start justify-between gap-3 bg-[#293029] px-4 py-4 text-white">
-        <div><p className="text-[.65rem] font-bold uppercase tracking-widest text-[#eec590]">MonkChat Guide</p><h2 className="mt-1 font-serif text-lg font-bold">{copy.serviceTitle}</h2></div>
-        <button type="button" onClick={() => setIsOpen(false)} className="min-h-11 min-w-11 rounded-full border border-white/40 text-2xl leading-none" aria-label={copy.close}>×</button>
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const wasOpen = useRef(false)
+  useEffect(() => {
+    if (isOpen) closeRef.current?.focus()
+    else if (wasOpen.current) triggerRef.current?.focus()
+    wasOpen.current = isOpen
+  }, [isOpen])
+
+  return <aside className="fixed bottom-4 right-4 z-50 max-w-[calc(100vw-2rem)] text-brand-text sm:bottom-6 sm:right-6" aria-label={copy.serviceTitle}>
+    {isOpen ? <section id="reviewed-chatbot-panel" aria-labelledby="reviewed-chatbot-title" onKeyDown={event => { if (event.key === 'Escape') setIsOpen(false) }} className="flex max-h-[min(78dvh,42rem)] w-[min(25rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-[0_8px_24px_rgba(0,0,0,.12)]">
+      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-brand-border px-4 py-4">
+        <div><p className="text-xs leading-5 text-brand-muted">{language === 'en' ? 'Ayutthaya Monk Chat' : 'อยุธยา มังค์แชท'}</p><h2 id="reviewed-chatbot-title" className="mt-1 text-base font-medium text-brand-maroon">{copy.serviceTitle}</h2></div>
+        <button ref={closeRef} type="button" onClick={() => setIsOpen(false)} className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-brand-muted transition-colors duration-150 hover:bg-brand-gold-soft" aria-label={copy.close}><GuideIcon name="close" /></button>
       </div>
       <ReviewedChatbot key={language} language={language} />
-    </section> : <button type="button" aria-label={copy.serviceTitle} aria-expanded={false} aria-controls="reviewed-chatbot-panel" onClick={() => setIsOpen(true)}
-      className="ml-auto flex min-h-16 w-full items-center gap-3 rounded-2xl border border-[#d5bd94] bg-[#293029] px-4 py-3 text-left text-white shadow-[0_14px_38px_rgba(35,43,34,.3)] hover:bg-[#354536] sm:w-72">
-      <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#eec590] text-[#293029]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v9a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4.5A2.5 2.5 0 0 1 4 14.5z" strokeLinejoin="round" /><path d="M8 8h8M8 12h6" strokeLinecap="round" /></svg></span>
-      <span className="min-w-0"><strong className="block text-sm">{copy.serviceTitle}</strong><small className="mt-1 block text-xs text-white/75">{copy.serviceDescription}</small></span>
+    </section> : <button ref={triggerRef} type="button" aria-label={copy.serviceTitle} aria-expanded={false} aria-controls="reviewed-chatbot-panel" onClick={() => setIsOpen(true)}
+      className="ml-auto flex min-h-12 cursor-pointer items-center gap-2 rounded-xl border border-brand-border bg-brand-surface px-4 py-3 text-left text-brand-maroon shadow-[0_4px_16px_rgba(0,0,0,.08)] transition-colors duration-150 hover:bg-brand-gold-soft">
+      <GuideIcon name="chat" />
+      <span className="min-w-0"><strong className="block text-sm font-medium">{copy.serviceTitle}</strong><small className="mt-1 hidden text-xs text-brand-muted sm:block">{copy.serviceDescription}</small></span>
     </button>}
   </aside>
 }
@@ -109,38 +119,38 @@ function ReviewedChatbot({ language }: { language: 'th' | 'en' }) {
   }
 
   return <div className="space-y-3 overflow-y-auto overscroll-contain p-3 text-sm break-words [overflow-wrap:anywhere]" tabIndex={0}>
-    {isLoading && <p role="status" className="rounded-2xl bg-white p-5 text-sm">{copy.loading}</p>}
-    {!isLoading && error && <div role="alert" className="rounded-2xl bg-white p-5 text-sm">
+    {isLoading && <p role="status" className="rounded-xl bg-brand-surface p-5 text-sm">{copy.loading}</p>}
+    {!isLoading && error && <div role="alert" className="rounded-xl bg-brand-surface p-5 text-sm">
       <p>{copy.error}</p>
-      <button type="button" onClick={() => void loadQuestions()} className="mt-3 min-h-11 rounded-full bg-[#293029] px-5 font-bold text-white">{copy.retry}</button>
+      <button type="button" onClick={() => void loadQuestions()} className="mt-3 min-h-11 rounded-lg bg-brand-terracotta px-5 font-medium text-white">{copy.retry}</button>
     </div>}
-    {!isLoading && !error && questions.length === 0 && <p className="rounded-2xl bg-white p-5 text-sm">{copy.noQuestions}</p>}
+    {!isLoading && !error && questions.length === 0 && <p className="rounded-xl bg-brand-surface p-5 text-sm">{copy.noQuestions}</p>}
 
     {!isLoading && !error && questions.length > 0 && <>
-      <section aria-label={copy.suggestions} className="rounded-2xl border border-[#ded3c3] bg-white p-3">
-        <h2 className="text-sm font-bold text-[#293029]">{copy.suggestions}</h2>
+      <section aria-label={copy.suggestions} className="rounded-xl border border-brand-border bg-white p-3">
+        <h2 className="text-sm font-medium text-brand-text">{copy.suggestions}</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           {questions.slice(0, 6).map(item => <button key={item.id} type="button" onClick={() => sendQuestion(item.question)}
-            className="min-h-11 rounded-full border border-[#c9b9a2] px-3 py-2 text-left text-xs text-[#293029] hover:bg-[#f6eedf]">{item.question}</button>)}
+            className="min-h-11 rounded-lg border border-brand-border px-3 py-2 text-left text-sm leading-6 text-brand-text hover:bg-brand-gold-soft">{item.question}</button>)}
         </div>
       </section>
 
       <section aria-label={copy.conversation} aria-live="polite" className="space-y-3">
-        {messages.length === 0 && <p className="rounded-2xl border border-[#ded3c3] bg-white p-3 text-xs text-[#5d6058]">{copy.empty}</p>}
-        {messages.map((message, index) => <article key={index} className={'rounded-2xl border p-3 ' + (message.role === 'visitor'
-          ? 'ml-4 border-[#d5dace] bg-[#eef1e7]' : 'mr-4 border-[#ded3c3] bg-white')}>
-          <h2 className="text-xs font-bold uppercase tracking-wide text-[#91402b]">{message.role === 'visitor' ? copy.question : copy.answer}</h2>
-          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#293029]">{message.text}</p>
+        {messages.length === 0 && <p className="rounded-xl border border-brand-border bg-white p-3 text-xs text-brand-muted">{copy.empty}</p>}
+        {messages.map((message, index) => <article key={index} className={'rounded-xl border p-3 ' + (message.role === 'visitor'
+          ? 'ml-4 border-brand-border bg-brand-gold-soft' : 'mr-4 border-brand-border bg-white')}>
+          <h2 className="text-xs font-medium text-brand-maroon">{message.role === 'visitor' ? copy.question : copy.answer}</h2>
+          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-brand-text">{message.text}</p>
         </article>)}
       </section>
 
-      <form onSubmit={submit} className="rounded-2xl border border-[#ded3c3] bg-white p-3 shadow-sm">
-        <label htmlFor="chatbot-question" className="block text-sm font-bold text-[#293029]">{copy.placeholder}</label>
+      <form onSubmit={submit} className="rounded-xl border border-brand-border bg-white p-3 shadow-sm">
+        <label htmlFor="chatbot-question" className="block text-sm font-medium text-brand-text">{copy.placeholder}</label>
         <textarea id="chatbot-question" required minLength={2} maxLength={280} rows={2} value={draft}
           onChange={event => setDraft(event.target.value)}
-          className="mt-2 min-h-16 w-full resize-y rounded-xl border border-[#ded3c3] p-3 text-sm outline-none focus:border-[#a86100]" />
+          className="mt-2 min-h-16 w-full resize-y rounded-lg border border-brand-border p-3 text-sm focus:border-[#a86100]" />
         <div className="mt-3 flex justify-end"><button type="submit" disabled={!draft.trim()}
-          className="min-h-11 rounded-full bg-[#293029] px-6 text-sm font-bold text-white disabled:opacity-50">{copy.ask}</button></div>
+          className="min-h-11 rounded-lg bg-brand-terracotta px-6 text-sm font-medium text-white disabled:opacity-50">{copy.ask}</button></div>
       </form>
     </>}
   </div>

@@ -57,7 +57,7 @@ export function Layout() {
       label: t('nav.home', 'หน้าแรก'),
       end: true,
       icon: (
-        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <svg className="h-[18px] w-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
       ),
@@ -66,7 +66,7 @@ export function Layout() {
       to: '/activities',
       label: t('nav.activities', 'กิจกรรม'),
       icon: (
-        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <svg className="h-[18px] w-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       ),
@@ -75,7 +75,7 @@ export function Layout() {
       to: '/meditation',
       label: t('nav.meditation', 'นำสมาธิ'),
       icon: (
-        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <svg className="h-[18px] w-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
       ),
@@ -84,7 +84,7 @@ export function Layout() {
       to: '/qa',
       label: t('nav.qa', 'ถาม-ตอบ'),
       icon: (
-        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <svg className="h-[18px] w-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
       ),
@@ -93,7 +93,7 @@ export function Layout() {
       to: '/centers',
       label: t('nav.centers', 'ศูนย์ปฏิบัติธรรม'),
       icon: (
-        <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <svg className="h-[18px] w-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
@@ -120,9 +120,9 @@ export function Layout() {
           {/* Logo & Brand */}
           <NavLink
             to="/"
-            className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3 text-[#681B16] transition-transform"
+            className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3 text-[#681B16] transition-colors duration-150"
           >
-            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#FFFDF7] p-0.5 shadow-xs ring-1 ring-[#D5BD94]/70 transition-transform group-hover:scale-105 sm:h-11 sm:w-11">
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#FFFDF7] p-0.5 shadow-xs ring-1 ring-[#D5BD94]/70  sm:h-11 sm:w-11">
               <img
                 src="/images/logo/ayutthaya-monk-chat-logo.png"
                 alt="อยุธยา มังค์แชท — Ayutthaya Monk Chat"
@@ -130,24 +130,24 @@ export function Layout() {
               />
             </div>
             <span className="min-w-0 leading-tight">
-              <span className="block truncate font-serif text-sm font-bold tracking-tight text-[#681B16] sm:text-base lg:text-lg">
+              <span className="block truncate font-serif text-sm font-semibold text-[#681B16] sm:text-base lg:text-lg">
                 {isEnglish ? 'Ayutthaya Monk Chat' : 'อยุธยา มังค์แชท'}
               </span>
-              <span className="hidden text-[0.62rem] font-semibold tracking-wider text-[#A43D1D] sm:block">
+              <span className="hidden text-xs font-medium text-[#A43D1D] sm:block">
                 {isEnglish ? 'Ayutthaya Monk Chat Guide' : 'คู่มือสมาธิและสนทนาธรรม'}
               </span>
             </span>
           </NavLink>
 
           {/* Desktop Navigation Links */}
-          <nav aria-label={t('nav.mainNavigation')} className="hidden items-center gap-6 md:flex lg:gap-8">
+          <nav aria-label={t('nav.mainNavigation')} className="hidden items-center gap-6 lg:flex lg:gap-8">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `relative inline-flex items-center gap-1.5 py-1.5 text-sm font-semibold transition-colors ${
+                  `relative inline-flex items-center gap-1.5 py-1.5 text-sm font-medium transition-colors duration-150 ${
                     isActive
                       ? 'text-[#A43D1D] after:absolute after:inset-x-0 after:-bottom-2.5 after:h-0.5 after:bg-[#A43D1D]'
                       : 'text-[#4A3B32] hover:text-[#A43D1D]'
@@ -170,9 +170,9 @@ export function Layout() {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-expanded={isMobileMenuOpen}
               aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] shadow-xs transition-colors hover:bg-[#FDF4E3] md:hidden cursor-pointer"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] shadow-xs transition-colors hover:bg-[#FDF4E3] lg:hidden cursor-pointer"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 {isMobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -185,7 +185,7 @@ export function Layout() {
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="border-t border-[#EADCC6] bg-[#FFFDF7] px-4 py-4 shadow-lg md:hidden">
+          <div className="border-t border-[#EADCC6] bg-[#FFFDF7] px-4 py-4 shadow-lg lg:hidden">
             <nav aria-label={t('nav.mainNavigation')} className="flex flex-col gap-1">
               {navItems.map((item) => (
                 <NavLink
@@ -194,7 +194,7 @@ export function Layout() {
                   end={item.end}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex min-h-11 items-center gap-3 rounded-xl px-4 text-sm font-bold transition-colors ${
+                    `flex min-h-11 items-center gap-3 rounded-xl px-4 text-sm font-medium transition-colors duration-150 ${
                       isActive
                         ? 'bg-[#A43D1D] text-white shadow-xs'
                         : 'text-[#4A3B32] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'
@@ -222,10 +222,10 @@ export function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#EADCC6] bg-[#FFFDF7] py-6 text-center text-xs text-[#7D6B5D]">
+      <footer className="border-t border-[#EADCC6] bg-[#FFFDF7] pb-24 pt-6 text-center text-xs text-[#7D6B5D]">
         <div className="mx-auto max-w-[76rem] px-4 sm:px-6">
           <p>{t('app.footer')}</p>
-          <p className="mt-1 text-[0.7rem] text-[#A43D1D]/80">
+          <p className="mt-1 text-xs text-[#A43D1D]/80">
             อยุธยา มังค์แชท (Ayutthaya Monk Chat) · Mahachulalongkornrajavidyalaya University (MCU)
           </p>
         </div>

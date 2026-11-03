@@ -13,7 +13,7 @@ export function LanguageSwitcher({ tone = 'terracotta' }: { tone?: 'navy' | 'cla
 
   return (
     <div
-      className={`inline-flex items-center rounded-full border p-0.5 shadow-xs transition-colors ${
+      className={`inline-flex items-center rounded-full border p-0.5 transition-colors ${
         isOverlay
           ? 'border-white/30 bg-white/90 backdrop-blur-md'
           : 'border-[#EADCC6] bg-[#FFFDF7]'
@@ -24,9 +24,9 @@ export function LanguageSwitcher({ tone = 'terracotta' }: { tone?: 'navy' | 'cla
       <button
         type="button"
         onClick={() => setLanguage('th')}
-        className={`min-h-8 min-w-9 rounded-full px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+        className={`min-h-11 min-w-11 rounded-full px-2.5 py-1 text-xs font-medium transition-colors duration-150 cursor-pointer ${
           currentLang === 'th'
-            ? 'bg-[#A43D1D] text-white shadow-xs'
+            ? 'bg-[#A43D1D] text-white'
             : 'text-[#681B16] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'
         }`}
         aria-pressed={currentLang === 'th'}
@@ -37,9 +37,9 @@ export function LanguageSwitcher({ tone = 'terracotta' }: { tone?: 'navy' | 'cla
       <button
         type="button"
         onClick={() => setLanguage('en')}
-        className={`min-h-8 min-w-9 rounded-full px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+        className={`min-h-11 min-w-11 rounded-full px-2.5 py-1 text-xs font-medium transition-colors duration-150 cursor-pointer ${
           currentLang === 'en'
-            ? 'bg-[#A43D1D] text-white shadow-xs'
+            ? 'bg-[#A43D1D] text-white'
             : 'text-[#681B16] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'
         }`}
         aria-pressed={currentLang === 'en'}
