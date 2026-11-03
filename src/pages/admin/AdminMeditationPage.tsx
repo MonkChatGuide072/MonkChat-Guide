@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
+import { GuideIcon } from '../../components/GuideIcon'
 import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
 
@@ -219,8 +220,8 @@ export function AdminMeditationPage() {
   const renderRecommendedBadge = (isRecommended: boolean) => {
     if (!isRecommended) return null
     return (
-      <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-[#A86100]/10 text-[#A86100] border border-[#A86100]/20 uppercase ml-2">
-        Recommended
+      <span className="px-2 py-0.5 text-xs font-medium rounded bg-[#A86100]/10 text-[#A86100] border border-[#A86100]/20  ml-2">
+        {t('meditation.recommended')}
       </span>
     )
   }
@@ -230,10 +231,10 @@ export function AdminMeditationPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 ">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-medium text-slate-900">
               {t('admin.modules.meditation.title')}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -257,7 +258,7 @@ export function AdminMeditationPage() {
             {/* Add track button */}
             <Link
               to="/admin/meditation/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white  transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -269,16 +270,16 @@ export function AdminMeditationPage() {
       </div>
 
       {/* Coming-soon banner */}
-      <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-        ℹ️ {t('admin.meditation.readOnlyNotice')}
+      <div className="rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
+        {t('admin.meditation.readOnlyNotice')}
       </div>
 
       {/* Action Success */}
       {actionSuccessMsg && (
-        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 flex items-center justify-between">
+        <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 flex flex-wrap items-center justify-between gap-3">
           <span>✓ {actionSuccessMsg}</span>
-          <button onClick={() => setActionSuccessMsg(null)} className="text-green-600 hover:text-green-800 font-bold ml-4 cursor-pointer">
-            ×
+          <button aria-label={t('management.dismiss')} onClick={() => setActionSuccessMsg(null)} className="text-green-600 hover:text-green-800 font-medium ml-4 cursor-pointer">
+            <GuideIcon name="close" />
           </button>
         </div>
       )}
@@ -307,16 +308,14 @@ export function AdminMeditationPage() {
       {/* Empty state */}
       {!isLoading && !error && tracks.length === 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 flex items-center justify-center text-3xl">
-            🎧
-          </div>
+          
           <h2 className="text-lg font-semibold text-slate-800">
             {t('admin.meditation.emptyTitle')}
           </h2>
           <p className="text-sm text-slate-500 max-w-md mx-auto">
             {t('admin.meditation.emptyDesc')}
           </p>
-          <p className="text-xs text-slate-400 italic">
+          <p className="text-xs text-slate-500 ">
             {t('admin.meditation.emptyHint')}
           </p>
         </div>
@@ -324,8 +323,8 @@ export function AdminMeditationPage() {
 
       {/* Results table */}
       {!isLoading && !error && tracks.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-slate-200  overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-slate-700">
               {t('admin.meditation.trackCount', { count: tracks.length })}
             </p>
@@ -345,10 +344,10 @@ export function AdminMeditationPage() {
                   <div className="flex items-center gap-4 text-xs text-slate-500">
                     <span>{t('admin.meditation.duration')}: {formatDuration(track.duration_seconds)}</span>
                     <span className={track.audio_storage_path ? 'text-emerald-600' : 'text-amber-600'}>
-                      {track.audio_storage_path ? `✓ ${t('admin.meditation.audioExists')}` : `⚠ ${t('admin.meditation.audioMissing')}`}
+                      {track.audio_storage_path ? `✓ ${t('admin.meditation.audioExists')}` : `${t('admin.meditation.audioMissing')}`}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-slate-500">
                     {t('admin.meditation.updatedAt')}: {formatDate(track.updated_at, currentLang)}
                   </div>
                   {/* Per-row action buttons */}
@@ -388,7 +387,7 @@ export function AdminMeditationPage() {
                     </Link>
                     <Link
                       to={`/admin/meditation/${track.id}/audio`}
-                      className="px-2.5 py-1 text-xs font-semibold rounded border border-blue-300 text-blue-800 bg-blue-50 hover:bg-blue-100 transition-colors"
+                      className="px-2.5 py-1 text-xs font-semibold rounded border border-blue-300 text-neutral-700 bg-neutral-50 hover:bg-blue-100 transition-colors"
                     >
                       {t('admin.meditation.uploadAudio')}
                     </Link>
@@ -425,7 +424,7 @@ export function AdminMeditationPage() {
                   ].map((key) => (
                     <th
                       key={key}
-                      className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                      className="px-4 py-3 text-left text-xs font-semibold text-slate-500  "
                     >
                       {t(key)}
                     </th>
@@ -451,7 +450,7 @@ export function AdminMeditationPage() {
                         <span className={track.audio_storage_path ? 'text-emerald-600 font-medium' : 'text-amber-600 font-medium'}>
                           {track.audio_storage_path
                             ? `✓ ${t('admin.meditation.audioExists')}`
-                            : `⚠ ${t('admin.meditation.audioMissing')}`}
+                            : `${t('admin.meditation.audioMissing')}`}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
@@ -494,7 +493,7 @@ export function AdminMeditationPage() {
                           </Link>
                           <Link
                             to={`/admin/meditation/${track.id}/audio`}
-                            className="px-2.5 py-1 text-xs font-semibold rounded border border-blue-300 text-blue-800 bg-blue-50 hover:bg-blue-100 transition-colors whitespace-nowrap"
+                            className="px-2.5 py-1 text-xs font-semibold rounded border border-blue-300 text-neutral-700 bg-neutral-50 hover:bg-blue-100 transition-colors whitespace-nowrap"
                           >
                             {t('admin.meditation.uploadAudio')}
                           </Link>

@@ -216,10 +216,8 @@ export function AdminMeditationTranscriptPage() {
   if (loadError || !trackData) {
     return (
       <div className="max-w-xl mx-auto bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4">
-        <div className="w-12 h-12 mx-auto rounded-full bg-red-50 flex items-center justify-center text-2xl text-red-600">
-          ⚠️
-        </div>
-        <h1 className="text-xl font-bold text-slate-900">
+        
+        <h1 className="text-xl font-medium text-slate-900">
           {t('admin.meditation.transcript.notFoundTitle')}
         </h1>
         <p className="text-sm text-slate-500">
@@ -238,9 +236,9 @@ export function AdminMeditationTranscriptPage() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-slate-200 p-6  flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-medium text-slate-900">
             {t('admin.meditation.transcript.title')}
           </h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -256,12 +254,12 @@ export function AdminMeditationTranscriptPage() {
       </div>
 
       {/* Target Track Information Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6  space-y-4">
         <div className="border-b border-slate-100 pb-4">
-          <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+          <span className="text-xs font-medium text-slate-500  ">
             {t('admin.meditation.colTitle')}
           </span>
-          <h2 className="text-lg font-bold text-slate-900 mt-0.5">
+          <h2 className="text-lg font-medium text-slate-900 mt-0.5">
             {trackData.title}
           </h2>
           <p className="text-xs text-slate-500 mt-1">
@@ -272,16 +270,16 @@ export function AdminMeditationTranscriptPage() {
         {/* Status Badges */}
         <div className="grid grid-cols-2 gap-4 text-xs">
           <div>
-            <span className="text-slate-400 block">{t('admin.meditation.audio.currentAudioStatus')}</span>
+            <span className="text-slate-500 block">{t('admin.meditation.audio.currentAudioStatus')}</span>
             <span className={trackData.audio_storage_path ? 'font-semibold text-emerald-600' : 'font-semibold text-amber-600'}>
               {trackData.audio_storage_path
                 ? `✓ ${t('admin.meditation.audio.audioExists')}`
-                : `⚠ ${t('admin.meditation.audio.audioMissing')}`}
+                : `${t('admin.meditation.audio.audioMissing')}`}
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 block">{t('admin.meditation.edit.fieldStatus')}</span>
+            <span className="text-slate-500 block">{t('admin.meditation.edit.fieldStatus')}</span>
             <span className="font-semibold text-slate-700">
               {t(`admin.meditation.status.${trackData.content_status}`, trackData.content_status)}
               {trackData.is_published ? ` (${t('admin.meditation.published')})` : ` (${t('admin.meditation.unpublished')})`}
@@ -293,7 +291,7 @@ export function AdminMeditationTranscriptPage() {
       {/* Draft/Unpublished Notice */}
       <div className="bg-amber-50 rounded-xl border border-amber-200 p-4 text-xs text-amber-800 space-y-1">
         <p className="font-semibold flex items-center gap-1.5 text-sm">
-          <span>ℹ️</span> {t('admin.meditation.transcript.draftNoticeTitle')}
+          {t('admin.meditation.transcript.draftNoticeTitle')}
         </p>
         <p className="text-amber-700">
           {t('admin.meditation.transcript.draftNoticeDesc')}
@@ -309,24 +307,24 @@ export function AdminMeditationTranscriptPage() {
       )}
 
       {/* Transcript Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
         {/* Thai Section */}
         <div className="space-y-3 pb-6 border-b border-slate-100">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-600"></span>
+            <span className="w-2 h-2 rounded-full bg-brand-terracotta"></span>
             {t('admin.meditation.transcript.sectionThai')}
           </h2>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="cms-adminmeditationtranscriptpage-1" className="block text-sm font-medium text-slate-700 mb-1">
               {t('admin.meditation.transcript.fieldThTranscript')}
             </label>
-            <textarea
+            <textarea id="cms-adminmeditationtranscriptpage-1"
               rows={6}
               value={thTranscript}
               onChange={(e) => setThTranscript(e.target.value)}
               placeholder={t('admin.meditation.transcript.placeholderThTranscript')}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-sans"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta font-sans"
             />
           </div>
         </div>
@@ -340,15 +338,15 @@ export function AdminMeditationTranscriptPage() {
 
           {enTrans ? (
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label htmlFor="cms-adminmeditationtranscriptpage-2" className="block text-sm font-medium text-slate-700 mb-1">
                 {t('admin.meditation.transcript.fieldEnTranscript')}
               </label>
-              <textarea
+              <textarea id="cms-adminmeditationtranscriptpage-2"
                 rows={6}
                 value={enTranscript}
                 onChange={(e) => setEnTranscript(e.target.value)}
                 placeholder={t('admin.meditation.transcript.placeholderEnTranscript')}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-sans"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta font-sans"
               />
             </div>
           ) : (
@@ -356,7 +354,7 @@ export function AdminMeditationTranscriptPage() {
               <p className="text-xs font-medium text-slate-500">
                 {t('admin.meditation.transcript.enUnavailable')}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 {t('admin.meditation.transcript.enUnavailableHint')}
               </p>
             </div>
@@ -365,7 +363,7 @@ export function AdminMeditationTranscriptPage() {
 
         {/* Subtitle / VTT Section */}
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
               <span>💬</span> {t('admin.meditation.transcript.vttSectionTitle')}
             </h3>
@@ -382,7 +380,7 @@ export function AdminMeditationTranscriptPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end space-x-3 pt-2">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
           <Link
             to="/admin/meditation"
             className="px-4 py-2 text-sm font-medium rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
@@ -393,7 +391,7 @@ export function AdminMeditationTranscriptPage() {
           <button
             type="submit"
             disabled={isSubmitting || !thTrans}
-            className="px-5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors disabled:opacity-50 cursor-pointer"
+            className="px-5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting
               ? t('admin.meditation.transcript.saving')

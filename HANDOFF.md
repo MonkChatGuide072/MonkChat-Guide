@@ -1,5 +1,14 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับ UI ทีละหน้า: CMS Meditation 6 หน้า — 4 พฤศจิกายน 2569
+
+- ต่อจาก Admin shell 74fbc219cc23796079397323da01e70aabb42f80 ตรวจรายการ สร้าง แก้ไข อัปโหลดเสียง ถอดความ และซับทีละหน้า ปรับหัวเรื่อง/ปุ่ม/notice ให้สอดคล้องกัน ลดตัวหนา ป้าย uppercase ตัวอักษร 10/11px และเงา เปลี่ยน Recommended ให้แปลตามภาษา เชื่อม label กับ control รวม 16 จุดพร้อม label เลือกไฟล์เสียงและกลุ่มภาษาซับ
+- จัดหัวฟอร์มและปุ่มให้ wrap บนมือถือ เพิ่ม scoped action-link sizing กันปุ่มยุบเป็นทีละตัวอักษร คงสถานะ Draft/Unpublished/คำเตือนเปลี่ยนไฟล์และ confirmation ทุกข้อ
+- Source integrity เปรียบเทียบ handlers/effects กับฐาน ผลอยู่ unslop-admin-meditation-integrity.log ไม่มีการเปลี่ยน fetch/save/upload/validation หรือ auth
+- รันเอง 69 tests / 12 files, lint, TypeScript/PWA build ผ่าน ตรวจ isolated fixture TH/EN 360/1440 ทั้ง 6 หน้า รวม 24 สถานะ ไม่ล้นหน้า ปุ่มไม่ต่ำกว่า 44px ช่องข้อความ/เลือก/textarea 16px และมี label ไม่อัปโหลดไฟล์หรือบันทึกข้อมูลจริง
+- ถัดไป CMS Q&A แล้ว Centers/BioLinks/ภาษา/ทีม/Analytics/ผู้ช่วยส่วนตัว ไม่มี merge/deploy
+
+
 ## ปรับ UI ทีละหน้า: Admin shell / Dashboard — 4 พฤศจิกายน 2569
 
 - ต่อจาก Login/404 6411476c4776f4a1e4ac3a63f4d4317d88758656 เปลี่ยนเมนูคอมเป็น sidebar 240px และ drawer ต่ำกว่า 1024px มี aria-expanded/controls, Escape คืนโฟกัสและปิดเมื่อเปลี่ยนเส้นทาง ใช้โลโก้จริง พื้น neutral กับสีอิฐเป็น accent เดียว ลบแถบนำทางแนวนอนและสีรุ้งประจำโมดูล

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, type ChangeEvent, type FormEvent } from 'react'
 import { useParams, Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
+import { GuideIcon } from '../../components/GuideIcon'
 import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
 
@@ -455,7 +456,7 @@ export function AdminMeditationSubtitlesPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Top Navigation & Title */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 gap-4">
         <Link
           to="/admin/meditation"
           className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-amber-700 transition-colors"
@@ -465,10 +466,10 @@ export function AdminMeditationSubtitlesPage() {
       </div>
 
       {/* Header Info Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6  space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{trackData.title}</h1>
+            <h1 className="text-2xl font-medium text-slate-900">{trackData.title}</h1>
             <p className="text-xs text-slate-500 font-mono mt-1">ID: {trackData.id}</p>
           </div>
 
@@ -485,7 +486,7 @@ export function AdminMeditationSubtitlesPage() {
             >
               {trackData.audio_storage_path
                 ? `✓ ${t('admin.meditation.audioExists')}`
-                : `⚠ ${t('admin.meditation.audioMissing')}`}
+                : `${t('admin.meditation.audioMissing')}`}
             </span>
             <span
               className={`px-2 py-0.5 text-xs font-semibold rounded border ${
@@ -516,32 +517,32 @@ export function AdminMeditationSubtitlesPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100 text-xs">
           {/* Thai VTT Status */}
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1">
-            <p className="font-semibold text-slate-700 flex items-center justify-between">
+            <p className="font-semibold text-slate-700 flex flex-wrap items-center justify-between gap-3">
               <span>{t('admin.meditation.subtitles.thSubtitleStatus')}</span>
-              <span className={thVttPath ? 'text-emerald-600 font-bold' : 'text-amber-600 font-bold'}>
-                {thVttPath ? `✓ ${t('admin.meditation.subtitles.statusAttached')}` : `⚠ ${t('admin.meditation.subtitles.statusMissing')}`}
+              <span className={thVttPath ? 'text-emerald-600 font-medium' : 'text-amber-600 font-medium'}>
+                {thVttPath ? `✓ ${t('admin.meditation.subtitles.statusAttached')}` : `${t('admin.meditation.subtitles.statusMissing')}`}
               </span>
             </p>
-            <p className="text-slate-500 font-mono break-all text-[11px]">
+            <p className="text-slate-500 font-mono break-all text-xs">
               {t('admin.meditation.subtitles.storedPath')} {thVttPath || '—'}
             </p>
           </div>
 
           {/* English VTT Status */}
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1">
-            <p className="font-semibold text-slate-700 flex items-center justify-between">
+            <p className="font-semibold text-slate-700 flex flex-wrap items-center justify-between gap-3">
               <span>{t('admin.meditation.subtitles.enSubtitleStatus')}</span>
               {trackData.enTrans ? (
-                <span className={enVttPath ? 'text-emerald-600 font-bold' : 'text-amber-600 font-bold'}>
-                  {enVttPath ? `✓ ${t('admin.meditation.subtitles.statusAttached')}` : `⚠ ${t('admin.meditation.subtitles.statusMissing')}`}
+                <span className={enVttPath ? 'text-emerald-600 font-medium' : 'text-amber-600 font-medium'}>
+                  {enVttPath ? `✓ ${t('admin.meditation.subtitles.statusAttached')}` : `${t('admin.meditation.subtitles.statusMissing')}`}
                 </span>
               ) : (
-                <span className="text-slate-400 italic">
+                <span className="text-slate-500 ">
                   {t('admin.meditation.subtitles.enUnavailable')}
                 </span>
               )}
             </p>
-            <p className="text-slate-500 font-mono break-all text-[11px]">
+            <p className="text-slate-500 font-mono break-all text-xs">
               {t('admin.meditation.subtitles.storedPath')} {enVttPath || '—'}
             </p>
           </div>
@@ -551,7 +552,7 @@ export function AdminMeditationSubtitlesPage() {
       {/* Draft Notice */}
       <div className="bg-amber-50 rounded-xl border border-amber-200 p-4 text-xs text-amber-800 space-y-1">
         <p className="font-semibold flex items-center gap-1.5 text-sm">
-          <span>ℹ️</span> {t('admin.meditation.subtitles.draftNoticeTitle')}
+          {t('admin.meditation.subtitles.draftNoticeTitle')}
         </p>
         <p className="text-amber-700">
           {t('admin.meditation.subtitles.draftNoticeDesc')}
@@ -560,14 +561,14 @@ export function AdminMeditationSubtitlesPage() {
 
       {/* Success Alert Banner */}
       {successMessage && !formError && !pendingUploadedPath && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex items-center justify-between">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex flex-wrap items-center justify-between gap-3">
           <p className="font-semibold">✓ {successMessage}</p>
           <button
             type="button"
-            onClick={() => setSuccessMessage(null)}
-            className="text-emerald-600 hover:text-emerald-800 text-xs font-bold cursor-pointer"
+            aria-label={t('management.dismiss')} onClick={() => setSuccessMessage(null)}
+            className="text-emerald-600 hover:text-emerald-800 text-xs font-medium cursor-pointer"
           >
-            ✕
+            <GuideIcon name="close" />
           </button>
         </div>
       )}
@@ -575,7 +576,7 @@ export function AdminMeditationSubtitlesPage() {
       {/* Partial Failure Warning Banner */}
       {pendingUploadedPath && (
         <div className="bg-amber-100 border border-amber-300 rounded-xl p-4 text-amber-900 space-y-2">
-          <p className="font-semibold text-sm">⚠️ {t('admin.meditation.subtitles.errorHeader')}</p>
+          <p className="font-semibold text-sm">{t('admin.meditation.subtitles.errorHeader')}</p>
           <p className="text-xs font-mono break-all">
             Storage Path: {pendingUploadedPath}
           </p>
@@ -599,19 +600,20 @@ export function AdminMeditationSubtitlesPage() {
       )}
 
       {/* Upload Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
-        <h2 className="text-lg font-bold text-slate-900">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
+        <h2 className="text-lg font-medium text-slate-900">
           {t('admin.meditation.subtitles.title')}
         </h2>
 
         {/* Language Selector Tabs */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-2">
+          <p id="cms-subtitle-language" className="block text-sm font-medium text-slate-700 mb-2">
             {t('admin.meditation.subtitles.selectLanguage')}
-          </label>
-          <div className="flex gap-2">
+          </p>
+          <div role="group" aria-labelledby="cms-subtitle-language" className="flex flex-wrap gap-2">
             <button
               type="button"
+              aria-pressed={selectedLang === 'th'}
               onClick={() => {
                 setSelectedLang('th')
                 setFormError(null)
@@ -622,7 +624,7 @@ export function AdminMeditationSubtitlesPage() {
               }}
               className={`px-4 py-2 text-xs font-semibold rounded-lg border transition-colors cursor-pointer ${
                 selectedLang === 'th'
-                  ? 'bg-amber-600 text-white border-amber-600'
+                  ? 'bg-brand-terracotta text-white border-amber-600'
                   : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
               }`}
             >
@@ -644,7 +646,7 @@ export function AdminMeditationSubtitlesPage() {
               }}
               className={`px-4 py-2 text-xs font-semibold rounded-lg border transition-colors ${
                 !trackData.enTrans
-                  ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                  ? 'bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed'
                   : selectedLang === 'en'
                   ? 'bg-blue-600 text-white border-blue-600 cursor-pointer'
                   : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 cursor-pointer'
@@ -656,24 +658,24 @@ export function AdminMeditationSubtitlesPage() {
 
           {!trackData.enTrans && (
             <p className="text-xs text-amber-700 mt-2 bg-amber-50 border border-amber-200 p-2.5 rounded-lg">
-              ℹ️ {t('admin.meditation.subtitles.enUnavailableHint')}
+              {t('admin.meditation.subtitles.enUnavailableHint')}
             </p>
           )}
         </div>
 
         {/* File Input */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="cms-adminmeditationsubtitlespage-1" className="block text-sm font-medium text-slate-700 mb-1">
             {t('admin.meditation.subtitles.chooseFile')} ({selectedLang.toUpperCase()})
           </label>
-          <input
+          <input id="cms-adminmeditationsubtitlespage-1"
             ref={fileInputRef}
             type="file"
             accept=".vtt"
             onChange={handleFileSelect}
             className="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-800 hover:file:bg-amber-100 cursor-pointer"
           />
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             {t('admin.meditation.subtitles.fileHint')}
           </p>
         </div>
@@ -694,7 +696,7 @@ export function AdminMeditationSubtitlesPage() {
         )}
 
         {/* Submit Actions */}
-        <div className="flex items-center justify-end space-x-3 pt-2">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
           <Link
             to="/admin/meditation"
             className="px-4 py-2 text-sm font-medium rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
@@ -705,7 +707,7 @@ export function AdminMeditationSubtitlesPage() {
           <button
             type="submit"
             disabled={isSubmitting || !selectedFile || (isReplacingCurrent && !confirmReplace)}
-            className="px-5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors disabled:opacity-50 cursor-pointer"
+            className="px-5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting
               ? t('admin.meditation.subtitles.uploading')

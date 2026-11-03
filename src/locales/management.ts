@@ -1,6 +1,6 @@
 export const managementTranslations = {
   th: {
-    loading: 'กำลังโหลด...', retry: 'ลองใหม่', save: 'บันทึก', saving: 'กำลังบันทึก...', cancel: 'ยกเลิก', edit: 'แก้ไข', refresh: 'โหลดใหม่',
+    dismiss: 'ปิดข้อความ', loading: 'กำลังโหลด...', retry: 'ลองใหม่', save: 'บันทึก', saving: 'กำลังบันทึก...', cancel: 'ยกเลิก', edit: 'แก้ไข', refresh: 'โหลดใหม่',
     active: 'เปิดใช้งาน', inactive: 'ปิดใช้งาน', name: 'ชื่อที่แสดง', saved: 'บันทึกเรียบร้อยแล้ว', error: 'ดำเนินการไม่สำเร็จ กรุณาลองใหม่', empty: 'ยังไม่มีรายการ',
     readOnly: 'ทีมงานดูข้อมูลได้ การแก้ไขสงวนไว้สำหรับ Owner',
     languagesTitle: 'จัดการภาษา', languagesDescription: 'จัดการภาษาสำหรับเนื้อหาและภาษาของเสียง',
@@ -21,7 +21,7 @@ export const managementTranslations = {
     signOutError: 'ออกจากระบบไม่สำเร็จ กรุณาลองใหม่',
   },
   en: {
-    loading: 'Loading...', retry: 'Retry', save: 'Save', saving: 'Saving...', cancel: 'Cancel', edit: 'Edit', refresh: 'Refresh',
+    dismiss: 'Dismiss message', loading: 'Loading...', retry: 'Retry', save: 'Save', saving: 'Saving...', cancel: 'Cancel', edit: 'Edit', refresh: 'Refresh',
     active: 'Active', inactive: 'Inactive', name: 'Display name', saved: 'Saved successfully', error: 'Could not complete the action. Please try again.', empty: 'No records yet.',
     readOnly: 'Team members can view this list. Only the Owner can make changes.',
     languagesTitle: 'Manage languages', languagesDescription: 'Manage content and spoken audio languages.',

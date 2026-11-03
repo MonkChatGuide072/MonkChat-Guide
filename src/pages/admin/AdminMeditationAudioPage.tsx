@@ -295,10 +295,8 @@ export function AdminMeditationAudioPage() {
   if (loadError || !trackData) {
     return (
       <div className="max-w-xl mx-auto bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4">
-        <div className="w-12 h-12 mx-auto rounded-full bg-red-50 flex items-center justify-center text-2xl text-red-600">
-          ⚠️
-        </div>
-        <h1 className="text-xl font-bold text-slate-900">
+        
+        <h1 className="text-xl font-medium text-slate-900">
           {t('admin.meditation.audio.notFoundTitle')}
         </h1>
         <p className="text-sm text-slate-500">
@@ -319,9 +317,9 @@ export function AdminMeditationAudioPage() {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-slate-200 p-6  flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-medium text-slate-900">
             {t('admin.meditation.audio.title')}
           </h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -337,12 +335,12 @@ export function AdminMeditationAudioPage() {
       </div>
 
       {/* Target Track Information Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6  space-y-4">
         <div className="border-b border-slate-100 pb-4">
-          <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+          <span className="text-xs font-medium text-slate-500  ">
             {t('admin.meditation.colTitle')}
           </span>
-          <h2 className="text-lg font-bold text-slate-900 mt-0.5">
+          <h2 className="text-lg font-medium text-slate-900 mt-0.5">
             {trackData.title}
           </h2>
           <p className="text-xs text-slate-500 mt-1">
@@ -353,16 +351,16 @@ export function AdminMeditationAudioPage() {
         {/* Current Audio Status */}
         <div className="grid grid-cols-2 gap-4 text-xs">
           <div>
-            <span className="text-slate-400 block">{t('admin.meditation.audio.currentAudioStatus')}</span>
+            <span className="text-slate-500 block">{t('admin.meditation.audio.currentAudioStatus')}</span>
             <span className={trackData.audio_storage_path ? 'font-semibold text-emerald-600' : 'font-semibold text-amber-600'}>
               {trackData.audio_storage_path
                 ? `✓ ${t('admin.meditation.audio.audioExists')}`
-                : `⚠ ${t('admin.meditation.audio.audioMissing')}`}
+                : `${t('admin.meditation.audio.audioMissing')}`}
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 block">{t('admin.meditation.edit.fieldStatus')}</span>
+            <span className="text-slate-500 block">{t('admin.meditation.edit.fieldStatus')}</span>
             <span className="font-semibold text-slate-700">
               {t(`admin.meditation.status.${trackData.content_status}`, trackData.content_status)}
               {trackData.is_published ? ` (${t('admin.meditation.published')})` : ` (${t('admin.meditation.unpublished')})`}
@@ -372,7 +370,7 @@ export function AdminMeditationAudioPage() {
 
         {trackData.audio_storage_path && (
           <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs font-mono break-all text-slate-600">
-            <span className="font-sans text-slate-400 font-medium block mb-1">
+            <span className="font-sans text-slate-500 font-medium block mb-1">
               {t('admin.meditation.audio.storagePath')}
             </span>
             {trackData.audio_storage_path}
@@ -384,7 +382,7 @@ export function AdminMeditationAudioPage() {
       {isReplacement && (
         <div className="bg-amber-50 rounded-xl border border-amber-200 p-4 space-y-2 text-xs text-amber-800">
           <p className="font-semibold text-sm flex items-center gap-1.5">
-            <span>⚠️</span> {t('admin.meditation.audio.replaceNoticeTitle')}
+            {t('admin.meditation.audio.replaceNoticeTitle')}
           </p>
           <p className="text-amber-700">
             {t('admin.meditation.audio.replaceNoticeDesc')}
@@ -405,7 +403,7 @@ export function AdminMeditationAudioPage() {
       {pendingUploadedPath && (
         <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 space-y-2 text-xs text-amber-900">
           <p className="font-semibold text-sm">
-            ℹ️ {t('admin.meditation.audio.pendingUploadNotice')}
+            {t('admin.meditation.audio.pendingUploadNotice')}
           </p>
           <p className="font-mono text-xs text-amber-800 break-all">
             {pendingUploadedPath}
@@ -414,7 +412,7 @@ export function AdminMeditationAudioPage() {
             type="button"
             onClick={handleRetryDbSave}
             disabled={isSubmitting}
-            className="mt-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors cursor-pointer disabled:opacity-50"
+            className="mt-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors cursor-pointer disabled:opacity-50"
           >
             {t('admin.meditation.audio.retryDbSaveButton')}
           </button>
@@ -442,9 +440,9 @@ export function AdminMeditationAudioPage() {
       )}
 
       {/* Upload Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-slate-900 mb-1">
+          <label htmlFor="cms-audio-file" className="block text-sm font-semibold text-slate-900 mb-1">
             {t('admin.meditation.audio.selectFileLabel')} <span className="text-red-500">*</span>
           </label>
           <p className="text-xs text-slate-500 mb-3">
@@ -452,6 +450,7 @@ export function AdminMeditationAudioPage() {
           </p>
 
           <input
+            id="cms-audio-file"
             type="file"
             accept=".mp3,audio/mpeg"
             onChange={handleFileSelect}
@@ -466,7 +465,7 @@ export function AdminMeditationAudioPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end space-x-3 pt-2 border-t border-slate-100">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-slate-100">
           <Link
             to="/admin/meditation"
             className="px-4 py-2 text-sm font-medium rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
@@ -477,7 +476,7 @@ export function AdminMeditationAudioPage() {
           <button
             type="submit"
             disabled={isSubmitting || !selectedFile || (isReplacement && !confirmReplace)}
-            className="px-5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors disabled:opacity-50 cursor-pointer"
+            className="px-5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting
               ? t('admin.meditation.audio.uploading')

@@ -274,10 +274,8 @@ export function AdminMeditationEditPage() {
   if (loadError || !trackData) {
     return (
       <div className="max-w-xl mx-auto bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4">
-        <div className="w-12 h-12 mx-auto rounded-full bg-red-50 flex items-center justify-center text-2xl text-red-600">
-          ⚠️
-        </div>
-        <h1 className="text-xl font-bold text-slate-900">
+        
+        <h1 className="text-xl font-medium text-slate-900">
           {t('admin.meditation.edit.notFoundTitle')}
         </h1>
         <p className="text-sm text-slate-500">
@@ -296,9 +294,9 @@ export function AdminMeditationEditPage() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-slate-200 p-6  flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-medium text-slate-900">
             {t('admin.meditation.edit.title')}
           </h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -316,25 +314,25 @@ export function AdminMeditationEditPage() {
       {/* Read-Only Status Banner */}
       <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-2 text-xs text-slate-600">
         <p className="font-semibold text-slate-800 text-sm">
-          ℹ️ {t('admin.meditation.edit.readOnlySection')}
+          {t('admin.meditation.edit.readOnlySection')}
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
           <div>
-            <span className="text-slate-400 block">{t('admin.meditation.edit.fieldStatus')}</span>
+            <span className="text-slate-500 block">{t('admin.meditation.edit.fieldStatus')}</span>
             <span className="font-medium text-slate-700">
               {t(`admin.meditation.status.${trackData.content_status}`, trackData.content_status)}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 block">{t('admin.meditation.edit.fieldPublish')}</span>
+            <span className="text-slate-500 block">{t('admin.meditation.edit.fieldPublish')}</span>
             <span className="font-medium text-slate-700">
               {trackData.is_published ? t('admin.meditation.published') : t('admin.meditation.unpublished')}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 block">{t('admin.meditation.edit.fieldAudio')}</span>
+            <span className="text-slate-500 block">{t('admin.meditation.edit.fieldAudio')}</span>
             <span className={trackData.audio_storage_path ? 'font-medium text-emerald-600' : 'font-medium text-amber-600'}>
-              {trackData.audio_storage_path ? `✓ ${t('admin.meditation.audioExists')}` : `⚠ ${t('admin.meditation.audioMissing')}`}
+              {trackData.audio_storage_path ? `✓ ${t('admin.meditation.audioExists')}` : `${t('admin.meditation.audioMissing')}`}
             </span>
           </div>
         </div>
@@ -349,39 +347,39 @@ export function AdminMeditationEditPage() {
       )}
 
       {/* Edit Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6  space-y-6">
         <AudioLanguageField value={sourceLanguage} onChange={setSourceLanguage} disabled={isSubmitting} />
         {/* Thai Section */}
         <div className="space-y-4 pt-2 border-b border-slate-100 pb-6">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-600"></span>
+            <span className="w-2 h-2 rounded-full bg-brand-terracotta"></span>
             {t('admin.meditation.edit.sectionThai')}
           </h2>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="cms-adminmeditationeditpage-1" className="block text-sm font-medium text-slate-700 mb-1">
               {t('admin.meditation.edit.fieldThTitle')} <span className="text-red-500">*</span>
             </label>
-            <input
+            <input id="cms-adminmeditationeditpage-1"
               type="text"
               required
               value={thTitle}
               onChange={(e) => setThTitle(e.target.value)}
               placeholder={t('admin.meditation.new.placeholderThTitle')}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="cms-adminmeditationeditpage-2" className="block text-sm font-medium text-slate-700 mb-1">
               {t('admin.meditation.edit.fieldThDesc')}
             </label>
-            <textarea
+            <textarea id="cms-adminmeditationeditpage-2"
               rows={3}
               value={thDesc}
               onChange={(e) => setThDesc(e.target.value)}
               placeholder={t('admin.meditation.new.placeholderThDesc')}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
             />
           </div>
         </div>
@@ -394,33 +392,33 @@ export function AdminMeditationEditPage() {
           </h2>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="cms-adminmeditationeditpage-3" className="block text-sm font-medium text-slate-700 mb-1">
               {t('admin.meditation.edit.fieldEnTitle')}
             </label>
-            <input
+            <input id="cms-adminmeditationeditpage-3"
               type="text"
               value={enTitle}
               onChange={(e) => setEnTitle(e.target.value)}
               placeholder={t('admin.meditation.new.placeholderEnTitle')}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
             />
             {hadEnTranslation && !enTitle.trim() && (
-              <p className="text-xs text-amber-700 mt-1 italic">
-                ℹ️ {t('admin.meditation.edit.enPreserveNotice')}
+              <p className="text-xs text-amber-700 mt-1 ">
+                {t('admin.meditation.edit.enPreserveNotice')}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="cms-adminmeditationeditpage-4" className="block text-sm font-medium text-slate-700 mb-1">
               {t('admin.meditation.edit.fieldEnDesc')}
             </label>
-            <textarea
+            <textarea id="cms-adminmeditationeditpage-4"
               rows={3}
               value={enDesc}
               onChange={(e) => setEnDesc(e.target.value)}
               placeholder={t('admin.meditation.new.placeholderEnDesc')}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
             />
           </div>
         </div>
@@ -433,36 +431,36 @@ export function AdminMeditationEditPage() {
 
           <div className="grid grid-cols-2 gap-4 max-w-xs">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label htmlFor="cms-adminmeditationeditpage-5" className="block text-sm font-medium text-slate-700 mb-1">
                 {t('admin.meditation.edit.fieldMinutes')}
               </label>
-              <input
+              <input id="cms-adminmeditationeditpage-5"
                 type="number"
                 min="0"
                 value={minutes}
                 onChange={(e) => setMinutes(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label htmlFor="cms-adminmeditationeditpage-6" className="block text-sm font-medium text-slate-700 mb-1">
                 {t('admin.meditation.edit.fieldSeconds')}
               </label>
-              <input
+              <input id="cms-adminmeditationeditpage-6"
                 type="number"
                 min="0"
                 max="59"
                 value={seconds}
                 onChange={(e) => setSeconds(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 focus:border-brand-terracotta"
               />
             </div>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end space-x-3 pt-2">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
           <Link
             to="/admin/meditation"
             className="px-4 py-2 text-sm font-medium rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
@@ -473,7 +471,7 @@ export function AdminMeditationEditPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors disabled:opacity-50 cursor-pointer"
+            className="px-5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting
               ? t('admin.meditation.edit.saving')

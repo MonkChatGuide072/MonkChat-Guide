@@ -1,6 +1,6 @@
 /* CMS interaction rules are scoped; public pages keep their own presentation. */
 .cms-shell button { min-height: 44px; }
-.cms-shell main a[class*="px-"] { min-height: 44px; display: inline-flex; align-items: center; }
+.cms-shell main a:is([class*="px-"],[class*="inline-flex"]) { min-height: 44px; display: inline-flex; align-items: center; flex-shrink: 0; }
 .cms-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 .cms-shell select { min-height: 48px; min-width: 0; font-size: 16px; }
 .cms-shell textarea { min-width: 0; font-size: 16px; line-height: 1.75; }
