@@ -1,5 +1,14 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับ UI ทีละหน้า: Login และ 404 — 4 พฤศจิกายน 2569
+
+- ต่อจาก Centers 542b8cf ปรับ LoginPage ให้ใช้โลโก้จริง โทนเดียวกับเว็บ เลิกป้าย Owner access ที่ไม่ตรงกับบัญชีทีม ปรับช่องกรอก 16px / สูง 48px ปุ่มและสถานะปฏิเสธอ่านง่าย เอาวงกลมตกแต่ง เงาสี และ hover movement ออก Layout ไม่แสดงแชทสาธารณะในเส้นทาง admin/login
+- หน้า 404 ใช้หัวเรื่องอธิบายปัญหา โลโก้จริง สลับภาษาและปุ่มกลับ Home สูง 48px คงปลายทาง /
+- รันเอง 66 tests / 11 files, lint, TypeScript/PWA build ผ่าน เทียบ auth hooks / submit / error handling / redirect กับฐานแล้วไม่เปลี่ยน ช่อง email/password ยัง required, autocomplete เดิม และปุ่มว่าง disabled ไม่ได้ส่ง credentials หรือทดสอบล็อกอินบัญชีจริง
+- ตรวจ Chrome Login TH/EN 360/768/1440 ไม่ล้นแนวนอน ช่องกรอก 16px/48px ทั้งหมด หน้า 404 ตรวจเบราว์เซอร์และทางกลับ Home; ข้อจำกัด local QA route copy ไม่รับรอง HTTP fallback/status ของ hosting จริง
+- คิวต่อไป AdminLayout และ Dashboard แล้วแยกตรวจรายการ/ฟอร์มแต่ละโมดูลด้วยข้อมูลจำลองแยกจากแอปจริง ไม่มีการข้าม auth ใน production หรือเขียนฐานข้อมูลจริง
+
+
 ## ปรับ UI ทีละหน้า: Centers — 4 พฤศจิกายน 2569
 
 - ต่อจาก Q&A 5d90ad4fd8b0e0e11925c5dd914fa92bf4a12b83 ปรับ CentersPage.tsx: เลิกใช้ภาพอยุธยาซ้ำเป็นภาพแต่ละศูนย์ ใช้ชื่อ/เมือง/ประเทศ/ที่อยู่จริงแทน แสดงรายละเอียดเต็ม ปุ่มลิงก์กดง่ายและบอกบริบทศูนย์ ตัวกรองมือถือเป็น native select ส่วนจอใหญ่เป็นปุ่ม

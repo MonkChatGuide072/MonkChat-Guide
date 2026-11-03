@@ -1,26 +1,29 @@
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
+import { GuideIcon } from '../components/GuideIcon'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 
 export function NotFoundPage() {
   const { t } = useTranslation()
 
   return (
-    <div className="max-w-md mx-auto text-center space-y-4 pt-12 sm:pt-16">
-      <h1 className="text-4xl font-extrabold text-amber-600">404</h1>
-      <h2 className="text-xl font-bold text-slate-900">
-        {t('pages.notFound.title')}
-      </h2>
-      <p className="text-sm text-slate-600">
-        {t('pages.notFound.message')}
-      </p>
-      <div className="pt-4">
-        <Link
-          to="/"
-          className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-lg bg-amber-600 text-white hover:bg-amber-700 transition-colors shadow-xs"
-        >
+    <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-text sm:px-6 sm:py-12">
+      <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
+        <Link to="/" aria-label="Ayutthaya Monk Chat" className="inline-flex min-h-12 items-center gap-3 text-sm font-medium text-brand-maroon">
+          <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="" className="h-12 w-12 object-contain" />
+          <span>Ayutthaya Monk Chat</span>
+        </Link>
+        <LanguageSwitcher />
+      </div>
+      <section className="mx-auto mt-12 max-w-3xl border-t border-brand-border pt-8 sm:mt-20 sm:pt-12">
+        <p className="text-sm tabular-nums text-brand-muted">404</p>
+        <h1 className="mt-4 font-serif text-3xl font-medium leading-snug text-brand-maroon sm:text-4xl">{t('pages.notFound.title')}</h1>
+        <p className="mt-4 max-w-lg text-base leading-7 text-brand-muted">{t('pages.notFound.message')}</p>
+        <Link to="/" className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand-terracotta px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-terracotta-dark">
+          <GuideIcon name="home" />
           {t('pages.notFound.backHome')}
         </Link>
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }

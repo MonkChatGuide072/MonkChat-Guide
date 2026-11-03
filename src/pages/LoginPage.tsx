@@ -64,7 +64,7 @@ export function LoginPage() {
   if (isAuthLoading) {
     return (
       <div className="flex min-h-[55vh] items-center justify-center" role="status">
-        <div className="h-9 w-9 animate-spin rounded-full border-2 border-[#11223C]/12 border-t-[#A86100]"></div>
+        <div className="h-9 w-9 animate-spin rounded-full border-2 border-brand-border border-t-brand-terracotta"></div>
       </div>
     )
   }
@@ -76,17 +76,17 @@ export function LoginPage() {
 
     return (
       <div className="mx-auto max-w-md space-y-6 py-6 sm:py-12">
-        <div className="rounded-[1.75rem] border border-red-200 bg-white p-6 text-center shadow-[0_18px_55px_rgba(17,34,60,0.08)] sm:p-8">
-          <h2 className="text-xl font-bold text-red-700 mb-4">
+        <div className="rounded-2xl border border-red-200 bg-brand-surface p-6 sm:p-8">
+          <h2 className="mb-4 text-xl font-medium text-red-800">
             {t(isInactive ? 'management.inactiveTitle' : 'management.deniedTitle')}
           </h2>
-          <p className="text-slate-600 mb-6">{t(`pages.login.errors.${errorKey}`)}</p>
+          <p className="mb-6 leading-7 text-brand-muted">{t(`pages.login.errors.${errorKey}`)}</p>
           <button
             onClick={async () => {
               try { await signOut(); setErrorMsg('') }
               catch { setErrorMsg(t('management.signOutError')) }
             }}
-            className="w-full rounded-lg bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-200"
+            className="min-h-12 w-full rounded-lg border border-red-200 px-4 py-3 text-sm font-medium text-red-800 transition-colors hover:bg-red-50"
           >
             {t('admin.nav.signOut')}
           </button>
@@ -97,36 +97,23 @@ export function LoginPage() {
   }
 
   return (
-    <div className="mx-auto grid max-w-5xl overflow-hidden rounded-[2rem] border border-[#11223C]/8 bg-white shadow-[0_28px_80px_rgba(17,34,60,0.12)] lg:grid-cols-[0.9fr_1.1fr]">
-      <section className="relative hidden overflow-hidden bg-[#11223C] p-10 text-white lg:flex lg:flex-col lg:justify-between">
-        <div aria-hidden="true" className="absolute -right-20 -top-20 h-72 w-72 rounded-full border border-white/8" />
-        <div aria-hidden="true" className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full border border-[#DDA756]/15" />
-        <div className="relative flex items-center gap-3">
-          <img src="/monkchat-placeholder.svg" alt="" className="h-11 w-11 rounded-xl ring-1 ring-white/15" />
-          <div className="leading-tight">
-            <p className="text-[0.65rem] font-extrabold uppercase tracking-[0.22em] text-[#DDA756]">MonkChat</p>
-            <p className="font-extrabold">Guide CMS</p>
-          </div>
-        </div>
-        <div className="relative mt-24">
-          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#DDA756]/12 text-[#DDA756]">
-            <svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M8 11V8a4 4 0 118 0v3m-9 0h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6a2 2 0 012-2z" />
-            </svg>
-          </span>
-          <h2 className="mt-6 text-3xl font-bold leading-tight tracking-[-0.03em]">{t('management.loginPanelTitle')}</h2>
-          <p className="mt-4 text-sm leading-7 text-white/55">{t('management.loginPanelDescription')}</p>
+    <div className="mx-auto grid max-w-4xl overflow-hidden rounded-2xl border border-brand-border bg-brand-surface lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="hidden flex-col justify-center gap-8 border-r border-brand-border bg-[#F5F1E9] p-8 lg:flex">
+        <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="Ayutthaya Monk Chat" className="h-20 w-20 object-contain" />
+        <div>
+          <h2 className="font-serif text-2xl font-medium leading-snug text-brand-maroon">{t('management.loginPanelTitle')}</h2>
+          <p className="mt-4 text-sm leading-7 text-brand-muted">{t('management.loginPanelDescription')}</p>
         </div>
       </section>
 
       <section className="p-6 sm:p-10 lg:p-12">
         <div className="mx-auto max-w-md space-y-5">
         <div className="space-y-2">
-          <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#A86100]">Owner access</p>
-          <h1 className="text-2xl font-bold tracking-tight text-[#11223C] sm:text-3xl">
+          <p className="text-sm text-brand-muted">Ayutthaya Monk Chat</p>
+          <h1 className="font-serif text-2xl font-medium text-brand-maroon sm:text-3xl">
             {t('pages.login.title')}
           </h1>
-          <p className="text-sm leading-6 text-[#11223C]/55">
+          <p className="text-sm leading-6 text-brand-muted">
             {t('pages.login.subtitle')}
           </p>
         </div>
@@ -139,7 +126,7 @@ export function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           <div>
-            <label className="mb-2 block text-xs font-bold text-[#11223C]/75" htmlFor="email">
+            <label className="mb-2 block text-sm font-medium text-brand-text" htmlFor="email">
               {t('pages.login.emailLabel')}
             </label>
             <input
@@ -151,12 +138,12 @@ export function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isSubmitting || !supabaseClient}
               placeholder="team@example.com"
-              className="min-h-12 w-full rounded-xl border border-[#11223C]/15 bg-[#FFFEF9] px-4 text-sm text-[#11223C] transition-colors placeholder:text-slate-400 focus:border-[#A86100]/50 focus:outline-none focus:ring-2 focus:ring-[#A86100]/15 disabled:bg-slate-50 disabled:text-slate-500"
+              className="min-h-12 w-full rounded-lg border border-brand-border-dark bg-white px-4 text-base text-brand-text transition-colors placeholder:text-brand-muted focus:border-brand-terracotta focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 disabled:bg-neutral-100 disabled:text-neutral-500"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-xs font-bold text-[#11223C]/75" htmlFor="password">
+            <label className="mb-2 block text-sm font-medium text-brand-text" htmlFor="password">
               {t('pages.login.passwordLabel')}
             </label>
             <input
@@ -168,20 +155,20 @@ export function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={isSubmitting || !supabaseClient}
               placeholder="••••••••"
-              className="min-h-12 w-full rounded-xl border border-[#11223C]/15 bg-[#FFFEF9] px-4 text-sm text-[#11223C] transition-colors placeholder:text-slate-400 focus:border-[#A86100]/50 focus:outline-none focus:ring-2 focus:ring-[#A86100]/15 disabled:bg-slate-50 disabled:text-slate-500"
+              className="min-h-12 w-full rounded-lg border border-brand-border-dark bg-white px-4 text-base text-brand-text transition-colors placeholder:text-brand-muted focus:border-brand-terracotta focus:outline-none focus:ring-2 focus:ring-brand-terracotta/20 disabled:bg-neutral-100 disabled:text-neutral-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting || !supabaseClient || !email || !password}
-            className="min-h-12 w-full rounded-xl bg-[#11223C] px-4 text-sm font-bold text-white shadow-[0_10px_25px_rgba(17,34,60,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#1A3256] disabled:translate-y-0 disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none"
+            className="min-h-12 w-full rounded-lg bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors hover:bg-brand-terracotta-dark disabled:bg-neutral-200 disabled:text-neutral-600"
           >
             {isSubmitting ? t('pages.login.loadingButton') : t('pages.login.submitButton')}
           </button>
         </form>
 
-        <p className="rounded-xl border border-[#A86100]/15 bg-[#A86100]/6 p-3 text-center text-xs font-semibold leading-5 text-[#8D5200]">
+        <p className="border-t border-brand-border pt-4 text-sm leading-6 text-brand-muted">
           {t('management.loginNote')}
         </p>
         </div>

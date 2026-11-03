@@ -118,3 +118,16 @@ Nine passes: (1) consistent padding/spacing, 44/48px actions; (2) existing quiet
 Verification: 66 tests / 11 files, lint and TypeScript/PWA build passed. One new regression test covers York vs New York, search-submit focus and restoring both records from an empty result. Fetch logic and published-only filters compared unchanged to the base; safe-URL checks remain and existing partial-data/error assertions still pass. Chrome: Singapore filter yields one real record, unmatched query shows recovery, Show all centers restores four, native phone selection of Singapore also works. All ten TH/EN layout states at 360/390/768/1024/1440 show four records and no document overflow; phone select has five options and 16px text, larger-screen buttons fit. Map/website/contact hrefs and noopener checked from the page; remote venue addresses and external-site availability were not independently certified. No live records or schema were changed.
 
 Next: login, then the missing-page state; afterwards inspect the authenticated shell and management pages. Public visual work does not certify real authenticated CMS or live private inference.
+
+
+## Login phase
+
+Direction: authorized team access to the project's content; calm, legible, restrained; paper and brick; the official project mark is the sole visual moment; the existing maroon/terracotta action treatment is the signature.
+
+Audit: placeholder logo, navy panel disconnected from the public brand, decorative circles, 2rem radii, colored shadows, uppercase Owner access despite team access, tiny bold labels, hover movement, unrelated public chatbot. Passes: 4px spacing, neutral tinted panels, official mark, accurate team context, readable 14px labels / 16px fields, proportionate split, 48px controls, remove circles/placeholder, color-only hover. The inactive/missing-profile state keeps its denial/sign-out behavior and semantic red.
+
+Verification: 66 tests / 11 files, lint and TypeScript/PWA build passed. Auth hooks, submit handler, errors and redirect compared equal to the baseline. Chrome TH/EN 360/768/1440: no document overflow, both fields 16px and 48px, correct required/autocomplete attributes, empty submit disabled, no chatbot. No real credentials entered; this is not certification of live sign-in.
+
+## Missing-page phase
+
+Direction: help a visitor recover a missing route; clear, calm, familiar; the same project palette; official mark only; the outline Home action. Audit: oversized amber 404 as primary heading, small recovery control, unrelated slate/amber colors. Changed to descriptive H1, quiet 404 metadata, readable explanation, language control and 48px Home action. No content promises or new recovery features. The QA route is a static index copy to exercise React's wildcard, not a real hosting HTTP404/fallback check.
