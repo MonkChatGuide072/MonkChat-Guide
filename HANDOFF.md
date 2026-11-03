@@ -1,5 +1,14 @@
 # MonkChat Guide — Current Handoff
 
+## ส่งงานขึ้น GitHub สำเร็จ — 3 พฤศจิกายน 2569
+
+- Draft PR #17: https://github.com/MonkChatGuide072/MonkChat-Guide/pull/17
+- Branch: `sync/anti-reviewed-20261103`; source checkpoint: `b038e5d24d3d382fc0b7597b8603319e7fddf47e`
+- ตรวจ source tree บน GitHub ตรงกับชุดที่เตรียม: `2f8de60bdb0d39341d5387b13d39a432066347a7`; อ่านกลับ HANDOFF.md, CURRENT_SCOPE.md, WORKFLOW.md, HomeHeroIntro.tsx และ VisitPage.tsx แล้วตรงกัน
+- โค้ดและเอกสาร 63 ไฟล์อยู่ใน branch เดียว พร้อมให้ดึงจาก Git แทนการใช้ ZIP; ไม่รวมภาพใหม่/.env/node_modules/dist หรือเอกสารร่างภายใน
+- ยังไม่ merge main, deploy production, ติดตั้ง migration หรือยืนยันว่า Windows/Antigravity รับงานแล้ว
+
+
 เจ้าของยืนยันให้ส่งโค้ดและเอกสาร 63 ไฟล์ไปยัง GitHub สาธารณะ MonkChatGuide072/MonkChat-Guide บน branch sync/anti-reviewed-20261103 แล้ว หลังชี้แจงปลายทางและชุดไฟล์ โดยสั่ง “อัพดิ้รออะไร” ไม่รวมภาพ/.env และไม่ merge/deploy production
 
 ## จุดส่งต่องานร่วมผ่าน Git — 3 พฤศจิกายน 2569
