@@ -52,7 +52,14 @@ button,
 input,
 textarea,
 select {
-  font: inherit;
+  font-family: inherit;
+}
+
+/* Keep fields readable on phones without overriding utility font weights. */
+input,
+textarea,
+select {
+  font-size: 1rem;
 }
 
 #root {

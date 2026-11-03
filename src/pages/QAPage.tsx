@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { VisitorBackLink } from '../components/VisitorBackLink'
+import { GuideIcon, type GuideIconName } from '../components/GuideIcon'
 
 interface QATranslationRow {
   language_code: string
@@ -24,6 +25,7 @@ export function QAPage() {
   const { t, i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
   const currentLang = isEnglish ? 'en' : 'th'
+  const resultsHeadingRef = useRef<HTMLHeadingElement>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [openIds, setOpenIds] = useState<Set<string>>(new Set())
@@ -91,90 +93,39 @@ export function QAPage() {
   const featuredQuestion = availableItems[0]?.translation
 
   const categories = [
-    { key: 'All', label: isEnglish ? 'All Questions' : 'คำถามทั้งหมด', icon: '🪷' },
-    { key: 'Meditation', label: isEnglish ? 'Meditation' : 'สมาธิ', icon: '🧘' },
-    { key: 'Buddhism', label: isEnglish ? 'Buddhism' : 'พระพุทธศาสนา', icon: '☸️' },
-    { key: 'Visiting', label: isEnglish ? 'Visiting' : 'การมาเยือน', icon: '🏛️' },
-    { key: 'Monk Chat', label: isEnglish ? 'Monk Chat' : 'Monk Chat', icon: '💬' },
-    { key: 'Etiquette', label: isEnglish ? 'Etiquette' : 'มารยาทในวัด', icon: '🙏' },
+    { key: 'All', label: isEnglish ? 'All Questions' : 'คำถามทั้งหมด', icon: 'question' },
+    { key: 'Meditation', label: isEnglish ? 'Meditation' : 'สมาธิ', icon: 'lotus' },
+    { key: 'Buddhism', label: isEnglish ? 'Buddhism' : 'พระพุทธศาสนา', icon: 'book' },
+    { key: 'Visiting', label: isEnglish ? 'Visiting' : 'การมาเยือน', icon: 'pin' },
+    { key: 'Monk Chat', label: isEnglish ? 'Monk Chat' : 'Monk Chat', icon: 'chat' },
+    { key: 'Etiquette', label: isEnglish ? 'Etiquette' : 'มารยาทในวัด', icon: 'check' },
   ]
 
   return (
-    <div className="space-y-10 pb-6 break-words [overflow-wrap:anywhere]">
-      {/* 1. HERO BANNER */}
-      <section className="relative isolate overflow-hidden rounded-[2rem] border border-[#EADCC6] bg-[#FFF8EE] shadow-[0_16px_40px_rgba(104,27,22,0.12)]">
-        <div className="absolute inset-0 -z-20">
-          <img
-            src="/images/home/monkchat-slide-2.webp"
-            alt="Ayutthaya ruins and monks"
-            className="h-full w-full object-cover object-[center_35%] opacity-100"
-          />
+    <div className="space-y-12 bg-brand-cream pb-16 text-brand-text break-words [overflow-wrap:anywhere]">
+      <section className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface">
+        <div className="grid md:grid-cols-[1.3fr_0.7fr]">
+          <div className="order-2 p-5 sm:p-6 md:order-1 md:p-8">
+            <p className="flex items-center gap-2 text-sm text-brand-muted"><GuideIcon name="chat" />{isEnglish ? 'Questions and answers' : 'ถาม–ตอบ'}</p>
+            <h1 className="mt-3 font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{t('qa.title')}</h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-brand-muted sm:text-base">{t('qa.subtitle')}</p>
+            <div className="mt-4"><VisitorBackLink /></div>
+          </div>
+          <img src="/images/home/monkchat-slide-2.webp" alt={isEnglish ? 'A monk among Ayutthaya ruins' : 'พระสงฆ์ท่ามกลางโบราณสถานอยุธยา'} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
         </div>
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(255,248,238,0.96)_0%,rgba(255,248,238,0.84)_50%,rgba(255,248,238,0.3)_100%)]"
-        />
-
-        <div className="relative z-10 px-4 py-10 text-center sm:px-12 sm:py-16">
-          <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#B77A24]/20 text-[#A43D1D] ring-1 ring-[#EFD070]/30">
-            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
+        <form role="search" onSubmit={event => { event.preventDefault(); resultsHeadingRef.current?.focus() }} className="flex flex-col gap-3 border-t border-brand-border p-5 sm:flex-row sm:p-6 md:px-8">
+          <div className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-lg border border-brand-border bg-brand-surface px-3 focus-within:border-brand-terracotta focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-terracotta">
+            <GuideIcon name="search" className="h-[18px] w-[18px] text-brand-muted" />
+            <input value={searchQuery} onChange={event => setSearchQuery(event.target.value)} aria-label={t('qa.searchPlaceholder')} placeholder={t('qa.searchPlaceholder')} className="min-h-11 min-w-0 flex-1 bg-transparent text-sm text-brand-text outline-none placeholder:text-brand-muted" />
+            {searchQuery && <button type="button" onClick={() => setSearchQuery('')} aria-label={t('qa.clearSearch')} className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-brand-muted hover:bg-brand-gold-soft"><GuideIcon name="close" /></button>}
           </div>
-
-          <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#A43D1D]">
-            {t('qa.heroTag')}
-          </p>
-          <h1 className="mt-2 font-serif text-3xl font-extrabold tracking-tight text-[#681B16] drop-shadow-sm sm:text-5xl">
-            {t('qa.title')}
-          </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-xs text-[#4A3B32] sm:text-lg sm:leading-7">
-            {t('qa.subtitle')}
-          </p>
-
-          <div className="mt-6 flex justify-center">
-            <VisitorBackLink />
-          </div>
-
-          {/* Search Bar Embedded in Hero */}
-          <div className="mx-auto mt-8 max-w-2xl">
-            <div className="flex min-h-12 items-center rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-1.5 shadow-md">
-              <span className="grid w-11 shrink-0 place-items-center text-[#A43D1D]" aria-hidden="true">
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <circle cx="11" cy="11" r="7" strokeWidth={1.8} />
-                  <path d="m16 16 4 4" strokeWidth={1.8} strokeLinecap="round" />
-                </svg>
-              </span>
-              <input
-                value={searchQuery}
-                onChange={event => setSearchQuery(event.target.value)}
-                aria-label={t('qa.searchPlaceholder')}
-                placeholder={t('qa.searchPlaceholder')}
-                className="min-w-0 flex-1 bg-transparent px-2 text-xs font-medium text-[#30251E] outline-none placeholder:text-[#7D6B5D] sm:text-sm"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="px-2 text-xs font-bold text-[#A43D1D] hover:underline"
-                >
-                  {t('qa.clearSearch')}
-                </button>
-              )}
-              <button
-                type="button"
-                className="inline-flex min-h-10 items-center justify-center rounded-xl bg-[#A43D1D] px-5 text-xs font-bold text-white shadow-2xs transition hover:bg-[#8E3317]"
-              >
-                {isEnglish ? 'Search' : 'ค้นหา'}
-              </button>
-            </div>
-          </div>
-        </div>
+          <button type="submit" className="inline-flex min-h-12 cursor-pointer items-center justify-center rounded-lg bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark">{isEnglish ? 'Search' : 'ค้นหา'}</button>
+        </form>
       </section>
 
       {/* 2. CATEGORY PILLS */}
-      <section aria-label="Question categories" className="overflow-x-auto pb-1">
-        <div className="flex gap-2">
+      <section aria-label="Question categories" className="pb-1">
+        <div className="flex flex-wrap gap-2">
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.key
             return (
@@ -182,13 +133,14 @@ export function QAPage() {
                 key={cat.key}
                 type="button"
                 onClick={() => setSelectedCategory(cat.key)}
-                className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 text-xs font-bold transition cursor-pointer ${
+                aria-pressed={isActive}
+                className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors duration-150 cursor-pointer ${
                   isActive
-                    ? 'bg-[#A43D1D] text-white shadow-xs'
+                    ? 'bg-[#A43D1D] text-white '
                     : 'border border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] hover:bg-[#FDF4E3]'
                 }`}
               >
-                <span>{cat.icon}</span>
+                <GuideIcon name={cat.icon as GuideIconName} />
                 <span>{cat.label}</span>
               </button>
             )
@@ -197,14 +149,14 @@ export function QAPage() {
       </section>
 
       {/* 3. MAIN 2-COLUMN SECTION: FAQ ACCORDION + ASK MONKCHAT */}
-      <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+      <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr] items-start">
         {/* Left Column: Frequently Asked Questions Accordion */}
         <div className="space-y-4">
           <div>
-            <h2 className="font-serif text-2xl font-bold text-[#681B16] sm:text-3xl">
-              {isEnglish ? 'Frequently Asked Questions' : 'คำถามที่พบบ่อย'}
+            <h2 id="qa-results-heading" ref={resultsHeadingRef} tabIndex={-1} className="scroll-mt-24 font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+              {isEnglish ? 'Frequently asked questions' : 'คำถามที่พบบ่อย'}
             </h2>
-            <p className="text-xs text-[#7D6B5D] sm:text-sm">
+            <p className="text-sm text-brand-muted sm:text-sm">
               {isEnglish ? 'Popular questions from foreign visitors' : 'ข้อสงสัยที่พบบ่อยจากผู้มาเยือนชาวต่างชาติ'}
             </p>
           </div>
@@ -221,7 +173,7 @@ export function QAPage() {
               <button
                 type="button"
                 onClick={() => void fetchQAItems()}
-                className="mt-3 min-h-10 rounded-xl bg-[#A43D1D] px-5 text-xs font-bold text-white"
+                className="mt-3 min-h-11 rounded-xl bg-[#A43D1D] px-5 text-sm font-medium text-white"
               >
                 {t('qa.retry')}
               </button>
@@ -229,20 +181,20 @@ export function QAPage() {
           )}
 
           {!isLoading && !error && availableItems.length === 0 && (
-            <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-8 text-center text-xs text-[#7D6B5D]">
+            <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-8 text-center text-sm text-brand-muted">
               {t('qa.empty')}
             </div>
           )}
 
           {!isLoading && !error && availableItems.length > 0 && filteredItems.length === 0 && (
             <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-8 text-center">
-              <h2 className="font-serif text-base font-bold text-[#681B16]">{t('qa.noResults')}</h2>
+              <h2 className="font-serif text-base font-semibold text-[#681B16]">{t('qa.noResults')}</h2>
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
-                className="mt-3 min-h-9 rounded-xl bg-[#A43D1D] px-4 text-xs font-bold text-white hover:bg-[#8E3317]"
+                onClick={() => { setSearchQuery(''); setSelectedCategory('All') }}
+                className="mt-3 min-h-11 rounded-xl bg-[#A43D1D] px-4 text-sm font-medium text-white hover:bg-[#8E3317]"
               >
-                {t('qa.clearSearch')}
+                {isEnglish ? 'Show all questions' : 'แสดงคำถามทั้งหมด'}
               </button>
             </div>
           )}
@@ -254,32 +206,20 @@ export function QAPage() {
                 return (
                   <div
                     key={item.id}
-                    className="overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] shadow-2xs transition hover:border-[#D5BD94]"
+                    className="overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] transition-colors duration-150 hover:border-[#D5BD94]"
                   >
-                    <button
-                      type="button"
-                      onClick={() => toggleAccordion(item.id)}
-                      aria-expanded={isOpen}
-                      className="flex w-full items-center justify-between p-4 text-left transition cursor-pointer"
-                    >
-                      <div className="flex items-center gap-3 pr-2">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#FDF4E3] text-[#A43D1D] text-xs font-bold">
-                          {item.category.toLowerCase().includes('meditation') ? '🪷' : '☸️'}
-                        </span>
-                        <h3 className="font-serif text-sm font-bold text-[#681B16] sm:text-base">
-                          {translation.question}
-                        </h3>
-                      </div>
-                      <span className="text-sm font-bold text-[#A43D1D]">
-                        {isOpen ? '▲' : '▼'}
-                      </span>
-                    </button>
+                    <h3>
+                      <button type="button" onClick={() => toggleAccordion(item.id)} aria-expanded={isOpen} aria-controls={`qa-answer-${item.id}`} className="flex min-h-14 w-full cursor-pointer items-start justify-between gap-4 p-4 text-left text-base font-medium leading-6 text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft">
+                        <span>{translation.question}</span>
+                        <GuideIcon name="down" className={`mt-1 h-[18px] w-[18px] text-brand-muted transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                    </h3>
 
                     {isOpen && (
-                      <div className="border-t border-[#EADCC6]/80 bg-[#FAF2E6]/50 p-4 pt-3 text-xs leading-6 text-[#4A3B32] sm:text-sm">
+                      <div id={`qa-answer-${item.id}`} className="border-t border-[#EADCC6]/80 bg-[#FAF2E6]/50 p-4 pt-3 text-sm leading-6 text-[#4A3B32] sm:text-sm">
                         <p className="font-medium">{translation.short_answer}</p>
                         {translation.detailed_answer && (
-                          <p className="mt-2 text-xs text-[#5A4B40] whitespace-pre-wrap">
+                          <p className="mt-2 text-sm text-brand-muted whitespace-pre-wrap">
                             {translation.detailed_answer}
                           </p>
                         )}
@@ -294,18 +234,18 @@ export function QAPage() {
 
         {/* Right Column: Ask MonkChat Card (Non-generative verified guide) */}
         <aside className="space-y-6">
-          <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 shadow-xs sm:p-6">
+          <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FDF4E3] text-[#A43D1D]">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-serif text-lg font-bold text-[#681B16]">
+                <h3 className="font-sans text-lg font-medium text-[#681B16]">
                   {isEnglish ? 'Ask MonkChat' : 'ถาม MonkChat'}
                 </h3>
-                <p className="text-xs text-[#7D6B5D]">
+                <p className="text-sm text-brand-muted">
                   {isEnglish
                     ? 'Your friendly guide for meditation, Buddhism, and visiting Ayutthaya'
                     : 'คู่มือคำถาม-คำตอบเกี่ยวกับสมาธิ พระพุทธศาสนา และอยุธยา'}
@@ -314,31 +254,31 @@ export function QAPage() {
             </div>
 
             {/* Use the same published Q&A as the FAQ, never a fabricated demo reply. */}
-            <div className="mt-4 space-y-3 rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-3.5">
+            <div className="mt-4 space-y-3 rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-4">
               {featuredQuestion ? <>
-                <p className="ml-auto max-w-[90%] rounded-xl border border-[#EADCC6] bg-[#FDF4E3] px-3.5 py-2 text-sm font-semibold text-[#681B16]">{featuredQuestion.question}</p>
+                <p className="ml-auto max-w-[90%] rounded-xl border border-[#EADCC6] bg-[#FDF4E3] px-4 py-2 text-sm font-semibold text-[#681B16]">{featuredQuestion.question}</p>
                 <p className="rounded-xl border border-[#EADCC6] bg-[#FFFDF7] p-3 text-sm leading-7 text-[#4A3B32]">{featuredQuestion.short_answer}</p>
-              </> : <p className="text-sm text-[#5A4B40]">{isLoading ? t('qa.loading') : error ? t('qa.errorLoad') : t('qa.empty')}</p>}
+              </> : <p className="text-sm text-brand-muted">{isLoading ? t('qa.loading') : error ? t('qa.errorLoad') : t('qa.empty')}</p>}
             </div>
 
             {/* Quick Action Suggestions */}
             <div className="mt-4 space-y-2">
               <Link
                 to="/meditation"
-                className="flex items-center justify-between rounded-xl border border-[#EADCC6] bg-[#FFF8EE] px-4 py-2.5 text-xs font-bold text-[#681B16] transition hover:bg-[#FDF4E3]"
+                className="flex min-h-11 items-center justify-between rounded-lg border border-[#EADCC6] bg-[#FFF8EE] px-4 py-2.5 text-sm font-medium text-[#681B16] transition-colors duration-150 hover:bg-[#FDF4E3]"
               >
                 <span className="flex items-center gap-2">
-                  <span>▷</span>
+                  <GuideIcon name="play" />
                   <span>{isEnglish ? 'Try a guided meditation' : 'ลองฝึกสมาธิตามเสียงนำ'}</span>
                 </span>
                 <span>→</span>
               </Link>
               <Link
                 to="/meditation#meditation-supplementary"
-                className="flex items-center justify-between rounded-xl border border-[#EADCC6] bg-[#FFF8EE] px-4 py-2.5 text-xs font-bold text-[#681B16] transition hover:bg-[#FDF4E3]"
+                className="flex min-h-11 items-center justify-between rounded-lg border border-[#EADCC6] bg-[#FFF8EE] px-4 py-2.5 text-sm font-medium text-[#681B16] transition-colors duration-150 hover:bg-[#FDF4E3]"
               >
                 <span className="flex items-center gap-2">
-                  <span>📖</span>
+                  <GuideIcon name="book" />
                   <span>{isEnglish ? 'More meditation tips' : 'คำแนะนำเพิ่มเติม'}</span>
                 </span>
                 <span>→</span>
@@ -352,29 +292,29 @@ export function QAPage() {
       <section className="grid gap-4 rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:grid-cols-3 sm:p-6">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FDF4E3] text-[#A43D1D]">
-            <span>💬</span>
+            <GuideIcon name="chat" />
           </div>
           <div>
-            <h3 className="font-serif text-sm font-bold text-[#681B16]">
+            <h3 className="font-sans text-sm font-medium text-[#681B16]">
               {isEnglish ? 'Meditation Questions' : 'คำถามเรื่องสมาธิ'}
             </h3>
-            <p className="mt-1 text-xs text-[#7D6B5D]">
+            <p className="mt-2 text-sm leading-6 text-brand-muted">
               {isEnglish
                 ? 'Get clear, respectful answers about meditation and Buddhism'
-                : 'คำตอบที่เข้าใจง่ายและถูกต้องเกี่ยวกับสมาธิและพระพุทธศาสนา'}
+                : 'คำตอบที่เข้าใจง่ายเกี่ยวกับสมาธิและพระพุทธศาสนา'}
             </p>
           </div>
         </div>
 
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FDF4E3] text-[#A43D1D]">
-            <span>🪷</span>
+            <GuideIcon name="lotus" />
           </div>
           <div>
-            <h3 className="font-serif text-sm font-bold text-[#681B16]">
+            <h3 className="font-sans text-sm font-medium text-[#681B16]">
               {isEnglish ? 'Visitor Friendly' : 'เป็นมิตรกับผู้มาเยือน'}
             </h3>
-            <p className="mt-1 text-xs text-[#7D6B5D]">
+            <p className="mt-2 text-sm leading-6 text-brand-muted">
               {isEnglish
                 ? 'Simple, practical guidance for foreign visitors in Ayutthaya'
                 : 'คำแนะนำที่เหมาะสมและเป็นประโยชน์สำหรับชาวต่างชาติ'}
@@ -384,13 +324,13 @@ export function QAPage() {
 
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FDF4E3] text-[#A43D1D]">
-            <span>🛡️</span>
+            <GuideIcon name="book" />
           </div>
           <div>
-            <h3 className="font-serif text-sm font-bold text-[#681B16]">
+            <h3 className="font-sans text-sm font-medium text-[#681B16]">
               {isEnglish ? 'Continue Learning' : 'เรียนรู้และฝึกต่อ'}
             </h3>
-            <p className="mt-1 text-xs text-[#7D6B5D]">
+            <p className="mt-2 text-sm leading-6 text-brand-muted">
               {isEnglish
                 ? 'Explore meditation audio and practical visitor information'
                 : 'ฟังเสียงนำสมาธิและดูข้อมูลสำหรับการมาเยือน'}

@@ -23,6 +23,8 @@ const paths = {
   bookmark: 'M6 3h12v18l-6-4-6 4V3Z',
   share: 'M15 8 9 11m6 5-6-3M21 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM9 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM21 19a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
   user: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM5 21a7 7 0 0 1 14 0',
+  search: 'M18 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Zm-2 5 5 5',
+  book: 'M12 6v15M3 4c4-1 6-1 9 2 3-3 5-3 9-2v15c-4-1-6-1-9 2-3-3-5-3-9-2V4Z',
 } as const
 
 export type GuideIconName = keyof typeof paths

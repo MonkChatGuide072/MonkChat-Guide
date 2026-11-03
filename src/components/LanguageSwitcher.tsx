@@ -24,7 +24,7 @@ export function LanguageSwitcher({ tone = 'terracotta' }: { tone?: 'navy' | 'cla
       <button
         type="button"
         onClick={() => setLanguage('th')}
-        className={`min-h-11 min-w-11 rounded-full px-2.5 py-1 text-xs font-medium transition-colors duration-150 cursor-pointer ${
+        className={`min-h-11 min-w-11 rounded-full px-2.5 py-1 text-sm font-medium transition-colors duration-150 cursor-pointer ${
           currentLang === 'th'
             ? 'bg-[#A43D1D] text-white'
             : 'text-[#681B16] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'
@@ -37,7 +37,7 @@ export function LanguageSwitcher({ tone = 'terracotta' }: { tone?: 'navy' | 'cla
       <button
         type="button"
         onClick={() => setLanguage('en')}
-        className={`min-h-11 min-w-11 rounded-full px-2.5 py-1 text-xs font-medium transition-colors duration-150 cursor-pointer ${
+        className={`min-h-11 min-w-11 rounded-full px-2.5 py-1 text-sm font-medium transition-colors duration-150 cursor-pointer ${
           currentLang === 'en'
             ? 'bg-[#A43D1D] text-white'
             : 'text-[#681B16] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'

@@ -1,5 +1,13 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับ UI ทีละหน้า: Q&A — 4 พฤศจิกายน 2569
+
+- ต่อจาก Meditation 09541c8ecc1345f5bea1c644c9025205dfbaadc1 ปรับ QAPage.tsx: ภาพกับหัวเรื่องกระชับ ช่องค้นหากับหมวดอ่านง่าย ใช้เส้นไอคอน คำถามเป็น heading/button ที่ถูกโครงสร้างและมี aria-controls ปุ่ม Search ส่งโฟกัสไปผลลัพธ์ ปุ่ม Show all questions ล้างทั้งคำค้นและหมวด
+- แก้ src/index.css ที่ font:inherit เขียนทับ utility ของ native controls ให้ฟอนต์/น้ำหนักที่กำหนดทำงาน โดยช่อง input/textarea/select ยังคง 16px; LanguageSwitcher ใช้ 14px / target 44px เพิ่มไอคอน search/book ใน GuideIcon
+- รันเอง 65 tests / 11 files, lint, TypeScript/PWA build ผ่าน เพิ่มการตรวจ submit-focus/empty-category recovery ใน flow test เดิม และรอปุ่มคำถามที่โหลดแบบ async ก่อนกด ไม่ลด assertion เรื่องคลัง verified/published หรือบอทไม่เรียก AI ตรวจ logic โหลด/กรอง/จับคู่คำถามเทียบฐานแล้วไม่เปลี่ยน
+- Chrome: ค้นไม่พบแล้วกด Search โฟกัสถึงหัวข้อผลลัพธ์ กลับมาดูทั้งหมดได้ 4 คำถาม พับคำตอบได้ บอทตอบจากคลังและปฏิเสธคำถามที่ไม่มีข้อมูล ตรวจ TH/EN 360/390/768/1024/1440 ไม่พบ horizontal overflow หมวดพอดีช่อง ภาพและผลวัดเก็บภายใน ไม่ใช่อุปกรณ์จริง
+- ถัดไป Centers: ค้นหา/ภูมิภาค/ข้อมูลศูนย์/ลิงก์ปลอดภัย/ผลลัพธ์ว่าง คง source และเนื้อหาจริงเดิม รายละเอียดอยู่ docs/UNSLOP_REVIEW_2026-11-04.md ไม่มี merge/deploy หรือแก้ข้อมูลจริง
+
 ## ปรับ UI ทีละหน้า: Meditation — 4 พฤศจิกายน 2569
 
 - ต่อจาก Activities f9dd39ecd823d10e27730206dd7082ae348f713e ปรับ MeditationPage และ BeginnerGuide / Supplementary / Player: หัวเรื่องกับภาพกระชับ ลิงก์ส่วนต่าง ๆ สั้น ไม่แสดงเลขหัวข้อซ้ำ ตัวอักษรอ่านง่าย metadata เป็นเส้นไอคอน ขั้นตอนมือถือเป็นแถว เนื้อหาถอดเสียงเต็มไม่ขังในกล่องเลื่อนเล็ก คงเสียง/ซับ/คำแนะนำ/สถานะร่างเดิม

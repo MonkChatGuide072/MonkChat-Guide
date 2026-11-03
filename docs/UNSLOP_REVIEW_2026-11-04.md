@@ -12,8 +12,8 @@ Review approach: adapted from **unslop by Damir Sokolovsky (@heydamir), CC BY 4.
 | Shared | Navigation, footer clearance, public chatbot | Changed for Home usability; cross-page checks continue with each page |
 | 2 | Activities | Implemented and checked |
 | 3 | Meditation and its supporting sections | Implemented and checked |
-| 4 | Q&A and public chatbot states | Next |
-| 5 | Centers | Pending |
+| 4 | Q&A and public chatbot states | Implemented and checked |
+| 5 | Centers | Next |
 | 6 | Login and missing-page state | Pending |
 | 7 | Authenticated administration and private assistant | Pending; distinguish source review from a real authenticated session |
 
@@ -94,3 +94,15 @@ Verification: 65 tests / 11 files, lint and TypeScript/PWA build passed. Two exi
 Limit: this visual pass does not certify every caption cue. The 326s audio versus 300s VTT discrepancy, cue 19 and public Draft for Review sections still need the project's content decision before release. Draft badges remain visible; no reviewer approval has been invented.
 
 Next: Q&A, including search/category/accordion states and the existing reviewed-answer chatbot; preserve verified/published filtering and avoid generative answers.
+
+## Q&A phase
+
+Direction: help visitors find an existing answer or continue with a monk; calm, readable, approachable; the same Ayutthaya world; the original monk photograph and actual answer text are the moments; small chat/search outlines mark the task. No answer text, publication policy or generative behavior was added.
+
+Audit: large centered hero and washed-out photograph; small tracked capitals; emoji categories; all category pills on one horizontal strip; heavy colored shadow; a Search button without behavior; an empty-state action that cleared text but left an empty category selected; answer headings nested inside buttons; missing accordion panel associations. Also found the global unlayered `font: inherit` rule overriding control font utility weights.
+
+Nine passes: (1) consistent spacing and 44/48px controls; (2) original cream/brick palette with quiet surfaces; (3) outline icons; (4) concise task labels without status claims; (5) readable body and actual medium control weights, while inputs/textarea/select stay 16px; (6) original photograph beside text on desktop / above on phones, wrapping categories, search input and submit stack on phones; (7) semantic search form moves focus to results, empty reset clears both search and category, proper heading/button and aria-controls; (8) retain the actual monk photo and real published answer preview; (9) color-only interaction feedback.
+
+Verification: 65 tests / 11 files, lint and TypeScript/PWA build passed. Existing Q&A flow test now checks submit focus and recovery from an empty category; it awaits the asynchronously loaded question control instead of assuming it appears with the static page title. No assertion about verified/published filters or non-generative behavior was removed. The loading/filter/matching logic compared unchanged to the base. Chrome: search for an unmatched phrase, Search focuses qa-results-heading, Show all questions restores four loaded questions, accordion closes, chatbot returns a stored answer and declines an unknown question. Ten TH/EN layout states at 360/390/768/1024/1440 showed four questions, categories fitting and no document horizontal overflow. Final mobile check confirmed a 16px input, 14px category labels and 16px/500 question controls after the font reset correction. No real-device/IME certification is claimed.
+
+Next: Centers, including region selection, complete center details, safe outgoing links and no-results recovery.
