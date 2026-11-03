@@ -1,5 +1,16 @@
 # MonkChat Guide — Current Handoff
 
+## ChatGPT ตรวจซ้ำชุดแก้ไขจาก Windows — 4 พฤศจิกายน 2569
+
+- ตรวจ source commit `7717ee1d0329164c7c150336581e14a35d22eb9f` จาก GitHub โดยแยกสำเนาทดสอบจาก Git tree ของ commit นี้ ไม่อ้างผลจากโฟลเดอร์ Windows แทน
+- รันเอง: `npm test -- --run` ผ่าน 65 tests / 11 files, `npm run lint` ผ่าน, `npm run build` ซึ่งรวม TypeScript ผ่าน และ `git diff --check` ผ่าน
+- ยืนยัน favicon PNG ใช้ `type="image/png"` และ HANDOFF แก้จำนวน tests ให้ตรง 65/11 แล้ว เหตุผลเรื่องสแกนโฟลเดอร์สำรองเป็นคำชี้แจงจาก Antigravity; ไม่ได้เปิดตรวจโฟลเดอร์สำรองบน Windows ด้วยตนเอง
+- Diff จาก 1537043 ถึง 7717ee1 มีเพียง HANDOFF.md, index.html และ vite.config.ts; เพิ่ม exclude ของโฟลเดอร์สำรองตามรายงาน ไม่มีการลด/ลบ tests ใน commit นี้
+- HomeHeroIntro และเนื้อหาท่อนล่างไม่ได้เปลี่ยนใน commit แก้ไขนี้ โลโก้จริงมาจาก commit 1537043 ก่อนหน้า ข้อเสนอ unslop เรื่องครอปภาพ/น้ำหนักหัวเรื่อง/ขนาดป้ายยังเป็นข้อเสนอ ไม่ได้แก้ UI เพิ่ม
+- งานถัดไป: เจ้าของเลือกจุดเก็บรายละเอียดส่วนบน Home จากข้อเสนอ unslop แล้วจึงปรับเฉพาะจุดที่ยืนยัน รักษาภาพเต็มขอบ ชื่อใต้ภาพ ทางลัด 5 ช่อง และส่วนล่างเดิม
+- ยังไม่ merge main/deploy/migrate; ยังไม่ยืนยัน live private AI, authenticated CMS, Supabase gateway หรืออุปกรณ์จริงจากการทดสอบรอบนี้
+
+
 ## รับงานและรวมงานเสร็จสมบูรณ์จาก Windows — 4 พฤศจิกายน 2569
 
 - **Branch งานร่วม**: `sync/anti-reviewed-20261103` สำหรับ PR #17 (https://github.com/MonkChatGuide072/MonkChat-Guide/pull/17)
