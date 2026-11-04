@@ -1,5 +1,10 @@
 # MonkChat Guide - Decision Log
 
+## Latest owner decision — 2026-11-04: three stages around the actual spoken session
+
+The owner supplied the real English guidance and approved five short preparation cards. Add three stages: Before (5), Meditation time (one quiet image), and After (8 owner-requested experience prompts). Put all seven-base detail behind an optional disclosure with existing source links. Reflection pictures help visitors tell a monk about wandering, striving, ease, a crystal ball, feeling small, a Buddha image, brightness, or another/uncertain/no-image experience. Do not rank these or promise them. No response collection, timer, automatic slide progression, audio synchronization claim, database changes, or replacement of recorded media.
+
+
 This document records the confirmed decisions made during the project's lifecycle.
 
 For current scope and proposals still awaiting a decision, read CURRENT_SCOPE.md. Historical entries remain as a record and may have been superseded by later explicit owner instructions.

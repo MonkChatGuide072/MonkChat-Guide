@@ -1,5 +1,24 @@
 # Meditation picture guide and visitor navigation — 4 November 2026
 
+## Latest implementation: three stages, based on the owner's actual session
+
+The owner clarified that visitors first meet and talk briefly with a monk, then need a quick picture explanation before closing their eyes. The earlier nine-card introduction was too detailed for this job. The actual supplied English guidance is the source of the five condensed preparation cards; it is not a verbatim transcript of the existing recording.
+
+| Stage | Content | Behaviour |
+| --- | --- | --- |
+| Before | Sit comfortably; close eyes and relax; set worries aside; attention at the abdomen; imagine a clear sphere | Five swipe cards; seven-base detail optional |
+| Meditation time | One calm drawing of a monk beneath a tree | No carousel, timer or auto-play; link to the existing audio |
+| After | Wandering; striving/tension; ease/lightness; clear sphere; feeling small; Buddha image; brightness; other/uncertain/no image | Eight conversation prompts; no ranking, promised outcome, interpretation or response storage |
+
+TH/EN text is separate from rendering. Tab keyboard supports Left/Right/Home/End and focus follows selection. Carousel keyboard is bounded; inactive slides are inert and hidden from assistive technology. Changing stages leaves the actual audio player mounted. There is no attempt to auto-synchronize cards with a recording. New scene illustrations are original SVG additions, not copied source imagery or medical/attainment diagrams.
+
+Verification: 71 tests across 12 files, lint and TypeScript/PWA build passed. A new behavioural regression covers stage switching, single-image meditation time, reflection content, no success score, unchanged audio element, language switching and tab focus. Existing source and keyboard tests now cover the optional seven-base detail and five-card primary sequence. Seven MeditationPage handlers/effects are unchanged against 923e199. Chrome checked 30 states (3 stages × 2 languages × 5 widths: 360/390/768/1024/1440), with no document overflow, minimum 44px visible control buttons, 16px main card copy and guide above audio. EN 360 first preparation card ends at 787.5px after shortening duplicate headings. End reaches the last reflection; Home returns to the first stage; optional base 7 can be opened. Evidence stays outside the Git branch.
+
+Limits: viewport testing is not actual phone/iPad touch testing. Existing recording/subtitle timing and historical production/account checks are unchanged. No database mutation, audio/subtitle/transcript replacement, production merge or production deployment belongs to this change.
+
+---
+
+
 ## Owner request and diagnosis
 
 The screenshots show a back-to-visitor-home control despite an existing Home menu, and generic practice steps below the audio. The owner requested an urgent correction, a cute illustrated carousel above audio, and accurate Dhammakaya instructions emphasizing the seven bases.

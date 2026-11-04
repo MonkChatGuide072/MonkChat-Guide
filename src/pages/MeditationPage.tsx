@@ -154,7 +154,7 @@ export function MeditationPage() {
     <div className="space-y-6 bg-brand-cream pb-8 text-brand-text break-words [overflow-wrap:anywhere]">
       <header>
         <h1 className="font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{isEnglish ? 'Dhammakaya meditation' : 'นั่งสมาธิแบบธรรมกาย'}</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-brand-muted">{isEnglish ? 'Learn the seven bases with picture cards, then listen to a guided session.' : 'รู้จักฐานที่ตั้งของใจทั้ง 7 ผ่านการ์ดภาพ แล้วค่อยฟังเสียงนำสมาธิ'}</p>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-brand-muted">{isEnglish ? 'Get ready, then listen to the monk.' : 'ดูภาพก่อนเริ่ม แล้วฟังพระนำสมาธิ'}</p>
       </header>
       <MeditationBeginnerGuide />
 

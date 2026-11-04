@@ -30,3 +30,8 @@
 @media (min-width: 1024px) {
   .meditation-picture-card { flex-basis: calc(80% - 12px); }
 }
+.meditation-time-art { height: 240px; padding: 12px; background: #EDF3E9; }
+@media (min-width: 640px) {
+  .meditation-time-card { display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
+  .meditation-time-art { height: 320px; }
+}
