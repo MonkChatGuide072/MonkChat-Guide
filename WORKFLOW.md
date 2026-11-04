@@ -1,5 +1,10 @@
 # การทำงานร่วม ChatGPT / Antigravity
 
+## สถานะหลังเผยแพร่ — 4 พฤศจิกายน 2569
+
+PR #17 รวมเข้า main และเว็บหลักเผยแพร่ตามคำยืนยันเจ้าของแล้ว (release merge 55b2afe, source ที่ตรวจ 8d91de4) งานรับต่อให้ดึงและใช้ main ล่าสุดเป็นฐาน โดยตรวจงานค้างในเครื่องก่อนเหมือนเดิม branch sync/anti-reviewed-20261103 เป็นประวัติงานร่วมก่อน release; อย่าคิดว่าไฟล์ ZIP หรือ HEAD เดิมเป็น production ปัจจุบันโดยไม่ตรวจ HANDOFF.md และ GitHub
+
+
 ## แหล่งงานร่วม
 
 - Repository: `MonkChatGuide072/MonkChat-Guide`

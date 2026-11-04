@@ -1,5 +1,15 @@
 # MonkChat Guide — Current Handoff
 
+## เผยแพร่เว็บหลักตามคำยืนยันเจ้าของ — 4 พฤศจิกายน 2569
+
+- เจ้าของยืนยันครบ 3 ขั้นตอนอย่างชัดเจน: PR #17 Draft → Ready → merge main → deploy production จึงดำเนินการตามคำยืนยันล่าสุด แทนข้อจำกัดพรีวิวในบันทึกก่อนหน้าเฉพาะรอบนี้
+- PR #17 merged สำเร็จที่ 55b2afefdbe168c01b88dec98aa01dd458542c48 จาก head 8d91de44e56677653c7165e6055b1ca15c6dcdff; merge tree 4ae6876e9894470cfe06966f614500a4926fff3e ตรงกับ source ที่ตรวจแล้ว จึงใช้ผล 71 tests / 12 files, lint และ TypeScript/PWA build จากชุดนั้น ไม่มี source code เปลี่ยนระหว่าง release
+- Cloudflare Pages production deployment 06222416-b0c7-4354-a7cd-0bacf1239b00 สถานะ success จาก merge commit เว็บหลัก https://monkchat-guide.pages.dev/ ไม่ใช่แค่ preview; production branch main และ env public connection เดิม ไม่เปลี่ยน settings/bindings/DB
+- ตรวจบน URL เว็บหลักจริง: /centers มี 3 destination links และรายการเผยแพร่ 4 แห่ง ไม่มี alert ภาพโหลดครบ; /meditation มี 6 preparation cards / 1 quiet image / 8 reflection cards และ audio element; /qa มีช่องค้นหา ไม่มี alert; /activities ไม่มี report panel/alert; Home เลือก English แล้วชื่อ MonkChat Guide กับ 5 shortcuts; alias /visit ยังเข้า Home ได้ ไม่มี alert และไม่มี academic/budget copy
+- บันทึกหลักฐาน screenshot ภายใน checkpoints/production-gateway-20261104.jpg ไม่ส่งภาพ/.env ขึ้น GitHub; ผลตรวจนี้เป็น public browser smoke check ไม่ใช่ยืนยันบัญชีจริง Owner/Team, live private AI หรือเสียง/ซับทุกวินาที ประเด็นเดิมยังอยู่ในรายงานก่อนหน้า ไม่มี migration/เผยแพร่คำตอบใหม่
+- หลัง release ใช้ main เป็นฐานรับงานล่าสุดตาม WORKFLOW.md ไม่ใช้ ZIP ทับ Windows และยังไม่มีหลักฐานว่า Antigravity ดึง main แล้ว Previous production c93437006334165bcca3c5339e3b7536de5b6e89 / deployment 752487fc-6986-4afd-8786-a34df354793a เก็บในประวัติสำหรับเทียบย้อนหลัง รอบปิดงานนี้เพิ่มเฉพาะเอกสารสถานะหลัง deploy
+
+
 ## Centers เป็น gateway สำหรับเรียนรู้และฝึกต่อ — 4 พฤศจิกายน 2569
 
 - ต่อจาก source 8d0024efbd0015b8bc3eec127d0cda40a71a39eb ตามคำชี้แจงเจ้าของ /centers ให้ผู้ที่ลองสมาธิแล้วสนใจเลือกไปต่อ เปลี่ยน hero เป็น “เรียนรู้และฝึกสมาธิต่อ” / “Continue your practice” พร้อมข้อความเชิญสำรวจแบบมีเงื่อนไขตามความสนใจ

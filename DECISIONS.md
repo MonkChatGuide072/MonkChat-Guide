@@ -1,5 +1,10 @@
 # MonkChat Guide - Decision Log
 
+## Latest owner decision — 2026-11-04: explicit production release approval
+
+The owner explicitly confirmed changing PR #17 from Draft to Ready, merging into main, and deploying the main website. This supersedes the earlier preview-only restriction for this reviewed release. PR #17 merged as 55b2afefdbe168c01b88dec98aa01dd458542c48; Cloudflare production deployment 06222416-b0c7-4354-a7cd-0bacf1239b00 succeeded. The merge tree is identical to tested head 8d91de4. Public production routes were smoke-checked at https://monkchat-guide.pages.dev/. No database/account changes, paid-service activation or new media publication took place. Historical limitations on actual authenticated write/live-AI and media timing verification remain accurately recorded.
+
+
 ## Latest owner decision — 2026-11-04: a gateway after the first meditation experience
 
 The public Centers page is a neutral next step after Monk Chat: visitors who are interested may explore Ayothaya Meditation Center, Wat Phra Dhammakaya and its branch centers. Lead with “Continue your practice” and three direct destination links, then keep directory search as secondary discovery. The site connects people to destination-owned information; it does not book, promise availability/language support, or repeat changeable course conditions. Verified official URLs are kept separately in src/content/continuePractice.ts. Existing published-only data filters and safe-link rules stay unchanged.
