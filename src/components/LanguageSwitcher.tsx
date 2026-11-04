@@ -1,24 +1,22 @@
 import { useTranslation } from 'react-i18next'
 import { normalizeLanguage, type AppLanguage } from '../lib/language'
 
-export function LanguageSwitcher({ tone = 'navy' }: { tone?: 'navy' | 'clay' | 'overlay' }) {
+export function LanguageSwitcher({ tone = 'terracotta' }: { tone?: 'navy' | 'clay' | 'overlay' | 'terracotta' }) {
   const { i18n, t } = useTranslation()
   const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
-  const isClay = tone === 'clay'
-  const isOverlay = tone === 'overlay'
 
   const setLanguage = (lang: AppLanguage) => {
     i18n.changeLanguage(lang)
   }
 
+  const isOverlay = tone === 'overlay'
+
   return (
     <div
-      className={`inline-flex items-center rounded-full border p-1 shadow-inner ${
+      className={`inline-flex items-center rounded-full border p-0.5 transition-colors ${
         isOverlay
-          ? 'border-white/25 bg-white/90 shadow-black/10 backdrop-blur-md'
-          : isClay
-          ? 'border-[#7A3E2E]/12 bg-[#F7EAE2]/90'
-          : 'border-[#354033]/12 bg-[#efe5d2]/90'
+          ? 'border-white/30 bg-white/90 backdrop-blur-md'
+          : 'border-[#EADCC6] bg-[#FFFDF7]'
       }`}
       role="group"
       aria-label={t('language.label')}
@@ -26,28 +24,28 @@ export function LanguageSwitcher({ tone = 'navy' }: { tone?: 'navy' | 'clay' | '
       <button
         type="button"
         onClick={() => setLanguage('th')}
-        className={`min-h-9 rounded-full px-3 text-xs font-bold transition-all cursor-pointer ${
+        className={`min-h-11 min-w-11 rounded-full px-2.5 py-1 text-sm font-medium transition-colors duration-150 cursor-pointer ${
           currentLang === 'th'
-            ? `${isClay || isOverlay ? 'bg-[#7A3E2E]' : 'bg-[#354033]'} text-white shadow-sm`
-            : `${isClay || isOverlay ? 'text-[#5B3A31]/65 hover:text-[#5B3A31]' : 'text-[#354033]/65 hover:text-[#354033]'} hover:bg-white`
+            ? 'bg-[#A43D1D] text-white'
+            : 'text-[#681B16] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'
         }`}
         aria-pressed={currentLang === 'th'}
         aria-label={t('language.switchToTh')}
       >
-        ไทย
+        TH
       </button>
       <button
         type="button"
         onClick={() => setLanguage('en')}
-        className={`min-h-9 rounded-full px-3 text-xs font-bold transition-all cursor-pointer ${
+        className={`min-h-11 min-w-11 rounded-full px-2.5 py-1 text-sm font-medium transition-colors duration-150 cursor-pointer ${
           currentLang === 'en'
-            ? `${isClay || isOverlay ? 'bg-[#7A3E2E]' : 'bg-[#354033]'} text-white shadow-sm`
-            : `${isClay || isOverlay ? 'text-[#5B3A31]/65 hover:text-[#5B3A31]' : 'text-[#354033]/65 hover:text-[#354033]'} hover:bg-white`
+            ? 'bg-[#A43D1D] text-white'
+            : 'text-[#681B16] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'
         }`}
         aria-pressed={currentLang === 'en'}
         aria-label={t('language.switchToEn')}
       >
-        English
+        EN
       </button>
     </div>
   )

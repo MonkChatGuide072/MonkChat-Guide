@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { GuideIcon } from '../../components/GuideIcon'
 import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
 
@@ -40,7 +41,7 @@ function formatDate(iso: string, lang: string): string {
 function resolveQuestion(translations: QATranslationRow[], currentLang: string): string {
   const preferred = translations.find((tr) => tr.language_code === currentLang)
   const fallback = translations.find((tr) => tr.language_code === 'th')
-  return preferred?.question || fallback?.question || translations[0]?.question || 'เนโฌโ€'
+  return preferred?.question || fallback?.question || translations[0]?.question || '—'
 }
 
 export function AdminQAPage() {
@@ -120,7 +121,7 @@ export function AdminQAPage() {
 
     const verificationMap: Record<string, string> = {
       unverified: 'bg-amber-100 text-amber-900 border-amber-300',
-      verified: 'bg-blue-100 text-blue-800 border-blue-300',
+      verified: 'bg-blue-100 text-neutral-700 border-blue-300',
     }
 
     const statusCls = statusMap[item.content_status] ?? 'bg-slate-100 text-slate-700 border-slate-300'
@@ -135,7 +136,7 @@ export function AdminQAPage() {
 
         {/* Verification Status */}
         <span className={`px-2 py-0.5 text-xs font-semibold rounded border ${verifyCls}`}>
-          {item.verification_status === 'verified' ? '✓ ' : '⚠ '}
+          {item.verification_status === 'verified' ? '✓ ' : ''}
           {t(`admin.qa.verification.${item.verification_status}`, item.verification_status)}
         </span>
 
@@ -278,7 +279,7 @@ export function AdminQAPage() {
           className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
             canEdit
               ? 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer'
-              : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+              : 'border-slate-200 text-slate-500 bg-slate-50 cursor-not-allowed'
           }`}
           title={!canEdit && !isArchived && isVerified ? t('admin.qa.ownerOnlyHint') : undefined}
         >
@@ -304,8 +305,8 @@ export function AdminQAPage() {
             title={!hasSource ? t('admin.qa.create.labelSourceRef') + ' ' + t('admin.qa.create.fixedStatus') : undefined}
             className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
               canVerify
-                ? 'border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 cursor-pointer'
-                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+                ? 'border-neutral-200 text-blue-700 bg-neutral-50 hover:bg-blue-100 cursor-pointer'
+                : 'border-slate-200 text-slate-500 bg-slate-50 cursor-not-allowed'
             }`}
           >
             {t('admin.qa.actions.verify')}
@@ -320,7 +321,7 @@ export function AdminQAPage() {
             className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
               canPublish
                 ? 'border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 cursor-pointer'
-                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+                : 'border-slate-200 text-slate-500 bg-slate-50 cursor-not-allowed'
             }`}
           >
             {t('admin.qa.status.published')}
@@ -335,7 +336,7 @@ export function AdminQAPage() {
             className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
               canUnpublish
                 ? 'border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100 cursor-pointer'
-                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+                : 'border-slate-200 text-slate-500 bg-slate-50 cursor-not-allowed'
             }`}
           >
             {t('admin.qa.actions.unpublish')}
@@ -350,7 +351,7 @@ export function AdminQAPage() {
             className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
               canArchive
                 ? 'border-red-200 text-red-700 bg-red-50 hover:bg-red-100 cursor-pointer'
-                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+                : 'border-slate-200 text-slate-500 bg-slate-50 cursor-not-allowed'
             }`}
           >
             {t('admin.qa.actions.archive')}
@@ -365,7 +366,7 @@ export function AdminQAPage() {
             className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
               canRestore
                 ? 'border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 cursor-pointer'
-                : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+                : 'border-slate-200 text-slate-500 bg-slate-50 cursor-not-allowed'
             }`}
           >
             {t('admin.qa.actions.restore')}
@@ -378,10 +379,10 @@ export function AdminQAPage() {
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-medium text-slate-900">
               {t('admin.modules.qa.title')}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -406,7 +407,7 @@ export function AdminQAPage() {
             {/* Add Q&A button */}
             <Link
               to="/admin/qa/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-amber-600 hover:bg-amber-500 text-white transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -420,7 +421,7 @@ export function AdminQAPage() {
       {/* Safety & Policy Notice */}
       <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3.5 text-xs text-amber-900 space-y-1">
         <p className="font-semibold flex items-center gap-1.5 text-sm">
-          <span>ℹ️</span> {t('admin.qa.policyNoticeTitle')}
+          {t('admin.qa.policyNoticeTitle')}
         </p>
         <p className="text-amber-800 leading-relaxed">
           {t('admin.qa.policyNotice')}
@@ -436,7 +437,7 @@ export function AdminQAPage() {
 
       {/* Error State */}
       {!isLoading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
           <p className="text-red-800 font-semibold">{t('admin.qa.errorTitle')}</p>
           <p className="text-red-600 text-sm font-mono break-all">{error}</p>
           <button
@@ -451,14 +452,14 @@ export function AdminQAPage() {
 
       {/* Success Alert State */}
       {actionSuccessMsg && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex items-center justify-between">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex flex-wrap items-center justify-between gap-3">
           <p className="font-semibold">✓ {actionSuccessMsg}</p>
           <button
             type="button"
-            onClick={() => setActionSuccessMsg(null)}
-            className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer"
+            aria-label={t('management.dismiss')} onClick={() => setActionSuccessMsg(null)}
+            className="text-xs text-emerald-800 hover:text-emerald-800 font-semibold cursor-pointer"
           >
-            ✕
+            <GuideIcon name="close" />
           </button>
         </div>
       )}
@@ -466,16 +467,14 @@ export function AdminQAPage() {
       {/* Empty State */}
       {!isLoading && !error && items.length === 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 flex items-center justify-center text-3xl">
-            ❓
-          </div>
+
           <h2 className="text-lg font-semibold text-slate-800">
             {t('admin.qa.emptyTitle')}
           </h2>
           <p className="text-sm text-slate-500 max-w-md mx-auto">
             {t('admin.qa.emptyDesc')}
           </p>
-          <p className="text-xs text-slate-400 italic">
+          <p className="text-xs text-slate-500">
             {t('admin.qa.emptyHint')}
           </p>
         </div>
@@ -483,8 +482,8 @@ export function AdminQAPage() {
 
       {/* Results List */}
       {!isLoading && !error && items.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-slate-700">
               {t('admin.qa.itemCount', { count: items.length })}
             </p>
@@ -502,14 +501,15 @@ export function AdminQAPage() {
                     <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
                       {t('admin.qa.category')}: {item.category || '—'}
                     </span>
-                    <span className={item.source_reference ? 'text-emerald-700' : 'text-slate-400'}>
-                      {item.source_reference ? `✓ ${t('admin.qa.hasSourceRef')}` : `— ${t('admin.qa.noSourceRef')}`}
-                    </span>
                   </div>
+
+                  <p className="text-xs leading-5 text-slate-600 break-words [overflow-wrap:anywhere]">
+                    <strong>{t('admin.qa.colSource')}:</strong> {item.source_reference || '—'}
+                  </p>
 
                   {renderBadges(item)}
 
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-slate-500">
                     {t('admin.qa.updatedAt')}: {formatDate(item.updated_at, currentLang)}
                   </div>
 
@@ -537,7 +537,7 @@ export function AdminQAPage() {
                   ].map((key) => (
                     <th
                       key={key}
-                      className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                      className="px-4 py-3 text-left text-xs font-semibold text-slate-500"
                     >
                       {t(key)}
                     </th>
@@ -560,10 +560,8 @@ export function AdminQAPage() {
                       <td className="px-4 py-3">
                         {renderBadges(item)}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-xs">
-                        <span className={item.source_reference ? 'text-emerald-700 font-medium' : 'text-slate-400'}>
-                          {item.source_reference ? `✓ ${t('admin.qa.hasSourceRef')}` : `— ${t('admin.qa.noSourceRef')}`}
-                        </span>
+                      <td className="max-w-xs px-4 py-3 text-xs leading-5 text-slate-600 break-words [overflow-wrap:anywhere]">
+                        {item.source_reference || '—'}
                       </td>
                       <td className="px-4 py-3 text-slate-500 whitespace-nowrap text-xs">
                         {formatDate(item.updated_at, currentLang)}

@@ -1,0 +1,197 @@
+[
+  {
+    "frameWidth": 360,
+    "pageSize": {
+      "scrollWidth": 345,
+      "width": 345
+    },
+    "tiles": [
+      {
+        "height": 76,
+        "label": "หน้าแรก",
+        "overflow": false,
+        "width": 57.796875
+      },
+      {
+        "height": 76,
+        "label": "กิจกรรม",
+        "overflow": false,
+        "width": 57.796875
+      },
+      {
+        "height": 76,
+        "label": "สมาธิ",
+        "overflow": false,
+        "width": 57.796875
+      },
+      {
+        "height": 76,
+        "label": "ถาม–ตอบ",
+        "overflow": false,
+        "width": 57.796875
+      },
+      {
+        "height": 76,
+        "label": "ศูนย์",
+        "overflow": false,
+        "width": 57.796875
+      }
+    ]
+  },
+  {
+    "frameWidth": 390,
+    "pageSize": {
+      "scrollWidth": 375,
+      "width": 375
+    },
+    "tiles": [
+      {
+        "height": 76,
+        "label": "หน้าแรก",
+        "overflow": false,
+        "width": 63.796875
+      },
+      {
+        "height": 76,
+        "label": "กิจกรรม",
+        "overflow": false,
+        "width": 63.796875
+      },
+      {
+        "height": 76,
+        "label": "สมาธิ",
+        "overflow": false,
+        "width": 63.796875
+      },
+      {
+        "height": 76,
+        "label": "ถาม–ตอบ",
+        "overflow": false,
+        "width": 63.796875
+      },
+      {
+        "height": 76,
+        "label": "ศูนย์",
+        "overflow": false,
+        "width": 63.796875
+      }
+    ]
+  },
+  {
+    "frameWidth": 768,
+    "pageSize": {
+      "scrollWidth": 753,
+      "width": 753
+    },
+    "tiles": [
+      {
+        "height": 88,
+        "label": "หน้าแรก",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "กิจกรรม",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "สมาธิ",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "ถาม–ตอบ",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "ศูนย์",
+        "overflow": false,
+        "width": 124.8125
+      }
+    ]
+  },
+  {
+    "frameWidth": 1024,
+    "pageSize": {
+      "scrollWidth": 1009,
+      "width": 1009
+    },
+    "tiles": [
+      {
+        "height": 88,
+        "label": "หน้าแรก",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "กิจกรรม",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "สมาธิ",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "ถาม–ตอบ",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "ศูนย์",
+        "overflow": false,
+        "width": 124.8125
+      }
+    ]
+  },
+  {
+    "frameWidth": 1440,
+    "pageSize": {
+      "scrollWidth": 1425,
+      "width": 1425
+    },
+    "tiles": [
+      {
+        "height": 88,
+        "label": "หน้าแรก",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "กิจกรรม",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "สมาธิ",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "ถาม–ตอบ",
+        "overflow": false,
+        "width": 124.796875
+      },
+      {
+        "height": 88,
+        "label": "ศูนย์",
+        "overflow": false,
+        "width": 124.8125
+      }
+    ]
+  }
+]

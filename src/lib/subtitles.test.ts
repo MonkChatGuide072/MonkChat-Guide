@@ -14,6 +14,13 @@ describe('public media helpers', () => {
     expect(parseWebVTT('WEBVTT\n\nNOTE hidden\n00:01.000 --> 00:02.000\nDo not show\n\n00:99.000 --> 01:00.000\nInvalid\n\n00:04.000 --> 00:01.000\nReversed\n\ninvalid --> 00:01.000\nInvalid\n\n00:00.000 --> 00:01.000')).toEqual([])
   })
 
+  it('reads published captions with inline text and no blank cue separators', () => {
+    expect(parseWebVTT('WEBVTT\n00:00:00.000 --> 00:00:08.000 ขอเรียนเชิญทุกท่าน\n00:00:08.000 --> 00:00:15.000 ผ่อนคลายร่างกาย')).toEqual([
+      { id: 'cue-0', start: 0, end: 8, text: 'ขอเรียนเชิญทุกท่าน' },
+      { id: 'cue-1', start: 8, end: 15, text: 'ผ่อนคลายร่างกาย' },
+    ])
+  })
+
   it('formats time and rejects unsafe outbound URLs', () => {
     expect(formatMediaTime(65.5)).toBe('01:05')
     expect(formatMediaTime(NaN)).toBe('00:00')

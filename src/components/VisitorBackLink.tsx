@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next'
 export function VisitorBackLink() {
   const { t } = useTranslation()
   return (
-    <Link to="/visit" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#a94732]/20 bg-white/24 px-4 text-sm font-semibold text-[#8e3d2d] transition-colors hover:bg-white/40">
-      <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <Link to="/visit" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-brand-border bg-brand-surface px-4 text-sm font-medium text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft">
+      <svg aria-hidden="true" className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
       </svg>
       {t('visitor.backToHome')}

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { HomeHeroIntro } from '../components/HomeHeroIntro'
+import { GuideIcon } from '../components/GuideIcon'
 import {
   normalizeLanguage,
   VISITOR_LANGUAGE_SELECTED_EVENT,
@@ -10,7 +12,6 @@ import {
 import { trackUsageEvent } from '../lib/analytics'
 import { getBioLinkImageUrl } from '../lib/bioLinkImages'
 import { supabaseClient } from '../lib/supabase'
-import { MeditationMark } from '../components/MeditationMark'
 
 interface TrackTranslationRow {
   language_code: string
@@ -49,9 +50,7 @@ function hasSafeExternalUrl(url: string): boolean {
 
 export function VisitPage() {
   const { i18n } = useTranslation()
-  const [hasSelectedLanguage, setHasSelectedLanguage] = useState(
-    () => sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY) != null,
-  )
+  const [hasSelectedLanguage, setHasSelectedLanguage] = useState(() => sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY) != null)
   const [currentLang, setCurrentLang] = useState<AppLanguage>(() =>
     normalizeLanguage(i18n.resolvedLanguage || i18n.language),
   )
@@ -82,58 +81,39 @@ export function VisitPage() {
 
 function LanguageGate({ onSelect }: { onSelect: (language: AppLanguage) => void }) {
   return (
-    <main className="relative isolate min-h-screen overflow-hidden bg-[#d8ccb8] px-4 py-5 text-[#30342d] sm:px-8 sm:py-7">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_13%_10%,rgba(255,249,235,.9),transparent_34%),linear-gradient(150deg,#e2d7c4_0%,#cbbca4_100%)]" />
-      <MeditationMark className="pointer-events-none absolute -right-28 top-10 -z-10 w-[34rem] text-white/35 sm:w-[46rem]" />
-
-      <div className="mx-auto flex max-w-6xl items-center justify-between">
-        <Link to="/" className="group flex items-center gap-3" aria-label="MonkChat Guide">
-          <img src="/monkchat-placeholder.svg" alt="" className="h-10 w-10 rounded-xl bg-[#354033] ring-1 ring-white/30 transition-transform group-hover:-rotate-3" />
-          <span className="leading-tight"><span className="block text-sm font-extrabold">MonkChat Guide</span><span className="mt-1 block text-[.55rem] font-bold uppercase tracking-[.2em] text-[#a34e39]">Inner Peace Companion</span></span>
+    <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-text sm:px-8">
+      <div className="mx-auto w-full max-w-5xl">
+        <Link to="/" className="inline-flex items-center gap-3" aria-label="MonkChat Guide">
+          <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="" width={48} height={48} className="h-12 w-12 object-contain" />
+          <span className="text-sm font-medium leading-6 text-brand-maroon">MonkChat Guide<br /><span lang="en" className="text-brand-muted">Ayutthaya Monk Chat</span></span>
         </Link>
-        <Link to="/" className="inline-flex min-h-10 items-center rounded-full border border-[#4b4337]/15 bg-white/24 px-4 text-xs font-bold text-[#595248] backdrop-blur-sm transition-colors hover:bg-white/40">โครงการ / About</Link>
-      </div>
-
-      <div className="mx-auto grid min-h-[calc(100vh_-_4.75rem)] max-w-6xl items-center gap-10 py-10 lg:grid-cols-[1fr_.78fr] lg:gap-16">
-        <div className="max-w-2xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#a94732]/18 bg-[#a94732]/8 px-3 py-1.5 text-[.65rem] font-bold uppercase tracking-[.18em] text-[#8e3d2d]"><span className="h-1.5 w-1.5 rounded-full bg-[#a94732]" />Welcome to MonkChat</span>
-          <h1 className="mt-6 font-serif text-4xl font-bold leading-[1.08] tracking-[-.04em] text-balance sm:text-6xl">ฟัง เรียนรู้ และเดินทางต่ออย่างสงบ</h1>
-          <p className="mt-5 max-w-xl text-sm leading-7 text-[#625b50] sm:text-base">Meditation audio, trusted answers, and DCI centers—all in one calm space for your visit.</p>
-        </div>
-
-        <section aria-labelledby="language-gate-title" className="rounded-[1.75rem] border border-white/55 bg-[#eadbc1]/86 p-6 shadow-[0_28px_70px_rgba(73,61,45,.16)] backdrop-blur-xl sm:p-8">
-          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#a94732] text-white"><svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.2-2.3 3.3-5.3 3.3-9S14.2 5.3 12 3m0 18c-2.2-2.3-3.3-5.3-3.3-9S9.8 5.3 12 3M3.5 9h17m-17 6h17" /></svg></span>
-          <p className="mt-6 text-[.65rem] font-bold uppercase tracking-[.2em] text-[#a34e39]">Your language</p>
-          <h2 id="language-gate-title" className="mt-2 font-serif text-2xl font-bold tracking-tight sm:text-3xl">เลือกภาษา / Choose language</h2>
-          <p className="mt-3 text-sm leading-6 text-[#625b50]">ระบบจะจดจำภาษาสำหรับการเข้าชมครั้งนี้<br />Choose the language for this visit.</p>
-          <div className="mt-7 grid gap-3 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => onSelect('th')}
-            aria-label="ภาษาไทย"
-            className="group flex min-h-20 items-center gap-4 rounded-2xl bg-[#a94732] px-5 py-4 text-left text-white shadow-[0_12px_28px_rgba(142,61,45,.2)] transition-all hover:-translate-y-0.5 hover:bg-[#8e3d2d]"
-          >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/15 text-xs font-extrabold">TH</span>
-            <span><span className="block font-bold">ภาษาไทย</span><span className="mt-0.5 block text-xs text-white/65">ดำเนินการต่อ</span></span>
-          </button>
-          <button
-            type="button"
-            onClick={() => onSelect('en')}
-            aria-label="English"
-            className="group flex min-h-20 items-center gap-4 rounded-2xl border border-[#4b4337]/14 bg-white/55 px-5 py-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#a94732]/35 hover:bg-white/70"
-          >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#354033]/8 text-xs font-extrabold">EN</span>
-            <span><span className="block font-bold">English</span><span className="mt-0.5 block text-xs text-[#625b50]">Continue</span></span>
-          </button>
+        <div className="mt-8 overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:mt-12 lg:grid lg:grid-cols-2">
+          <div>
+            <img src="/images/home/monkchat-meditation-ruins.webp" alt="พระสงฆ์และผู้มาเยือนนั่งสมาธิท่ามกลางโบราณสถานอยุธยา / A monk and visitors meditating in Ayutthaya" width={1672} height={941} className="h-48 w-full object-cover sm:h-64 lg:h-full" />
           </div>
-        </section>
+          <section aria-labelledby="language-gate-title" className="p-6 sm:p-8">
+            <GuideIcon name="globe" className="h-6 w-6 text-brand-muted" />
+            <h1 id="language-gate-title" className="mt-4 text-2xl font-semibold leading-snug text-brand-maroon">เลือกภาษา / Choose language</h1>
+            <p className="mt-3 text-sm leading-6 text-brand-muted">เลือกภาษาสำหรับการเข้าชมครั้งนี้<br /><span lang="en">Choose the language for this visit</span></p>
+            <div className="mt-6 grid gap-3">
+              <button type="button" onClick={() => onSelect('th')} aria-label="ภาษาไทย" className="flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-lg bg-brand-terracotta px-4 py-3 text-left text-white transition-colors duration-150 hover:bg-brand-terracotta-dark">
+                <span className="font-medium">ภาษาไทย</span><span lang="en" className="text-sm">Thai</span><GuideIcon name="arrow" />
+              </button>
+              <button type="button" onClick={() => onSelect('en')} aria-label="English" className="flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-lg border border-brand-border bg-brand-surface px-4 py-3 text-left text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft">
+                <span lang="en" className="font-medium">English</span><span className="text-sm">ภาษาอังกฤษ</span><GuideIcon name="arrow" />
+              </button>
+            </div>
+            <p className="mt-6 border-t border-brand-border pt-4 text-sm leading-6 text-brand-muted">ร่วมสนทนาธรรมและฝึกสมาธิ ณ วัดมหาธาตุ พระนครศรีอยุธยา<br /><span lang="en">Monk Chat and guided meditation at Wat Mahathat, Ayutthaya</span></p>
+          </section>
         </div>
+      </div>
     </main>
   )
 }
 
 function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
   const [isTrackLoading, setIsTrackLoading] = useState(true)
   const [trackError, setTrackError] = useState<string | null>(null)
   const [recommendedTracks, setRecommendedTracks] = useState<MedTrackRow[]>([])
@@ -229,127 +209,398 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     (translation) => translation.language_code === currentLang,
   )
 
+  const whatToExpect = [
+    {
+      title: isEnglish ? 'Meet the monks' : 'พบและสนทนากับพระสงฆ์',
+      desc: isEnglish ? 'Have an open, respectful conversation about Buddhist life and mindfulness.' : 'สนทนาธรรมและแลกเปลี่ยนมุมมองชีวิตกับพระนิสิตอย่างเป็นกันเอง',
+      img: '/images/home/monkchat-slide-1.webp',
+    },
+    {
+      title: isEnglish ? 'Short meditation' : 'ฝึกสมาธิเบื้องต้น',
+      desc: isEnglish ? 'A simple, guided meditation to help you relax and be present.' : 'สมาธิสั้น 5-10 นาที ช่วยผ่อนคลายและสร้างสติรู้ตัว',
+      img: '/images/home/monkchat-meditation-hero.webp',
+    },
+    {
+      title: isEnglish ? 'Q&A' : 'ถาม-ตอบข้อสงสัย',
+      desc: isEnglish ? 'Ask questions about Buddhism, daily life, and practical wisdom.' : 'ซักถามข้อสงสัยเกี่ยวกับวิถีพุทธและหลักธรรมนำมาปรับใช้',
+      img: '/images/home/monkchat-slide-2.webp',
+    },
+    {
+      title: isEnglish ? 'Photo souvenir' : 'ภาพความทรงจำ',
+      desc: isEnglish ? 'Capture a meaningful memory at the historic Ayutthaya site.' : 'เก็บภาพความประทับใจและความทรงจำอันทรงคุณค่า ณ เมืองประวัติศาสตร์',
+      img: '/images/home/monkchat-slide-4.webp',
+    },
+  ]
+
+  const mapUrl = 'https://maps.google.com/?q=Wat+Mahathat+Ayutthaya'
+
   return (
-    <div className="space-y-5 pb-3">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[.68rem] font-bold uppercase tracking-[.18em] text-[#a34e39]">{t('visitor.heroTag')}</p>
-          <h1 className="mt-2 max-w-3xl font-serif text-4xl font-bold leading-[1.08] tracking-[-.035em] text-[#30342d] sm:text-5xl">
-            {t('visitor.title')}
-          </h1>
-        </div>
-        <p className="max-w-md text-sm leading-6 text-[#6b6255] sm:text-right">{t('visitor.subtitle')}</p>
-      </header>
-
-      <div className="grid gap-5 lg:grid-cols-[1.34fr_.8fr]">
-        <section aria-labelledby="recommended-heading" className="relative isolate min-h-[31rem] overflow-hidden rounded-[1.75rem] bg-[#303a2f] text-[#fff4df] shadow-[0_22px_60px_rgba(49,55,43,.18)]">
-          <div className="absolute inset-y-0 right-0 hidden w-[42%] overflow-hidden md:block">
-            <img src="/images/home/monkchat-slide-2.webp" alt="" className="h-full w-full object-cover opacity-85" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#303a2f] via-[#303a2f]/25 to-transparent" />
-          </div>
-          <div className="relative z-10 flex h-full max-w-[64%] flex-col p-6 sm:p-8 max-md:max-w-none">
-            <p className="text-[.66rem] font-bold uppercase tracking-[.15em] text-[#efd070]">{t('visitor.recommendedTag')}</p>
-            <h2 id="recommended-heading" className="mt-4 max-w-lg font-serif text-3xl font-bold leading-[1.12] tracking-[-.025em] sm:text-4xl">
-              {t('visitor.recommendedTitle')}
-            </h2>
-            <p className="mt-3 max-w-md text-sm leading-6 text-[#fff4df]/68">{t('visitor.recommendedSubtitle')}</p>
-
-            <div className="mt-auto pt-8">
-              {isTrackLoading ? (
-                <LoadingState label={t('visitor.loadingRecommended')} inverse />
-              ) : trackError ? (
-                <ErrorState message={trackError} onRetry={fetchRecommendedTracks} retryLabel={t('home.retry')} />
-              ) : !selectedTrack || !selectedTranslation ? (
-                <EmptyState message={t('visitor.noRecommended')} inverse />
-              ) : (
-                <div className="rounded-[1.25rem] border border-white/15 bg-black/14 p-5 backdrop-blur-md">
-                  {recommendedTracks.length > 1 && (
-                    <div className="mb-4 flex flex-wrap gap-2" aria-label={t('visitor.selectRecommended')}>
-                      {recommendedTracks.map((track) => {
-                        const translation = track.meditation_track_translations.find((item) => item.language_code === currentLang)
-                        return (
-                          <button key={track.id} type="button" onClick={() => setSelectedTrackId(track.id)} className={`rounded-full px-3 py-1.5 text-xs font-semibold ${track.id === selectedTrack.id ? 'bg-[#efd070] text-[#393427]' : 'bg-white/10 text-white/70 hover:bg-white/15'}`}>
-                            {translation?.title}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  )}
-                  <h3 className="text-base font-bold">{selectedTranslation.title}</h3>
-                  {selectedTranslation.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-[#fff4df]/68">{selectedTranslation.description}</p>}
-                  <div className="mt-4 flex items-center justify-between gap-4">
-                    <span className="text-xs text-[#fff4df]/62">{Math.max(1, Math.round(selectedTrack.duration_seconds / 60))} {t('meditation.minutes')} · {selectedTrack.source_language_code?.toUpperCase()}</span>
-                    <Link to={`/meditation?trackId=${selectedTrack.id}`} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#bd4e33] px-5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5">
-                      <PlayIcon />{t('visitor.playNow')}
-                    </Link>
-                  </div>
-                </div>
-              )}
+    <div className="bg-brand-cream text-brand-text break-words [overflow-wrap:anywhere]">
+      <HomeHeroIntro language={currentLang} />
+      <div className="mx-auto w-full max-w-[76rem] space-y-12 px-4 pb-24 pt-6 sm:space-y-16 sm:px-6 sm:pb-24 sm:pt-8 lg:px-8">
+      <section aria-label="Activity schedule and location summary" className="rounded-2xl border border-brand-border bg-brand-surface p-4 sm:p-6">
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4 sm:gap-6">
+          {([
+            { icon: 'calendar', value: isEnglish ? 'Mon & Fri' : 'จันทร์ และ ศุกร์', label: isEnglish ? 'Meditation sessions' : 'กิจกรรมนำสมาธิ' },
+            { icon: 'clock', value: isEnglish ? '13:15 onwards' : '13:15 น. เป็นต้นไป', label: isEnglish ? 'Starting time' : 'เวลาเริ่มกิจกรรม' },
+            { icon: 'hourglass', value: isEnglish ? '5–10 min' : '5–10 นาที', label: isEnglish ? 'Guided session' : 'ระยะเวลานำสมาธิ' },
+            { icon: 'pin', value: isEnglish ? 'Ayutthaya' : 'พระนครศรีอยุธยา', label: isEnglish ? 'Wat Mahathat' : 'วัดมหาธาตุ' },
+          ] as const).map(item => <div key={item.icon} className="flex min-w-0 items-start gap-2 sm:gap-3">
+            <GuideIcon name={item.icon} className="mt-1 h-[18px] w-[18px] text-brand-muted" />
+            <div className="min-w-0">
+              <dt className="text-xs leading-5 text-brand-muted">{item.label}</dt>
+              <dd className="mt-1 text-sm font-medium leading-6 text-brand-text tabular-nums">
+                {item.icon === 'clock' ? <><span className="whitespace-nowrap">{isEnglish ? '13:15' : '13:15 น.'}</span>{' '}<span className="whitespace-nowrap">{isEnglish ? 'onwards' : 'เป็นต้นไป'}</span></> : item.value}
+              </dd>
             </div>
+          </div>)}
+        </dl>
+      </section>
+
+      {/* 3. LOCATION & MAP SECTION */}
+      <section id="location-details" className="scroll-mt-8 space-y-4">
+        <div>
+          <h2 className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+            {isEnglish ? 'Location & map' : 'สถานที่และแผนที่'}
+          </h2>
+          <p className="text-sm leading-6 text-brand-muted">
+            {isEnglish ? 'Monk Chat at Wat Mahathat, Ayutthaya.' : 'จุดนัดพบกิจกรรม Monk Chat ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
+          </p>
+        </div>
+
+        <div className="overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] sm:grid sm:grid-cols-2">
+          <div className="relative h-48 w-full sm:h-full">
+            <img
+              src="/images/home/monkchat-meditation-ruins.webp"
+              alt={isEnglish ? 'A meditation scene among Ayutthaya ruins' : 'ภาพบรรยากาศนั่งสมาธิท่ามกลางโบราณสถานอยุธยา'} loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          <div className="flex flex-col justify-between p-5 sm:p-6 space-y-4">
+            <div>
+              <span className="text-xs font-medium text-[#A43D1D]">
+                {isEnglish ? 'Meeting point' : 'จุดนัดพบ'}
+              </span>
+              <h3 className="mt-1 font-sans text-xl font-medium text-[#681B16]">
+                {isEnglish ? 'Wat Mahathat, Ayutthaya' : 'วัดมหาธาตุ พระนครศรีอยุธยา'}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-brand-muted sm:text-sm">
+                {isEnglish
+                  ? 'Inside the Wat Mahathat temple area, near the historic prang (central tower). Student monks are available to welcome visitors.'
+                  : 'บริเวณลานร่มไม้ภายในวัดมหาธาตุ ใกล้พระปรางค์ประธาน พระนิสิตพร้อมต้อนรับและสนทนาธรรม'}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-4 space-y-2">
+              <div className="flex items-start gap-2 text-sm text-[#681B16]">
+                <GuideIcon name="pin" />
+                <span>{isEnglish ? 'Wat Mahathat (near central prang), Ayutthaya' : 'จุดนัดพบ: ลานร่มไม้ภายในวัดมหาธาตุ พระนครศรีอยุธยา'}</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm leading-6 text-brand-muted">
+                <GuideIcon name="clock" />
+                <span>{isEnglish ? 'Every Monday & Friday from 13:15 onwards' : 'ทุกวันจันทร์และวันศุกร์ เวลา 13:15 น. เป็นต้นไป'}</span>
+              </div>
+              <p className="text-sm leading-6 text-brand-muted">
+                {isEnglish
+                  ? 'Open Google Maps for the meeting point and directions.'
+                  : 'ข้อมูลสถานที่เบื้องต้น สำหรับการนำทางจริงกรุณากด "ดูแผนที่" หรือ "ขอเส้นทาง" เพื่อเปิด Google Maps'}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3 pt-2">
+              <a
+                href={mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#A43D1D] px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#8E3317]"
+              >
+                <LocationIcon />
+                <span>{isEnglish ? 'View map' : 'ดูแผนที่'}</span>
+              </a>
+              <a
+                href={mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#A43D1D] bg-[#FFFDF7] px-5 text-sm font-medium text-[#A43D1D] transition-colors duration-150 hover:bg-[#FDF4E3]"
+              >
+                <GuideIcon name="directions" />
+                <span>{isEnglish ? 'Get directions' : 'ขอเส้นทาง'}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. WHAT TO EXPECT SECTION */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+            {isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม'}
+          </h2>
+          <p className="text-sm leading-6 text-brand-muted">
+            {isEnglish
+              ? 'A friendly and meaningful experience to learn, reflect, and connect.'
+              : 'ประสบการณ์อันทรงคุณค่าเพื่อเรียนรู้ สงบใจ และแลกเปลี่ยนอย่างเป็นมิตร'}
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {whatToExpect.map((item) => (
+            <div
+              key={item.title}
+              className="flex overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] sm:flex-col"
+            >
+              <div className="relative w-24 shrink-0 overflow-hidden bg-[#FAF2E6] sm:h-36 sm:w-full">
+                <img src={item.img} alt={item.title} loading="lazy" className="h-full w-full object-cover" />
+              </div>
+              <div className="flex flex-1 flex-col p-4">
+                <h3 className="font-sans text-base font-medium text-[#681B16]">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-brand-muted">
+                  {item.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Recommended meditation and resources */}
+      <div className="grid items-start gap-6 lg:grid-cols-[1.2fr_1fr]">
+        <section aria-labelledby="recommended-heading" className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6">
+          <p className="text-xs font-medium text-[#A43D1D]">
+            {isEnglish ? 'Recommended for you' : t('visitor.recommendedTag')}
+          </p>
+          <h2 id="recommended-heading" className="mt-1 font-serif text-xl font-semibold text-[#681B16] sm:text-2xl">
+            {t('visitor.recommendedTitle')}
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-brand-muted">
+            {t('visitor.recommendedSubtitle')}
+          </p>
+
+          <div className="mt-5">
+            {isTrackLoading ? (
+              <LoadingState label={t('visitor.loadingRecommended')} />
+            ) : trackError ? (
+              <ErrorState message={trackError} onRetry={fetchRecommendedTracks} retryLabel={t('home.retry')} />
+            ) : !selectedTrack || !selectedTranslation ? (
+              <EmptyState message={t('visitor.noRecommended')} />
+            ) : (
+              <div className="rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-5">
+                {recommendedTracks.length > 1 && (
+                  <div className="mb-4 flex flex-wrap gap-2" aria-label={t('visitor.selectRecommended')}>
+                    {recommendedTracks.map((track) => {
+                      const translation = track.meditation_track_translations.find((item) => item.language_code === currentLang)
+                      return (
+                        <button
+                          key={track.id}
+                          type="button"
+                          onClick={() => setSelectedTrackId(track.id)}
+                          className={`min-h-11 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 cursor-pointer ${
+                            track.id === selectedTrack.id
+                              ? 'bg-[#A43D1D] text-white'
+                              : 'bg-white border border-[#EADCC6] text-[#681B16] hover:bg-[#FDF4E3]'
+                          }`}
+                        >
+                          {translation?.title}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+                <h3 className="font-sans text-lg font-medium text-[#681B16]">{selectedTranslation.title}</h3>
+                {selectedTranslation.description && (
+                  <p className="mt-2 text-sm leading-6 text-brand-muted">{selectedTranslation.description}</p>
+                )}
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+                  <span className="text-sm font-medium text-brand-muted tabular-nums">
+                    {Math.max(1, Math.round(selectedTrack.duration_seconds / 60))} {t('meditation.minutes')} · {selectedTrack.source_language_code?.toUpperCase()}
+                  </span>
+                  <Link
+                    to={`/meditation?trackId=${selectedTrack.id}`}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#A43D1D] px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#8E3317]"
+                  >
+                    <PlayIcon />
+                    <span>{t('visitor.playNow')}</span>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
-        <div className="grid gap-5">
-          <section className="rounded-[1.5rem] border border-white/35 bg-[#eadbc1]/82 p-5 shadow-[0_14px_40px_rgba(73,61,45,.09)] backdrop-blur-md sm:p-6">
-            <p className="text-[.65rem] font-bold uppercase tracking-[.13em] text-[#a34e39]">Q&amp;A · {t('qa.verificationNotice')}</p>
-            <h2 className="mt-3 font-serif text-2xl font-bold text-[#30342d]">{t('visitor.qaTitle')}</h2>
-            <Link to="/qa" className="mt-5 flex min-h-12 items-center justify-between rounded-xl border border-[#6b5c48]/20 bg-white/38 px-4 text-sm font-semibold text-[#625b50] transition-colors hover:bg-white/60">
-              <span>{t('qa.searchPlaceholder')}</span><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#a94732] text-white"><QuestionIcon /></span>
-            </Link>
-          </section>
+        {/* Bio Links / Quick Resources */}
+        <section aria-labelledby="bio-links-heading" className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6">
+          <h2 id="bio-links-heading" className="font-serif text-base font-semibold text-[#681B16]">
+            {t('visitor.chooseTitle')}
+          </h2>
+          <div className="mt-3 divide-y divide-[#EADCC6]/60">
+            <GuideLinkRow to="/qa" title={t('visitor.qaTitle')} description={t('visitor.qaDesc')} icon={<QuestionIcon />} />
+            <GuideLinkRow to="/centers" title={t('visitor.centersTitle')} description={t('visitor.centersDesc')} icon={<LocationIcon />} />
+            <GuideLinkRow to="/meditation" title={t('visitor.meditationTitle')} description={t('visitor.meditationDesc')} icon={<PlayIcon />} />
+          </div>
 
-          <section aria-labelledby="bio-links-heading" className="rounded-[1.5rem] bg-[#354033] p-5 text-[#fff4df] shadow-[0_16px_42px_rgba(49,55,43,.14)] sm:p-6">
-            <h2 id="bio-links-heading" className="text-sm font-bold">{t('visitor.chooseTitle')}</h2>
-            <div className="mt-3 divide-y divide-white/15">
-              <GuideLinkRow to="/qa" title={t('visitor.qaTitle')} description={t('visitor.qaDesc')} icon={<QuestionIcon />} />
-              <GuideLinkRow to="/centers" title={t('visitor.centersTitle')} description={t('visitor.centersDesc')} icon={<LocationIcon />} />
-              <GuideLinkRow to="/meditation" title={t('visitor.meditationTitle')} description={t('visitor.meditationDesc')} icon={<PlayIcon />} />
+          {areLinksLoading ? (
+            <LoadingState label={t('home.loadingLinks')} />
+          ) : linksError ? (
+            <ErrorState message={linksError} onRetry={fetchBioLinks} retryLabel={t('home.retry')} />
+          ) : bioLinks.length > 0 ? (
+            <div className="mt-4 grid gap-2 border-t border-[#EADCC6]/60 pt-4">
+              {bioLinks.map((link) => {
+                const title = link.bio_link_translations.find((translation) => translation.language_code === currentLang)?.title
+                const imageUrl = getBioLinkImageUrl(link.image_storage_path)
+                return (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={title}
+                    onClick={() => {
+                      void trackUsageEvent({
+                        eventType: 'bio_link_click',
+                        resourceType: 'bio_link',
+                        resourceId: link.id,
+                      })
+                    }}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#EADCC6] bg-brand-surface px-3 text-sm font-medium text-[#681B16] hover:bg-[#FDF4E3]"
+                  >
+                    {imageUrl ? <img src={imageUrl} alt="" className="h-4 w-4 rounded-full object-cover" /> : <LinkIcon />}
+                    <span>{title}</span>
+                    <ExternalLinkIcon />
+                  </a>
+                )
+              })}
             </div>
-
-            {areLinksLoading ? (
-              <LoadingState label={t('home.loadingLinks')} inverse />
-            ) : linksError ? (
-              <ErrorState message={linksError} onRetry={fetchBioLinks} retryLabel={t('home.retry')} />
-            ) : bioLinks.length > 0 ? (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {bioLinks.slice(0, 3).map((link) => {
-                  const title = link.bio_link_translations.find((translation) => translation.language_code === currentLang)?.title
-                  const imageUrl = getBioLinkImageUrl(link.image_storage_path)
-                  return (
-                    <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" aria-label={title} onClick={() => { void trackUsageEvent({ eventType: 'bio_link_click', resourceType: 'bio_link', resourceId: link.id }) }} className="inline-flex min-h-10 items-center gap-2 rounded-full bg-white/10 px-3 text-xs font-semibold text-white/78 hover:bg-white/16">
-                      {imageUrl ? <img src={imageUrl} alt="" className="h-6 w-6 rounded-full object-cover" /> : <LinkIcon />}{title}<ExternalLinkIcon />
-                    </a>
-                  )
-                })}
-              </div>
-            ) : null}
-          </section>
-        </div>
+          ) : null}
+        </section>
       </div>
 
-      <section className="grid gap-4 rounded-[1.35rem] bg-[#8e3d2d] px-5 py-4 text-[#fff1d7] shadow-[0_15px_36px_rgba(113,49,37,.15)] sm:grid-cols-[1fr_1fr_auto] sm:items-center sm:px-7">
-        <div><strong className="block text-sm">กิจกรรมจริง · จันทร์และศุกร์</strong><span className="mt-1 block text-xs text-white/70">13.15 น. เป็นต้นไป</span></div>
-        <div className="border-white/20 sm:border-l sm:pl-6"><strong className="block text-sm">วัดมหาธาตุ · อยุธยา</strong><span className="mt-1 block text-xs text-white/70">ตรวจสอบจุดนัดหมายก่อนมา</span></div>
-        <Link to="/" className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#f3d992] px-5 text-sm font-bold text-[#633121] transition-transform hover:-translate-y-0.5">Ayutthaya Monk Chat ↗</Link>
+      {/* 6. LOWER 3-COLUMN SECTION: BEFORE YOU COME + FAQ + CONTACT */}
+      <section className="grid gap-6 md:grid-cols-3">
+        {/* Column 1: Before you come */}
+        <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
+          <div className="flex items-start gap-2 text-sm font-medium text-[#A43D1D]">
+            <GuideIcon name="clipboard" />
+            <span>{isEnglish ? 'Before you come' : 'ข้อควรทราบก่อนมา'}</span>
+          </div>
+          <h3 className="mt-2 font-sans text-base font-medium text-[#681B16]">
+            {isEnglish ? 'Visitor etiquette' : 'การปฏิบัติตนในวัด'}
+          </h3>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-brand-muted">
+            <li className="flex items-start gap-2">
+              <GuideIcon name="check" className="mt-1 h-[18px] w-[18px] text-brand-muted" />
+              <span>{isEnglish ? 'Check the schedule (Mon & Fri, 13:15)' : 'ตรวจสอบตารางเวลา (จันทร์และศุกร์ 13:15 น.)'}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <GuideIcon name="check" className="mt-1 h-[18px] w-[18px] text-brand-muted" />
+              <span>{isEnglish ? 'Dress modestly (shoulders & knees covered)' : 'แต่งกายสุภาพ (คลุมไหล่และเข่า)'}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <GuideIcon name="check" className="mt-1 h-[18px] w-[18px] text-brand-muted" />
+              <span>{isEnglish ? 'Arrive a few minutes early' : 'มาถึงก่อนเวลากิจกรรมเล็กน้อย'}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <GuideIcon name="check" className="mt-1 h-[18px] w-[18px] text-brand-muted" />
+              <span>{isEnglish ? 'Be respectful and follow temple etiquette' : 'สำรวมกาย วาจา และให้เกียรติสถานที่'}</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 2: FAQ */}
+        <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-start gap-2 text-sm font-medium text-[#A43D1D]">
+              <GuideIcon name="question" />
+              <span>FAQ</span>
+            </div>
+            <Link to="/qa" className="text-sm font-medium text-[#A43D1D] hover:underline">
+              {isEnglish ? 'View all FAQ →' : 'ดูคำถามทั้งหมด →'}
+            </Link>
+          </div>
+          <h3 className="mt-2 font-sans text-base font-medium text-[#681B16]">
+            {isEnglish ? 'Common questions' : 'คำถามที่พบบ่อย'}
+          </h3>
+          <div className="mt-3 space-y-2 text-sm leading-6 text-brand-muted">
+            <div className="rounded-lg bg-[#FAF2E6]/60 p-3">
+              <strong className="block font-medium text-[#681B16]">
+                {isEnglish ? 'Do I need to register in advance?' : 'ต้องลงทะเบียนล่วงหน้าหรือไม่?'}
+              </strong>
+              <p className="mt-2 text-sm leading-6">
+                {isEnglish ? 'No advance registration is needed for regular Monk Chat sessions at Wat Mahathat. For special workshops, please consult announcements or contact the team.' : 'กิจกรรม Monk Chat ประจำสัปดาห์ ณ วัดมหาธาตุ ไม่ต้องลงทะเบียนล่วงหน้า สามารถเข้าร่วมได้ทันที สำหรับกิจกรรมรอบพิเศษ กรุณาติดตามประกาศจากทีมงาน'}
+              </p>
+            </div>
+            <div className="rounded-lg bg-[#FAF2E6]/60 p-3">
+              <strong className="block font-medium text-[#681B16]">
+                {isEnglish ? 'Is it free to join?' : 'มีค่าใช้จ่ายหรือไม่?'}
+              </strong>
+              <p className="mt-2 text-sm leading-6">
+                {isEnglish ? 'Yes, weekly Monk Chat sessions at Wat Mahathat are completely free of charge.' : 'กิจกรรม Monk Chat ณ วัดมหาธาตุ เข้าร่วมได้ฟรีโดยไม่มีค่าใช้จ่าย'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Column 3: Contact & help */}
+        <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
+          <div className="flex items-start gap-2 text-sm font-medium text-[#A43D1D]">
+            <GuideIcon name="chat" />
+            <span>{isEnglish ? 'Contact & help' : 'ติดต่อสอบถาม'}</span>
+          </div>
+          <h3 className="mt-2 font-sans text-base font-medium text-[#681B16]">
+            {isEnglish ? 'Need assistance?' : 'ต้องการข้อมูลเพิ่มเติม?'}
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-brand-muted">
+            {isEnglish
+              ? 'Have a question about your visit? Student monks and the team are happy to guide you.'
+              : 'มีคำถามเกี่ยวกับการเข้าร่วมกิจกรรม พระนิสิตและทีมงานยินดีให้คำแนะนำ'}
+          </p>
+          <div className="mt-4 pt-2 space-y-2">
+            <Link
+              to="/activities"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#A43D1D] bg-[#FFFDF7] px-4 text-sm font-medium text-[#A43D1D] transition-colors duration-150 hover:bg-[#FDF4E3]"
+            >
+              <span>{isEnglish ? 'View all activities →' : 'ดูกิจกรรมทั้งหมด →'}</span>
+            </Link>
+            <Link
+              to="/qa"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#A43D1D] px-4 text-sm font-medium text-white hover:bg-[#8E3317]"
+            >
+              <span>{isEnglish ? 'Ask via Q&A' : 'ถามคำถามผ่านหน้า Q&A'}</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </div>
       </section>
+
+      <section className="rounded-2xl border border-brand-border bg-brand-surface p-5">
+        <h2 className="font-serif text-lg font-semibold text-brand-maroon">{isEnglish ? 'About Ayutthaya Monk Chat' : 'รู้จัก Ayutthaya Monk Chat'}</h2>
+        <p className="mt-2 text-sm leading-6 text-brand-muted">{isEnglish ? 'Meet student monks, ask questions about Buddhism, and try a short guided meditation at Wat Mahathat, Ayutthaya. MonkChat Guide helps you prepare and explore more after your visit.' : 'พบปะพระนิสิต สนทนาเรื่องพระพุทธศาสนา และลองนั่งสมาธิสั้น ๆ ณ วัดมหาธาตุ พระนครศรีอยุธยา ใช้ MonkChat Guide เตรียมตัวก่อนร่วมกิจกรรม และเรียนรู้ต่อหลังการเยี่ยมชม'}</p>
+      </section>
+      </div>
     </div>
   )
 }
 
 function GuideLinkRow({ to, title, description, icon }: { to: string; title: string; description: string; icon: ReactNode }) {
   return (
-    <Link to={to} className="group flex items-center gap-3 py-4">
-      <span className="text-[#e9c66b]">{icon}</span>
-      <span className="min-w-0 flex-1"><strong className="block text-sm">{title}</strong><small className="mt-1 block truncate text-[.68rem] text-white/55">{description}</small></span>
-      <span className="text-white/60 transition-transform group-hover:translate-x-1">↗</span>
+    <Link to={to} className="group flex min-h-16 items-start gap-3 rounded-lg py-4 transition-colors duration-150 hover:text-[#A43D1D]">
+      <span className="mt-1 text-brand-muted">{icon}</span>
+      <span className="min-w-0 flex-1">
+        <strong className="block text-sm font-medium text-[#681B16] sm:text-sm group-hover:text-[#A43D1D]">{title}</strong>
+        <small className="mt-1 block text-sm leading-6 text-brand-muted">{description}</small>
+      </span>
+      <span aria-hidden="true" className="text-brand-muted">→</span>
     </Link>
   )
 }
 
-function LoadingState({ label, inverse = false }: { label: string; inverse?: boolean }) {
+function LoadingState({ label }: { label: string }) {
   return (
-    <div className={`flex items-center justify-center gap-3 py-8 text-sm ${inverse ? 'text-white/65' : 'text-slate-500'}`} role="status">
-      <span className={`h-5 w-5 animate-spin rounded-full border-2 ${inverse ? 'border-white/20 border-t-[#efd070]' : 'border-slate-200 border-t-[#A86100]'}`} />
+    <div className="flex items-center justify-center gap-3 py-6 text-sm text-brand-muted" role="status">
+      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#A43D1D]/20 border-t-[#A43D1D]" />
       {label}
     </div>
   )
@@ -361,12 +612,12 @@ function ErrorState({ message, retryLabel, onRetry }: {
   onRetry: () => Promise<void>
 }) {
   return (
-    <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-5 text-center">
+    <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-center">
       <p className="text-sm font-semibold text-red-800">{message}</p>
       <button
         type="button"
         onClick={() => void onRetry()}
-        className="mt-3 rounded-lg bg-red-700 px-4 py-2 text-sm font-bold text-white hover:bg-red-800"
+        className="mt-3 min-h-11 cursor-pointer rounded-lg bg-brand-terracotta px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
       >
         {retryLabel}
       </button>
@@ -374,52 +625,16 @@ function ErrorState({ message, retryLabel, onRetry }: {
   )
 }
 
-function EmptyState({ message, inverse = false }: { message: string; inverse?: boolean }) {
+function EmptyState({ message }: { message: string }) {
   return (
-    <div className={`mt-4 rounded-xl border border-dashed px-5 py-7 text-center text-sm ${inverse ? 'border-white/20 bg-white/5 text-white/65' : 'border-slate-300 bg-white text-slate-500'}`}>
+    <div className="mt-3 rounded-xl border border-dashed border-[#EADCC6] bg-[#FFF8EE] p-5 text-center text-sm leading-6 text-brand-muted">
       {message}
     </div>
   )
 }
 
-function PlayIcon() {
-  return (
-    <svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M14.75 9.25L9.5 6.2A1 1 0 008 7.07v9.86a1 1 0 001.5.87l5.25-3.05a3.18 3.18 0 000-5.5z" />
-      <circle cx="12" cy="12" r="9" strokeWidth={1.8} />
-    </svg>
-  )
-}
-
-function QuestionIcon() {
-  return (
-    <svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 9.5a4 4 0 117.2 2.4c-1.2 1.6-3.2 1.7-3.2 3.6m0 3h.01M12 22a10 10 0 100-20 10 10 0 000 20z" />
-    </svg>
-  )
-}
-
-function LocationIcon() {
-  return (
-    <svg aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1114 0z" />
-      <circle cx="12" cy="10" r="2.5" strokeWidth={1.8} />
-    </svg>
-  )
-}
-
-function LinkIcon() {
-  return (
-    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10 13a5 5 0 007.54.54l2-2a5 5 0 00-7.07-7.07l-1.15 1.14m2.68 5.38a5 5 0 00-7.54-.54l-2 2a5 5 0 007.07 7.07l1.14-1.14" />
-    </svg>
-  )
-}
-
-function ExternalLinkIcon() {
-  return (
-    <svg aria-hidden="true" className="h-5 w-5 shrink-0 text-slate-400 transition-colors group-hover:text-[#A86100]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M14 5h5m0 0v5m0-5l-8 8m-2-6H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3" />
-    </svg>
-  )
-}
+function PlayIcon() { return <GuideIcon name="play" /> }
+function QuestionIcon() { return <GuideIcon name="question" /> }
+function LocationIcon() { return <GuideIcon name="pin" /> }
+function LinkIcon() { return <GuideIcon name="link" /> }
+function ExternalLinkIcon() { return <GuideIcon name="external" /> }

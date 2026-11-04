@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { GuideIcon } from '../../components/GuideIcon'
 import { useAuth } from '../../lib/auth'
 import { supabaseClient } from '../../lib/supabase'
 
@@ -266,7 +267,7 @@ export function AdminBioLinksPage() {
           className={`px-2.5 py-1 text-xs font-semibold rounded border whitespace-nowrap ${
             canEdit
               ? 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer'
-              : 'border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed'
+              : 'border-slate-200 text-slate-500 bg-slate-50 cursor-not-allowed'
           }`}
         >
           {t('admin.bioLinks.actions.edit')}
@@ -322,10 +323,10 @@ export function AdminBioLinksPage() {
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-medium text-slate-900">
               {t('admin.modules.bioLinks.title')}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -343,7 +344,7 @@ export function AdminBioLinksPage() {
             </button>
             <Link
               to="/admin/bio-links/new"
-              className="px-4 py-2 text-sm font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              className="px-4 py-2 text-sm font-semibold rounded-lg bg-brand-terracotta hover:bg-brand-terracotta-dark text-white transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
               {t('admin.bioLinks.addLink')}
             </Link>
@@ -360,7 +361,7 @@ export function AdminBioLinksPage() {
 
       {/* Error State */}
       {!isLoading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-3">
           <p className="text-red-800 font-semibold">{t('admin.bioLinks.create.errorHeader')}</p>
           <p className="text-red-600 text-sm font-mono break-all">{error}</p>
           <button
@@ -375,14 +376,14 @@ export function AdminBioLinksPage() {
 
       {/* Success Alert State */}
       {actionSuccessMsg && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex items-center justify-between">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-800 flex flex-wrap items-center justify-between gap-3">
           <p className="font-semibold">✓ {actionSuccessMsg}</p>
           <button
             type="button"
-            onClick={() => setActionSuccessMsg(null)}
-            className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer"
+            aria-label={t('management.dismiss')} onClick={() => setActionSuccessMsg(null)}
+            className="text-xs text-emerald-800 hover:text-emerald-800 font-semibold cursor-pointer"
           >
-            ✕
+            <GuideIcon name="close" />
           </button>
         </div>
       )}
@@ -390,9 +391,7 @@ export function AdminBioLinksPage() {
       {/* Empty State */}
       {!isLoading && !error && items.length === 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-slate-50 flex items-center justify-center text-3xl">
-            🔗
-          </div>
+
           <h2 className="text-lg font-semibold text-slate-800">
             {t('admin.bioLinks.emptyTitle')}
           </h2>
@@ -404,8 +403,8 @@ export function AdminBioLinksPage() {
 
       {/* Results List */}
       {!isLoading && !error && items.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
             <p className="text-sm font-semibold text-slate-700">
               {t('admin.bioLinks.linkCount', { count: items.length })}
             </p>
@@ -422,7 +421,7 @@ export function AdminBioLinksPage() {
               return (
                 <div key={item.id} className="p-4 space-y-3">
                   <div className="flex justify-between items-start gap-2">
-                    <span className="font-bold text-slate-900 leading-tight">
+                    <span className="font-medium text-slate-900 leading-tight">
                       {title}
                     </span>
                     {renderBadges(item)}
@@ -430,7 +429,7 @@ export function AdminBioLinksPage() {
                   <div className="text-xs text-slate-600 space-y-1">
                     <p className="truncate">
                       <strong>URL:</strong>{' '}
-                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-brand-maroon underline">
                         {item.url}
                       </a>
                     </p>
@@ -438,24 +437,25 @@ export function AdminBioLinksPage() {
                       <strong>{t('admin.bioLinks.displayOrder')}:</strong>
                       <input
                         type="number"
+                        aria-label={`${t('admin.bioLinks.displayOrder')}: ${title}`}
                         disabled={isProcessing}
                         value={orderVal}
                         onChange={(e) => handleOrderChange(item.id, e.target.value)}
-                        className="w-16 border border-slate-200 rounded px-1.5 py-0.5 text-xs text-center focus:outline-emerald-600"
+                        className="w-16 border border-slate-200 rounded px-1.5 py-0.5 text-xs text-center focus:outline-brand-terracotta"
                       />
                       {hasOrderChanged && (
                         <button
                           type="button"
                           disabled={isProcessing}
                           onClick={() => saveOrder(item)}
-                          className="bg-emerald-600 text-white rounded px-2 py-0.5 text-[11px] font-semibold hover:bg-emerald-700 cursor-pointer"
+                          className="bg-brand-terracotta text-white rounded px-2 py-0.5 text-xs font-semibold hover:bg-brand-terracotta-dark cursor-pointer"
                         >
                           Save
                         </button>
                       )}
                     </div>
                   </div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-slate-500">
                     {t('admin.bioLinks.updatedAt')}: {formatDate(item.updated_at, currentLang)}
                   </div>
                   <div className="pt-2">
@@ -470,7 +470,7 @@ export function AdminBioLinksPage() {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold text-xs uppercase">
+                <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold text-xs">
                   <th className="px-6 py-3">{t('admin.bioLinks.colTitle')}</th>
                   <th className="px-6 py-3">{t('admin.bioLinks.colUrl')}</th>
                   <th className="px-6 py-3 w-32">{t('admin.bioLinks.colOrder')}</th>
@@ -490,7 +490,7 @@ export function AdminBioLinksPage() {
                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4 font-semibold text-slate-900">{title}</td>
                       <td className="px-6 py-4 text-xs font-mono">
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-brand-maroon hover:underline break-all">
                           {item.url}
                         </a>
                       </td>
@@ -498,17 +498,18 @@ export function AdminBioLinksPage() {
                         <div className="flex items-center gap-1.5">
                           <input
                             type="number"
+                        aria-label={`${t('admin.bioLinks.displayOrder')}: ${title}`}
                             disabled={isProcessing}
                             value={orderVal}
                             onChange={(e) => handleOrderChange(item.id, e.target.value)}
-                            className="w-16 border border-slate-200 rounded px-2 py-1 text-xs text-center focus:outline-emerald-600 focus:border-emerald-600"
+                            className="w-16 border border-slate-200 rounded px-2 py-1 text-xs text-center focus:outline-brand-terracotta focus:border-brand-terracotta"
                           />
                           {hasOrderChanged && (
                             <button
                               type="button"
                               disabled={isProcessing}
                               onClick={() => saveOrder(item)}
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white rounded px-2 py-1 text-xs font-semibold transition-colors cursor-pointer"
+                              className="bg-brand-terracotta hover:bg-brand-terracotta-dark text-white rounded px-2 py-1 text-xs font-semibold transition-colors cursor-pointer"
                             >
                               Save
                             </button>
@@ -516,7 +517,7 @@ export function AdminBioLinksPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">{renderBadges(item)}</td>
-                      <td className="px-6 py-4 text-xs text-slate-400">{formatDate(item.updated_at, currentLang)}</td>
+                      <td className="px-6 py-4 text-xs text-slate-500">{formatDate(item.updated_at, currentLang)}</td>
                       <td className="px-6 py-4 text-right">{renderActionButtons(item)}</td>
                     </tr>
                   )

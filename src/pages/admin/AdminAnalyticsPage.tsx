@@ -165,12 +165,12 @@ export function AdminAnalyticsPage() {
   )
 
   const summaryCards = [
-    { key: 'visitors', value: summary.visitors, color: 'border-l-amber-500' },
-    { key: 'sessions', value: summary.sessions, color: 'border-l-blue-500' },
-    { key: 'pageViews', value: summary.pageViews, color: 'border-l-violet-500' },
-    { key: 'audioPlays', value: summary.audioPlays, color: 'border-l-emerald-500' },
-    { key: 'audioCompletes', value: summary.audioCompletes, color: 'border-l-teal-500' },
-    { key: 'bioClicks', value: summary.bioClicks, color: 'border-l-rose-500' },
+    { key: 'visitors', value: summary.visitors },
+    { key: 'sessions', value: summary.sessions },
+    { key: 'pageViews', value: summary.pageViews },
+    { key: 'audioPlays', value: summary.audioPlays },
+    { key: 'audioCompletes', value: summary.audioCompletes },
+    { key: 'bioClicks', value: summary.bioClicks },
   ]
 
   const recentUsageEvents = usageEvents.slice(0, 20)
@@ -179,10 +179,10 @@ export function AdminAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <section className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6 shadow-xs">
+      <section className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-medium text-slate-900">
               {t('admin.analytics.title')}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -195,10 +195,11 @@ export function AdminAnalyticsPage() {
               <button
                 key={days}
                 type="button"
+                aria-pressed={rangeDays === days}
                 onClick={() => setRangeDays(days)}
                 className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-colors cursor-pointer ${
                   rangeDays === days
-                    ? 'bg-amber-600 text-white border-amber-600'
+                    ? 'bg-brand-terracotta text-white border-amber-600'
                     : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
                 }`}
               >
@@ -209,7 +210,7 @@ export function AdminAnalyticsPage() {
               type="button"
               onClick={() => void loadAnalytics()}
               disabled={isLoading}
-              className="px-3 py-2 rounded-lg text-sm font-semibold bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-60 cursor-pointer"
+              className="px-3 py-2 rounded-lg text-sm font-semibold bg-brand-terracotta text-white hover:bg-brand-terracotta-dark disabled:opacity-60 cursor-pointer"
             >
               {t('admin.analytics.refresh')}
             </button>
@@ -217,13 +218,13 @@ export function AdminAnalyticsPage() {
         </div>
       </section>
 
-      <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+      <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
         <p className="font-semibold">{t('admin.analytics.privacyTitle')}</p>
         <p className="mt-1 leading-relaxed">{t('admin.analytics.privacyDesc')}</p>
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           <p className="font-semibold">{error}</p>
           <button
             type="button"
@@ -245,22 +246,22 @@ export function AdminAnalyticsPage() {
             {summaryCards.map((card) => (
               <div
                 key={card.key}
-                className={`bg-white rounded-xl border border-slate-200 border-l-4 ${card.color} p-4 sm:p-5 shadow-xs`}
+                className={`bg-white rounded-xl border border-slate-200  p-4 sm:p-5 `}
               >
                 <p className="text-xs sm:text-sm text-slate-500 font-medium">
                   {t(`admin.analytics.metrics.${card.key}`)}
                 </p>
-                <p className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">
+                <p className="text-2xl sm:text-3xl font-medium tabular-nums text-slate-900 mt-1">
                   {card.value.toLocaleString(currentLanguage.startsWith('en') ? 'en-US' : 'th-TH')}
                 </p>
               </div>
             ))}
           </section>
 
-          <section className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-xs">
+          <section className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
               <div>
-                <h2 className="text-lg font-bold text-slate-900">
+                <h2 className="text-lg font-medium text-slate-900">
                   {t('admin.analytics.dailyTitle')}
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
@@ -289,16 +290,16 @@ export function AdminAnalyticsPage() {
                         title={`${t('admin.analytics.eventsLegend')}: ${point.events}`}
                       />
                     </div>
-                    <span className="text-[10px] text-slate-500 whitespace-nowrap">{point.label}</span>
+                    <span className="text-xs text-slate-500 whitespace-nowrap">{point.label}</span>
                   </div>
                 ))}
               </div>
             </div>
           </section>
 
-          <section className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-slate-200">
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2 className="text-lg font-medium text-slate-900">
                 {t('admin.analytics.recentVisitorsTitle')}
               </h2>
               <p className="text-xs text-slate-500 mt-1">
@@ -307,7 +308,7 @@ export function AdminAnalyticsPage() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-sm">
-                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <thead className="bg-slate-50 text-xs text-slate-500">
                   <tr>
                     <th className="text-left px-4 py-3">{t('admin.analytics.columns.visitor')}</th>
                     <th className="text-left px-4 py-3">{t('admin.analytics.columns.event')}</th>
@@ -333,9 +334,9 @@ export function AdminAnalyticsPage() {
             </div>
           </section>
 
-          {isOwner && <section className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          {isOwner && <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-slate-200">
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2 className="text-lg font-medium text-slate-900">
                 {t('admin.analytics.auditTitle')}
               </h2>
               <p className="text-xs text-slate-500 mt-1">
@@ -344,7 +345,7 @@ export function AdminAnalyticsPage() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[820px] text-sm">
-                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <thead className="bg-slate-50 text-xs text-slate-500">
                   <tr>
                     <th className="text-left px-4 py-3">{t('admin.analytics.columns.admin')}</th>
                     <th className="text-left px-4 py-3">{t('admin.analytics.columns.action')}</th>
@@ -367,7 +368,7 @@ export function AdminAnalyticsPage() {
                             ? 'bg-emerald-100 text-emerald-800'
                             : log.action === 'delete'
                               ? 'bg-red-100 text-red-800'
-                              : 'bg-blue-100 text-blue-800'
+                              : 'bg-blue-100 text-neutral-700'
                         }`}>
                           {t(`admin.analytics.actions.${log.action}`)}
                         </span>

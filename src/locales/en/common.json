@@ -1,9 +1,9 @@
 {
   "app": {
     "title": "MonkChat Guide",
-    "heading": "Meditation Guide for Monk Students and Visitors",
+    "heading": "MonkChat Guide",
     "status": "Under Development",
-    "description": "A web application that helps monk students guide meditation and share essential information with international visitors.",
+    "description": "Meditation and Monk Chat guidance for visitors to Ayutthaya Monk Chat.",
     "footer": "© 2026 MonkChat Guide. All rights reserved."
   },
   "nav": {
@@ -14,7 +14,9 @@
     "login": "Team Login",
     "visitor": "For Visitors",
     "mainNavigation": "Main navigation",
-    "aboutProject": "About MonkChat Guide"
+    "aboutProject": "About MonkChat Guide",
+    "visit": "Activities",
+    "activities": "Activities"
   },
   "language": {
     "label": "Language",
@@ -40,8 +42,8 @@
     "meditationCardDesc": "Listen to guided meditation tracks for relaxation and peace, complete with subtitles.",
     "meditationCardAction": "Explore Meditation Tracks",
     "qaCardTitle": "Buddhism & Meditation Q&A",
-    "qaCardDesc": "Search verified answers to common meditation questions and temple etiquette.",
-    "qaCardAction": "Browse Verified Q&A",
+    "qaCardDesc": "Search answers to common meditation questions and temple etiquette.",
+    "qaCardAction": "Browse Q&A",
     "centersCardTitle": "DCI Meditation Centers",
     "centersCardDesc": "Discover locations and contact details for international DCI meditation centers.",
     "centersCardAction": "View DCI Centers",
@@ -51,15 +53,15 @@
     "purposeTitle": "About the MonkChat Guide Project",
     "purposeText": "MonkChat Guide is a mobile-first Progressive Web Application designed to support foreign visitors and monk students participating in Monk Chat activities.",
     "purposeVisitors": "For Visitors: Scan a QR code to access guided meditation, subtitles, and introductory Buddhist knowledge easily.",
-    "purposeMonks": "For Monks & Team: Access a verified Q&A knowledge base to confidently guide visitors in multiple languages.",
+    "purposeMonks": "For monk students and the team: Use the Q&A collection to guide visitors.",
     "loadingLinks": "Loading links...",
     "errorLoadLinks": "Could not load links.",
     "emptyLinks": "No published links available.",
     "retry": "Retry"
   },
   "visitor": {
-    "heroTag": "MONKCHAT GUIDE",
-    "title": "Welcome to MonkChat Guide",
+    "heroTag": "AYUTTHAYA MONK CHAT · WAT MAHATHAT",
+    "title": "Ayutthaya Monk Chat",
     "subtitle": "Begin learning and practising meditation at your own pace. Choose what you would like to explore below.",
     "chooseTitle": "What would you like to do?",
     "chooseSubtitle": "Choose a section to begin right away.",
@@ -85,8 +87,8 @@
   },
   "meditation": {
     "heroTag": "GUIDED MEDITATION",
-    "title": "Guided Meditation Tracks",
-    "subtitle": "Select a meditation track to view description, transcript, and synchronized subtitles.",
+    "title": "Guided Meditation",
+    "subtitle": "Simple preparation steps and a 5-minute guided meditation audio track for inner calm.",
     "demoBadge": "Demonstration Track (Demo)",
     "selectTrackTitle": "Meditation Tracks",
     "duration": "Duration",
@@ -117,7 +119,45 @@
     "subtitleError": "Captions could not be loaded. You can still listen or read the transcript.",
     "currentCaption": "Current caption",
     "captionWaiting": "Captions will appear when playback reaches a captioned section.",
-    "allCaptions": "View all captions with timestamps"
+    "allCaptions": "View all captions with timestamps",
+    "flowNav": {
+      "step1": "1. Preparation",
+      "step2": "2. Main Audio",
+      "step3": "3. Subtitles & Transcript",
+      "step4": "4. Practice Tips"
+    },
+    "guide": {
+      "tag": "GETTING STARTED",
+      "title": "Preparation Steps Before Practicing",
+      "subtitle": "Simple steps to settle your body and calm your mind before listening to the audio.",
+      "reviewDraftBadge": "Draft for Review",
+      "collapseSteps": "Hide steps",
+      "expandSteps": "View steps",
+      "jumpToAudio": "Listen to Main Audio ↓",
+      "quickSummary": "01 Space & Body · 02 Posture · 03 Relax & Center",
+      "step1Title": "1. Prepare Your Space & Body",
+      "step1Desc": "Find a quiet, well-ventilated corner. Rest for a moment, sip some water, and relax any physical tension.",
+      "step2Title": "2. Settle Your Posture",
+      "step2Desc": "Sit comfortably on the floor or a chair, body upright without strain. Place right hand over left with index finger lightly touching thumb.",
+      "step3Title": "3. Relax & Center Your Mind",
+      "step3Desc": "Close your eyes gently, relax all muscles from head to toe, and rest your mind softly at the Center of the Body."
+    },
+    "supplementary": {
+      "tag": "PRACTICE TIPS",
+      "title": "Additional Practice Tips",
+      "subtitle": "Practical guidance for common meditation experiences.",
+      "reviewDraftBadge": "Draft for Review",
+      "tipsSectionTitle": "Tips for Common Meditation Experiences",
+      "wanderingTitle": "When Thoughts Wander",
+      "wanderingDesc": "Wandering thoughts are completely natural. Don't fight them—softly bring your awareness back to the center and begin again with ease.",
+      "sleepyTitle": "Drowsiness or Muscle Tension",
+      "sleepyDesc": "If feeling tense, consciously soften face, neck, and shoulders. If drowsy, open eyes slightly, adjust posture, or take deeper breaths.",
+      "dailyTitle": "Carrying Peace Throughout the Day",
+      "dailyDesc": "After your session, maintain that calm, clear, and relaxed awareness throughout daily activities, walking, and working.",
+      "exitTitle": "Return to Home",
+      "exitDesc": "Return to the visitor home page for Monk Chat Ayutthaya activities. Q&A and Centers can be accessed via the main menu.",
+      "exitButton": "Back to Visitor Home"
+    }
   },
   "qa": {
     "heroTag": "BUDDHISM & MEDITATION Q&A",
@@ -137,9 +177,8 @@
     "errorNoClient": "Supabase client not initialized.",
     "errorLoad": "Could not load Q&A items.",
     "retry": "Retry",
-    "empty": "No verified and published Q&A items available yet.",
+    "empty": "No Q&A items are available yet.",
     "itemCount": "item(s)",
-    "sourceRef": "Source Reference:",
     "listTitle": "Questions & answers",
     "loading": "Loading questions and answers...",
     "readMore": "Read the full answer"
@@ -157,8 +196,8 @@
     },
     "qa": {
       "title": "Meditation & Buddhism Q&A",
-      "subtitle": "Frequently asked questions with answers verified by teaching monks",
-      "placeholder": "The system is preparing verified questions and answers."
+      "subtitle": "Frequently asked questions about meditation and Buddhism",
+      "placeholder": "The system is preparing questions and answers."
     },
     "centers": {
       "title": "DCI Meditation Centers",
@@ -188,9 +227,9 @@
     }
   },
   "centers": {
-    "heroTag": "DCI MEDITATION CENTERS",
-    "title": "DCI Meditation Centers",
-    "subtitle": "Explore DCI meditation centers and contact details published by the team.",
+    "heroTag": "After your Monk Chat visit",
+    "title": "Continue your practice",
+    "subtitle": "If you would like to explore meditation further, discover these places and contact one that suits you.",
     "demoBadge": "Demonstration Data (Demo)",
     "listTitle": "Meditation centers",
     "demoNotice": "ℹ️ All center records below are system structure placeholders for testing. They do not represent real or official centers. Official data is pending from the project owner.",
@@ -206,7 +245,8 @@
     "retry": "Retry",
     "empty": "No published centers available yet.",
     "itemCount": "center(s)",
-    "loading": "Loading centers..."
+    "loading": "Loading centers...",
+    "unnamedCenter": "Unnamed center"
   },
   "admin": {
     "nav": {
@@ -337,17 +377,17 @@
       }
     },
     "meditation": {
-      "subtitle": "Meditation tracks in the database (read-only)",
+      "subtitle": "Manage audio tracks, transcripts and captions",
       "refresh": "Refresh",
       "addTrack": "+ Add Track",
       "comingSoon": "This feature will be available in the next step",
-      "readOnlyNotice": "This page is currently read-only. Content management buttons will be enabled in the next step.",
+      "readOnlyNotice": "New tracks start as drafts. Check audio and translations before publishing.",
       "errorNoClient": "Supabase connection is not configured. Please check your .env.local file.",
       "errorTitle": "Error loading tracks",
       "retry": "Retry",
       "emptyTitle": "No meditation tracks in the database yet",
       "emptyDesc": "There are currently no meditation tracks in the database. Records will appear here once the first track is added.",
-      "emptyHint": "The add track feature will be available in the next step.",
+      "emptyHint": "Choose Add Track to create a draft",
       "trackCount": "{{count}} meditation track(s)",
       "duration": "Duration",
       "audioExists": "Audio file exists",
@@ -385,7 +425,7 @@
         "submit": "Save Track",
         "saving": "Saving...",
         "noticeTitle": "New tracks always start as Draft",
-        "noticeDesc": "content_status = draft \u00b7 is_published = false \u00b7 audio_storage_path = null \u00b7 No audio upload yet",
+        "noticeDesc": "content_status = draft · is_published = false · audio_storage_path = null · No audio upload yet",
         "sectionThai": "Thai (Required)",
         "sectionEnglish": "English (Optional)",
         "sectionDuration": "Duration",
@@ -395,8 +435,8 @@
         "fieldEnDesc": "Description (English)",
         "fieldMinutes": "Minutes",
         "fieldSeconds": "Seconds",
-        "placeholderThTitle": "e.g. \u0e01\u0e32\u0e23\u0e2a\u0e27\u0e14\u0e21\u0e19\u0e15\u0e4c\u0e20\u0e32\u0e27\u0e19\u0e32",
-        "placeholderThDesc": "\u0e04\u0e33\u0e2d\u0e18\u0e34\u0e1a\u0e32\u0e22\u0e2a\u0e31\u0e49\u0e19 \u0e46 (\u0e44\u0e21\u0e48\u0e1a\u0e31\u0e07\u0e04\u0e31\u0e1a)",
+        "placeholderThTitle": "e.g. การสวดมนต์ภาวนา",
+        "placeholderThDesc": "คำอธิบายสั้น ๆ (ไม่บังคับ)",
         "placeholderEnTitle": "e.g. Mindfulness Meditation",
         "placeholderEnDesc": "Brief description of this track (optional)",
         "errorHeader": "Could not save track",
@@ -548,10 +588,11 @@
         "errorGeneric": "An unexpected error occurred. Please try again.",
         "notFoundTitle": "Meditation Track Not Found",
         "successUpload": "VTT Subtitle uploaded successfully"
-      }
+      },
+      "errorNoUser": "No user session found. Please sign in again."
     },
     "qa": {
-      "subtitle": "List of Buddhist Q&A items in database (Read-only)",
+      "subtitle": "Manage questions, answers and review status",
       "refresh": "Refresh",
       "addQA": "+ Add Q&A",
       "policyNoticeTitle": "Q&A Content Policy & Verification Notice",
@@ -562,7 +603,7 @@
       "retry": "Retry",
       "emptyTitle": "No Q&A items in database",
       "emptyDesc": "There are currently no Q&A items in the database. Items will appear here once created.",
-      "emptyHint": "Feature to create Q&A items will be enabled in the next step.",
+      "emptyHint": "Choose Add Q&A to create a draft",
       "itemCount": "{{count}} Q&A items",
       "category": "Category",
       "hasSourceRef": "Has reference",
@@ -637,6 +678,7 @@
         "submit": "Save Changes",
         "errorNotFound": "The requested Q&A item was not found.",
         "errorArchived": "Archived items cannot be edited.",
+        "errorRequiresDraft": "This answer has been reviewed or published. The project owner must return it to draft from the Q&A list before editing.",
         "errorCategoryRequired": "Category is required.",
         "errorThQuestionRequired": "Thai question is required.",
         "errorThShortAnswerRequired": "Thai short answer is required.",
@@ -647,7 +689,8 @@
         "errorUpdateCore": "Failed to update core metadata.",
         "errorUpdateTh": "Failed to update Thai translation.",
         "errorUpdateEn": "Failed to update English translation.",
-        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged."
+        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged.",
+        "errorVerified": "This verified answer is locked. An owner must return it to draft from the list before editing, then verify it again before publishing."
       },
       "actions": {
         "edit": "Edit",
@@ -669,6 +712,7 @@
     },
     "centers": {
       "subtitle": "Manage DCI Meditation Centers metadata and locations (CMS)",
+      "errorHeader": "Could not load centers",
       "refresh": "Refresh",
       "addCenter": "+ Add DCI Center",
       "emptyTitle": "No DCI centers in database",
@@ -730,7 +774,8 @@
         "errorEnDescRequired": "English description is required if English name is provided.",
         "errorNoUser": "User session not found. Please sign in again.",
         "errorNoClient": "Supabase connection is not configured.",
-        "errorGeneric": "An unexpected error occurred. Please try again."
+        "errorGeneric": "An unexpected error occurred. Please try again.",
+        "optional": "Optional"
       },
       "edit": {
         "title": "Edit DCI Meditation Center",
@@ -743,7 +788,8 @@
         "errorUpdateCore": "Failed to update core metadata.",
         "errorUpdateTh": "Failed to update Thai translation.",
         "errorUpdateEn": "Failed to update English translation.",
-        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged."
+        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged.",
+        "errorVerified": "This verified answer is locked. An owner must return it to draft from the list before editing, then verify it again before publishing."
       },
       "actions": {
         "edit": "Edit",
@@ -757,7 +803,9 @@
         "restoreConfirm": "Are you sure you want to restore this archived center?",
         "errorUpdate": "Failed to update status.",
         "successMsg": "Status updated successfully."
-      }
+      },
+      "errorNoClient": "Supabase connection is not configured.",
+      "errorGeneric": "An unexpected error occurred. Please try again."
     },
     "bioLinks": {
       "subtitle": "Manage links displayed on the BioPage (CMS)",
@@ -821,7 +869,8 @@
         "errorUpdateCore": "Failed to update core metadata.",
         "errorUpdateTh": "Failed to update Thai translation.",
         "errorUpdateEn": "Failed to update English translation.",
-        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged."
+        "enPreserveNotice": "Removing English translations is not supported in this MVP. Clearing fields will leave existing English data unchanged.",
+        "errorVerified": "This verified answer is locked. An owner must return it to draft from the list before editing, then verify it again before publishing."
       },
       "actions": {
         "edit": "Edit",
@@ -835,7 +884,9 @@
         "restoreConfirm": "Are you sure you want to restore this archived link?",
         "errorUpdate": "Failed to update status.",
         "successMsg": "Status updated successfully."
-      }
+      },
+      "errorNoClient": "Supabase connection is not configured.",
+      "errorGeneric": "An unexpected error occurred. Please try again."
     }
   }
 }

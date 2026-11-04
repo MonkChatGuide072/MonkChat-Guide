@@ -17,18 +17,43 @@ function timestamp(value: string): number {
 
 export function parseWebVTT(input: string): SubtitleCue[] {
   const cues: SubtitleCue[] = []
-  const blocks = input.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n').split(/\n[ \t]*\n/)
-  for (const block of blocks) {
-    const lines = block.trim().split('\n')
-    if (/^(WEBVTT|NOTE|STYLE|REGION)(?:\s|$)/.test(lines[0])) continue
-    const timingIndex = lines[0].includes('-->') ? 0 : 1
-    const match = lines[timingIndex]?.match(/^(\S+)\s+-->\s+(\S+)/)
-    if (!match) continue
-    const start = timestamp(match[1])
-    const end = timestamp(match[2])
-    const text = lines.slice(timingIndex + 1).join('\n').replace(/<[^>]*>/g, '').trim()
-    if (!text || !Number.isFinite(start) || !Number.isFinite(end) || end <= start) continue
-    cues.push({ id: `cue-${cues.length}`, start, end, text })
+  const lines = input.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n').split('\n')
+  let current: { start: number; end: number; lines: string[] } | null = null
+  let skipDirective = false
+  const flush = () => {
+    if (!current) return
+    const text = current.lines.join('\n').replace(/<[^>]*>/g, '').trim()
+    if (text && Number.isFinite(current.start) && Number.isFinite(current.end) && current.end > current.start) {
+      cues.push({ id: `cue-${cues.length}`, start: current.start, end: current.end, text })
+    }
+    current = null
   }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim()
+    if (!line) {
+      flush()
+      skipDirective = false
+      continue
+    }
+    if (/^(NOTE|STYLE|REGION)(?:\s|$)/.test(line)) {
+      flush()
+      skipDirective = true
+      continue
+    }
+    if (skipDirective || /^WEBVTT(?:\s|$)/.test(line)) continue
+
+    // Some published files omit cue separators and put caption text after the end time.
+    const timing = line.match(/^(\S+)\s+-->\s+(\S+)(?:\s+(.*))?$/)
+    if (timing) {
+      flush()
+      const tail = timing[3]?.trim() || ''
+      const inlineText = /^(?:line|position|size|align|vertical):/.test(tail) ? '' : tail
+      current = { start: timestamp(timing[1]), end: timestamp(timing[2]), lines: inlineText ? [inlineText] : [] }
+    } else if (current) {
+      current.lines.push(rawLine)
+    }
+  }
+  flush()
   return cues.sort((a, b) => a.start - b.start)
 }
