@@ -223,7 +223,7 @@ export function Layout() {
       </footer>
 
       {/* Floating verified chatbot card */}
-      {!location.pathname.startsWith('/admin') && <ChatbotServiceCard />}
+      {!location.pathname.startsWith('/admin') && !location.pathname.startsWith('/meditation') && <ChatbotServiceCard />}
     </div>
   )
 }

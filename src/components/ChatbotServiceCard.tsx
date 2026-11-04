@@ -22,7 +22,7 @@ interface Message {
   text: string
 }
 
-export function ChatbotServiceCard() {
+export function ChatbotServiceCard({ inline = false }: { inline?: boolean }) {
   const { i18n } = useTranslation()
   const language = (i18n.resolvedLanguage || i18n.language).startsWith('en') ? 'en' : 'th'
   const copy = reviewedChatbotCopy[language]
@@ -36,8 +36,8 @@ export function ChatbotServiceCard() {
     wasOpen.current = isOpen
   }, [isOpen])
 
-  return <aside className="fixed bottom-4 right-4 z-50 max-w-[calc(100vw-2rem)] text-brand-text sm:bottom-6 sm:right-6" aria-label={copy.serviceTitle}>
-    {isOpen ? <section id="reviewed-chatbot-panel" aria-labelledby="reviewed-chatbot-title" onKeyDown={event => { if (event.key === 'Escape') setIsOpen(false) }} className="flex max-h-[min(78dvh,42rem)] w-[min(25rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-[0_8px_24px_rgba(0,0,0,.12)]">
+  return <aside className={inline ? 'text-brand-text' : 'fixed bottom-4 right-4 z-50 max-w-[calc(100vw-2rem)] text-brand-text sm:bottom-6 sm:right-6'} aria-label={copy.serviceTitle}>
+    {isOpen ? <section id="reviewed-chatbot-panel" aria-labelledby="reviewed-chatbot-title" onKeyDown={event => { if (event.key === 'Escape') setIsOpen(false) }} className={`flex max-h-[min(78dvh,42rem)] ${inline ? 'w-full max-w-[25rem]' : 'w-[min(25rem,calc(100vw-2rem))]'} flex-col overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-[0_8px_24px_rgba(0,0,0,.12)]`}>
       <div className="flex shrink-0 items-start justify-between gap-3 border-b border-brand-border px-4 py-4">
         <div><p className="text-xs leading-5 text-brand-muted">{language === 'en' ? 'Ayutthaya Monk Chat' : 'อยุธยา มังค์แชท'}</p><h2 id="reviewed-chatbot-title" className="mt-1 text-base font-medium text-brand-maroon">{copy.serviceTitle}</h2></div>
         <button ref={closeRef} type="button" onClick={() => setIsOpen(false)} className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-brand-muted transition-colors duration-150 hover:bg-brand-gold-soft" aria-label={copy.close}><GuideIcon name="close" /></button>

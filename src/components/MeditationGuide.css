@@ -1,0 +1,32 @@
+.meditation-card-viewport {
+  display: flex;
+  position: relative;
+  gap: 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: 16px;
+}
+.meditation-card-viewport::-webkit-scrollbar { display: none; }
+.meditation-card-viewport:focus-visible { outline: 2px solid #681B16; outline-offset: 4px; }
+.meditation-picture-card {
+  flex: 0 0 calc(100% - 16px);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #EADCC6;
+  border-radius: 16px;
+  background: #FFFDF7;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.meditation-picture-art { height: 184px; background: #EDF3E9; padding: 8px; }
+.meditation-picture-copy { padding: 16px; }
+@media (min-width: 640px) {
+  .meditation-picture-card { flex-basis: calc(100% - 24px); display: grid; grid-template-columns: 1fr 1fr; min-height: 320px; }
+  .meditation-picture-art { height: 320px; min-height: 0; padding: 16px; }
+  .meditation-picture-copy { display: flex; flex-direction: column; justify-content: center; padding: 24px; }
+}
+@media (min-width: 1024px) {
+  .meditation-picture-card { flex-basis: calc(80% - 12px); }
+}

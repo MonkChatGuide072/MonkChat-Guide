@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { MeditationPlayer } from '../components/MeditationPlayer'
-import { VisitorBackLink } from '../components/VisitorBackLink'
 import { MeditationBeginnerGuide } from '../components/MeditationBeginnerGuide'
-import { MeditationSupplementary } from '../components/MeditationSupplementary'
 import { GuideIcon } from '../components/GuideIcon'
+import { ChatbotServiceCard } from '../components/ChatbotServiceCard'
 
 interface TrackTranslationRow {
   language_code: string
@@ -152,33 +151,12 @@ export function MeditationPage() {
   }
 
   return (
-    <div className="space-y-12 bg-brand-cream pb-8 text-brand-text break-words [overflow-wrap:anywhere]">
-      <section className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface">
-        <div className="grid md:grid-cols-[1.1fr_0.9fr]">
-          <div className="order-2 p-5 md:order-1 md:p-8">
-            <p className="flex items-center gap-2 text-sm text-brand-muted"><GuideIcon name="lotus" />{isEnglish ? 'Guided meditation' : 'เสียงนำสมาธิ'}</p>
-            <h1 className="mt-3 font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{t('meditation.title')}</h1>
-            <p className="mt-3 max-w-lg text-sm leading-6 text-brand-muted sm:text-base">{t('meditation.subtitle')}</p>
-            <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs leading-5 text-brand-muted sm:text-sm sm:leading-6">
-              <li>{isEnglish ? 'Calm your mind' : 'สงบใจ'}</li>
-              <li>{isEnglish ? 'Build awareness' : 'สร้างสติรู้ตัว'}</li>
-              <li>{isEnglish ? 'Find inner peace' : 'ค้นพบความสงบภายใน'}</li>
-            </ul>
-          </div>
-          <img src="/images/home/monkchat-meditation-hero.webp" alt={isEnglish ? 'A meditation scene in Ayutthaya' : 'ภาพบรรยากาศการนั่งสมาธิในอยุธยา'} width={1672} height={941} className="order-1 h-32 w-full object-cover md:order-2 md:h-full" />
-        </div>
-        <div className="flex flex-wrap items-center gap-3 border-t border-brand-border px-5 py-4 md:px-8">
-          <VisitorBackLink />
-          <nav aria-label={isEnglish ? 'Meditation sections' : 'ส่วนต่าง ๆ ของหน้าสมาธิ'} className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
-            {[
-              ['#meditation-audio', isEnglish ? 'Listen' : 'ฟังเสียง'],
-              ['#meditation-guide', isEnglish ? 'Prepare' : 'เตรียมตัว'],
-              ['#meditation-transcript', isEnglish ? 'Transcript' : 'ถอดเสียง'],
-              ['#meditation-supplementary', isEnglish ? 'Practice tips' : 'คำแนะนำ'],
-            ].map(([to, label]) => <a key={to} href={to} className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-3 text-sm text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft sm:justify-start">{label}</a>)}
-          </nav>
-        </div>
-      </section>
+    <div className="space-y-6 bg-brand-cream pb-8 text-brand-text break-words [overflow-wrap:anywhere]">
+      <header>
+        <h1 className="font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{isEnglish ? 'Dhammakaya meditation' : 'นั่งสมาธิแบบธรรมกาย'}</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-brand-muted">{isEnglish ? 'Learn the seven bases with picture cards, then listen to a guided session.' : 'รู้จักฐานที่ตั้งของใจทั้ง 7 ผ่านการ์ดภาพ แล้วค่อยฟังเสียงนำสมาธิ'}</p>
+      </header>
+      <MeditationBeginnerGuide />
 
       {/* 2. AUDIO PLAYER SECTION (STEP 2) */}
       <div id="meditation-audio" className="scroll-mt-24 space-y-5">
@@ -354,9 +332,6 @@ export function MeditationPage() {
         )}
       </div>
 
-      {/* 3. STEP 1: BEGINNER GUIDE & 5 PRACTICE STEPS */}
-      <MeditationBeginnerGuide />
-
       {/* 4. STEP 3: TRANSCRIPT SECTION */}
       {!isLoading && !error && currentTrack && trackTranslation && (
         <section
@@ -420,8 +395,7 @@ export function MeditationPage() {
         </section>
       )}
 
-      {/* 5. STEP 4: SUPPLEMENTARY PRACTICE TIPS & SIMPLE MEDITATION WITH MONKS */}
-      <MeditationSupplementary />
+      <div className="border-t border-brand-border pt-6"><ChatbotServiceCard inline /></div>
     </div>
   )
 }

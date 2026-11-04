@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { isSafeWebUrl } from '../lib/publicContent'
-import { VisitorBackLink } from '../components/VisitorBackLink'
 import { GuideIcon } from '../components/GuideIcon'
 
 interface CenterTranslationRow {
@@ -121,7 +120,6 @@ export function CentersPage() {
             <p className="flex items-center gap-2 text-sm text-brand-muted"><GuideIcon name="pin" />{isEnglish ? 'Continue your practice' : 'เรียนรู้และฝึกสมาธิต่อ'}</p>
             <h1 className="mt-3 font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{t('centers.title')}</h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-brand-muted sm:text-base">{t('centers.subtitle')}</p>
-            <div className="mt-4"><VisitorBackLink /></div>
           </div>
           <img src="/images/home/monkchat-slide-3.webp" alt={isEnglish ? 'Monks at an Ayutthaya activity' : 'พระสงฆ์ร่วมกิจกรรมในอยุธยา'} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
         </div>
@@ -375,7 +373,7 @@ export function CentersPage() {
           </Link>
 
           <Link
-            to="/visit"
+            to="/activities"
             className="group flex flex-col justify-between rounded-xl border border-[#EADCC6] bg-[#FFF8EE]/60 p-4 transition hover:border-[#D5BD94]"
           >
             <div>

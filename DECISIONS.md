@@ -4,6 +4,10 @@ This document records the confirmed decisions made during the project's lifecycl
 
 For current scope and proposals still awaiting a decision, read CURRENT_SCOPE.md. Historical entries remain as a record and may have been superseded by later explicit owner instructions.
 
+## Latest owner decision — 2026-11-04: sourced meditation picture guide
+
+Replace the generic/draft meditation instructions with concise TH/EN Dhammakaya guidance from the owner-supplied Foundation page and the temple publication “ทางเดิน ของใจ ๗ ฐาน”. Show preparation and all seven bases as mobile picture cards before audio, with direct access to base 7. Remove public back-to-visitor-home shortcuts that duplicate the global Home link. Preserve the approved Home, actual audio/captions/transcripts, verified-answer policy and authorization. This decision supersedes preserving the old meditation teaching copy only; it does not approve database changes or production deployment.
+
 ## 1. Project Name
 - **Decision**: Project name is MonkChat Guide.
 - **Reason**: Official name provided by the project owner.

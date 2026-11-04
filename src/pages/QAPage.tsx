@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
-import { VisitorBackLink } from '../components/VisitorBackLink'
 import { GuideIcon, type GuideIconName } from '../components/GuideIcon'
 
 interface QATranslationRow {
@@ -109,7 +108,6 @@ export function QAPage() {
             <p className="flex items-center gap-2 text-sm text-brand-muted"><GuideIcon name="chat" />{isEnglish ? 'Questions and answers' : 'ถาม–ตอบ'}</p>
             <h1 className="mt-3 font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{t('qa.title')}</h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-brand-muted sm:text-base">{t('qa.subtitle')}</p>
-            <div className="mt-4"><VisitorBackLink /></div>
           </div>
           <img src="/images/home/monkchat-slide-2.webp" alt={isEnglish ? 'A monk among Ayutthaya ruins' : 'พระสงฆ์ท่ามกลางโบราณสถานอยุธยา'} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
         </div>

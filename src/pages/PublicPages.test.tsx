@@ -138,46 +138,47 @@ describe('Meditation flow', () => {
     expect(screen.getByLabelText('Meditation Audio Player: Track B')).toHaveAttribute('src', 'https://example.org/b.mp3')
   })
 
-  it('renders audio, preparation, transcript and supplementary resources with the draft notice', async () => {
+  it('supports bounded keyboard navigation and keeps the current base when changing language', async () => {
     openPage(<MeditationPage />, '/meditation?trackId=a')
-    // Step 1: Beginner Guide
-    expect(await screen.findByRole('heading', { name: 'Preparation Steps Before Practicing' })).toBeInTheDocument()
-    expect(screen.getAllByText('Draft for Review').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('1. Prepare Your Space & Body')).toBeInTheDocument()
-    expect(screen.getByText('3. Relax & Center Your Mind')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Listen to Main Audio/ })).toHaveAttribute('href', '#meditation-audio')
+    const carousel = screen.getByRole('group', { name: 'Swipe cards or use arrow keys' })
+    expect(screen.getByRole('button', { name: 'Previous card' })).toBeDisabled()
+    fireEvent.keyDown(carousel, { key: 'End' })
+    expect(screen.getByRole('heading', { name: 'Rest gently at the center' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next card' })).toBeDisabled()
+    fireEvent.keyDown(carousel, { key: 'ArrowRight' })
+    expect(screen.getByRole('heading', { name: 'Rest gently at the center' })).toBeInTheDocument()
+    fireEvent.keyDown(carousel, { key: 'Home' })
+    expect(screen.getByRole('heading', { name: 'Sit comfortably' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Seven bases' }))
+    fireEvent.keyDown(carousel, { key: 'ArrowRight' })
+    expect(screen.getByRole('heading', { name: 'Inner corner of the eye' })).toBeInTheDocument()
+    await act(async () => { await i18n.changeLanguage('th') })
+    expect(screen.getByRole('heading', { name: 'หัวตาด้านใน' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'ฐานทั้ง 7' })).toHaveAttribute('aria-pressed', 'true')
+  })
 
-    // Test collapse & expand
-    const toggleBtn = screen.getByRole('button', { name: /Hide steps/ })
-    fireEvent.click(toggleBtn)
-    expect(screen.queryByText('1. Prepare Your Space & Body')).not.toBeInTheDocument()
-    expect(screen.getByText(/01 Space & Body · 02 Posture · 03 Relax & Center/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /View steps/ }))
-    expect(screen.getByText('1. Prepare Your Space & Body')).toBeInTheDocument()
-
-    // Step 2: Audio Player
-    expect(screen.getByRole('heading', { name: 'Meditation audio' })).toBeInTheDocument()
+  it('places the sourced seven-base picture guide before audio and keeps transcript access', async () => {
+    openPage(<MeditationPage />, '/meditation?trackId=a')
+    const guide = screen.getByRole('heading', { name: 'Picture guide: the seven bases' })
+    const audio = screen.getByRole('heading', { name: 'Meditation audio' })
+    expect(guide.compareDocumentPosition(audio) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.queryByRole('link', { name: /Back to [Vv]isitor/ })).not.toBeInTheDocument()
+    expect(screen.queryByText('Draft for Review')).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Read the full guide' })).toHaveAttribute('href', 'https://en.dhammakaya.net/meditation-wisdom/lets-practice/')
+    fireEvent.click(screen.getByRole('button', { name: 'Seven bases' }))
+    expect(screen.getByRole('heading', { name: 'Rim of the nostril' })).toBeInTheDocument()
+    for (let i = 0; i < 6; i++) fireEvent.click(screen.getByRole('button', { name: 'Next card' }))
+    expect(screen.getByRole('heading', { name: 'The seventh base' })).toBeInTheDocument()
+    expect(screen.getByText('Two finger breadths above base 6, inside the abdomen.')).toBeInTheDocument()
     expect(await screen.findByLabelText('Meditation Audio Player: Track A')).toBeInTheDocument()
-
-    // Step 3: Transcript
-    expect(screen.getByRole('heading', { name: 'Transcript' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'View Full Transcript →' }))
     expect(screen.getByText('Track A transcript', { selector: 'p' })).toBeVisible()
-
-    // Step 4: Supplementary tips & exit to home
-    expect(screen.getByRole('heading', { name: 'Additional Practice Tips' })).toBeInTheDocument()
-    expect(screen.getByText('When Thoughts Wander')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Back to Visitor Home/ })).toHaveAttribute('href', '/visit')
-
-    // Switch to Thai and check Thai translations
     await act(async () => { await i18n.changeLanguage('th') })
-    expect(await screen.findByRole('heading', { name: 'ขั้นตอนการเตรียมตัวก่อนเริ่มฝึก' })).toBeInTheDocument()
-    expect(screen.getAllByText('ร่างรอตรวจ (Draft for Review)').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('1. เตรียมพื้นที่และร่างกาย')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'ศูนย์กลางกายฐานที่ 7' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'คู่มือภาพ: ฐานที่ตั้งของใจทั้ง 7' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'อ่านฉบับเต็ม' })).toHaveAttribute('href', 'https://dhammakaya.com/4442')
     expect(screen.getByRole('heading', { name: 'ฟังเสียงสมาธิ' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'ข้อความถอดความ (Transcript)' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'ข้อแนะนำการปฏิบัติเพิ่มเติม' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /กลับหน้าหลักผู้มาเยือน \(Home\)/ })).toHaveAttribute('href', '/visit')
+    expect(screen.queryByRole('link', { name: /กลับหน้าหลักผู้มาเยือน/ })).not.toBeInTheDocument()
   })
 })
 
@@ -292,7 +293,8 @@ describe('reviewed chatbot and centers', () => {
     expect(screen.queryByRole('link', { name: 'Website' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Contact' })).not.toBeInTheDocument()
     expect(screen.getByRole('alert')).toHaveTextContent('Could not load links')
-    expect(screen.getByRole('link', { name: 'Back to visitor home' })).toHaveAttribute('href', '/visit')
+    expect(screen.queryByRole('link', { name: 'Back to visitor home' })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Visit Monk Chat/ })).toHaveAttribute('href', '/activities')
     mocks.failures.clear()
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
     await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument())
