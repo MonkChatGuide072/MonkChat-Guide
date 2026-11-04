@@ -1,5 +1,10 @@
 # MonkChat Guide - Decision Log
 
+## Latest owner decision — 2026-11-04: visitor-facing identity and a breathing card
+
+Use MonkChat Guide as the website/header/browser identity; explain Ayutthaya Monk Chat as the activity project. The owner clarified that “presentation” means the website's visitor-facing content, not slides or academic reporting. Remove academic/development report panels from public Home/Activities, retaining a short useful description of the activity. Add a separate, simple breathing card after closing the eyes: a few gentle deep breaths with a slow exhale, then natural breathing, as in the supplied script. Preparation now has six cards. Keep quiet sitting and after-session experiences unchanged. No changes to media, data/auth, costs or production deployment.
+
+
 ## Latest owner decision — 2026-11-04: three stages around the actual spoken session
 
 The owner supplied the real English guidance and approved five short preparation cards. Add three stages: Before (5), Meditation time (one quiet image), and After (8 owner-requested experience prompts). Put all seven-base detail behind an optional disclosure with existing source links. Reflection pictures help visitors tell a monk about wandering, striving, ease, a crystal ball, feeling small, a Buddha image, brightness, or another/uncertain/no-image experience. Do not rank these or promise them. No response collection, timer, automatic slide progression, audio synchronization claim, database changes, or replacement of recorded media.

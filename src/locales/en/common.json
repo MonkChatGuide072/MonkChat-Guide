@@ -1,10 +1,10 @@
 {
   "app": {
-    "title": "Ayutthaya Monk Chat",
-    "heading": "Ayutthaya Monk Chat Guide",
+    "title": "MonkChat Guide",
+    "heading": "MonkChat Guide",
     "status": "Under Development",
-    "description": "Ayutthaya Monk Chat web application that helps monk students guide meditation and share essential information with international visitors.",
-    "footer": "© 2026 Ayutthaya Monk Chat. All rights reserved."
+    "description": "Meditation and Monk Chat guidance for visitors to Ayutthaya Monk Chat.",
+    "footer": "© 2026 MonkChat Guide. All rights reserved."
   },
   "nav": {
     "home": "Home",

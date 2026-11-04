@@ -1,5 +1,16 @@
 # Meditation picture guide and visitor navigation — 4 November 2026
 
+## Latest refinement: breathing and visitor-facing copy
+
+The owner confirmed a dedicated breathing card in the Before stage and clarified that public copy must address visitors, with no academic/development reporting. Before now has six cards: posture, close eyes/relax, breathe, let go, abdomen, clear sphere. The breathing card uses original static SVG arrows, localized “Breathe in / Breathe out” labels, and concise instructions from the supplied script: a few gentle deep breaths, slow exhale, then natural breathing. No timer or automatic animation was added.
+
+MonkChat Guide is now the visible website identity (header/Home/gate/title/OG/footer/login/404/chatbot); Ayutthaya Monk Chat remains the activity project with the original logo. Home's former academic accordion is replaced by brief visitor information; Activities' academic accordion is removed. Internal context stays in these repository documents. Recorded media and data/auth logic are unchanged.
+
+Verification: 71 tests / 12 files, lint and TypeScript/PWA build passed. Existing behavioural tests now navigate to card 3 of 6 and switch languages while retaining that card; Home asserts product/activity identities and absence of research/budget copy. Chrome checked the breathing card in TH/EN across 360/390/768/1024/1440: no document overflow, six cards, localized arrows, 16px main copy and an unclipped header name. These are browser viewports, not actual phone/iPad certification. Public content and exact new branch preview are checked before delivery; no production deployment or media synchronization claim.
+
+---
+
+
 ## Latest implementation: three stages, based on the owner's actual session
 
 The owner clarified that visitors first meet and talk briefly with a monk, then need a quick picture explanation before closing their eyes. The earlier nine-card introduction was too detailed for this job. The actual supplied English guidance is the source of the five condensed preparation cards; it is not a verbatim transcript of the existing recording.

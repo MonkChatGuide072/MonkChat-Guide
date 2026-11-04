@@ -83,9 +83,9 @@ function LanguageGate({ onSelect }: { onSelect: (language: AppLanguage) => void 
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-text sm:px-8">
       <div className="mx-auto w-full max-w-5xl">
-        <Link to="/" className="inline-flex items-center gap-3" aria-label="อยุธยา มังค์แชท / Ayutthaya Monk Chat">
+        <Link to="/" className="inline-flex items-center gap-3" aria-label="MonkChat Guide">
           <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="" width={48} height={48} className="h-12 w-12 object-contain" />
-          <span className="text-sm font-medium leading-6 text-brand-maroon">อยุธยา มังค์แชท<br /><span lang="en" className="text-brand-muted">Ayutthaya Monk Chat</span></span>
+          <span className="text-sm font-medium leading-6 text-brand-maroon">MonkChat Guide<br /><span lang="en" className="text-brand-muted">Ayutthaya Monk Chat</span></span>
         </Link>
         <div className="mt-8 overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:mt-12 lg:grid lg:grid-cols-2">
           <div>
@@ -114,7 +114,6 @@ function LanguageGate({ onSelect }: { onSelect: (language: AppLanguage) => void 
 function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
   const { t, i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
-  const [isAboutExpanded, setIsAboutExpanded] = useState(false)
   const [isTrackLoading, setIsTrackLoading] = useState(true)
   const [trackError, setTrackError] = useState<string | null>(null)
   const [recommendedTracks, setRecommendedTracks] = useState<MedTrackRow[]>([])
@@ -576,52 +575,9 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </div>
       </section>
 
-      {/* 8. COLLAPSIBLE ACADEMIC PROJECT INFORMATION & CREDITS */}
-      <section className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
-        <button
-          type="button"
-          onClick={() => setIsAboutExpanded(!isAboutExpanded)}
-          aria-expanded={isAboutExpanded}
-          aria-controls="home-project-details" className="flex min-h-11 w-full cursor-pointer items-start justify-between gap-4 text-left"
-        >
-          <div className="flex min-w-0 items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-brand-muted">
-              <GuideIcon name="info" />
-            </div>
-            <div>
-              <h2 className="font-serif text-base font-semibold text-[#681B16] sm:text-lg">
-                {isEnglish ? 'About MonkChat Guide and the research' : 'เกี่ยวกับโครงการวิจัย MonkChat Guide'}
-              </h2>
-              <p className="text-sm leading-6 text-brand-muted">
-                {isEnglish
-                  ? 'Academic background, research purpose, and university collaboration'
-                  : 'ข้อมูลวิชาการ วัตถุประสงค์การบริการสังคม และความร่วมมือมหาวิทยาลัย มจร'}
-              </p>
-            </div>
-          </div>
-          <GuideIcon name="down" className={`mt-1 h-[18px] w-[18px] text-brand-muted transition-transform duration-150 ${isAboutExpanded ? 'rotate-180' : ''}`} />
-        </button>
-
-        {isAboutExpanded && (
-          <div id="home-project-details" className="mt-4 border-t border-[#EADCC6]/80 pt-4 text-sm leading-6 text-brand-muted space-y-3">
-            <p>
-              {isEnglish
-                ? 'MonkChat Guide is a Progressive Web Application (PWA) developed to assist student monks and international visitors during Monk Chat sessions in Ayutthaya. The project provides meditation audio with transcripts and subtitles where available, published Dhamma answers, and meditation center information.'
-                : 'MonkChat Guide คือเว็บแอปพลิเคชันแบบ Progressive Web Application (PWA) ที่พัฒนาขึ้นเพื่ออำนวยความสะดวกแก่พระนิสิตและผู้มาเยือนชาวต่างชาติ ในกิจกรรม Monk Chat ณ จังหวัดพระนครศรีอยุธยา โดยมุ่งเน้นการเปิดสื่อนำนั่งสมาธิ คำบรรยายประกอบ คำตอบธรรมะที่ผ่านการตรวจรับรอง และข้อมูลศูนย์ปฏิบัติธรรม'}
-            </p>
-            <div className="rounded-xl bg-[#FAF2E6]/60 p-4 border border-[#EADCC6]/60 space-y-1">
-              <strong className="block text-[#681B16] font-medium">
-                {isEnglish ? 'Project Principles:' : 'หลักการพัฒนาและจริยธรรม:'}
-              </strong>
-              <p>• {isEnglish ? 'Zero Budget Policy (0 THB) using free-tier cloud infrastructure.' : 'นโยบาย 0 บาท โดยใช้บริการคลาวด์ระดับฟรีทั้งหมด (Supabase Free & Cloudflare Pages Free)'}</p>
-              <p>• {isEnglish ? 'Verified Content Only: Public Q&A is strictly based on approved answers, avoiding generative AI hallucinations.' : 'คลังข้อมูลที่ผ่านการรับรอง: ส่วนถาม-ตอบสาธารณะไม่ใช้ AI ที่แต่งคำตอบเอง เพื่อป้องกันความคลาดเคลื่อนทางพระธรรมวินัย'}</p>
-              <p>• {isEnglish ? 'Under academic collaboration with Mahachulalongkornrajavidyalaya University (MCU).' : 'อยู่ภายใต้การสนับสนุนทางวิชาการและการบริการสังคมของมหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (มจร)'}</p>
-            </div>
-            <p className="text-sm leading-6 text-brand-muted">
-              {t('app.footer')} · Ayutthaya, Thailand
-            </p>
-          </div>
-        )}
+      <section className="rounded-2xl border border-brand-border bg-brand-surface p-5">
+        <h2 className="font-serif text-lg font-semibold text-brand-maroon">{isEnglish ? 'About Ayutthaya Monk Chat' : 'รู้จัก Ayutthaya Monk Chat'}</h2>
+        <p className="mt-2 text-sm leading-6 text-brand-muted">{isEnglish ? 'Meet student monks, ask questions about Buddhism, and try a short guided meditation at Wat Mahathat, Ayutthaya. MonkChat Guide helps you prepare and explore more after your visit.' : 'พบปะพระนิสิต สนทนาเรื่องพระพุทธศาสนา และลองนั่งสมาธิสั้น ๆ ณ วัดมหาธาตุ พระนครศรีอยุธยา ใช้ MonkChat Guide เตรียมตัวก่อนร่วมกิจกรรม และเรียนรู้ต่อหลังการเยี่ยมชม'}</p>
       </section>
       </div>
     </div>

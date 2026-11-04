@@ -13,21 +13,23 @@ export const meditationBases = [
   { id: 7, th: { title: 'ศูนย์กลางกายฐานที่ 7', body: 'เหนือฐานที่ 6 ขึ้นมา 2 นิ้วมือ ภายในกลางท้อง', note: 'เป็นตำแหน่งวางใจหลัก ไม่ต้องเพ่งหรือควานหาจุด' }, en: { title: 'The seventh base', body: 'Two finger breadths above base 6, inside the abdomen.', note: 'Rest attention here gently, without searching or straining.' } },
 ] as const
 
-export type MeditationScene = 'sit' | 'relax' | 'let-go' | 'center' | 'crystal' | 'wandering' | 'straining' | 'lightness' | 'small-self' | 'buddha' | 'brightness' | 'other'
+export type MeditationScene = 'sit' | 'relax' | 'breathe' | 'let-go' | 'center' | 'crystal' | 'wandering' | 'straining' | 'lightness' | 'small-self' | 'buddha' | 'brightness' | 'other'
 export interface MeditationPictureCard { scene: MeditationScene; title: string; body: string; note?: string }
 
 /** The owner's actual spoken script, condensed for a glance before closing the eyes. */
 export const preparationCards: Record<'th' | 'en', MeditationPictureCard[]> = {
   th: [
     { scene: 'sit', title: 'นั่งให้สบาย', body: 'ขาขวาทับขาซ้าย มือขวาวางบนมือซ้าย หงายฝ่ามือขึ้น', note: 'ปรับท่าให้สบายก่อนเริ่ม' },
-    { scene: 'relax', title: 'หลับตาเบา ๆ', body: 'หายใจเข้า–ออกสบาย ๆ แล้วคลายกล้ามเนื้อทั่วตัว', note: 'ไม่บีบตา ไม่เกร็งร่างกาย' },
+    { scene: 'relax', title: 'หลับตาเบา ๆ', body: 'หลับตาเบา ๆ เหมือนกำลังจะหลับ แล้วคลายกล้ามเนื้อทั่วตัว', note: 'ไม่บีบตา ไม่เกร็งร่างกาย' },
+    { scene: 'breathe', title: 'หายใจเข้า–ออกช้า ๆ', body: 'หายใจเข้าลึก ๆ อย่างสบาย แล้วค่อย ๆ ผ่อนออก ทำสองสามครั้ง', note: 'จากนั้นปล่อยลมหายใจให้เป็นธรรมชาติ ไม่ต้องฝืน' },
     { scene: 'let-go', title: 'พักเรื่องต่าง ๆ ไว้ก่อน', body: 'วางเรื่องงานและความกังวล นึกว่าตัวเราเบาเหมือนลูกโป่ง', note: 'เป็นภาพเปรียบเทียบให้รู้สึกผ่อนคลาย' },
     { scene: 'center', title: 'วางใจกลางท้อง', body: 'ค่อย ๆ น้อมใจมาพักไว้ภายในกลางท้องอย่างสบาย', note: 'ดูตำแหน่งฐานที่ 7 เพิ่มได้ด้านล่าง ไม่ต้องเพ่งหาจุด' },
     { scene: 'crystal', title: 'นึกดวงแก้วใสเบา ๆ', body: 'นึกดวงแก้วกลมใสกลางท้อง ชัดแค่ไหนก็เอาแค่นั้น', note: 'ค่อย ๆ รักษาใจให้สงบ ไม่บังคับให้เห็นชัด' },
   ],
   en: [
     { scene: 'sit', title: 'Sit comfortably', body: 'Right leg over left. Right hand on left, palms up.', note: 'Adjust your position until you feel comfortable.' },
-    { scene: 'relax', title: 'Close your eyes gently', body: 'Take a few easy breaths. Let your whole body relax.', note: 'Keep your eyes soft and your body at ease.' },
+    { scene: 'relax', title: 'Close your eyes gently', body: 'Close your eyes softly, as if falling asleep. Let your body relax.', note: 'Keep your eyes soft and your body at ease.' },
+    { scene: 'breathe', title: 'Breathe slowly', body: 'Take a gentle, deep breath in. Slowly breathe out. Repeat a few times.', note: 'Then let your breath flow naturally.' },
     { scene: 'let-go', title: 'Let your worries go', body: 'Set aside work and worries. Imagine feeling light, like a balloon.', note: 'This is a picture to help you relax.' },
     { scene: 'center', title: 'Rest at the center', body: 'Gently rest your attention in the middle of your abdomen.', note: 'See base 7 below if you wish. No need to search for a point.' },
     { scene: 'crystal', title: 'Imagine a clear crystal ball', body: 'Imagine a round, clear ball in your abdomen. Any clarity is fine.', note: 'Stay relaxed. There is no need to force an image.' },
@@ -62,7 +64,7 @@ export const meditationJourneyCopy = {
   th: {
     title: 'ก่อนนั่ง · ช่วงนั่ง · หลังนั่ง', intro: 'ดูภาพเตรียมตัว แล้วพักหน้าจอเพื่อฟังพระนำสมาธิ',
     phases: ['ก่อนนั่ง', 'ช่วงนั่ง', 'หลังนั่ง'], phaseLabel: 'ช่วงของการนั่งสมาธิ',
-    beforeTitle: 'เตรียมตัวง่าย ๆ 5 ขั้น', beforeIntro: 'ย่อจากบทนำนั่งที่ใช้ในกิจกรรม ดูให้เข้าใจก่อนหลับตา',
+    beforeTitle: 'เตรียมตัวง่าย ๆ 6 ขั้น', beforeIntro: 'ดูภาพเตรียมตัวก่อนเริ่มนั่งสมาธิ', breathIn: 'หายใจเข้า', breathOut: 'หายใจออก',
     duringTitle: 'ถึงเวลาพักใจ', duringBody: 'นั่งสบาย ๆ หลับตา แล้วฟังพระนำ ไม่ต้องปัดการ์ดต่อ', duringNote: 'ถ้าฝึกด้วยตัวเอง เปิดเสียงนำสมาธิด้านล่างได้', duringImage: 'ภาพพระนั่งสมาธิอย่างสงบใต้ต้นไม้',
     afterTitle: 'เมื่อกี้รู้สึกอย่างไรบ้าง?', afterIntro: 'ภาพช่วยเล่าให้พระฟัง ไม่ใช่เป้าหมายที่ต้องทำให้ได้',
     afterNote: 'ภาพเป็นเพียงตัวอย่างประสบการณ์ ไม่ใช่สิ่งที่ต้องเห็นหรือคะแนนความสำเร็จ ไม่เห็นภาพอะไรก็เล่าได้',
@@ -74,7 +76,7 @@ export const meditationJourneyCopy = {
   en: {
     title: 'Your meditation guide', intro: 'Prepare, sit, then share how it felt.',
     phases: ['Before', 'Meditation time', 'After'], phaseLabel: 'Meditation stages',
-    beforeTitle: 'Get ready in five steps', beforeIntro: 'Based on the session’s spoken guide.',
+    beforeTitle: 'Get ready in six steps', beforeIntro: 'A few simple steps before you begin.', breathIn: 'Breathe in', breathOut: 'Breathe out',
     duringTitle: 'Time to rest your mind', duringBody: 'Sit comfortably, close your eyes, and listen to the monk. No more swiping needed.', duringNote: 'Practising on your own? You can play the audio below.', duringImage: 'A monk sitting peacefully beneath a tree',
     afterTitle: 'How did it feel?', afterIntro: 'Pictures to talk about, not goals to achieve.',
     afterNote: 'These are examples, not things you must see or a score of success. You can also describe seeing no image.',

@@ -1,10 +1,10 @@
 {
   "app": {
-    "title": "อยุธยา มังค์แชท (Ayutthaya Monk Chat)",
-    "heading": "อยุธยา มังค์แชท — คู่มือสำหรับพระนิสิตและผู้มาเยือน",
+    "title": "MonkChat Guide",
+    "heading": "MonkChat Guide",
     "status": "กำลังพัฒนาระบบ",
-    "description": "เว็บแอปพลิเคชัน อยุธยา มังค์แชท ช่วยพระนิสิตเปิดสื่อนำนั่งสมาธิและให้ข้อมูลเบื้องต้นแก่ชาวต่างชาติ",
-    "footer": "© 2026 อยุธยา มังค์แชท (Ayutthaya Monk Chat). สงวนลิขสิทธิ์."
+    "description": "คู่มือสมาธิและสนทนาธรรมสำหรับผู้ร่วมกิจกรรม Ayutthaya Monk Chat",
+    "footer": "© 2026 MonkChat Guide. สงวนลิขสิทธิ์."
   },
   "nav": {
     "home": "หน้าแรก",

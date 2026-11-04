@@ -1,9 +1,9 @@
 import type { MeditationScene } from '../content/meditationGuide'
 
-interface Props { base?: number; still?: boolean; scene?: MeditationScene; meditationTime?: boolean; label: string }
+interface Props { base?: number; still?: boolean; scene?: MeditationScene; meditationTime?: boolean; breathLabels?: readonly [string, string]; label: string }
 
 /** Original vector artwork. Positions follow the cited guide; the drawing is schematic. */
-export function MeditationGuideVisual({ base, still = false, scene = 'sit', meditationTime = false, label }: Props) {
+export function MeditationGuideVisual({ base, still = false, scene = 'sit', meditationTime = false, breathLabels = ['Breathe in', 'Breathe out'], label }: Props) {
   const points = [[208, 91], [188, 65], [139, 65], [169, 102], [141, 154], [132, 259], [132, 220]]
   return (
     <svg viewBox={base ? '85 5 145 285' : '0 0 320 220'} role="img" aria-label={label} className="h-full w-full" fill="none">
@@ -45,6 +45,12 @@ export function MeditationGuideVisual({ base, still = false, scene = 'sit', medi
           <circle cx="160" cy="133" r="21" fill="#E6F3F5" stroke="#7498A4" strokeWidth="1.5" />
           <path d="m160 112-14 11 5 23h18l5-23Zm-14 11h28m-23 23 9-34 9 34" stroke="#97B8C3" strokeWidth="1.2" />
           <path d="m150 119 7-3" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" />
+        </g>}
+        {scene === 'breathe' && <g>
+          <path d="M23 83q30-25 77 0m-10-14 11 14-17 3" stroke="#7498A4" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M219 83q32 26 77 0m-15-3 16 3-8 14" stroke="#A43D1D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <text x="62" y="123" textAnchor="middle" fontFamily="sans-serif" fontSize="18" fill="#426572">{breathLabels[0]}</text>
+          <text x="258" y="123" textAnchor="middle" fontFamily="sans-serif" fontSize="18" fill="#A43D1D">{breathLabels[1]}</text>
         </g>}
         {scene === 'relax' && <g stroke="#7498A4" strokeWidth="3" strokeLinecap="round">
           <path d="M31 93q13-10 26 0t26 0M26 108q16-10 32 0t32 0M36 123q12-8 24 0t24 0" />

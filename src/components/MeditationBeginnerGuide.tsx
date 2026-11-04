@@ -62,7 +62,7 @@ export function MeditationBeginnerGuide() {
   const [phase, setPhase] = useState(0)
   const [basesOpen, setBasesOpen] = useState(false)
   const tabs = useRef<(HTMLButtonElement | null)[]>([])
-  const makeCards = (cards: MeditationPictureCard[]) => cards.map(card => ({ ...card, visual: <MeditationGuideVisual scene={card.scene} label={card.title} /> }))
+  const makeCards = (cards: MeditationPictureCard[]) => cards.map(card => ({ ...card, visual: <MeditationGuideVisual scene={card.scene} breathLabels={[copy.breathIn, copy.breathOut]} label={card.title} /> }))
 
   return <section id="meditation-guide" aria-labelledby="meditation-guide-heading" className="meditation-guide scroll-mt-24">
     <h2 id="meditation-guide-heading" className="font-serif text-xl font-semibold leading-snug text-brand-maroon sm:text-2xl">{copy.title}</h2>

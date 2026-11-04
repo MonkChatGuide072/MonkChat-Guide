@@ -9,9 +9,9 @@ export function NotFoundPage() {
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-text sm:px-6 sm:py-12">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
-        <Link to="/" aria-label="Ayutthaya Monk Chat" className="inline-flex min-h-12 items-center gap-3 text-sm font-medium text-brand-maroon">
+        <Link to="/" aria-label="MonkChat Guide" className="inline-flex min-h-12 items-center gap-3 text-sm font-medium text-brand-maroon">
           <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="" className="h-12 w-12 object-contain" />
-          <span>Ayutthaya Monk Chat</span>
+          <span>MonkChat Guide</span>
         </Link>
         <LanguageSwitcher />
       </div>

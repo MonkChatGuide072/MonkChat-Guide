@@ -1,12 +1,10 @@
-import { useState } from 'react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { GuideIcon } from '../components/GuideIcon'
 
 export function ActivitiesPage() {
-  const { t, i18n } = useTranslation()
+  const { i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
-  const [isAboutExpanded, setIsAboutExpanded] = useState(false)
 
   // 1. Confirmed Official Activities (Monk Chat Ayutthaya)
   const confirmedActivities = [
@@ -288,40 +286,7 @@ export function ActivitiesPage() {
         </div>
       </section>
 
-      {/* SECTION 5: MCU PROJECT BACKGROUND */}
-      <section className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
-        <button
-          type="button"
-          onClick={() => setIsAboutExpanded(!isAboutExpanded)}
-          aria-expanded={isAboutExpanded}
-          aria-controls="activities-project-details" className="flex min-h-11 w-full cursor-pointer items-start justify-between gap-4 text-left"
-        >
-          <div>
-            <h2 className="font-serif text-sm font-semibold text-[#681B16]">
-              {isEnglish ? 'About MonkChat Guide & MCU Collaboration' : 'ข้อมูลโครงการและคณะผู้จัดทำ มจร'}
-            </h2>
-            <p className="mt-0.5 text-sm text-brand-muted">
-              {isEnglish
-                ? 'Academic partnership and student monk field support project'
-                : 'โครงการบริการวิชาการและสนับสนุนการสื่อสารธรรมะสำหรับพระนิสิต'}
-            </p>
-          </div>
-          <GuideIcon name="down" className={`mt-1 h-[18px] w-[18px] text-brand-muted transition-transform duration-150 ${isAboutExpanded ? 'rotate-180' : ''}`} />
-        </button>
 
-        {isAboutExpanded && (
-          <div id="activities-project-details" className="mt-4 space-y-3 border-t border-[#EADCC6] pt-4 text-sm leading-relaxed text-brand-muted">
-            <p>
-              {isEnglish
-                ? 'MonkChat Guide is developed as a mobile-first Progressive Web Application (PWA) under Mahachulalongkornrajavidyalaya University (MCU) to support student monks in guiding meditation and offering respectful intercultural dialogue with foreign visitors in Ayutthaya.'
-                : 'MonkChat Guide พัฒนาขึ้นในรูปแบบ Progressive Web Application (PWA) ภายใต้มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย (มจร) เพื่อสนับสนุนพระนิสิตในการนำนั่งสมาธิและสนทนาธรรมภาษาอังกฤษกับชาวต่างชาติ ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
-            </p>
-            <p className="font-semibold text-[#681B16]">
-              {t('app.footer')} · Ayutthaya, Thailand
-            </p>
-          </div>
-        )}
-      </section>
     </div>
   )
 }

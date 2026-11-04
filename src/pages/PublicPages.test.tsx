@@ -150,8 +150,12 @@ describe('Meditation flow', () => {
     fireEvent.keyDown(carousel, { key: 'Home' })
     fireEvent.keyDown(carousel, { key: 'ArrowRight' })
     expect(screen.getByRole('heading', { name: 'Close your eyes gently' })).toBeInTheDocument()
+    fireEvent.keyDown(carousel, { key: 'ArrowRight' })
+    expect(screen.getByRole('heading', { name: 'Breathe slowly' })).toBeInTheDocument()
+    expect(screen.getByText('Take a gentle, deep breath in. Slowly breathe out. Repeat a few times.')).toBeInTheDocument()
+    expect(within(screen.getByRole('tabpanel')).getByRole('status')).toHaveTextContent('Card 3 of 6')
     await act(async () => { await i18n.changeLanguage('th') })
-    expect(screen.getByRole('heading', { name: 'หลับตาเบา ๆ' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'หายใจเข้า–ออกช้า ๆ' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: /ก่อนนั่ง/ })).toHaveAttribute('aria-selected', 'true')
   })
 

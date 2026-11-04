@@ -120,11 +120,11 @@ export function Layout() {
               />
             </div>
             <span className="min-w-0 leading-tight">
-              <span className="block truncate font-serif text-sm font-semibold text-[#681B16] sm:text-base lg:text-lg">
-                {isEnglish ? 'Ayutthaya Monk Chat' : 'อยุธยา มังค์แชท'}
+              <span className="block truncate font-sans text-sm sm:font-serif font-semibold text-[#681B16] sm:text-base lg:text-lg">
+                MonkChat Guide
               </span>
               <span className="hidden text-xs font-medium text-[#A43D1D] sm:block">
-                {isEnglish ? 'Ayutthaya Monk Chat Guide' : 'คู่มือสมาธิและสนทนาธรรม'}
+                {isEnglish ? 'Meditation & Monk Chat' : 'คู่มือสมาธิและสนทนาธรรม'}
               </span>
             </span>
           </NavLink>
@@ -217,7 +217,7 @@ export function Layout() {
         <div className="mx-auto max-w-[76rem] px-4 sm:px-6">
           <p>{t('app.footer')}</p>
           <p className="mt-1 text-xs text-[#A43D1D]/80">
-            อยุธยา มังค์แชท (Ayutthaya Monk Chat) · Mahachulalongkornrajavidyalaya University (MCU)
+            Ayutthaya Monk Chat · Ayutthaya, Thailand
           </p>
         </div>
       </footer>

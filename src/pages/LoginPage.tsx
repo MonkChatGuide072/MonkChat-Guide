@@ -109,7 +109,7 @@ export function LoginPage() {
       <section className="p-6 sm:p-10 lg:p-12">
         <div className="mx-auto max-w-md space-y-5">
         <div className="space-y-2">
-          <p className="text-sm text-brand-muted">Ayutthaya Monk Chat</p>
+          <p className="text-sm text-brand-muted">MonkChat Guide</p>
           <h1 className="font-serif text-2xl font-medium text-brand-maroon sm:text-3xl">
             {t('pages.login.title')}
           </h1>

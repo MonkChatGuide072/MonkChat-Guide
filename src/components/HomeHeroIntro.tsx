@@ -27,9 +27,9 @@ export function HomeHeroIntro({ language }: { language: AppLanguage }) {
 
       <div className="mx-auto max-w-[76rem] px-4 pb-2 pt-6 text-center sm:px-6 lg:px-8">
         <h1 id="home-intro-title" className="font-serif text-[2rem] font-semibold leading-snug text-brand-maroon sm:text-4xl lg:text-[2.75rem]">
-          {isEnglish ? 'Ayutthaya Monk Chat' : 'อยุธยา มังค์แชท'}
+          MonkChat Guide
         </h1>
-        {!isEnglish && <p lang="en" className="mt-2 text-sm text-brand-muted">Ayutthaya Monk Chat</p>}
+        <p className="mt-2 text-sm text-brand-muted">{isEnglish ? 'Your guide to Ayutthaya Monk Chat' : 'คู่มือสำหรับร่วมกิจกรรม Ayutthaya Monk Chat'}</p>
         <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base">
           {isEnglish ? 'Join Monk Chat and guided meditation at Wat Mahathat, Ayutthaya.' : 'ร่วมสนทนาธรรมและฝึกสมาธิ ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
         </p>
