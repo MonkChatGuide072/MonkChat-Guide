@@ -1,5 +1,14 @@
 # MonkChat Guide — Current Handoff
 
+## Centers เป็น gateway สำหรับเรียนรู้และฝึกต่อ — 4 พฤศจิกายน 2569
+
+- ต่อจาก source 8d0024efbd0015b8bc3eec127d0cda40a71a39eb ตามคำชี้แจงเจ้าของ /centers ให้ผู้ที่ลองสมาธิแล้วสนใจเลือกไปต่อ เปลี่ยน hero เป็น “เรียนรู้และฝึกสมาธิต่อ” / “Continue your practice” พร้อมข้อความเชิญสำรวจแบบมีเงื่อนไขตามความสนใจ
+- เพิ่ม 3 ช่องทางก่อนค้นหา: อโยธยา → https://ayothayameditation.com/ ; วัดพระธรรมกาย → https://en.dhammakaya.net/contact/ ; ศูนย์สาขา → https://en.dhammakaya.net/branches/ เปิดเว็บไซต์ภายนอกโดยตรง ระบุภาษาปลายทางในปุ่มเมื่อจำเป็น และแนะนำให้สอบถามเวลา ภาษา เงื่อนไขกับสถานที่ก่อนเดินทาง ไม่เพิ่มสมัคร/จอง/ค่าใช้จ่าย/กำหนดการ
+- แยกข้อมูลลิงก์และคำเชิญใน src/content/continuePractice.ts ตรวจเว็บไซต์เจ้าของสถานที่ด้วย web retrieval วันที่ 4 พ.ย. 2569; source ยังใช้รายการ published / safe links / strict language filtering เดิม Search form ย้ายลงหลัง gateway; fetch/effects 2 ชุดเทียบฐาน 8d0024e ตรงกัน ไม่แก้ DB/CMS/Auth
+- รันเอง 71 tests / 12 files, lint, TypeScript/PWA build ผ่าน ขยาย regression เดิมให้ตรวจหัวข้อใหม่ ลิงก์ 3 แห่ง ลำดับก่อน Search และยังทดสอบ York ไม่ปน New York / empty search reset ตามเดิม Chrome TH/EN 360/390/768/1024/1440 รวม 10 สถานะ: ไม่ล้นแนวนอน ปุ่มลิงก์ >=44px และ gateway อยู่ก่อน Search ทุกขนาด
+- รายละเอียด: docs/CENTERS_GATEWAY_2026-11-04.md ภาพหลักฐานอยู่ภายใน ไม่ส่งขึ้น GitHub ส่ง checkpoint branch ร่วม ไม่ merge main/deploy production และไม่อ้างว่า Windows ดึงงานแล้ว
+
+
 ## ชื่อ MonkChat Guide / ข้อความสาธารณะ / การ์ดหายใจ — 4 พฤศจิกายน 2569
 
 - ต่อจาก 3067c5d3a6f283959834ddbc9d79fffe5c179ec6 ตามคำยืนยันล่าสุด ชื่อ header, Home, language gate, title/OG, footer, login/404 และบอทใช้ MonkChat Guide; คงโลโก้เดิมและโครงการ Ayutthaya Monk Chat ในคำแนะนำกิจกรรม ไม่เปลี่ยนโครงหน้าที่อนุมัติ

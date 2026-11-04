@@ -296,6 +296,12 @@ describe('reviewed chatbot and centers', () => {
     ]
     openPage(<CentersPage />, '/centers')
     await screen.findByRole('heading', { name: 'York Center' })
+    expect(screen.getByRole('heading', { name: 'Continue your practice' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Visit center website/ })).toHaveAttribute('href', 'https://ayothayameditation.com/')
+    expect(screen.getByRole('link', { name: /View temple contact details/ })).toHaveAttribute('href', 'https://en.dhammakaya.net/contact/')
+    expect(screen.getByRole('link', { name: /Explore branch centers/ })).toHaveAttribute('href', 'https://en.dhammakaya.net/branches/')
+    const destinations = screen.getByRole('region', { name: 'Places you can explore' })
+    expect(destinations.compareDocumentPosition(screen.getByRole('search')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     fireEvent.click(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: 'York' }))
     expect(screen.getByRole('heading', { name: 'York Center' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'New York Center' })).not.toBeInTheDocument()

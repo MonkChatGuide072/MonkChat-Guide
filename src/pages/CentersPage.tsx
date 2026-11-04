@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { isSafeWebUrl } from '../lib/publicContent'
 import { GuideIcon } from '../components/GuideIcon'
+import { practiceDestinations } from '../content/continuePractice'
 
 interface CenterTranslationRow {
   language_code: string
@@ -117,13 +118,37 @@ export function CentersPage() {
       <section className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface">
         <div className="grid md:grid-cols-[1.3fr_0.7fr]">
           <div className="order-2 p-5 sm:p-6 md:order-1 md:p-8">
-            <p className="flex items-center gap-2 text-sm text-brand-muted"><GuideIcon name="pin" />{isEnglish ? 'Continue your practice' : 'เรียนรู้และฝึกสมาธิต่อ'}</p>
+            <p className="flex items-center gap-2 text-sm text-brand-muted"><GuideIcon name="pin" />{t('centers.heroTag')}</p>
             <h1 className="mt-3 font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{t('centers.title')}</h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-brand-muted sm:text-base">{t('centers.subtitle')}</p>
           </div>
-          <img src="/images/home/monkchat-slide-3.webp" alt={isEnglish ? 'Monks at an Ayutthaya activity' : 'พระสงฆ์ร่วมกิจกรรมในอยุธยา'} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
+          <img src="/images/home/monkchat-slide-3.webp" alt={isEnglish ? 'A monk speaking with visitors in Ayutthaya' : 'พระสงฆ์สนทนากับผู้มาเยือนในอยุธยา'} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
         </div>
-        <form role="search" onSubmit={event => { event.preventDefault(); resultsHeadingRef.current?.focus() }} className="flex flex-col gap-3 border-t border-brand-border p-5 sm:flex-row sm:p-6 md:px-8">
+
+      </section>
+
+      <section aria-labelledby="continue-practice-heading" className="space-y-4">
+        <div>
+          <h2 id="continue-practice-heading" className="font-serif text-2xl font-semibold text-brand-maroon">{isEnglish ? 'Places you can explore' : 'สถานที่สำหรับเรียนรู้เพิ่มเติม'}</h2>
+          <p className="mt-2 text-sm leading-6 text-brand-muted">{isEnglish ? 'MonkChat Guide connects you with these destinations so you can explore and contact each one directly.' : 'MonkChat Guide รวบรวมช่องทางเหล่านี้ให้คุณเลือกดูข้อมูลและติดต่อแต่ละแห่งได้โดยตรง'}</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {practiceDestinations.map(destination => {
+            const copy = destination[currentLang]
+            return <article key={destination.id} className="flex min-w-0 flex-col rounded-2xl border border-brand-border bg-brand-surface p-5">
+              <GuideIcon name={destination.icon} className="h-6 w-6 text-brand-terracotta" />
+              <h3 className="mt-3 text-lg font-medium leading-7 text-brand-maroon">{copy.title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-6 text-brand-muted">{copy.description}</p>
+              <a href={destination.href} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center justify-between gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-medium leading-5 text-brand-maroon hover:bg-brand-gold-soft">{copy.action}<span aria-hidden="true">↗</span></a>
+            </article>
+          })}
+        </div>
+        <p className="text-sm leading-6 text-brand-muted">{isEnglish ? 'Before travelling, ask the destination about session times, available languages and any participation requirements.' : 'ก่อนเดินทาง สอบถามรอบกิจกรรม ภาษาที่ให้บริการ และเงื่อนไขการเข้าร่วมกับสถานที่นั้นโดยตรง'}</p>
+      </section>
+
+      <section aria-labelledby="centers-search-heading" className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+        <h2 id="centers-search-heading" className="text-lg font-medium text-brand-maroon">{isEnglish ? 'Find more places' : 'ค้นหาสถานที่เพิ่มเติม'}</h2>
+        <form role="search" onSubmit={event => { event.preventDefault(); resultsHeadingRef.current?.focus() }} className="mt-4 flex flex-col gap-3 sm:flex-row">
           <div className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-lg border border-brand-border px-3 focus-within:border-brand-terracotta focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-terracotta">
             <GuideIcon name="search" className="h-[18px] w-[18px] text-brand-muted" />
             <input value={searchQuery} onChange={event => setSearchQuery(event.target.value)} aria-label={isEnglish ? 'Search centers' : 'ค้นหาศูนย์ปฏิบัติธรรม'} placeholder={isEnglish ? 'Name, city or address' : 'ชื่อศูนย์ เมือง หรือที่อยู่'} className="min-h-11 min-w-0 flex-1 bg-transparent text-base text-brand-text outline-none placeholder:text-brand-muted" />
@@ -298,7 +323,7 @@ export function CentersPage() {
               {isEnglish ? 'Regions' : 'พื้นที่ตั้งศูนย์'}
             </h3>
             <p className="mt-2 text-sm leading-6 text-brand-muted">
-              {isEnglish ? 'Choose a location to filter the directory.' : 'เลือกพื้นที่เพื่อกรองรายชื่อศูนย์'}
+              {isEnglish ? 'Choose an area to explore more places.' : 'เลือกพื้นที่เพื่อดูสถานที่เพิ่มเติม'}
             </p>
 
             <div className="mt-4 divide-y divide-[#EADCC6]/60 rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60">
@@ -335,7 +360,7 @@ export function CentersPage() {
           <p className="mt-1 text-sm text-brand-muted sm:text-sm">
             {isEnglish
               ? 'Deepen your practice with curated learning materials and related links.'
-              : 'ต่อยอดการปฏิบัติสมาธิด้วยสื่อการเรียนรู้และช่องทางที่คัดสรรแล้ว'}
+              : 'เลือกดูสื่อและช่องทางเพิ่มเติมได้ตามความสนใจ'}
           </p>
         </div>
 
@@ -395,7 +420,7 @@ export function CentersPage() {
                 {isEnglish ? 'Helpful Links' : 'ลิงก์เพิ่มเติม'}
               </h3>
               <p className="mt-2 text-sm leading-6 text-brand-muted">
-                {isEnglish ? 'Related learning links' : 'ช่องทางติดต่อและเครือข่าย มจร'}
+                {isEnglish ? 'Related learning links' : 'เว็บไซต์และแหล่งเรียนรู้เพิ่มเติม'}
               </p>
             </div>
             {bioLinks.length > 0 && (

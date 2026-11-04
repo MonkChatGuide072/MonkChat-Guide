@@ -1,5 +1,10 @@
 # MonkChat Guide - Decision Log
 
+## Latest owner decision — 2026-11-04: a gateway after the first meditation experience
+
+The public Centers page is a neutral next step after Monk Chat: visitors who are interested may explore Ayothaya Meditation Center, Wat Phra Dhammakaya and its branch centers. Lead with “Continue your practice” and three direct destination links, then keep directory search as secondary discovery. The site connects people to destination-owned information; it does not book, promise availability/language support, or repeat changeable course conditions. Verified official URLs are kept separately in src/content/continuePractice.ts. Existing published-only data filters and safe-link rules stay unchanged.
+
+
 ## Latest owner decision — 2026-11-04: visitor-facing identity and a breathing card
 
 Use MonkChat Guide as the website/header/browser identity; explain Ayutthaya Monk Chat as the activity project. The owner clarified that “presentation” means the website's visitor-facing content, not slides or academic reporting. Remove academic/development report panels from public Home/Activities, retaining a short useful description of the activity. Add a separate, simple breathing card after closing the eyes: a few gentle deep breaths with a slow exhale, then natural breathing, as in the supplied script. Preparation now has six cards. Keep quiet sitting and after-session experiences unchanged. No changes to media, data/auth, costs or production deployment.
