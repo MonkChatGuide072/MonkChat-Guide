@@ -188,3 +188,10 @@ Owner/Protected states: change only loading/denial presentation; compare if-cond
 - Remaining release gates: real Owner/Team sign-in/write/upload/publication flows and gateway/RLS; live private AI/free-tier behavior; real phone/iPad; audio 326s versus VTT 300s, cue 19 and media rights/speaker; project approval/removal of public Draft meditation content. No claim that these were solved by presentation changes.
 
 Next handoff: Antigravity should fetch the shared branch into a separate worktree, compare Windows work and follow HANDOFF.md/WORKFLOW.md. No ZIP replacement, force push or silent overwrite. The shared PR is for review; no claim is made that Windows has fetched it.
+
+
+## Closeout: deployed UI preview verified — 4 November 2026
+
+The owner reaffirmed completing the existing UI work without expanding into backend setup. No further UI, database, account, AI-binding or production changes were made. Cloudflare Git integration already deployed source 115b0539081b776676d079d25cd6cb563624d677 successfully as preview deployment 96eebf40-5f26-4662-9591-79ca8083368b. The exact pinned preview is https://96eebf40.monkchat-guide.pages.dev/. This clarifies the prior shorthand “not deployed”: production was not replaced, but an online preview does exist.
+
+Chrome live checks: selected language and opened Activities, Meditation, Q&A, Centers and /visit in both TH/EN, ten route/language states; each rendered the expected H1, no alert or document overflow. Home and official logo images loaded at their expected dimensions. Returned to the Thai Home and left it open as the deliverable. These are real Cloudflare preview pages, not the isolated CMS fixture. The original UI pass is closed and can be inspected directly; real-account/service/media limitations remain accurately recorded rather than being added as more visual work.

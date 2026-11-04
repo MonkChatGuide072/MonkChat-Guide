@@ -1,5 +1,15 @@
 # MonkChat Guide — Current Handoff
 
+## ปิดงาน UI ชุดเดิมบนพรีวิวออนไลน์ — 4 พฤศจิกายน 2569
+
+- เจ้าของย้ำให้จบงานเดิม ไม่ขยายไปตั้งค่าระบบหลังบ้าน รอบนี้จึงไม่เปลี่ยน UI เพิ่ม ไม่แก้ฐานข้อมูล/บัญชี/Workers AI หรือ production
+- งาน UI ที่ตรวจแล้วอยู่ที่ source commit 115b0539081b776676d079d25cd6cb563624d677 ครบ 27 routed page components ผล 69 tests / 12 files, lint และ build จากรอบโค้ดล่าสุดยังใช้ได้ รอบนี้แก้เฉพาะเอกสาร
+- ตรวจ Cloudflare จริงพบว่า Git integration ขึ้น Preview สำเร็จอัตโนมัติแล้ว deployment 96eebf40-5f26-4662-9591-79ca8083368b ผูก source commit ข้างต้น: https://96eebf40.monkchat-guide.pages.dev/ (จึงแก้ความเข้าใจเดิม: ยังไม่ deploy production แต่มี preview ออนไลน์แล้ว)
+- เปิดพรีวิวออนไลน์ผ่าน Chrome: เลือกภาษา Home → Activities → Meditation → Q&A → Centers → /visit ทั้ง TH/EN ตรวจรวม 10 route/language states ไม่พบ alert หรือ document horizontal overflow ภาพ Home และโลโก้โหลดครบ หน้า /visit ยังเป็น Home ตามเดิม ไม่ใช่ fixture
+- งานปรับ UI เดิมปิดรอบและพร้อมให้ตรวจจากลิงก์จริง ไม่ผลักการทำ UI ที่เสร็จแล้วกลับไปให้ Antigravity ทำซ้ำ รายละเอียดรายหน้าอยู่ docs/UNSLOP_REVIEW_2026-11-04.md
+- ข้อจำกัดบัญชีจริง/AI/เสียงและซับในบันทึกก่อนหน้ายังเป็นข้อจำกัดของระบบ ไม่ได้รวมเป็นงานตกแต่งเพิ่มเติมหรืออ้างว่าแก้เสร็จ รอบนี้ไม่มี merge main หรือแทน production
+
+
 ## รอบ UI ครบเส้นทางและส่งตรวจรวม — 4 พฤศจิกายน 2569
 
 - ต่อจาก Centers/BioLinks fb086c847e567aec0d0083ddcca6fba58d9bac8a เก็บภาษา ทีมงาน สถิติ ผู้ช่วยส่วนตัว และสถานะปฏิเสธสิทธิ์ พร้อมตรวจรวมหน้าสาธารณะ 5 หน้า + Login/404 + หลังบ้าน 20 หน้า รวม 27 page components (Home มี alias /visit)
