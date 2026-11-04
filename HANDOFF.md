@@ -1,5 +1,35 @@
 # MonkChat Guide — Current Handoff
 
+## Antigravity รับช่วงต่อจาก main ล่าสุดบน Windows — 4 พฤศจิกายน 2569
+
+- **ฐานโค้ดที่รับ**: Fetch และ sync ตรงกับ `origin/main` ที่ commit `3255f39` (หลัง PR #17 รวมที่ `55b2afe` และ deploy เว็บหลัก production แล้ว)
+- **การจัดการ Workspace บน Windows**:
+  - โฟลเดอร์โครงการ Windows เดิมเก็บรักษางานที่ยังไม่ commit ไว้ครบถ้วน ไม่มีการ reset, clean, หรือแตก ZIP ทับ
+  - เปิด worktree แยก `..\monkchat-guide-wt-main` สำหรับติดตาม `origin/main` เพื่อตรวจสอบโค้ดและสถานะจริง
+- **การตรวจเทียบงาน (Comparison)**:
+  - งานที่ Windows เคยปรับและเสนอไว้ (Hero crop แยก breakpoint, ป้ายทางลัด 12px, Meditate, โลโก้ทางการ, 65 tests เดิม) ได้รับการรวมเข้า main สมบูรณ์แล้ว
+  - งานที่ main มีใหม่กว่า: การ์ดสมาธิ 3 หมวด (ก่อนนั่ง 6 ใบรวมหายใจ / ช่วงนั่ง 1 ภาพ / หลังนั่ง 8 ใบ), ฐานทั้ง 7 เป็นแบบเปิดอ่านเพิ่มเติม, Centers gateway 3 ช่องทางภายนอก, ปรับชื่อเว็บ MonkChat Guide และตัดข้อความวิชาการ/งบประมาณออก, ชุดทดสอบขยายเป็น 71 tests / 12 files
+  - ไฟล์ในเครื่อง Windows ที่เป็นงานค้างและคงรักษาไว้: `.env.local`, ชุดไฟล์ร่างตรวจสอบเนื้อหาและ VTT split cues ใน `docs/content-review/`, ภาพถ่ายหลักฐาน viewport ใน `docs/review-evidence/`, และไฟล์ฐานข้อมูลจำลอง/SQL
+- **ผลการทดสอบที่รันเองจริงบนเครื่อง Windows (`origin/main`)**:
+  - `npm test -- --run`: ผ่านครบ **71/71 tests passed** จาก 12 ไฟล์ทดสอบ
+  - `npm run lint`: **0 errors, 0 warnings** บน 97 ไฟล์ (`oxlint`)
+  - `npm run build`: ผ่านสมบูรณ์ (`tsc -b && vite build`) สร้าง PWA Service Worker สำเร็จใน 289ms
+  - **In-Browser Route Verification (Preview port 5173 ผ่าน CDP)**:
+    - ตรวจครบ 6 routes: Home (`/`), `/visit`, Activities (`/activities`), Meditation (`/meditation`), Q&A (`/qa`), Centers (`/centers`) ทั้งภาษาไทยและอังกฤษ บน mobile (390px) และ desktop (1440px)
+    - ทุกหน้าไม่มีการเลื่อนแนวนอน (`hasHorizontalOverflow: false`)
+    - ยืนยันชื่อเว็บ "MonkChat Guide" และไม่มีข้อความวิชาการ/งบประมาณบนหน้าสาธารณะ
+    - หน้า Meditation มี 3 หมวด (ก่อนนั่ง 6 ใบรวมการหายใจ, ช่วงนั่ง 1 ภาพ, หลังนั่ง 8 ใบ) ฐานทั้ง 7 เปิดอ่านเพิ่มเติมได้ การ์ดหลังนั่งไม่มีคะแนน/การรับรอง
+    - หน้า Centers มี 3 ลิงก์ gateway (อโยธยา, วัดพระธรรมกาย, ศูนย์สาขา) ถูกต้อง
+- **สิ่งที่ยังไม่ได้ตรวจจริง (ข้อจำกัดตามจริง)**:
+  - ยังไม่ได้ทดสอบการล็อกอินบัญชีจริง Owner/Team บน production Supabase (ผลทดสอบปัจจุบันเป็น mock suite)
+  - ยังไม่ได้ทดสอบ live inference จริงของ Cloudflare Workers AI สำหรับผู้ช่วยส่วนตัวพระนิสิต (`/admin/assistant`)
+  - ไฟล์เสียงจริง (326s) กับซับไตเติล VTT (300s) จุดตัด Cue 19 ยังรอพระอาจารย์ตรวจเทียบความตรงกันทุกคำ
+- **งานค้างที่ควรทำต่อ เรียงตามความสำคัญ**:
+  1. ตรวจสอบความถูกต้องของเนื้อหาธรรมะ เสียงนำสมาธิ (326s) และไฟล์ซับไตเติล VTT (300s / จุดตัด Cue 19) ร่วมกับพระอาจารย์/ทีมงาน
+  2. ทดสอบระบบความปลอดภัยและสิทธิ์ CMS บนบัญชีจริง (Owner vs Team Member) ใน staging/test environment โดยไม่กระทบฐานข้อมูลหลัก
+  3. ทดสอบและยืนยันการเชื่อมต่อ Cloudflare Workers AI Free สำหรับผู้ช่วยร่างคำตอบของพระนิสิตหลังบ้าน (`/admin/assistant`)
+  4. ทดสอบความลื่นไหลบนอุปกรณ์จริง (Mobile/Tablet touch devices) ก่อนรอบพัฒนาใหญ่ถัดไป
+
 ## เผยแพร่เว็บหลักตามคำยืนยันเจ้าของ — 4 พฤศจิกายน 2569
 
 - เจ้าของยืนยันครบ 3 ขั้นตอนอย่างชัดเจน: PR #17 Draft → Ready → merge main → deploy production จึงดำเนินการตามคำยืนยันล่าสุด แทนข้อจำกัดพรีวิวในบันทึกก่อนหน้าเฉพาะรอบนี้
