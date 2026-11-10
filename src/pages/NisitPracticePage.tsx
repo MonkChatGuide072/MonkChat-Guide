@@ -191,7 +191,7 @@ export function NisitPracticePage() {
         </div>
 
         {/* Student Account Bar & Local Study Profile */}
-        <div className="mt-6 rounded-xl border border-brand-border bg-[#FAF2E6]/70 p-4">
+        <div className="mt-6 rounded-xl border border-brand-border bg-brand-gold-soft/70 p-4">
           {isSignedStudent && authProfile ? (
             <>
               <div className="flex flex-wrap items-center justify-between gap-3">

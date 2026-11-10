@@ -79,7 +79,7 @@ export function NisitVocabCards({
               className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6"
             >
               <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
-                <div className="aspect-[16/11] w-full overflow-hidden rounded-xl border border-brand-border bg-[#FAF2E6] lg:aspect-auto lg:h-full">
+                <div className="aspect-[16/11] w-full overflow-hidden rounded-xl border border-brand-border bg-brand-gold-soft lg:aspect-auto lg:h-full">
                   <MeditationGuideVisual
                     scene={lesson.scene}
                     still
@@ -126,7 +126,7 @@ export function NisitVocabCards({
                     ))}
                   </div>
 
-                  <p className="rounded-lg bg-[#FAF2E6]/70 px-3 py-2 text-xs leading-5 text-brand-muted">
+                  <p className="rounded-lg bg-brand-gold-soft/70 px-3 py-2 text-xs leading-5 text-brand-muted">
                     <strong className="font-medium text-brand-maroon">
                       {isEnglish ? 'Tip: ' : 'ข้อแนะนำหน้างาน: '}
                     </strong>

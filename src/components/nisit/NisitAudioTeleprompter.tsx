@@ -302,7 +302,7 @@ function SyncedScriptPlayer({
         <div
           aria-live="polite"
           aria-label={isEnglish ? 'Active spoken script cue' : 'บทพูดนำสมาธิท่อนปัจจุบัน'}
-          className="mt-5 rounded-xl border-l-3 border-brand-terracotta bg-[#FDF4E3] p-5"
+          className="mt-5 rounded-xl border-l-3 border-brand-terracotta bg-brand-gold-soft p-5"
         >
           <div className="flex items-center justify-between text-xs font-medium text-brand-terracotta tabular-nums">
             <span>{isEnglish ? 'Active spoken line' : 'ข้อความที่กำลังพูดอยู่ในคลิป'}</span>
@@ -358,7 +358,7 @@ function SyncedScriptPlayer({
                     onClick={() => jumpToCue(cue.start)}
                     className={`flex min-h-11 w-full cursor-pointer items-start gap-3 rounded-xl border p-3 text-left text-sm transition-colors duration-150 ${
                       isCurrent
-                        ? 'border-brand-terracotta bg-[#FDF4E3] font-medium text-brand-maroon'
+                        ? 'border-brand-terracotta bg-brand-gold-soft font-medium text-brand-maroon'
                         : 'border-brand-border bg-brand-cream/40 text-brand-text hover:bg-brand-gold-soft'
                     }`}
                   >

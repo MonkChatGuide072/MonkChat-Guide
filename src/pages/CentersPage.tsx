@@ -177,8 +177,8 @@ export function CentersPage() {
                 aria-pressed={isActive}
                 className={`inline-flex min-h-11 max-w-full shrink-0 items-center gap-1.5 rounded-lg px-4 text-sm font-medium transition-colors duration-150 cursor-pointer ${
                   isActive
-                    ? 'bg-[#A43D1D] text-white '
-                    : 'border border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] hover:bg-[#FDF4E3]'
+                    ? 'bg-brand-terracotta text-white '
+                    : 'border border-brand-border bg-brand-surface text-brand-maroon hover:bg-brand-gold-soft'
                 }`}
               >
                 <GuideIcon name="pin" />
@@ -194,7 +194,7 @@ export function CentersPage() {
         {/* Left Column: Center Cards */}
         <div className="space-y-4">
           <div>
-            <h2 id="centers-results-heading" ref={resultsHeadingRef} tabIndex={-1} className="scroll-mt-24 font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+            <h2 id="centers-results-heading" ref={resultsHeadingRef} tabIndex={-1} className="scroll-mt-24 font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
               {isEnglish ? 'Meditation centers' : 'ศูนย์ปฏิบัติธรรม'}
             </h2>
             <p className="text-sm text-brand-muted sm:text-sm">
@@ -205,8 +205,8 @@ export function CentersPage() {
           </div>
 
           {isLoading && (
-            <div role="status" aria-label={t('centers.loading')} className="flex min-h-60 items-center justify-center rounded-2xl border border-[#EADCC6] bg-[#FFFDF7]">
-              <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#A43D1D]/20 border-t-[#A43D1D]" />
+            <div role="status" aria-label={t('centers.loading')} className="flex min-h-60 items-center justify-center rounded-2xl border border-brand-border bg-brand-surface">
+              <div className="h-8 w-8 animate-spin rounded-full border-3 border-brand-terracotta/20 border-t-brand-terracotta" />
             </div>
           )}
 
@@ -216,7 +216,7 @@ export function CentersPage() {
               <button
                 type="button"
                 onClick={() => void fetchData()}
-                className="mt-3 min-h-11 rounded-xl bg-[#A43D1D] px-5 text-sm font-medium text-white"
+                className="mt-3 min-h-11 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white"
               >
                 {t('centers.retry')}
               </button>
@@ -224,7 +224,7 @@ export function CentersPage() {
           )}
 
           {!isLoading && !error && centers.length === 0 && (
-            <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-8 text-center text-sm text-brand-muted">
+            <div className="rounded-2xl border border-brand-border bg-brand-surface p-8 text-center text-sm text-brand-muted">
               {t('centers.empty')}
             </div>
           )}
@@ -248,7 +248,7 @@ export function CentersPage() {
                     </div>
 
                     <div className="flex flex-1 flex-col p-5">
-                      <h3 id={`center-title-${center.id}`} className="font-sans text-lg font-medium text-[#681B16]">
+                      <h3 id={`center-title-${center.id}`} className="font-sans text-lg font-medium text-brand-maroon">
                         {translation?.name || t('centers.unnamedCenter')}
                       </h3>
                       {translation?.description && (
@@ -263,7 +263,7 @@ export function CentersPage() {
 
 
                       {/* Links for this center (Map, Website, Contact) */}
-                      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[#EADCC6]/80 pt-3">
+                      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-brand-border/80 pt-3">
                         {isSafeWebUrl(center.map_url) && (
                           <a
                             href={center.map_url}
@@ -271,7 +271,7 @@ export function CentersPage() {
                             rel="noopener noreferrer"
                             aria-label={t('centers.linkMap')}
                             aria-describedby={`center-title-${center.id}`}
-                            className="inline-flex min-h-11 items-center gap-1 rounded-lg bg-[#A43D1D] px-3 text-sm font-medium text-white hover:bg-[#8E3317]"
+                            className="inline-flex min-h-11 items-center gap-1 rounded-lg bg-brand-terracotta px-3 text-sm font-medium text-white hover:bg-brand-terracotta-dark"
                           >
                             <span>{t('centers.linkMap')}</span>
                             <span aria-hidden="true">↗</span>
@@ -284,7 +284,7 @@ export function CentersPage() {
                             rel="noopener noreferrer"
                             aria-label={t('centers.linkWebsite')}
                             aria-describedby={`center-title-${center.id}`}
-                            className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-[#D5BD94] bg-[#FFFDF7] px-3 text-sm font-medium text-[#681B16] hover:bg-[#FDF4E3]"
+                            className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-brand-border-dark bg-brand-surface px-3 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
                           >
                             <span>{t('centers.linkWebsite')}</span>
                             <span aria-hidden="true">↗</span>
@@ -297,7 +297,7 @@ export function CentersPage() {
                             rel="noopener noreferrer"
                             aria-label={t('centers.linkContact')}
                             aria-describedby={`center-title-${center.id}`}
-                            className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-[#D5BD94] bg-[#FFFDF7] px-3 text-sm font-medium text-[#681B16] hover:bg-[#FDF4E3]"
+                            className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-brand-border-dark bg-brand-surface px-3 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
                           >
                             <span>{t('centers.linkContact')}</span>
                             <span aria-hidden="true">↗</span>
@@ -314,19 +314,19 @@ export function CentersPage() {
 
         {/* Right Column: Map & Regions Sidebar */}
         <aside className="space-y-6">
-          <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-[#A43D1D]">
+          <div className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+            <div className="flex items-center gap-2 text-sm font-medium text-brand-terracotta">
               <GuideIcon name="pin" />
               <span>{isEnglish ? 'Browse regions' : 'เลือกตามพื้นที่'}</span>
             </div>
-            <h3 className="mt-1 font-sans text-lg font-medium text-[#681B16]">
+            <h3 className="mt-1 font-sans text-lg font-medium text-brand-maroon">
               {isEnglish ? 'Regions' : 'พื้นที่ตั้งศูนย์'}
             </h3>
             <p className="mt-2 text-sm leading-6 text-brand-muted">
               {isEnglish ? 'Choose an area to explore more places.' : 'เลือกพื้นที่เพื่อดูสถานที่เพิ่มเติม'}
             </p>
 
-            <div className="mt-4 divide-y divide-[#EADCC6]/60 rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60">
+            <div className="mt-4 divide-y divide-brand-border/60 rounded-xl border border-brand-border bg-brand-gold-soft/60">
               {regionCounts.map(region => <button key={region.city} type="button" onClick={() => setSelectedRegion(region.city)} aria-pressed={selectedRegion === region.city} className="flex min-h-11 w-full items-center justify-between gap-3 p-3 text-left text-sm">
                 <span className="font-medium text-brand-maroon">{region.city}</span>
                 <span className="text-brand-muted">{region.count} {isEnglish ? (region.count === 1 ? 'center' : 'centers') : 'แห่ง'}</span>
@@ -352,9 +352,9 @@ export function CentersPage() {
       )}
 
       {/* 4. BOTTOM SECTION: LEARN MORE & RESOURCES */}
-      <section className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6 space-y-5">
+      <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6 space-y-5">
         <div>
-          <h2 className="font-serif text-2xl font-semibold text-[#681B16]">
+          <h2 className="font-serif text-2xl font-semibold text-brand-maroon">
             {isEnglish ? 'Learn More & Resources' : 'แหล่งเรียนรู้และข้อมูลเพิ่มเติม'}
           </h2>
           <p className="mt-1 text-sm text-brand-muted sm:text-sm">
@@ -367,56 +367,56 @@ export function CentersPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Link
             to="/meditation"
-            className="group flex flex-col justify-between rounded-xl border border-[#EADCC6] bg-[#FFF8EE]/60 p-4 transition hover:border-[#D5BD94]"
+            className="group flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4 transition hover:border-brand-border-dark"
           >
             <div>
               <GuideIcon name="play" />
-              <h3 className="mt-2 font-sans text-sm font-medium text-[#681B16] group-hover:text-[#A43D1D]">
+              <h3 className="mt-2 font-sans text-sm font-medium text-brand-maroon group-hover:text-brand-terracotta">
                 {isEnglish ? 'Guided Meditations' : 'เสียงนำสมาธิ'}
               </h3>
               <p className="mt-2 text-sm leading-6 text-brand-muted">
                 {isEnglish ? 'Guided meditation audio' : 'ไฟล์เสียงนำสมาธิสั้นกระชับ'}
               </p>
             </div>
-            <span className="mt-3 text-sm font-medium text-[#A43D1D]">→</span>
+            <span className="mt-3 text-sm font-medium text-brand-terracotta">→</span>
           </Link>
 
           <Link
             to="/qa"
-            className="group flex flex-col justify-between rounded-xl border border-[#EADCC6] bg-[#FFF8EE]/60 p-4 transition hover:border-[#D5BD94]"
+            className="group flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4 transition hover:border-brand-border-dark"
           >
             <div>
               <GuideIcon name="book" />
-              <h3 className="mt-2 font-sans text-sm font-medium text-[#681B16] group-hover:text-[#A43D1D]">
+              <h3 className="mt-2 font-sans text-sm font-medium text-brand-maroon group-hover:text-brand-terracotta">
                 {isEnglish ? 'Dhamma Q&A' : 'ถาม-ตอบธรรมะ'}
               </h3>
               <p className="mt-2 text-sm leading-6 text-brand-muted">
                 {isEnglish ? 'Teachings & practical insights' : 'คำตอบธรรมะสำหรับผู้มาเยือน'}
               </p>
             </div>
-            <span className="mt-3 text-sm font-medium text-[#A43D1D]">→</span>
+            <span className="mt-3 text-sm font-medium text-brand-terracotta">→</span>
           </Link>
 
           <Link
             to="/activities"
-            className="group flex flex-col justify-between rounded-xl border border-[#EADCC6] bg-[#FFF8EE]/60 p-4 transition hover:border-[#D5BD94]"
+            className="group flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4 transition hover:border-brand-border-dark"
           >
             <div>
               <GuideIcon name="pin" />
-              <h3 className="mt-2 font-sans text-sm font-medium text-[#681B16] group-hover:text-[#A43D1D]">
+              <h3 className="mt-2 font-sans text-sm font-medium text-brand-maroon group-hover:text-brand-terracotta">
                 {isEnglish ? 'Visit Monk Chat' : 'ร่วมกิจกรรมหน้างาน'}
               </h3>
               <p className="mt-2 text-sm leading-6 text-brand-muted">
                 {isEnglish ? 'On-site sessions at Wat Mahathat' : 'พบปะและสนทนาธรรมที่วัดมหาธาตุ'}
               </p>
             </div>
-            <span className="mt-3 text-sm font-medium text-[#A43D1D]">→</span>
+            <span className="mt-3 text-sm font-medium text-brand-terracotta">→</span>
           </Link>
 
-          <div className="flex flex-col justify-between rounded-xl border border-[#EADCC6] bg-[#FFF8EE]/60 p-4">
+          <div className="flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4">
             <div>
               <GuideIcon name="link" />
-              <h3 className="mt-2 font-sans text-sm font-medium text-[#681B16]">
+              <h3 className="mt-2 font-sans text-sm font-medium text-brand-maroon">
                 {isEnglish ? 'Helpful Links' : 'ลิงก์เพิ่มเติม'}
               </h3>
               <p className="mt-2 text-sm leading-6 text-brand-muted">
@@ -433,7 +433,7 @@ export function CentersPage() {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm font-medium text-[#A43D1D] hover:underline"
+                      className="text-sm font-medium text-brand-terracotta hover:underline"
                     >
                       {title} ↗
                     </a>

@@ -1,10 +1,11 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter, Route, Routes } from 'react-router'
 import { createInstance } from 'i18next'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
 import th from '../locales/th/common.json'
 import en from '../locales/en/common.json'
+import { Layout } from '../components/Layout'
 import { HomeOverviewPage } from './HomeOverviewPage'
 import { VisitPage } from './VisitPage'
 import { NisitPracticePage } from './NisitPracticePage'
@@ -42,10 +43,10 @@ await i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 })
 
-function renderWithRouter(ui: React.ReactNode) {
+function renderWithRouter(ui: React.ReactNode, initialEntries: string[] = ['/']) {
   return render(
     <I18nextProvider i18n={i18n}>
-      <MemoryRouter>{ui}</MemoryRouter>
+      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
     </I18nextProvider>,
   )
 }
@@ -181,14 +182,41 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
 
   afterEach(cleanup)
 
-  it('HomeOverviewPage displays language gate first, then clear /visit and /nisit gateways', async () => {
+  it('HomeOverviewPage unifies / and /visit: displays language gate first, then visitor home, 5 shortcuts and /nisit gateway', async () => {
     renderWithRouter(<HomeOverviewPage />)
     expect(screen.getByRole('heading', { name: /เลือกภาษา \/ Choose language/i })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'English' }))
 
-    expect(await screen.findByRole('heading', { name: 'Choose your space' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Enter Visitor Guide/i })).toHaveAttribute('href', '/visit')
+    expect(await screen.findByRole('heading', { name: 'MonkChat Guide' })).toBeInTheDocument()
+    const shortcuts = screen.getByRole('navigation', { name: 'Home shortcuts' })
+    expect(shortcuts.querySelectorAll('a')).toHaveLength(5)
     expect(screen.getByRole('link', { name: /Open Student Training/i })).toHaveAttribute('href', '/nisit')
+  })
+
+  it('Layout keeps 5 visitor shortcuts persistent on sub-pages and places chatbot in header', async () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
+    renderWithRouter(
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="activities" element={<div>Subpage body</div>} />
+        </Route>
+      </Routes>,
+      ['/activities'],
+    )
+
+    const bar = screen.getByRole('navigation', { name: 'Visitor quick shortcuts' })
+    expect(bar.querySelectorAll('a')).toHaveLength(5)
+    expect(within(bar).getByRole('link', { name: 'Activities', current: 'page' })).toHaveAttribute('href', '/activities')
+
+    const header = screen.getByRole('banner')
+    const chatButton = header.querySelector('button[aria-controls="reviewed-chatbot-panel"]')
+    expect(chatButton).not.toBeNull()
+    fireEvent.click(chatButton as HTMLButtonElement)
+    const dialog = await screen.findByRole('dialog', { name: 'Ask the chatbot' })
+    expect(dialog).toBeInTheDocument()
+    fireEvent.keyDown(dialog, { key: 'Escape' })
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Ask the chatbot' })).not.toBeInTheDocument())
   })
 
   it('VisitPage renders visitor atmosphere, 3 gentle meditation cards and verified practice places', async () => {

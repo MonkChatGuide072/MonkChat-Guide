@@ -227,7 +227,7 @@ export function NisitFlashcards({
           </div>
 
           {revealed && (
-            <div className="mt-6 space-y-4 rounded-xl border border-brand-border bg-[#FAF2E6]/70 p-5">
+            <div className="mt-6 space-y-4 rounded-xl border border-brand-border bg-brand-gold-soft/70 p-5">
               {enRow && (
                 <div>
                   <p className="text-xs font-medium text-brand-terracotta">English Response</p>

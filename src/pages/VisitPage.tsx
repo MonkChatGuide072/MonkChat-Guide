@@ -239,8 +239,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
 
   return (
     <div className="bg-brand-cream text-brand-text break-words [overflow-wrap:anywhere]">
-      <HomeHeroIntro language={currentLang} activePath="/visit" />
-      <div className="mx-auto w-full max-w-[76rem] space-y-12 px-4 pb-24 pt-6 sm:space-y-16 sm:px-6 sm:pb-24 sm:pt-8 lg:px-8">
+      <HomeHeroIntro language={currentLang} activePath="/" />
+      <div className="mx-auto w-full max-w-[76rem] space-y-12 px-4 pb-12 pt-6 sm:space-y-16 sm:px-6 sm:pb-16 sm:pt-8 lg:px-8">
       <section aria-label="Activity schedule and location summary" className="rounded-2xl border border-brand-border bg-brand-surface p-4 sm:p-6">
         <dl className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4 sm:gap-6">
           {([
@@ -260,10 +260,33 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </dl>
       </section>
 
+      <section
+        aria-label={isEnglish ? 'Student monk training portal' : 'มุมฝึกพระนิสิต'}
+        className="flex flex-col gap-3 rounded-2xl border border-brand-gold/30 bg-brand-gold-soft/75 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+      >
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-brand-gold">
+            {isEnglish ? 'For MCU student monks' : 'สำหรับพระนิสิต มจร'}
+          </p>
+          <p className="mt-0.5 text-sm font-medium leading-6 text-brand-maroon">
+            {isEnglish
+              ? 'Open Student Training for audio teleprompter, flashcards, and cohort practice check-in.'
+              : 'เข้ามุมฝึกพระนิสิต เพื่อฝึกนำสมาธิพร้อมเสียง คำศัพท์ และลงชื่อรุ่นผู้ใช้งาน'}
+          </p>
+        </div>
+        <Link
+          to="/nisit"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-brand-terracotta bg-brand-surface px-4 text-sm font-medium text-brand-terracotta transition-colors duration-150 hover:bg-brand-terracotta hover:text-white"
+        >
+          <span>{isEnglish ? 'Open Student Training' : 'เข้ามุมฝึกพระนิสิต'}</span>
+          <GuideIcon name="arrow" />
+        </Link>
+      </section>
+
       {/* 3. LOCATION & MAP SECTION */}
       <section id="location-details" className="scroll-mt-8 space-y-4">
         <div>
-          <h2 className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+          <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
             {isEnglish ? 'Location & map' : 'สถานที่และแผนที่'}
           </h2>
           <p className="text-sm leading-6 text-brand-muted">
@@ -271,7 +294,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] sm:grid sm:grid-cols-2">
+        <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:grid sm:grid-cols-2">
           <div className="relative h-48 w-full sm:h-full">
             <img
               src="/images/home/monkchat-meditation-ruins.webp"
@@ -285,10 +308,10 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
 
           <div className="flex flex-col justify-between p-5 sm:p-6 space-y-4">
             <div>
-              <span className="text-xs font-medium text-[#A43D1D]">
+              <span className="text-xs font-medium text-brand-terracotta">
                 {isEnglish ? 'Meeting point' : 'จุดนัดพบ'}
               </span>
-              <h3 className="mt-1 font-sans text-xl font-medium text-[#681B16]">
+              <h3 className="mt-1 font-sans text-xl font-medium text-brand-maroon">
                 {isEnglish ? 'Wat Mahathat, Ayutthaya' : 'วัดมหาธาตุ พระนครศรีอยุธยา'}
               </h3>
               <p className="mt-2 text-sm leading-6 text-brand-muted sm:text-sm">
@@ -298,8 +321,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
               </p>
             </div>
 
-            <div className="rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-4 space-y-2">
-              <div className="flex items-start gap-2 text-sm text-[#681B16]">
+            <div className="rounded-xl border border-brand-border bg-brand-gold-soft/60 p-4 space-y-2">
+              <div className="flex items-start gap-2 text-sm text-brand-maroon">
                 <GuideIcon name="pin" />
                 <span>{isEnglish ? 'Wat Mahathat (near central prang), Ayutthaya' : 'จุดนัดพบ: ลานร่มไม้ภายในวัดมหาธาตุ พระนครศรีอยุธยา'}</span>
               </div>
@@ -319,7 +342,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 href={mapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#A43D1D] px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#8E3317]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
               >
                 <LocationIcon />
                 <span>{isEnglish ? 'View map' : 'ดูแผนที่'}</span>
@@ -328,7 +351,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 href={mapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#A43D1D] bg-[#FFFDF7] px-5 text-sm font-medium text-[#A43D1D] transition-colors duration-150 hover:bg-[#FDF4E3]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-terracotta bg-brand-surface px-5 text-sm font-medium text-brand-terracotta transition-colors duration-150 hover:bg-brand-gold-soft"
               >
                 <GuideIcon name="directions" />
                 <span>{isEnglish ? 'Get directions' : 'ขอเส้นทาง'}</span>
@@ -341,7 +364,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
       {/* 4. WHAT TO EXPECT SECTION */}
       <section className="space-y-4">
         <div>
-          <h2 className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+          <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
             {isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม'}
           </h2>
           <p className="text-sm leading-6 text-brand-muted">
@@ -355,13 +378,13 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           {whatToExpect.map((item) => (
             <div
               key={item.title}
-              className="flex overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] sm:flex-col"
+              className="flex overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:flex-col"
             >
-              <div className="relative w-24 shrink-0 overflow-hidden bg-[#FAF2E6] sm:h-36 sm:w-full">
+              <div className="relative w-24 shrink-0 overflow-hidden bg-brand-gold-soft sm:h-36 sm:w-full">
                 <img src={item.img} alt={item.title} width={item.width} height={item.height} loading="lazy" className="h-full w-full object-cover" />
               </div>
               <div className="flex flex-1 flex-col p-4">
-                <h3 className="font-sans text-base font-medium text-[#681B16]">
+                <h3 className="font-sans text-base font-medium text-brand-maroon">
                   {item.title}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-brand-muted">
@@ -392,7 +415,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
               key={moment.title}
               className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface"
             >
-              <div className="h-56 w-full overflow-hidden bg-[#FAF2E6]">
+              <div className="h-56 w-full overflow-hidden bg-brand-gold-soft">
                 <img src={moment.img} alt={moment.title} width={moment.width} height={moment.height} loading="lazy" className="h-full w-full object-cover object-center" />
               </div>
               <figcaption className="p-5">
@@ -494,11 +517,11 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
 
       {/* Recommended meditation and resources */}
       <div className="grid items-start gap-6 lg:grid-cols-[1.2fr_1fr]">
-        <section aria-labelledby="recommended-heading" className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6">
-          <p className="text-xs font-medium text-[#A43D1D]">
+        <section aria-labelledby="recommended-heading" className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+          <p className="text-xs font-medium text-brand-terracotta">
             {isEnglish ? 'Recommended for you' : t('visitor.recommendedTag')}
           </p>
-          <h2 id="recommended-heading" className="mt-1 font-serif text-xl font-semibold text-[#681B16] sm:text-2xl">
+          <h2 id="recommended-heading" className="mt-1 font-serif text-xl font-semibold text-brand-maroon sm:text-2xl">
             {t('visitor.recommendedTitle')}
           </h2>
           <p className="mt-1 text-sm leading-6 text-brand-muted">
@@ -513,7 +536,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             ) : !selectedTrack || !selectedTranslation ? (
               <EmptyState message={t('visitor.noRecommended')} />
             ) : (
-              <div className="rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-5">
+              <div className="rounded-xl border border-brand-border bg-brand-gold-soft/60 p-5">
                 {recommendedTracks.length > 1 && (
                   <div className="mb-4 flex flex-wrap gap-2" aria-label={t('visitor.selectRecommended')}>
                     {recommendedTracks.map((track) => {
@@ -525,8 +548,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                           onClick={() => setSelectedTrackId(track.id)}
                           className={`min-h-11 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 cursor-pointer ${
                             track.id === selectedTrack.id
-                              ? 'bg-[#A43D1D] text-white'
-                              : 'bg-white border border-[#EADCC6] text-[#681B16] hover:bg-[#FDF4E3]'
+                              ? 'bg-brand-terracotta text-white'
+                              : 'bg-white border border-brand-border text-brand-maroon hover:bg-brand-gold-soft'
                           }`}
                         >
                           {translation?.title}
@@ -535,7 +558,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                     })}
                   </div>
                 )}
-                <h3 className="font-sans text-lg font-medium text-[#681B16]">{selectedTranslation.title}</h3>
+                <h3 className="font-sans text-lg font-medium text-brand-maroon">{selectedTranslation.title}</h3>
                 {selectedTranslation.description && (
                   <p className="mt-2 text-sm leading-6 text-brand-muted">{selectedTranslation.description}</p>
                 )}
@@ -545,7 +568,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                   </span>
                   <Link
                     to={`/meditation?trackId=${selectedTrack.id}`}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#A43D1D] px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#8E3317]"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
                   >
                     <PlayIcon />
                     <span>{t('visitor.playNow')}</span>
@@ -557,11 +580,11 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </section>
 
         {/* Bio Links / Quick Resources */}
-        <section aria-labelledby="bio-links-heading" className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6">
-          <h2 id="bio-links-heading" className="font-serif text-base font-semibold text-[#681B16]">
+        <section aria-labelledby="bio-links-heading" className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+          <h2 id="bio-links-heading" className="font-serif text-base font-semibold text-brand-maroon">
             {t('visitor.chooseTitle')}
           </h2>
-          <div className="mt-3 divide-y divide-[#EADCC6]/60">
+          <div className="mt-3 divide-y divide-brand-border/60">
             <GuideLinkRow to="/qa" title={t('visitor.qaTitle')} description={t('visitor.qaDesc')} icon={<QuestionIcon />} />
             <GuideLinkRow to="/centers" title={t('visitor.centersTitle')} description={t('visitor.centersDesc')} icon={<LocationIcon />} />
             <GuideLinkRow to="/meditation" title={t('visitor.meditationTitle')} description={t('visitor.meditationDesc')} icon={<PlayIcon />} />
@@ -572,7 +595,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           ) : linksError ? (
             <ErrorState message={linksError} onRetry={fetchBioLinks} retryLabel={t('home.retry')} />
           ) : bioLinks.length > 0 ? (
-            <div className="mt-4 grid gap-2 border-t border-[#EADCC6]/60 pt-4">
+            <div className="mt-4 grid gap-2 border-t border-brand-border/60 pt-4">
               {bioLinks.map((link) => {
                 const title = link.bio_link_translations.find((translation) => translation.language_code === currentLang)?.title
                 const imageUrl = getBioLinkImageUrl(link.image_storage_path)
@@ -590,7 +613,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                         resourceId: link.id,
                       })
                     }}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#EADCC6] bg-brand-surface px-3 text-sm font-medium text-[#681B16] hover:bg-[#FDF4E3]"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-brand-border bg-brand-surface px-3 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
                   >
                     {imageUrl ? <img src={imageUrl} alt="" width={16} height={16} className="h-4 w-4 rounded-full object-cover" /> : <LinkIcon />}
                     <span>{title}</span>
@@ -606,12 +629,12 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
       {/* 6. LOWER 3-COLUMN SECTION: BEFORE YOU COME + FAQ + CONTACT */}
       <section className="grid gap-6 md:grid-cols-3">
         {/* Column 1: Before you come */}
-        <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
-          <div className="flex items-start gap-2 text-sm font-medium text-[#A43D1D]">
+        <div className="rounded-2xl border border-brand-border bg-brand-surface p-5">
+          <div className="flex items-start gap-2 text-sm font-medium text-brand-terracotta">
             <GuideIcon name="clipboard" />
             <span>{isEnglish ? 'Before you come' : 'ข้อควรทราบก่อนมา'}</span>
           </div>
-          <h3 className="mt-2 font-sans text-base font-medium text-[#681B16]">
+          <h3 className="mt-2 font-sans text-base font-medium text-brand-maroon">
             {isEnglish ? 'Visitor etiquette' : 'การปฏิบัติตนในวัด'}
           </h3>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-brand-muted">
@@ -635,30 +658,30 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </div>
 
         {/* Column 2: FAQ */}
-        <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
+        <div className="rounded-2xl border border-brand-border bg-brand-surface p-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-start gap-2 text-sm font-medium text-[#A43D1D]">
+            <div className="flex items-start gap-2 text-sm font-medium text-brand-terracotta">
               <GuideIcon name="question" />
               <span>FAQ</span>
             </div>
-            <Link to="/qa" className="inline-flex min-h-11 items-center text-sm font-medium text-[#A43D1D] hover:underline">
+            <Link to="/qa" className="inline-flex min-h-11 items-center text-sm font-medium text-brand-terracotta hover:underline">
               {isEnglish ? 'View all FAQ →' : 'ดูคำถามทั้งหมด →'}
             </Link>
           </div>
-          <h3 className="mt-2 font-sans text-base font-medium text-[#681B16]">
+          <h3 className="mt-2 font-sans text-base font-medium text-brand-maroon">
             {isEnglish ? 'Common questions' : 'คำถามที่พบบ่อย'}
           </h3>
           <div className="mt-3 space-y-2 text-sm leading-6 text-brand-muted">
-            <div className="rounded-lg bg-[#FAF2E6]/60 p-3">
-              <strong className="block font-medium text-[#681B16]">
+            <div className="rounded-lg bg-brand-gold-soft/60 p-3">
+              <strong className="block font-medium text-brand-maroon">
                 {isEnglish ? 'Do I need to register in advance?' : 'ต้องลงทะเบียนล่วงหน้าหรือไม่?'}
               </strong>
               <p className="mt-2 text-sm leading-6">
                 {isEnglish ? 'No advance registration is needed for regular Monk Chat sessions at Wat Mahathat. For special workshops, please consult announcements or contact the team.' : 'กิจกรรม Monk Chat ประจำสัปดาห์ ณ วัดมหาธาตุ ไม่ต้องลงทะเบียนล่วงหน้า สามารถเข้าร่วมได้ทันที สำหรับกิจกรรมรอบพิเศษ กรุณาติดตามประกาศจากทีมงาน'}
               </p>
             </div>
-            <div className="rounded-lg bg-[#FAF2E6]/60 p-3">
-              <strong className="block font-medium text-[#681B16]">
+            <div className="rounded-lg bg-brand-gold-soft/60 p-3">
+              <strong className="block font-medium text-brand-maroon">
                 {isEnglish ? 'Is it free to join?' : 'มีค่าใช้จ่ายหรือไม่?'}
               </strong>
               <p className="mt-2 text-sm leading-6">
@@ -669,12 +692,12 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </div>
 
         {/* Column 3: Contact & help */}
-        <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
-          <div className="flex items-start gap-2 text-sm font-medium text-[#A43D1D]">
+        <div className="rounded-2xl border border-brand-border bg-brand-surface p-5">
+          <div className="flex items-start gap-2 text-sm font-medium text-brand-terracotta">
             <GuideIcon name="chat" />
             <span>{isEnglish ? 'Contact & help' : 'ติดต่อสอบถาม'}</span>
           </div>
-          <h3 className="mt-2 font-sans text-base font-medium text-[#681B16]">
+          <h3 className="mt-2 font-sans text-base font-medium text-brand-maroon">
             {isEnglish ? 'Need assistance?' : 'ต้องการข้อมูลเพิ่มเติม?'}
           </h3>
           <p className="mt-2 text-sm leading-6 text-brand-muted">
@@ -685,13 +708,13 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           <div className="mt-4 pt-2 space-y-2">
             <Link
               to="/activities"
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#A43D1D] bg-[#FFFDF7] px-4 text-sm font-medium text-[#A43D1D] transition-colors duration-150 hover:bg-[#FDF4E3]"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-brand-terracotta bg-brand-surface px-4 text-sm font-medium text-brand-terracotta transition-colors duration-150 hover:bg-brand-gold-soft"
             >
               <span>{isEnglish ? 'View all activities →' : 'ดูกิจกรรมทั้งหมด →'}</span>
             </Link>
             <Link
               to="/qa"
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#A43D1D] px-4 text-sm font-medium text-white hover:bg-[#8E3317]"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white hover:bg-brand-terracotta-dark"
             >
               <span>{isEnglish ? 'Ask via Q&A' : 'ถามคำถามผ่านหน้า Q&A'}</span>
               <span aria-hidden="true">→</span>
@@ -711,10 +734,10 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
 
 function GuideLinkRow({ to, title, description, icon }: { to: string; title: string; description: string; icon: ReactNode }) {
   return (
-    <Link to={to} className="group flex min-h-16 items-start gap-3 rounded-lg py-4 transition-colors duration-150 hover:text-[#A43D1D]">
+    <Link to={to} className="group flex min-h-16 items-start gap-3 rounded-lg py-4 transition-colors duration-150 hover:text-brand-terracotta">
       <span className="mt-1 text-brand-muted">{icon}</span>
       <span className="min-w-0 flex-1">
-        <strong className="block text-sm font-medium text-[#681B16] sm:text-sm group-hover:text-[#A43D1D]">{title}</strong>
+        <strong className="block text-sm font-medium text-brand-maroon sm:text-sm group-hover:text-brand-terracotta">{title}</strong>
         <small className="mt-1 block text-sm leading-6 text-brand-muted">{description}</small>
       </span>
       <span aria-hidden="true" className="text-brand-muted">→</span>
@@ -725,7 +748,7 @@ function GuideLinkRow({ to, title, description, icon }: { to: string; title: str
 function LoadingState({ label }: { label: string }) {
   return (
     <div className="flex items-center justify-center gap-3 py-6 text-sm text-brand-muted" role="status">
-      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#A43D1D]/20 border-t-[#A43D1D]" />
+      <span className="h-4 w-4 animate-spin rounded-full border-2 border-brand-terracotta/20 border-t-brand-terracotta" />
       {label}
     </div>
   )
@@ -752,7 +775,7 @@ function ErrorState({ message, retryLabel, onRetry }: {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="mt-3 rounded-xl border border-dashed border-[#EADCC6] bg-[#FFF8EE] p-5 text-center text-sm leading-6 text-brand-muted">
+    <div className="mt-3 rounded-xl border border-dashed border-brand-border bg-brand-cream p-5 text-center text-sm leading-6 text-brand-muted">
       {message}
     </div>
   )

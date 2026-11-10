@@ -8,7 +8,6 @@ import { UsageTracker } from './components/UsageTracker'
 import { AuthProvider } from './lib/auth'
 
 // Public Routes (Lazy)
-const HomeOverviewPage = lazy(() => import('./pages/HomeOverviewPage').then(m => ({ default: m.HomeOverviewPage })))
 const VisitPage = lazy(() => import('./pages/VisitPage').then(m => ({ default: m.VisitPage })))
 const NisitPracticePage = lazy(() => import('./pages/NisitPracticePage').then(m => ({ default: m.NisitPracticePage })))
 const NisitLoginPage = lazy(() => import('./pages/NisitLoginPage').then(m => ({ default: m.NisitLoginPage })))
@@ -52,8 +51,8 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Layout />}>
-              <Route index element={<HomeOverviewPage />} />
-              <Route path="home" element={<HomeOverviewPage />} />
+              <Route index element={<VisitPage />} />
+              <Route path="home" element={<VisitPage />} />
               <Route path="visit" element={<VisitPage />} />
               <Route path="nisit" element={<NisitPracticePage />} />
               <Route path="nisit/login" element={<NisitLoginPage />} />

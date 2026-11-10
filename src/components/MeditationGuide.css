@@ -9,14 +9,14 @@
   border-radius: 16px;
 }
 .meditation-card-viewport::-webkit-scrollbar { display: none; }
-.meditation-card-viewport:focus-visible { outline: 2px solid #681B16; outline-offset: 4px; }
+.meditation-card-viewport:focus-visible { outline: 2px solid #11223C; outline-offset: 4px; }
 .meditation-picture-card {
   flex: 0 0 calc(100% - 16px);
   min-width: 0;
   overflow: hidden;
-  border: 1px solid #EADCC6;
+  border: 1px solid #E2E6EB;
   border-radius: 16px;
-  background: #FFFDF7;
+  background: #FFFFFF;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }

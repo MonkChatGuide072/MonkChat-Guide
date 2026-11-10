@@ -1,14 +1,7 @@
 import { Link } from 'react-router'
+import { PUBLIC_SHORTCUTS } from '../content/publicShortcuts'
 import type { AppLanguage } from '../lib/language'
 import { GuideIcon, type GuideIconName } from './GuideIcon'
-
-const shortcuts = [
-  { to: '/', th: 'หน้าแรก', en: 'Home', icon: 'home' },
-  { to: '/activities', th: 'กิจกรรม', en: 'Activities', icon: 'calendar' },
-  { to: '/meditation', th: 'สมาธิ', en: 'Meditate', icon: 'lotus' },
-  { to: '/qa', th: 'ถาม–ตอบ', en: 'Q&A', icon: 'chat' },
-  { to: '/centers', th: 'ศูนย์', en: 'Centers', icon: 'pin' },
-]
 
 /** Preserve the approved full-width scene, title below it and five shortcuts. */
 export function HomeHeroIntro({
@@ -19,10 +12,10 @@ export function HomeHeroIntro({
   activePath?: '/' | '/home' | '/visit'
 }) {
   const isEnglish = language === 'en'
-  const normalizedActive = activePath === '/home' ? '/' : activePath
+  const normalizedActive = activePath === '/home' || activePath === '/visit' ? '/' : activePath
 
   return (
-    <section aria-labelledby="home-intro-title" className="bg-[#FFF8EE]">
+    <section aria-labelledby="home-intro-title" className="bg-brand-cream">
       <picture className="block">
         <source media="(min-width: 80rem)" srcSet="/images/home/monkchat-banner-desktop.webp" />
         <source media="(min-width: 40rem)" srcSet="/images/home/monkchat-banner-tablet.webp" />
@@ -50,7 +43,7 @@ export function HomeHeroIntro({
         </p>
 
         <nav aria-label={isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก'} className="mx-auto mt-6 grid max-w-2xl grid-cols-5 gap-1 min-[390px]:gap-2 sm:gap-3">
-          {shortcuts.map((item) => (
+          {PUBLIC_SHORTCUTS.map((item) => (
             <Link
               key={item.to}
               to={item.to}

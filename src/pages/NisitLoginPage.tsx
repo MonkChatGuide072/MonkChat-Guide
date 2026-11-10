@@ -219,7 +219,7 @@ export function NisitLoginPage() {
   return (
     <div className="mx-auto max-w-4xl py-4 sm:py-8">
       <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface lg:grid lg:grid-cols-[0.88fr_1.12fr]">
-        <section className="flex flex-col justify-between gap-6 border-b border-brand-border bg-[#FAF2E6]/80 p-6 lg:border-b-0 lg:border-r lg:p-8">
+        <section className="flex flex-col justify-between gap-6 border-b border-brand-border bg-brand-gold-soft/80 p-6 lg:border-b-0 lg:border-r lg:p-8">
           <div className="space-y-4">
             <img
               src="/images/logo/ayutthaya-monk-chat-logo.png"

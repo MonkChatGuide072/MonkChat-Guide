@@ -10,7 +10,7 @@ export function MeditationSupplementary() {
       title: t('meditation.supplementary.wanderingTitle'),
       desc: t('meditation.supplementary.wanderingDesc'),
       icon: (
-        <svg className="h-[18px] w-[18px] text-[#A43D1D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+        <svg className="h-[18px] w-[18px] text-brand-terracotta" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
       ),
@@ -19,7 +19,7 @@ export function MeditationSupplementary() {
       title: t('meditation.supplementary.sleepyTitle'),
       desc: t('meditation.supplementary.sleepyDesc'),
       icon: (
-        <svg className="h-[18px] w-[18px] text-[#A43D1D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+        <svg className="h-[18px] w-[18px] text-brand-terracotta" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
         </svg>
       ),
@@ -28,7 +28,7 @@ export function MeditationSupplementary() {
       title: t('meditation.supplementary.dailyTitle'),
       desc: t('meditation.supplementary.dailyDesc'),
       icon: (
-        <svg className="h-[18px] w-[18px] text-[#A43D1D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+        <svg className="h-[18px] w-[18px] text-brand-terracotta" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
@@ -42,7 +42,7 @@ export function MeditationSupplementary() {
       className="scroll-mt-24 space-y-6"
     >
       {/* 1. Simple Meditation with Monks Card */}
-      <div className="overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] sm:grid sm:grid-cols-[1fr_1.4fr]">
+      <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:grid sm:grid-cols-[1fr_1.4fr]">
         <div className="relative h-48 w-full sm:h-full">
           <img
             src="/images/home/monkchat-slide-3.webp"
@@ -59,7 +59,7 @@ export function MeditationSupplementary() {
               </svg>
               <span>{isEnglish ? 'Ayutthaya' : 'อยุธยา'}</span>
             </div>
-            <h3 className="mt-2 font-sans text-xl font-medium text-[#681B16] sm:text-2xl">
+            <h3 className="mt-2 font-sans text-xl font-medium text-brand-maroon sm:text-2xl">
               {isEnglish ? 'Simple Meditation with Monks' : 'ฝึกสมาธิอย่างเรียบง่ายกับพระสงฆ์'}
             </h3>
             <p className="mt-2 text-sm leading-6 text-brand-muted sm:text-sm">
@@ -71,7 +71,7 @@ export function MeditationSupplementary() {
           <div className="mt-5">
             <Link
               to="/visit"
-              className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#A43D1D] bg-[#FFFDF7] px-5 text-sm font-medium text-[#A43D1D] transition-colors duration-150 hover:bg-[#FDF4E3]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-brand-terracotta bg-brand-surface px-5 text-sm font-medium text-brand-terracotta transition-colors duration-150 hover:bg-brand-gold-soft"
             >
               <span>{isEnglish ? 'Join Session in Ayutthaya' : 'เข้าร่วมกิจกรรม ณ อยุธยา'}</span>
               <span aria-hidden="true">→</span>
@@ -81,13 +81,13 @@ export function MeditationSupplementary() {
       </div>
 
       {/* 2. Additional Practice Tips Card */}
-      <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <span className="text-xs font-medium text-[#A43D1D]">
+            <span className="text-xs font-medium text-brand-terracotta">
               {isEnglish ? 'Practice tips' : 'คำแนะนำเพิ่มเติม'}
             </span>
-            <h2 id="meditation-supplementary-heading" className="mt-1 font-serif text-xl font-semibold text-[#681B16] sm:text-2xl">
+            <h2 id="meditation-supplementary-heading" className="mt-1 font-serif text-xl font-semibold text-brand-maroon sm:text-2xl">
               {t('meditation.supplementary.title')}
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-brand-muted sm:text-sm">
@@ -105,20 +105,20 @@ export function MeditationSupplementary() {
 
         {/* Common Experience Tips */}
         <div className="mt-5">
-          <h3 className="font-sans text-sm font-medium text-[#681B16] sm:text-base">
+          <h3 className="font-sans text-sm font-medium text-brand-maroon sm:text-base">
             {t('meditation.supplementary.tipsSectionTitle')}
           </h3>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             {tips.map((tip) => (
               <div
                 key={tip.title}
-                className="flex flex-col justify-between rounded-xl border border-[#EADCC6] bg-[#FFF8EE]/60 p-4"
+                className="flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4"
               >
                 <div>
-                  <div className="inline-flex rounded-lg bg-[#FDF4E3] p-2 text-[#A43D1D] border border-[#EADCC6]">
+                  <div className="inline-flex rounded-lg bg-brand-gold-soft p-2 text-brand-terracotta border border-brand-border">
                     {tip.icon}
                   </div>
-                  <h4 className="mt-3 font-sans text-sm font-medium text-[#681B16]">
+                  <h4 className="mt-3 font-sans text-sm font-medium text-brand-maroon">
                     {tip.title}
                   </h4>
                   <p className="mt-2 text-sm leading-6 text-brand-muted">
@@ -131,10 +131,10 @@ export function MeditationSupplementary() {
         </div>
 
         {/* Exit to Home */}
-        <div className="mt-6 border-t border-[#EADCC6]/80 pt-5">
-          <div className="rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-4 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div className="mt-6 border-t border-brand-border/80 pt-5">
+          <div className="rounded-xl border border-brand-border bg-brand-gold-soft/60 p-4 sm:flex sm:items-center sm:justify-between sm:gap-6">
             <div className="space-y-1">
-              <h3 className="font-sans text-sm font-medium text-[#681B16]">
+              <h3 className="font-sans text-sm font-medium text-brand-maroon">
                 {t('meditation.supplementary.exitTitle')}
               </h3>
               <p className="max-w-xl text-sm text-brand-muted">
@@ -144,7 +144,7 @@ export function MeditationSupplementary() {
             <div className="mt-3 shrink-0 sm:mt-0">
               <Link
                 to="/visit"
-                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#A43D1D] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#8E3317]"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-terracotta px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
               >
                 <span>{t('meditation.supplementary.exitButton')}</span>
                 <span aria-hidden="true">→</span>

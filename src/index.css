@@ -11,24 +11,24 @@
   --color-navy-800: #1e293b;
   --color-navy-900: #0f172a;
 
-  --color-brand-cream: #FFF8EE;
-  --color-brand-surface: #FFFDF7;
-  --color-brand-border: #EADCC6;
-  --color-brand-border-dark: #D5BD94;
-  --color-brand-maroon: #681B16;
-  --color-brand-terracotta: #A43D1D;
-  --color-brand-terracotta-dark: #8E3317;
-  --color-brand-gold: #B77A24;
-  --color-brand-gold-soft: #F9F1E2;
-  --color-brand-text: #30251E;
-  --color-brand-muted: #6B5C48;
+  --color-brand-cream: #F7F7F4;
+  --color-brand-surface: #FFFFFF;
+  --color-brand-border: #E2E6EB;
+  --color-brand-border-dark: #CBD3DC;
+  --color-brand-maroon: #11223C;
+  --color-brand-terracotta: #16324F;
+  --color-brand-terracotta-dark: #0F2338;
+  --color-brand-gold: #8F6419;
+  --color-brand-gold-soft: #FAF5E8;
+  --color-brand-text: #1E293B;
+  --color-brand-muted: #526071;
 }
 
 :root {
   color-scheme: light;
   font-family: 'Noto Sans Thai', 'Inter', 'Leelawadee UI', Tahoma, 'Noto Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background-color: #FFF8EE;
-  color: #30251E;
+  background-color: #F7F7F4;
+  color: #1E293B;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -43,8 +43,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #FFF8EE;
-  color: #30251E;
+  background-color: #F7F7F4;
+  color: #1E293B;
   overflow-x: hidden;
 }
 
@@ -89,12 +89,12 @@ select {
 }
 
 ::selection {
-  background: rgba(164, 61, 29, 0.2);
-  color: #681B16;
+  background: rgba(22, 50, 79, 0.16);
+  color: #11223C;
 }
 
 *:focus-visible {
-  outline: 2px solid #A43D1D;
+  outline: 2px solid #16324F;
   outline-offset: 2px;
 }
 

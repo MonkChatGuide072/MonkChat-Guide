@@ -48,14 +48,14 @@ export function ActivitiesPage() {
   return (
     <div className="space-y-12 bg-brand-cream pb-24 text-brand-text sm:space-y-16">
       {/* Hero Header */}
-      <section className="relative overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-6 sm:p-8">
+      <section className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-6 sm:p-8">
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center gap-2 text-sm text-brand-muted">
             <GuideIcon name="lotus" />
             <span>{isEnglish ? 'Monk Chat Activities · Ayutthaya' : 'กิจกรรมธรรมะและ Monk Chat อยุธยา'}</span>
           </div>
 
-          <h1 className="mt-4 font-serif text-3xl font-semibold leading-snug text-[#681B16] sm:text-4xl">
+          <h1 className="mt-4 font-serif text-3xl font-semibold leading-snug text-brand-maroon sm:text-4xl">
             {isEnglish ? 'Activities & Practice' : 'กิจกรรมและการปฏิบัติธรรม'}
           </h1>
 
@@ -68,14 +68,14 @@ export function ActivitiesPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <a
               href="#official-schedule"
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#A43D1D] px-4 py-2 text-sm font-medium text-white hover:bg-[#8E3317]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-brand-terracotta px-4 py-2 text-sm font-medium text-white hover:bg-brand-terracotta-dark"
             >
               <GuideIcon name="calendar" />
               <span>{isEnglish ? 'View schedule' : 'ดูตารางกิจกรรม'}</span>
             </a>
             <Link
               to="/meditation"
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#D5BD94] bg-[#FFFDF7] px-4 py-2 text-sm font-medium text-[#681B16] hover:bg-[#FDF4E3]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-brand-border-dark bg-brand-surface px-4 py-2 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
             >
               <GuideIcon name="lotus" />
               <span>{isEnglish ? 'Guided Meditation' : 'ฝึกสมาธิเบื้องต้น'}</span>
@@ -88,11 +88,11 @@ export function ActivitiesPage() {
       <section aria-labelledby="confirmed-activities-title" className="space-y-6">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#A43D1D]">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-terracotta">
               <GuideIcon name="calendar" />
               <span>{isEnglish ? 'Weekly sessions' : 'กิจกรรมประจำสัปดาห์'}</span>
             </span>
-            <h2 id="confirmed-activities-title" className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+            <h2 id="confirmed-activities-title" className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
               {isEnglish ? 'Regular Monk Chat & Meditation' : 'กิจกรรมประจำสัปดาห์ Monk Chat'}
             </h2>
           </div>
@@ -105,7 +105,7 @@ export function ActivitiesPage() {
           {confirmedActivities.map((act, idx) => (
             <article
               key={idx}
-              className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7]"
+              className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-brand-border bg-brand-surface"
             >
               <div>
                 <div className="relative h-48 w-full overflow-hidden bg-neutral-100">
@@ -129,7 +129,7 @@ export function ActivitiesPage() {
               <div className="p-6 pt-0">
                 <Link
                   to={act.ctaLink}
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#A43D1D] px-4 py-2.5 text-center text-sm font-medium text-white transition-colors duration-150 hover:bg-[#8E3317]"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-brand-terracotta px-4 py-2.5 text-center text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
                 >
                   <span>{act.ctaText}</span>
                   <span>→</span>
@@ -143,10 +143,10 @@ export function ActivitiesPage() {
       {/* SECTION 2: OFFICIAL WEEKLY SCHEDULE TABLE */}
       <section id="official-schedule" aria-labelledby="schedule-table-title" className="scroll-mt-24 space-y-4">
         <div>
-          <span className="text-sm font-medium text-[#A43D1D]">
+          <span className="text-sm font-medium text-brand-terracotta">
             {isEnglish ? 'Time and place' : 'วัน เวลา และสถานที่'}
           </span>
-          <h2 id="schedule-table-title" className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+          <h2 id="schedule-table-title" className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
             {isEnglish ? 'Activity schedule' : 'ตารางกิจกรรม'}
           </h2>
         </div>
@@ -166,9 +166,9 @@ export function ActivitiesPage() {
           </dl>)}
         </div>
 
-        <div className="hidden overflow-x-auto rounded-2xl md:block border border-[#EADCC6] bg-[#FFFDF7]">
+        <div className="hidden overflow-x-auto rounded-2xl md:block border border-brand-border bg-brand-surface">
           <table className="w-full text-left text-sm leading-6 text-brand-text">
-            <thead className="border-b border-[#EADCC6] bg-[#FDF4E3]/70 font-sans text-[#681B16]">
+            <thead className="border-b border-brand-border bg-brand-gold-soft/70 font-sans text-brand-maroon">
               <tr>
                 <th scope="col" className="px-4 py-4 sm:px-6">{isEnglish ? 'Day' : 'วัน'}</th>
                 <th scope="col" className="px-4 py-4 sm:px-6">{isEnglish ? 'Time' : 'เวลา'}</th>
@@ -177,12 +177,12 @@ export function ActivitiesPage() {
                 <th scope="col" className="px-4 py-4 sm:px-6">{isEnglish ? 'Conditions & Format' : 'เงื่อนไขและรูปแบบ'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EADCC6]/60">
+            <tbody className="divide-y divide-brand-border/60">
               {confirmedSchedule.map((row, idx) => (
-                <tr key={idx} className="transition-colors duration-150 hover:bg-[#FFF8EE]">
-                  <td className="px-4 py-4 font-medium text-[#681B16] sm:px-6 whitespace-nowrap">{row.day}</td>
-                  <td className="px-4 py-4 font-semibold text-[#A43D1D] sm:px-6 whitespace-nowrap">{row.time}</td>
-                  <td className="px-4 py-4 font-medium text-[#30251E] sm:px-6">{row.activity}</td>
+                <tr key={idx} className="transition-colors duration-150 hover:bg-brand-cream">
+                  <td className="px-4 py-4 font-medium text-brand-maroon sm:px-6 whitespace-nowrap">{row.day}</td>
+                  <td className="px-4 py-4 font-semibold text-brand-terracotta sm:px-6 whitespace-nowrap">{row.time}</td>
+                  <td className="px-4 py-4 font-medium text-brand-text sm:px-6">{row.activity}</td>
                   <td className="px-4 py-4 text-brand-muted sm:px-6">{row.location}</td>
                   <td className="px-4 py-4 text-brand-muted sm:px-6">{row.format}</td>
                 </tr>
@@ -191,8 +191,8 @@ export function ActivitiesPage() {
           </table>
         </div>
 
-        <div className="rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-4 text-sm text-brand-muted space-y-1">
-          <strong className="block text-[#681B16] font-medium">
+        <div className="rounded-xl border border-brand-border bg-brand-gold-soft/60 p-4 text-sm text-brand-muted space-y-1">
+          <strong className="block text-brand-maroon font-medium">
             {isEnglish ? 'Notice regarding schedules:' : 'ข้อแนะนำเกี่ยวกับตารางกิจกรรม:'}
           </strong>
           <p>
@@ -237,20 +237,20 @@ export function ActivitiesPage() {
       </section>
 
       {/* SECTION 4: VISITOR GUIDELINES */}
-      <section className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-6 sm:p-8">
+      <section className="rounded-2xl border border-brand-border bg-brand-surface p-6 sm:p-8">
         <div className="max-w-2xl">
-          <span className="text-sm font-medium text-[#A43D1D]">
+          <span className="text-sm font-medium text-brand-terracotta">
             {isEnglish ? 'Visitor Etiquette' : 'ข้อควรปฏิบัติสำหรับผู้ร่วมกิจกรรม'}
           </span>
-          <h2 className="mt-1 font-sans text-xl font-semibold text-[#681B16]">
+          <h2 className="mt-1 font-sans text-xl font-semibold text-brand-maroon">
             {isEnglish ? 'Simple Guidelines for Temple Activities' : 'ข้อแนะนำเบื้องต้นในการร่วมกิจกรรมในวัด'}
           </h2>
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-[#EADCC6] bg-[#FFF8EE] p-4">
+          <div className="rounded-xl border border-brand-border bg-brand-cream p-4">
 
-            <h3 className="mt-2 text-sm font-medium text-[#681B16]">
+            <h3 className="mt-2 text-sm font-medium text-brand-maroon">
               {isEnglish ? 'Dress Modestly' : 'การแต่งกายสุภาพ'}
             </h3>
             <p className="mt-2 text-sm leading-6 text-brand-muted">
@@ -260,9 +260,9 @@ export function ActivitiesPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#EADCC6] bg-[#FFF8EE] p-4">
+          <div className="rounded-xl border border-brand-border bg-brand-cream p-4">
 
-            <h3 className="mt-2 text-sm font-medium text-[#681B16]">
+            <h3 className="mt-2 text-sm font-medium text-brand-maroon">
               {isEnglish ? 'Remove Footwear' : 'ถอดรองเท้า'}
             </h3>
             <p className="mt-2 text-sm leading-6 text-brand-muted">
@@ -272,9 +272,9 @@ export function ActivitiesPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#EADCC6] bg-[#FFF8EE] p-4">
+          <div className="rounded-xl border border-brand-border bg-brand-cream p-4">
 
-            <h3 className="mt-2 text-sm font-medium text-[#681B16]">
+            <h3 className="mt-2 text-sm font-medium text-brand-maroon">
               {isEnglish ? 'Respectful Presence' : 'กิริยาที่สงบสำรวม'}
             </h3>
             <p className="mt-2 text-sm leading-6 text-brand-muted">

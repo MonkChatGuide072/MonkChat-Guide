@@ -1,5 +1,19 @@
 # MonkChat Guide — Current Handoff
 
+## รวมหน้าแรก `/` · `/home` · `/visit`, ไอคอนลัดคงค้าง, แชทบอทบน Header และโทนสี White/Navy/Gold — 11 พฤศจิกายน 2569
+
+- **รวมหน้าแรกของผู้มาเยือน (`/` · `/home` · `/visit`):**
+  - ตามคำยืนยันเจ้าของ (`/visit` คือหน้าแรกสำหรับชาวต่างชาติ ไม่ใช่หน้าซ้ำอีกหน้า) ปรับ `src/App.tsx` ให้ `/` (`index`), `/home` และ `/visit` เรนเดอร์ `src/pages/VisitPage.tsx` เพียงชุดเดียว (และ `src/pages/HomeOverviewPage.tsx` คงเป็น re-export เพื่อไม่ให้ import เดิมขาด)
+  - เพิ่มการ์ดทางเข้า **`/nisit` ("สำหรับพระนิสิต มจร · เข้ามุมฝึกพระนิสิต")** ต่อจากตารางเวลาใน `VisitPage.tsx` พร้อมอัปเดตเมนูหลักและ Footer ใน `src/components/Layout.tsx`
+- **แถบทางลัด 5 ไอคอนคงค้างในหน้าย่อย:**
+  - แยกข้อมูลทางลัด 5 รายการไว้ใน `src/content/publicShortcuts.ts` (`/` หน้าแรก, `/activities` กิจกรรม, `/meditation` สมาธิ, `/qa` ถาม–ตอบ, `/centers` ศูนย์)
+  - ให้ `src/components/HomeHeroIntro.tsx` แสดงบนหน้าแรก และให้ `Layout.tsx` แสดงแถบ 5 ไอคอนใต้ Header บนหน้าย่อย (`/activities`, `/meditation`, `/qa`, `/centers`) สำหรับจอมือถือ–แท็บเล็ต (`lg:hidden`) เพื่อให้ไอคอนไม่หายเมื่อกดเข้าหน้าย่อย
+- **ย้ายปุ่มแชทบอทขึ้น Header (ไม่บังเนื้อหา):**
+  - เพิ่มโหมด `placement="header"` ใน `src/components/ChatbotServiceCard.tsx` (เปิด dialog ผ่าน React Portal แตะด้านนอกหรือกด Escape เพื่อปิด, รักษา focus และรองรับปุ่ม trigger 44×44 px บนมือถือ) และย้ายการเรียกใช้ใน `Layout.tsx` จากมุมขวาล่างที่ลอยทับตัวอักษรขึ้น Header พร้อมตัด `pb-24` ส่วนเกินออก
+- **ปรับชุดสีเป็น White + Soft Gold + Deep Navy ตาม `AGENTS.md` / `DECISIONS.md` #24:**
+  - อัปเดต `src/index.css`, `index.html`, `Layout.tsx`, `LanguageSwitcher.tsx`, `HomeHeroIntro.tsx`, `MeditationGuide.css`, `MeditationGuideVisual.tsx`, `MeditationPlayer.tsx`, `MeditationSupplementary.tsx`, `VisitPage.tsx`, `ActivitiesPage.tsx`, `MeditationPage.tsx`, `QAPage.tsx`, `CentersPage.tsx`, และกลุ่ม `/nisit` (รวมถึงสีภาพ PNG ใน `NisitThankYouCard.tsx`) เป็นพื้นขาวสว่างสะอาด (`#F7F7F4` / `#FFFFFF`), ตัวอักษรและปุ่มกรมท่า (`#11223C` / `#16324F`), และทองสุภาพ (`#8F6419` / `#FAF5E8`) ให้เข้ากับภาพแบนเนอร์และภาพสถานที่จริง
+- **ผลตรวจหลังแก้ไข:** ผ่าน `vitest run --run` **15 files / 94 tests**, `oxlint` (**0 warnings / 0 errors** บน 118 ไฟล์), `tsc -b && vite build`, `git diff --check`, และตรวจ Chrome headless screenshot ครบมือถือ (`360/390 px`) และเดสก์ท็อป (`1280 px`)
+
 ## สกิลตรวจ UX Flow / Accessibility (`.agents/skills/monkchat-ux-a11y-audit`) และปรับปรุง A11y — 11 พฤศจิกายน 2569
 
 - **สกิลใหม่ในโปรเจกต์:**
