@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router'
+import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { MeditationMark } from './MeditationMark'
@@ -46,7 +46,8 @@ export function Layout() {
     }
   }, [isMobileMenuOpen])
 
-  const isLanguageGate = (location.pathname === '/' || location.pathname === '/visit') && !hasSessionLang
+  const isLanguageGate =
+    (location.pathname === '/' || location.pathname === '/home' || location.pathname === '/visit') && !hasSessionLang
 
   if (isLanguageGate) {
     return <Outlet />
@@ -57,9 +58,19 @@ export function Layout() {
       to: '/',
       label: t('nav.home', 'หน้าแรก'),
       end: true,
+      isHome: true,
       icon: (
         <svg className="h-[18px] w-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+      ),
+    },
+    {
+      to: '/visit',
+      label: isEnglish ? 'Visitors' : 'ผู้มาเยือน',
+      icon: (
+        <svg className="h-[18px] w-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 20c-4-3-6-7 0-15 6 8 4 12 0 15Zm0 0C6 20 3 16 3 10c5 1 8 4 9 10Zm0 0c6 0 9-4 9-10-5 1-8 4-9 10Z" />
         </svg>
       ),
     },
@@ -130,19 +141,20 @@ export function Layout() {
           </NavLink>
 
           {/* Desktop Navigation Links */}
-          <nav aria-label={t('nav.mainNavigation')} className="hidden items-center gap-6 lg:flex lg:gap-8">
+          <nav aria-label={t('nav.mainNavigation')} className="hidden items-center gap-6 lg:flex lg:gap-7">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
-                className={({ isActive }) =>
-                  `relative inline-flex items-center gap-1.5 py-1.5 text-sm font-medium transition-colors duration-150 ${
-                    isActive
+                className={({ isActive }) => {
+                  const active = isActive || (Boolean('isHome' in item && item.isHome) && location.pathname === '/home')
+                  return `relative inline-flex items-center gap-1.5 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                    active
                       ? 'text-[#A43D1D] after:absolute after:inset-x-0 after:-bottom-2.5 after:h-0.5 after:bg-[#A43D1D]'
                       : 'text-[#4A3B32] hover:text-[#A43D1D]'
                   }`
-                }
+                }}
               >
                 <span className="opacity-80">{item.icon}</span>
                 <span>{item.label}</span>
@@ -183,13 +195,14 @@ export function Layout() {
                   to={item.to}
                   end={item.end}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `flex min-h-11 items-center gap-3 rounded-xl px-4 text-sm font-medium transition-colors duration-150 ${
-                      isActive
+                  className={({ isActive }) => {
+                    const active = isActive || (Boolean('isHome' in item && item.isHome) && location.pathname === '/home')
+                    return `flex min-h-11 items-center gap-3 rounded-xl px-4 text-sm font-medium transition-colors duration-150 ${
+                      active
                         ? 'bg-[#A43D1D] text-white shadow-xs'
                         : 'text-[#4A3B32] hover:bg-[#FDF4E3] hover:text-[#A43D1D]'
                     }`
-                  }
+                  }}
                 >
                   <span className="shrink-0">{item.icon}</span>
                   <span>{item.label}</span>
@@ -203,7 +216,7 @@ export function Layout() {
       {/* Main Content Area */}
       <main
         className={
-          location.pathname === '/' || location.pathname === '/visit'
+          location.pathname === '/' || location.pathname === '/home' || location.pathname === '/visit'
             ? 'w-full flex-1'
             : 'mx-auto w-full max-w-[76rem] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8'
         }
@@ -214,16 +227,26 @@ export function Layout() {
       {/* Footer */}
       <footer className="relative isolate overflow-hidden border-t border-[#EADCC6] bg-[#FFFDF7] pb-24 pt-6 text-center text-xs text-[#7D6B5D]">
         <MeditationMark className="pointer-events-none absolute -bottom-16 right-0 -z-10 w-64 text-brand-gold/5" />
-        <div className="mx-auto max-w-[76rem] px-4 sm:px-6">
+        <div className="mx-auto max-w-[76rem] space-y-2 px-4 sm:px-6">
           <p>{t('app.footer')}</p>
-          <p className="mt-1 text-xs text-[#A43D1D]/80">
+          <p className="text-xs text-[#A43D1D]/80">
             Ayutthaya Monk Chat · Ayutthaya, Thailand
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-1 text-xs">
+            <Link to="/nisit" className="inline-flex min-h-11 items-center px-2 text-[#681B16] hover:underline">
+              {isEnglish ? 'Student Monk Training (/nisit)' : 'มุมฝึกพระนิสิต (/nisit)'}
+            </Link>
+            <Link to="/admin/login" className="inline-flex min-h-11 items-center px-2 text-[#7D6B5D] hover:text-[#681B16] hover:underline">
+              {isEnglish ? 'Team CMS (/admin)' : 'ระบบทีมงาน (/admin)'}
+            </Link>
+          </div>
         </div>
       </footer>
 
       {/* Floating verified chatbot card */}
-      {!location.pathname.startsWith('/admin') && !location.pathname.startsWith('/meditation') && <ChatbotServiceCard />}
+      {!location.pathname.startsWith('/admin')
+        && !location.pathname.startsWith('/meditation')
+        && !location.pathname.startsWith('/nisit') && <ChatbotServiceCard />}
     </div>
   )
 }

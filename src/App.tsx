@@ -8,7 +8,9 @@ import { UsageTracker } from './components/UsageTracker'
 import { AuthProvider } from './lib/auth'
 
 // Public Routes (Lazy)
-const HomePage = lazy(() => import('./pages/VisitPage').then(m => ({ default: m.VisitPage })))
+const HomeOverviewPage = lazy(() => import('./pages/HomeOverviewPage').then(m => ({ default: m.HomeOverviewPage })))
+const VisitPage = lazy(() => import('./pages/VisitPage').then(m => ({ default: m.VisitPage })))
+const NisitPracticePage = lazy(() => import('./pages/NisitPracticePage').then(m => ({ default: m.NisitPracticePage })))
 const ActivitiesPage = lazy(() => import('./pages/ActivitiesPage').then(m => ({ default: m.ActivitiesPage })))
 const MeditationPage = lazy(() => import('./pages/MeditationPage').then(m => ({ default: m.MeditationPage })))
 const QAPage = lazy(() => import('./pages/QAPage').then(m => ({ default: m.QAPage })))
@@ -48,9 +50,11 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />
+              <Route index element={<HomeOverviewPage />} />
+              <Route path="home" element={<HomeOverviewPage />} />
+              <Route path="visit" element={<VisitPage />} />
+              <Route path="nisit" element={<NisitPracticePage />} />
               <Route path="activities" element={<ActivitiesPage />} />
-              <Route path="visit" element={<HomePage />} />
               <Route path="meditation" element={<MeditationPage />} />
               <Route path="qa" element={<QAPage />} />
               <Route path="centers" element={<CentersPage />} />
