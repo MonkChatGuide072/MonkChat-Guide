@@ -7,7 +7,8 @@ import { supabaseClient } from '../lib/supabase'
 import { isAuthApiError } from '@supabase/supabase-js'
 
 export function LoginPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
   const navigate = useNavigate()
   const { session, profile, isLoading: isAuthLoading, signOut } = useAuth()
 
@@ -77,14 +78,16 @@ export function LoginPage() {
             {t('management.deniedTitle')}
           </h2>
           <p className="mb-6 text-sm leading-6 text-brand-muted">
-            บัญชีพระนิสิต (`student`) เข้าใช้ได้เฉพาะมุมฝึก `/nisit` ไม่สามารถเข้าสู่ระบบจัดการทีมงาน `/admin` ได้
+            {isEnglish
+              ? 'Student accounts (student) are restricted to /nisit and cannot access the staff CMS (/admin).'
+              : 'บัญชีพระนิสิต (student) เข้าใช้ได้เฉพาะมุมฝึก /nisit ไม่สามารถเข้าสู่ระบบจัดการทีมงาน /admin ได้'}
           </p>
           <div className="space-y-3">
             <Link
               to="/nisit"
               className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-brand-terracotta px-4 text-sm font-medium text-white hover:bg-brand-terracotta-dark"
             >
-              ไปที่มุมฝึกพระนิสิต (/nisit)
+              {isEnglish ? 'Go to Student Training (/nisit)' : 'ไปที่มุมฝึกพระนิสิต (/nisit)'}
             </Link>
             <button
               onClick={async () => {

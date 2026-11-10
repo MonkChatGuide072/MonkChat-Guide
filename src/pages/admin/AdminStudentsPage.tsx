@@ -330,7 +330,7 @@ export function AdminStudentsPage() {
           <p className="text-sm font-semibold text-amber-950">{oneTimeSecret.title}</p>
           <p className="mt-1 text-xs text-amber-900">{oneTimeSecret.subtitle}</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <code className="rounded-lg border border-amber-300 bg-white px-3 py-2 font-mono text-base font-semibold tracking-wider text-slate-900">
+            <code className="rounded-lg border border-amber-300 bg-white px-3 py-2 font-mono text-base font-semibold text-slate-900">
               {oneTimeSecret.value}
             </code>
             <button type="button" onClick={() => { void handleCopySecret() }} className={buttonClass}>

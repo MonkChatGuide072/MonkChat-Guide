@@ -241,7 +241,7 @@ export function NisitLoginPage() {
           <div className="space-y-2 border-t border-brand-border pt-4 text-xs leading-5 text-brand-muted">
             <p>
               {isEnglish
-                ? 'Student accounts (`student`) are isolated from the public team CMS (`/admin`).'
+                ? 'Student accounts (student) are isolated from the team CMS (/admin).'
                 : 'บัญชีนิสิต (role: student) แยกสิทธิ์จากระบบหลังบ้าน CMS (/admin) อย่างชัดเจน'}
             </p>
             <Link

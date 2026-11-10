@@ -96,17 +96,17 @@ export async function handleStudentRegister(
       return reply(409, { code: 'duplicateStudent' })
     }
 
+    const claimedId = await dependencies.claimInviteSlot(codeHash, parsedId.thaiYear)
+    if (!claimedId) {
+      return reply(409, { code: 'invalidInvite' })
+    }
+
     const internalEmail = toStudentInternalEmail(parsedId.code)
     let userId: string
     try {
       userId = await dependencies.createAuthUser(internalEmail, input.password)
     } catch {
       return reply(409, { code: 'duplicateStudent' })
-    }
-
-    const claimedId = await dependencies.claimInviteSlot(codeHash, parsedId.thaiYear)
-    if (!claimedId) {
-      return reply(409, { code: 'invalidInvite' })
     }
 
     try {

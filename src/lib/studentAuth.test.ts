@@ -181,6 +181,22 @@ describe('student-register edge handler', () => {
     expect(resFull.status).toBe(403)
   })
 
+  it('does not create auth user if atomic invite claim loses a last-seat race', async () => {
+    const depsRace = await makeDeps({ claimInviteSlot: vi.fn(async () => null) })
+    const resRace = await handleStudentRegister(
+      postRegister({
+        invite_code: 'AYT66-SAFE-CODE',
+        student_code: '6611018',
+        display_name: 'Phra Somchai',
+        password: 'DhammaPractice66!',
+      }),
+      depsRace,
+    )
+    expect(resRace.status).toBe(409)
+    expect(await resRace.json()).toEqual({ code: 'invalidInvite' })
+    expect(depsRace.createAuthUser).not.toHaveBeenCalled()
+  })
+
   it('rejects duplicate student IDs and registers valid cohort students onto .invalid internal email', async () => {
     const depsDup = await makeDeps({ hasExistingStudentCode: vi.fn(async () => true) })
     const resDup = await handleStudentRegister(
