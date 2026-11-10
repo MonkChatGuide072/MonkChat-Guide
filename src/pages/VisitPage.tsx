@@ -2,7 +2,11 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { HomeHeroIntro } from '../components/HomeHeroIntro'
+import { LanguageGate } from '../components/LanguageGate'
 import { GuideIcon } from '../components/GuideIcon'
+import { MeditationGuideVisual } from '../components/MeditationGuideVisual'
+import { preparationCards } from '../content/meditationGuide'
+import { practiceDestinations } from '../content/continuePractice'
 import {
   normalizeLanguage,
   VISITOR_LANGUAGE_SELECTED_EVENT,
@@ -77,38 +81,6 @@ export function VisitPage() {
   }
 
   return <VisitorHome currentLang={currentLang} />
-}
-
-function LanguageGate({ onSelect }: { onSelect: (language: AppLanguage) => void }) {
-  return (
-    <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-text sm:px-8">
-      <div className="mx-auto w-full max-w-5xl">
-        <Link to="/" className="inline-flex items-center gap-3" aria-label="MonkChat Guide">
-          <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="" width={48} height={48} className="h-12 w-12 object-contain" />
-          <span className="text-sm font-medium leading-6 text-brand-maroon">MonkChat Guide<br /><span lang="en" className="text-brand-muted">Ayutthaya Monk Chat</span></span>
-        </Link>
-        <div className="mt-8 overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:mt-12 lg:grid lg:grid-cols-2">
-          <div>
-            <img src="/images/home/monkchat-meditation-ruins.webp" alt="พระสงฆ์และผู้มาเยือนนั่งสมาธิท่ามกลางโบราณสถานอยุธยา / A monk and visitors meditating in Ayutthaya" width={1672} height={941} className="h-48 w-full object-cover sm:h-64 lg:h-full" />
-          </div>
-          <section aria-labelledby="language-gate-title" className="p-6 sm:p-8">
-            <GuideIcon name="globe" className="h-6 w-6 text-brand-muted" />
-            <h1 id="language-gate-title" className="mt-4 text-2xl font-semibold leading-snug text-brand-maroon">เลือกภาษา / Choose language</h1>
-            <p className="mt-3 text-sm leading-6 text-brand-muted">เลือกภาษาสำหรับการเข้าชมครั้งนี้<br /><span lang="en">Choose the language for this visit</span></p>
-            <div className="mt-6 grid gap-3">
-              <button type="button" onClick={() => onSelect('th')} aria-label="ภาษาไทย" className="flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-lg bg-brand-terracotta px-4 py-3 text-left text-white transition-colors duration-150 hover:bg-brand-terracotta-dark">
-                <span className="font-medium">ภาษาไทย</span><span lang="en" className="text-sm">Thai</span><GuideIcon name="arrow" />
-              </button>
-              <button type="button" onClick={() => onSelect('en')} aria-label="English" className="flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-lg border border-brand-border bg-brand-surface px-4 py-3 text-left text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft">
-                <span lang="en" className="font-medium">English</span><span className="text-sm">ภาษาอังกฤษ</span><GuideIcon name="arrow" />
-              </button>
-            </div>
-            <p className="mt-6 border-t border-brand-border pt-4 text-sm leading-6 text-brand-muted">ร่วมสนทนาธรรมและฝึกสมาธิ ณ วัดมหาธาตุ พระนครศรีอยุธยา<br /><span lang="en">Monk Chat and guided meditation at Wat Mahathat, Ayutthaya</span></p>
-          </section>
-        </div>
-      </div>
-    </main>
-  )
 }
 
 function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
@@ -232,11 +204,30 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     },
   ]
 
+  const atmosphereMoments = [
+    {
+      title: isEnglish ? 'Warm cultural exchange under the trees' : 'แลกเปลี่ยนเรียนรู้ท่ามกลางธรรมชาติในวัดมหาธาตุ',
+      caption: isEnglish
+        ? 'Real open-air conversations with MCU student monks where visitors can ask about Thai monastic life, mindfulness, and practical Buddhism.'
+        : 'บรรยากาศสนทนาธรรมจริงใต้ร่มไม้ภายในวัดมหาธาตุ พูดคุยซักถามวิถีพระสงฆ์ วัฒนธรรมไทย และแนวคิดความสุขอย่างเป็นกันเอง',
+      img: '/images/home/monkchat-slide-3.webp',
+    },
+    {
+      title: isEnglish ? 'Shaded ruins & accessible stillness' : 'ความสงบเรียบง่ายที่เริ่มต้นได้ทุกคน',
+      caption: isEnglish
+        ? 'Rest among Ayutthaya heritage grounds with five to ten minutes of gentle breathing and center-of-body stillness—no prior experience required.'
+        : 'พักใจท่ามกลางโบราณสถานอยุธยาด้วยสมาธิเบื้องต้น 5–10 นาที เหมาะสำหรับผู้เริ่มต้นทุกเชื้อชาติและทุกความเชื่อ',
+      img: '/images/home/monkchat-meditation-field.webp',
+    },
+  ]
+
+  const easyMeditationPreview = preparationCards[currentLang].slice(0, 3)
+
   const mapUrl = 'https://maps.google.com/?q=Wat+Mahathat+Ayutthaya'
 
   return (
     <div className="bg-brand-cream text-brand-text break-words [overflow-wrap:anywhere]">
-      <HomeHeroIntro language={currentLang} />
+      <HomeHeroIntro language={currentLang} activePath="/visit" />
       <div className="mx-auto w-full max-w-[76rem] space-y-12 px-4 pb-24 pt-6 sm:space-y-16 sm:px-6 sm:pb-24 sm:pt-8 lg:px-8">
       <section aria-label="Activity schedule and location summary" className="rounded-2xl border border-brand-border bg-brand-surface p-4 sm:p-6">
         <dl className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4 sm:gap-6">
@@ -364,6 +355,125 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Atmosphere showcase: authentic setting at Wat Mahathat */}
+      <section aria-labelledby="visit-atmosphere-heading" className="space-y-4">
+        <div>
+          <h2 id="visit-atmosphere-heading" className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
+            {isEnglish ? 'Atmosphere & surroundings' : 'บรรยากาศกิจกรรมและสถานที่'}
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-brand-muted">
+            {isEnglish
+              ? 'Calm open-air dialogue and beginner meditation surrounded by Ayutthaya heritage.'
+              : 'สัมผัสความเรียบง่าย สงบเย็น และเป็นกันเองท่ามกลางเมืองประวัติศาสตร์พระนครศรีอยุธยา'}
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {atmosphereMoments.map((moment) => (
+            <figure
+              key={moment.title}
+              className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface"
+            >
+              <div className="h-56 w-full overflow-hidden bg-[#FAF2E6]">
+                <img src={moment.img} alt={moment.title} loading="lazy" className="h-full w-full object-cover object-center" />
+              </div>
+              <figcaption className="p-5">
+                <h3 className="font-sans text-base font-medium text-brand-maroon">{moment.title}</h3>
+                <p className="mt-1 text-sm leading-6 text-brand-muted">{moment.caption}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      {/* Easy illustrated meditation cards preview */}
+      <section aria-labelledby="visit-meditation-cards-heading" className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-medium text-brand-terracotta">
+              {isEnglish ? 'Simple meditation preview' : 'อธิบายสมาธิเข้าใจง่ายด้วยการ์ด'}
+            </p>
+            <h2 id="visit-meditation-cards-heading" className="mt-1 font-serif text-xl font-semibold text-brand-maroon sm:text-2xl">
+              {isEnglish ? 'How to start in three gentle steps' : 'เริ่มต้นความสงบง่าย ๆ ใน 3 ขั้นตอน'}
+            </h2>
+          </div>
+          <Link
+            to="/meditation"
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+          >
+            <span>{isEnglish ? 'Open full cards & audio' : 'ดูการ์ดทั้งหมดและฟังเสียงนำ'}</span>
+            <GuideIcon name="arrow" />
+          </Link>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          {easyMeditationPreview.map((card, index) => (
+            <article key={card.scene} className="overflow-hidden rounded-xl border border-brand-border bg-brand-cream/60 p-4">
+              <div className="aspect-[16/11] w-full overflow-hidden rounded-lg">
+                <MeditationGuideVisual
+                  scene={card.scene}
+                  still
+                  label={card.title}
+                  breathLabels={isEnglish ? ['Breathe in', 'Breathe out'] : ['หายใจเข้า', 'หายใจออก']}
+                />
+              </div>
+              <p className="mt-3 text-xs font-medium text-brand-terracotta tabular-nums">
+                {isEnglish ? `Step ${index + 1}` : `ขั้นที่ ${index + 1}`}
+              </p>
+              <h3 className="mt-1 font-sans text-base font-medium text-brand-maroon">{card.title}</h3>
+              <p className="mt-1 text-sm leading-6 text-brand-muted">{card.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Practice & Retreat Destinations (verified links from continuePractice.ts) */}
+      <section aria-labelledby="visit-places-heading" className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="visit-places-heading" className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
+              {isEnglish ? 'Meditation sanctuaries & places to stay' : 'สถานที่และศูนย์ปฏิบัติธรรมที่น่าสนใจ'}
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-brand-muted">
+              {isEnglish
+                ? 'If you wish to explore quiet retreat stays or multi-day programs, contact each official meditation center directly.'
+                : 'หากสนใจเข้าพักปฏิบัติธรรมหรือเรียนรู้เพิ่มเติม สามารถดูข้อมูลทางการและสอบถามเวลา/เงื่อนไขจากสถานที่โดยตรง'}
+            </p>
+          </div>
+          <Link to="/centers" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-terracotta hover:underline">
+            <span>{isEnglish ? 'View all centers' : 'ดูรายชื่อศูนย์ทั้งหมด'}</span>
+            <GuideIcon name="arrow" />
+          </Link>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {practiceDestinations.map((dest) => {
+            const copy = dest[currentLang]
+            return (
+              <article key={dest.id} className="flex flex-col justify-between rounded-2xl border border-brand-border bg-brand-surface p-5">
+                <div>
+                  <div className="flex items-center gap-2 text-xs font-medium text-brand-terracotta">
+                    <GuideIcon name={dest.icon} />
+                    <span>{isEnglish ? 'Official center' : 'ศูนย์ทางการ'}</span>
+                  </div>
+                  <h3 className="mt-2 font-sans text-lg font-medium text-brand-maroon">{copy.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-brand-muted">{copy.description}</p>
+                </div>
+                <a
+                  href={dest.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-border-dark bg-brand-cream px-4 text-sm font-medium text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft"
+                >
+                  <span>{copy.action}</span>
+                  <ExternalLinkIcon />
+                </a>
+              </article>
+            )
+          })}
         </div>
       </section>
 

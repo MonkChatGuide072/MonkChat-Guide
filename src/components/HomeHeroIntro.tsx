@@ -11,8 +11,15 @@ const shortcuts = [
 ]
 
 /** Preserve the approved full-width scene, title below it and five shortcuts. */
-export function HomeHeroIntro({ language }: { language: AppLanguage }) {
+export function HomeHeroIntro({
+  language,
+  activePath = '/',
+}: {
+  language: AppLanguage
+  activePath?: '/' | '/home' | '/visit'
+}) {
   const isEnglish = language === 'en'
+  const normalizedActive = activePath === '/home' ? '/' : activePath
 
   return (
     <section aria-labelledby="home-intro-title" className="bg-[#FFF8EE]">
@@ -47,8 +54,8 @@ export function HomeHeroIntro({ language }: { language: AppLanguage }) {
             <Link
               key={item.to}
               to={item.to}
-              aria-current={item.to === '/' ? 'page' : undefined}
-              className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-2 rounded-xl border px-0 py-3 text-xs font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-maroon sm:min-h-[88px] sm:px-2 sm:text-sm ${item.to === '/' ? 'border-brand-terracotta bg-brand-terracotta text-white hover:bg-brand-terracotta-dark' : 'border-brand-border bg-brand-surface text-brand-maroon hover:border-brand-terracotta hover:bg-brand-gold-soft'}`}
+              aria-current={item.to === normalizedActive ? 'page' : undefined}
+              className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-2 rounded-xl border px-0 py-3 text-xs font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-maroon sm:min-h-[88px] sm:px-2 sm:text-sm ${item.to === normalizedActive ? 'border-brand-terracotta bg-brand-terracotta text-white hover:bg-brand-terracotta-dark' : 'border-brand-border bg-brand-surface text-brand-maroon hover:border-brand-terracotta hover:bg-brand-gold-soft'}`}
             >
               <GuideIcon name={item.icon as GuideIconName} className="h-6 w-6" />
               <span className="text-center text-xs leading-4 tracking-normal sm:text-sm sm:leading-5">{isEnglish ? item.en : item.th}</span>

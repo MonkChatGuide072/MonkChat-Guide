@@ -1,5 +1,24 @@
 # MonkChat Guide — Current Handoff
 
+## แยกฝั่ง `/` · `/home` · `/visit` · `/nisit` (เฟส 1) และคง `/admin` — 10 พฤศจิกายน 2569
+
+- **ฐานงานและ branch:** แตกจาก `origin/feat/responsive-home-banner` (PR #19 commit `1b3d188`) เป็น branch ใหม่ `feat/home-visit-nisit-phase1` ใน worktree `..\monkchat-guide-wt-nisit` (ยังคง `PR #19` และ worktree เดิมไว้ครบ ไม่มีการ merge เข้า `main` หรือ deploy production)
+- **สิ่งที่พัฒนาในเฟส 1 (ไม่แก้ฐานข้อมูล/Migration):**
+  - แยก `src/components/LanguageGate.tsx` เป็นคอมโพเนนต์กลางสำหรับจุดเข้า QR
+  - เพิ่มหน้า `src/pages/HomeOverviewPage.tsx` สำหรับ `/` และ `/home`: แสดง Language Gate ก่อนเลือกภาษา, แบนเนอร์ Hero จาก PR #19 (`src/components/HomeHeroIntro.tsx`), ตารางเวลา, ภาพรวม Ayutthaya Monk Chat และทางแยกเข้า `/visit` (หลักสำหรับนักท่องเที่ยว) กับ `/nisit` (มุมฝึกพระนิสิต)
+  - ปรับ `src/pages/VisitPage.tsx` (`/visit`) เป็นหน้าหลักฝั่งนักท่องเที่ยว: เพิ่มส่วนบรรยากาศจริง 2 คอลัมน์, การ์ดสมาธิเข้าใจง่าย 3 ขั้นตอนจาก `preparationCards` + `MeditationGuideVisual`, และสถานที่ปฏิบัติธรรมที่ยืนยันแล้วจาก `src/content/continuePractice.ts` พร้อมคง Recommended Audio, Bio Links และกติกาความปลอดภัยเดิมครบ
+  - เพิ่มมุมฝึกพระนิสิต `src/pages/NisitPracticePage.tsx` (`/nisit`) พร้อมข้อมูลและตัวช่วยใน `src/content/nisitPractice.ts` แยก 5 แท็บ:
+    1. `src/components/nisit/NisitVocabCards.tsx` — การ์ดนำนั่งสมาธิคู่คำศัพท์ คำอ่านไทย และคำแนะนำการสื่อสาร
+    2. `src/components/nisit/NisitAudioTeleprompter.tsx` — ตัวเล่นเสียงนำสมาธิพร้อมบทพูดวิ่งตามซับ VTT (กดที่ท่อนเพื่อกระโดดเวลาเสียงไปซ้อมพูดซ้ำได้ทันที)
+    3. `src/components/nisit/NisitVideoStudy.tsx` — แหล่งเรียนรู้ทางการที่ยืนยันแล้ว และตัวเปิดวิดีโอ YouTube ห้องเรียนแบบปลอดภัย (`youtube-nocookie.com`)
+    4. `src/components/nisit/NisitFlashcards.tsx` — คลังถาม–ตอบฝึกความมั่นใจ (คัดเฉพาะรายการ `published + verified` ชุดเดียวกับระบบหลัก)
+    5. `src/components/nisit/NisitThankYouCard.tsx` — สมุดจดชื่อผู้มาเยือนและตัวสร้างการ์ดขอบคุณ PNG หน้างาน (ทำงานเฉพาะบนเครื่อง `localStorage` ไม่ส่งชื่อขึ้น DB และมีปุ่มล้างข้อมูลท้ายวัน)
+  - ปรับ `src/App.tsx` และ `src/components/Layout.tsx` ให้รองรับ `/`, `/home`, `/visit`, `/nisit`, ซ่อนการ์ดแชทลอยบน `/nisit`, และคง `/admin/*` ตามเดิมทุกประการ
+- **ชุดทดสอบและผลตรวจ:** เพิ่ม `src/pages/HomeAndNisitPages.test.tsx` (ทดสอบตัวตรวจรหัส 7 หลัก `4011001–6911060`, safe YouTube parser, `/home`, `/visit`, และครบทั้ง 5 แท็บใน `/nisit`) ผ่าน `vitest` ครบ 13 files / 76 tests, `oxlint`, `tsc -b && vite build` และตรวจผ่าน Chrome CDP ทุกเส้นทางบน 360–1440 px ไม่มี horizontal overflow
+- **งานเฟส 2 ที่ยังรอทำต่อ:**
+  1. ตัดสินใจ/รวม **PR #19** เข้า `main` และตรวจผลซับ VTT 05:26 ร่วมกับพระอาจารย์
+  2. เมื่อพร้อมขึ้นเฟส 2: เพิ่ม Migration/RLS Role `student`, ระบบสมัครด้วย **Invite Code ประจำรุ่น** + รหัส 7 หลัก + ตั้งรหัสผ่านเอง 12+ ตัว (อีเมลภายใน `.invalid`) เพื่อเก็บประวัติฝึกของนิสิตลงฐานข้อมูลจริงอย่างปลอดภัย (ไม่ใช้ `ID = Password` หรือ `monkchat + รหัส`)
+
 ## ส่งต่อแบนเนอร์หน้าแรกให้ Antigravity — 10 พฤศจิกายน 2569
 
 - ตามคำขอเจ้าของ เปลี่ยนภาพแบนเนอร์หน้าแรกเป็นแบบ Ayutthaya Monk Chat ที่มีโลโก้และข้อความตามภาพที่เลือก ใช้ `picture` ใน `HomeHeroIntro.tsx` เลือก WebP ตามช่วงจอที่ 640 และ 1280 px คงโครงหน้าเดิมทั้งภาษาไทยและอังกฤษ รวมถึงหน้าเลือกภาษาและทางลัด 5 รายการ
