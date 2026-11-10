@@ -16,14 +16,22 @@ export function HomeHeroIntro({ language }: { language: AppLanguage }) {
 
   return (
     <section aria-labelledby="home-intro-title" className="bg-[#FFF8EE]">
-      <img
-        src="/images/home/monkchat-meditation-ruins.webp"
-        alt={isEnglish ? 'A monk and visitors meditating among trees and Ayutthaya brick ruins' : 'พระสงฆ์และผู้มาเยือนนั่งสมาธิท่ามกลางต้นไม้และโบราณสถานอิฐอยุธยา'}
-        width={1672}
-        height={941}
-        fetchPriority="high"
-        className="block h-[240px] w-full object-cover object-[center_35%] sm:h-[360px] sm:object-[center_30%] lg:h-[460px] lg:object-[center_28%] xl:h-[500px] xl:object-[center_26%]"
-      />
+      <picture className="block">
+        <source media="(min-width: 80rem)" srcSet="/images/home/monkchat-banner-desktop.webp" />
+        <source media="(min-width: 40rem)" srcSet="/images/home/monkchat-banner-tablet.webp" />
+        <img
+          src="/images/home/monkchat-banner-mobile.webp"
+          alt={isEnglish ? 'Ayutthaya Monk Chat, a monk and visitors sit together among the Ayutthaya ruins' : 'Ayutthaya Monk Chat พระสงฆ์และผู้มาเยือนนั่งด้วยกันท่ามกลางโบราณสถานอยุธยา'}
+          aria-describedby="home-banner-quote"
+          width={1170}
+          height={720}
+          fetchPriority="high"
+          className="block h-[240px] w-full object-cover object-[center_35%] sm:h-[360px] sm:object-[center_30%] lg:h-[460px] lg:object-[center_28%] xl:h-[max(500px,24.4vw)] xl:object-[center_26%]"
+        />
+      </picture>
+      <p id="home-banner-quote" lang="en" className="sr-only">
+        In the calm of the temple, I heard the loudest truth.
+      </p>
 
       <div className="mx-auto max-w-[76rem] px-4 pb-2 pt-6 text-center sm:px-6 lg:px-8">
         <h1 id="home-intro-title" className="font-serif text-[2rem] font-semibold leading-snug text-brand-maroon sm:text-4xl lg:text-[2.75rem]">
