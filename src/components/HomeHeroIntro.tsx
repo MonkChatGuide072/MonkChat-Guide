@@ -24,9 +24,9 @@ export function HomeHeroIntro({ language }: { language: AppLanguage }) {
           alt={isEnglish ? 'Ayutthaya Monk Chat, a monk and visitors sit together among the Ayutthaya ruins' : 'Ayutthaya Monk Chat พระสงฆ์และผู้มาเยือนนั่งด้วยกันท่ามกลางโบราณสถานอยุธยา'}
           aria-describedby="home-banner-quote"
           width={1170}
-          height={720}
+          height={570}
           fetchPriority="high"
-          className="block h-[240px] w-full object-cover object-[center_35%] sm:h-[360px] sm:object-[center_30%] lg:h-[460px] lg:object-[center_28%] xl:h-[max(500px,24.4vw)] xl:object-[center_26%]"
+          className="block h-[190px] w-full object-cover object-[center_35%] sm:h-[280px] sm:object-[center_30%] lg:h-[320px] lg:object-[center_28%] xl:h-[max(400px,19.53vw)] xl:object-[center_26%]"
         />
       </picture>
       <p id="home-banner-quote" lang="en" className="sr-only">
