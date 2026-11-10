@@ -415,3 +415,9 @@ enabled = true
 
 [functions.team-management]
 verify_jwt = true
+
+[functions.student-cohorts]
+verify_jwt = true
+
+[functions.student-register]
+verify_jwt = false

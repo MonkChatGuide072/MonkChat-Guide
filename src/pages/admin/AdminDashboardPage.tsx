@@ -6,7 +6,8 @@ import { assistantCopy } from '../../locales/monkAssistant'
 export function AdminDashboardPage() {
   const { profile } = useAuth()
   const { t, i18n } = useTranslation()
-  const assistant = assistantCopy[(i18n.resolvedLanguage || i18n.language).startsWith('en') ? 'en' : 'th']
+  const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
+  const assistant = assistantCopy[isEnglish ? 'en' : 'th']
 
   const isOwner = profile?.role === 'owner'
 
@@ -50,6 +51,15 @@ export function AdminDashboardPage() {
     },
     ...(isOwner
       ? [
+          {
+            key: 'students',
+            title: isEnglish ? 'Student Cohorts' : 'รุ่นพระนิสิตและผลการฝึก',
+            description: isEnglish
+              ? 'Issue cohort invite codes, inspect vocab & Q&A completion, suspend or reset student accounts.'
+              : 'สร้างรหัสเชิญรุ่น ดูผลความก้าวหน้าคำศัพท์และ Q&A ระงับบัญชีหรือรีเซ็ตรหัสชั่วคราว',
+            path: '/admin/students',
+            ownerOnly: true,
+          },
           {
             key: 'team',
             title: t('admin.modules.team.title'),

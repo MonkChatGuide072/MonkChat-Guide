@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../lib/auth'
 import { supabaseClient } from '../lib/supabase'
 
@@ -16,9 +16,9 @@ export function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
-  // Redirect to admin if already authenticated and profile is active
+  // Redirect to admin only if already authenticated with CMS role ('owner' or 'team_member')
   useEffect(() => {
-    if (!isAuthLoading && session && profile && profile.is_active) {
+    if (!isAuthLoading && session && profile && profile.is_active && ['owner', 'team_member'].includes(profile.role)) {
       navigate('/admin', { replace: true })
     }
   }, [session, profile, isAuthLoading, navigate])
@@ -65,6 +65,39 @@ export function LoginPage() {
     return (
       <div className="flex min-h-[55vh] items-center justify-center" role="status">
         <div className="h-9 w-9 animate-spin rounded-full border-2 border-brand-border border-t-brand-terracotta"></div>
+      </div>
+    )
+  }
+
+  if (session && profile && profile.is_active && profile.role === 'student') {
+    return (
+      <div className="mx-auto max-w-md space-y-6 py-6 sm:py-12">
+        <div className="rounded-2xl border border-brand-border bg-brand-surface p-6 sm:p-8">
+          <h2 className="mb-3 font-serif text-xl font-medium text-brand-maroon">
+            {t('management.deniedTitle')}
+          </h2>
+          <p className="mb-6 text-sm leading-6 text-brand-muted">
+            บัญชีพระนิสิต (`student`) เข้าใช้ได้เฉพาะมุมฝึก `/nisit` ไม่สามารถเข้าสู่ระบบจัดการทีมงาน `/admin` ได้
+          </p>
+          <div className="space-y-3">
+            <Link
+              to="/nisit"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-brand-terracotta px-4 text-sm font-medium text-white hover:bg-brand-terracotta-dark"
+            >
+              ไปที่มุมฝึกพระนิสิต (/nisit)
+            </Link>
+            <button
+              onClick={async () => {
+                try { await signOut(); setErrorMsg('') }
+                catch { setErrorMsg(t('management.signOutError')) }
+              }}
+              className="min-h-11 w-full cursor-pointer rounded-lg border border-brand-border px-4 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
+            >
+              {t('admin.nav.signOut')}
+            </button>
+          </div>
+          {errorMsg && <p role="alert" className="mt-3 text-sm text-red-700">{errorMsg}</p>}
+        </div>
       </div>
     )
   }

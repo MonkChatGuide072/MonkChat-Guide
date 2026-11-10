@@ -1,12 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { nisitMeditationLessons } from '../../content/nisitPractice'
+import { fetchStudentCompletedKeys, setStudentItemCompleted } from '../../lib/studentPractice'
 import { MeditationGuideVisual } from '../MeditationGuideVisual'
 import { GuideIcon } from '../GuideIcon'
 
 const VOCAB_PROGRESS_KEY = 'monkchat_nisit_vocab_done_v1'
 
 /** Meditation guiding cards paired with essential English vocabulary & Thai pronunciation cues. */
-export function NisitVocabCards({ isEnglish }: { isEnglish: boolean }) {
+export function NisitVocabCards({
+  isEnglish,
+  studentProfileId,
+}: {
+  isEnglish: boolean
+  studentProfileId?: string
+}) {
   const [practicedIds, setPracticedIds] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem(VOCAB_PROGRESS_KEY) || '[]') as string[]
@@ -15,16 +22,31 @@ export function NisitVocabCards({ isEnglish }: { isEnglish: boolean }) {
     }
   })
 
-  const togglePracticed = (id: string) => {
-    setPracticedIds((prev) => {
-      const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-      try {
-        localStorage.setItem(VOCAB_PROGRESS_KEY, JSON.stringify(next))
-      } catch {
-        // Ignore storage errors.
+  useEffect(() => {
+    if (!studentProfileId) return
+    let active = true
+    fetchStudentCompletedKeys(studentProfileId, 'vocab_lesson').then((keys) => {
+      if (active && keys !== null) {
+        setPracticedIds(keys)
       }
-      return next
     })
+    return () => {
+      active = false
+    }
+  }, [studentProfileId])
+
+  const togglePracticed = (id: string) => {
+    const wasDone = practicedIds.includes(id)
+    const next = wasDone ? practicedIds.filter((item) => item !== id) : [...practicedIds, id]
+    setPracticedIds(next)
+    try {
+      localStorage.setItem(VOCAB_PROGRESS_KEY, JSON.stringify(next))
+    } catch {
+      // Ignore storage errors.
+    }
+    if (studentProfileId) {
+      void setStudentItemCompleted(studentProfileId, 'vocab_lesson', id, !wasDone)
+    }
   }
 
   return (

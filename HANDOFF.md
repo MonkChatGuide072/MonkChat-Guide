@@ -1,5 +1,33 @@
 # MonkChat Guide — Current Handoff
 
+## ระบบบัญชีพระนิสิตประจำรุ่น · Cohort Invite Code · บทบาท `student` และ `/admin/students` (เฟส 2) — 10 พฤศจิกายน 2569
+
+- **ฐานงานและ branch:** แตกจาก `feat/home-visit-nisit-phase1` (commit `55ff83f`, PR #20) เป็น branch ใหม่ `feat/nisit-student-accounts-phase2` ใน worktree `..\monkchat-guide-wt-nisit` (ยังไม่ commit/push, ยังไม่ merge เข้า `main`, ยังไม่ apply migration หรือ deploy production)
+- **ฐานข้อมูลและความปลอดภัย (`supabase/migrations/20261110170000_student_cohorts_and_practice.sql`):**
+  - ขยาย `public.profiles` รองรับบทบาท `'student'` (`role IN ('owner', 'team_member', 'student')`) และคอลัมน์ `student_code` (`4011001–6911060` unique), `cohort_year` (`40–69`), `dharma_name` พร้อมอัปเดต `private.guard_managed_profile()` ให้ฝั่ง client แก้ไข `id`, `role`, `student_code`, `cohort_year` ไม่ได้
+  - เพิ่มตาราง `public.student_cohort_invites` (เก็บ `invite_code_hash` SHA-256, `code_hint`, `max_uses`, `used_count`, `expires_at`; Owner อ่านได้อย่างเดียว) และฟังก์ชัน atomic `public.claim_student_cohort_invite(p_code_hash, p_cohort_year)` (`SECURITY DEFINER`, ให้สิทธิ์ `service_role` เท่านั้น) พร้อม `public.student_security_version()` (= 2) และ trigger audit log
+  - เพิ่มตาราง `public.student_practice_progress` (`module_type IN ('vocab_lesson', 'qa_flashcard', 'audio_track')`, `item_key`) โดยนิสิตอ่าน/เพิ่ม/ลบเฉพาะรายการของตนเอง และ Owner อ่านความคืบหน้าได้
+  - เพิ่ม Storage `SELECT` RLS policy สำหรับ `TO authenticated` บน `meditation-audio` (เฉพาะเผยแพร่แล้ว), `meditation-subtitles` (เฉพาะเผยแพร่แล้ว), และ `bio-link-images` เพื่อไม่ให้บัญชี `'student'` ติด 403
+- **Edge Functions และสิทธิ์หลังบ้าน:**
+  - เพิ่ม `supabase/functions/_shared/studentAuth.ts` ตรวจรหัสนิสิต 7 หลัก, แปลงเป็นอีเมลภายใน `@student.monkchat.invalid` (RFC 2606), บังคับรหัสผ่าน 12–128 ตัวและปฏิเสธ `ID = Password` กับ `monkchat+ID`
+  - เพิ่ม `supabase/functions/student-register/` (`verify_jwt = false`) สำหรับพระนิสิตสมัครเองด้วย Cohort Invite Code
+  - เพิ่ม `supabase/functions/student-cohorts/` (`verify_jwt = true`, เฉพาะ active `'owner'` และตรวจ `student_security_version() = 2`) สำหรับสร้าง/ระงับรหัสเชิญรุ่น ดูรายชื่อและยอดฝึก แก้ชื่อ–ฉายา ระงับบัญชี และรีเซ็ตรหัสชั่วคราวแบบสุ่ม 14 ตัวอักษร
+  - ปรับ `supabase/functions/team-management/index.ts` คัดกรอง `.in('role', ['owner', 'team_member'])` ใน `list()` ไม่ให้นิสิตปะปนในหน้า `/admin/team`, และตั้งค่า `[functions.student-cohorts]` / `[functions.student-register]` ใน `supabase/config.toml`
+- **หน้าเว็บและคอมโพเนนต์ (`src/`):**
+  - อัปเดต `src/lib/auth.tsx` (เพิ่ม `role: 'student'`, `student_code`, `cohort_year`, `dharma_name`) และเพิ่ม `src/lib/studentPractice.ts`
+  - เพิ่ม `src/pages/NisitLoginPage.tsx` (`/nisit/login`) สำหรับล็อกอิน 7 หลักและลงทะเบียนด้วย Cohort Invite Code
+  - ปรับ `src/pages/LoginPage.tsx` (`/admin/login`) ไม่ให้ auto-redirect บัญชี `'student'` เข้า `/admin` พร้อมแสดงปุ่มกลับ `/nisit` และออกจากระบบ
+  - อัปเดต `src/pages/NisitPracticePage.tsx`, `src/components/nisit/NisitVocabCards.tsx`, และ `src/components/nisit/NisitFlashcards.tsx` รองรับซิงก์ความก้าวหน้าลง `student_practice_progress` เมื่อล็อกอินเป็น `'student'`, เปลี่ยนรหัสผ่านเองได้ (คงกฎ 12+ ตัวและห้าม `ID=Password`/`monkchat+ID`), และคงโหมดฝึกบนเครื่อง (`localStorage`) สำหรับผู้ไม่ล็อกอิน
+  - เพิ่ม `src/pages/admin/AdminStudentsPage.tsx` (`/admin/students`, เฉพาะ `<OwnerRoute>`) พร้อมเพิ่มเมนูใน `src/components/AdminLayout.tsx`, การ์ดใน `src/pages/admin/AdminDashboardPage.tsx`, และ route ใน `src/App.tsx`
+- **การตรวจและการทดสอบ:**
+  - เพิ่ม `src/lib/studentAuth.test.ts` (11 unit/handler tests) และ `src/pages/NisitPhase2Pages.test.tsx` (4 integration tests)
+  - ผ่าน `vitest run --run` 15 files / 91 tests, `oxlint` (0 warnings, 0 errors บน 117 files), `tsc -b && vite build`, `git diff --check`, และ Chrome CDP responsive check (`360/390/768/1024/1440 px` บน `/nisit`, `/nisit/login` และแท็บลงทะเบียน ไม่มี horizontal overflow และ input font >= 16 px)
+  - **ข้อจำกัดที่ยังไม่ได้ทดสอบจริง (ต้องทำเมื่อขึ้นระบบจริง):** ยังไม่ได้ run SQL migration ขึ้นฐานข้อมูล Supabase จริง และยังไม่ได้ deploy `student-register` / `student-cohorts` เพื่อยิงทดสอบ End-to-End กับ Supabase Auth จริง
+- **ลำดับการ deploy เมื่อเจ้าของอนุมัติ (ห้ามสลับลำดับ):**
+  1. รัน migration `20261110170000_student_cohorts_and_practice.sql` บน Supabase ก่อน (เพื่อให้ตาราง, คอลัมน์, และ `student_security_version() = 2` พร้อมทำงาน)
+  2. ตรวจและตั้งค่า `CMS_ALLOWED_ORIGINS` (รวม origin ของเว็บจริงและ preview ที่อนุญาต) ก่อน deploy Edge Functions `student-register`, `student-cohorts`, และ `team-management`
+  3. สร้าง Cohort Invite Code รุ่นแรกผ่าน `/admin/students` ด้วยบัญชี Owner
+
 ## แยกฝั่ง `/` · `/home` · `/visit` · `/nisit` (เฟส 1) และคง `/admin` — 10 พฤศจิกายน 2569
 
 - **ฐานงานและ branch:** แตกจาก `origin/feat/responsive-home-banner` (PR #19 commit `1b3d188`) เป็น branch ใหม่ `feat/home-visit-nisit-phase1` ใน worktree `..\monkchat-guide-wt-nisit` (ยังคง `PR #19` และ worktree เดิมไว้ครบ ไม่มีการ merge เข้า `main` หรือ deploy production)
