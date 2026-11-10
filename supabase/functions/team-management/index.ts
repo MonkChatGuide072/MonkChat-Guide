@@ -26,7 +26,11 @@ Deno.serve(request => handleTeamRequest(request, {
         return error ? null : data
       },
       list: async () => {
-        const { data, error } = await client.from('profiles').select(columns).order('created_at', { ascending: true })
+        const { data, error } = await client
+          .from('profiles')
+          .select(columns)
+          .in('role', ['owner', 'team_member'])
+          .order('created_at', { ascending: true })
         if (error) throw error
         return data ?? []
       },

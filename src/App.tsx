@@ -11,6 +11,7 @@ import { AuthProvider } from './lib/auth'
 const HomeOverviewPage = lazy(() => import('./pages/HomeOverviewPage').then(m => ({ default: m.HomeOverviewPage })))
 const VisitPage = lazy(() => import('./pages/VisitPage').then(m => ({ default: m.VisitPage })))
 const NisitPracticePage = lazy(() => import('./pages/NisitPracticePage').then(m => ({ default: m.NisitPracticePage })))
+const NisitLoginPage = lazy(() => import('./pages/NisitLoginPage').then(m => ({ default: m.NisitLoginPage })))
 const ActivitiesPage = lazy(() => import('./pages/ActivitiesPage').then(m => ({ default: m.ActivitiesPage })))
 const MeditationPage = lazy(() => import('./pages/MeditationPage').then(m => ({ default: m.MeditationPage })))
 const QAPage = lazy(() => import('./pages/QAPage').then(m => ({ default: m.QAPage })))
@@ -37,6 +38,7 @@ const AdminBioLinksNewPage = lazy(() => import('./pages/admin/AdminBioLinksNewPa
 const AdminBioLinksEditPage = lazy(() => import('./pages/admin/AdminBioLinksEditPage').then(m => ({ default: m.AdminBioLinksEditPage })))
 const AdminLanguagesPage = lazy(() => import('./pages/admin/AdminLanguagesPage').then(m => ({ default: m.AdminLanguagesPage })))
 const AdminTeamPage = lazy(() => import('./pages/admin/AdminTeamPage').then(m => ({ default: m.AdminTeamPage })))
+const AdminStudentsPage = lazy(() => import('./pages/admin/AdminStudentsPage').then(m => ({ default: m.AdminStudentsPage })))
 const AdminAnalyticsPage = lazy(() => import('./pages/admin/AdminAnalyticsPage').then(m => ({ default: m.AdminAnalyticsPage })))
 
 const AdminAssistantPage = lazy(() => import('./pages/admin/AdminAssistantPage').then(m => ({ default: m.AdminAssistantPage })))
@@ -54,6 +56,7 @@ function App() {
               <Route path="home" element={<HomeOverviewPage />} />
               <Route path="visit" element={<VisitPage />} />
               <Route path="nisit" element={<NisitPracticePage />} />
+              <Route path="nisit/login" element={<NisitLoginPage />} />
               <Route path="activities" element={<ActivitiesPage />} />
               <Route path="meditation" element={<MeditationPage />} />
               <Route path="qa" element={<QAPage />} />
@@ -83,6 +86,14 @@ function App() {
                 <Route path="bio-links/:linkId/edit" element={<AdminBioLinksEditPage />} />
                 <Route path="languages" element={<AdminLanguagesPage />} />
                 <Route path="analytics" element={<AdminAnalyticsPage />} />
+                <Route
+                  path="students"
+                  element={
+                    <OwnerRoute>
+                      <AdminStudentsPage />
+                    </OwnerRoute>
+                  }
+                />
                 <Route
                   path="team"
                   element={

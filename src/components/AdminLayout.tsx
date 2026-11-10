@@ -46,7 +46,12 @@ export function AdminLayout() {
     { path: '/admin/bio-links', label: t('admin.nav.bioLinks') },
     { path: '/admin/languages', label: t('admin.nav.languages') },
     { path: '/admin/analytics', label: t('admin.nav.analytics') },
-    ...(isOwner ? [{ path: '/admin/team', label: t('admin.nav.team') }] : []),
+    ...(isOwner
+      ? [
+          { path: '/admin/students', label: isEnglish ? 'Student Cohorts' : 'รุ่นพระนิสิต' },
+          { path: '/admin/team', label: t('admin.nav.team') },
+        ]
+      : []),
   ]
 
   const navigation = (mobile = false) => (

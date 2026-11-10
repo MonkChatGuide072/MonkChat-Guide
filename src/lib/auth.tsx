@@ -2,11 +2,14 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import type { User, Session } from '@supabase/supabase-js'
 import { supabaseClient } from './supabase'
 
-interface Profile {
+export interface Profile {
   id: string
   display_name: string
-  role: 'owner' | 'team_member'
+  role: 'owner' | 'team_member' | 'student'
   is_active: boolean
+  student_code?: string | null
+  cohort_year?: number | null
+  dharma_name?: string | null
 }
 
 interface AuthContextType {
@@ -103,7 +106,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error('Error fetching profile:', error)
           if (mounted) setProfile(null)
         } else {
-          if (mounted) setProfile(data as Profile)
+          let resolved = data as Profile
+          if (resolved?.role === 'student') {
+            const { data: extra } = await supabaseClient
+              .from('profiles')
+              .select('student_code, cohort_year, dharma_name')
+              .eq('id', userId)
+              .single()
+            if (extra) resolved = { ...resolved, ...(extra as Partial<Profile>) }
+          }
+          if (mounted) setProfile(resolved)
         }
       } catch (err) {
         console.error('Unexpected error fetching profile:', err)

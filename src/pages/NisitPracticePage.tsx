@@ -2,6 +2,9 @@ import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { parseNisitStudentId } from '../content/nisitPractice'
+import { useAuth } from '../lib/auth'
+import { supabaseClient } from '../lib/supabase'
+import { isAcceptableStudentPassword } from '../lib/studentPractice'
 import { GuideIcon, type GuideIconName } from '../components/GuideIcon'
 import { NisitVocabCards } from '../components/nisit/NisitVocabCards'
 import { NisitAudioTeleprompter } from '../components/nisit/NisitAudioTeleprompter'
@@ -22,9 +25,16 @@ const PROFILE_STORAGE_KEY = 'monkchat_nisit_profile_v1'
 export function NisitPracticePage() {
   const { i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
+  const { session, profile: authProfile, signOut } = useAuth()
+
+  const isSignedStudent = Boolean(session && authProfile?.is_active && authProfile.role === 'student')
+  const isSignedCmsStaff = Boolean(
+    session && authProfile?.is_active && (authProfile.role === 'owner' || authProfile.role === 'team_member'),
+  )
+  const isSuspendedSession = Boolean(session && authProfile && !authProfile.is_active)
 
   const [activeTab, setActiveTab] = useState<NisitTab>('vocab')
-  const [profile, setProfile] = useState<LocalNisitProfile | null>(() => {
+  const [localProfile, setLocalProfile] = useState<LocalNisitProfile | null>(() => {
     try {
       const raw = localStorage.getItem(PROFILE_STORAGE_KEY)
       return raw ? (JSON.parse(raw) as LocalNisitProfile) : null
@@ -33,11 +43,19 @@ export function NisitPracticePage() {
     }
   })
   const [isEditingProfile, setIsEditingProfile] = useState(false)
-  const [studentIdInput, setStudentIdInput] = useState(profile?.studentId ?? '')
-  const [fullNameInput, setFullNameInput] = useState(profile?.fullName ?? '')
+  const [studentIdInput, setStudentIdInput] = useState(localProfile?.studentId ?? '')
+  const [fullNameInput, setFullNameInput] = useState(localProfile?.fullName ?? '')
   const [profileError, setProfileError] = useState('')
 
-  const parsedCurrentId = profile ? parseNisitStudentId(profile.studentId) : null
+  const [showPasswordForm, setShowPasswordForm] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordBusy, setPasswordBusy] = useState(false)
+  const [passwordError, setPasswordError] = useState('')
+  const [passwordSaved, setPasswordSaved] = useState(false)
+
+  const parsedCurrentId = localProfile ? parseNisitStudentId(localProfile.studentId) : null
+  const parsedAuthStudentId = authProfile?.student_code ? parseNisitStudentId(authProfile.student_code) : null
 
   const handleSaveProfile = (e: FormEvent) => {
     e.preventDefault()
@@ -58,7 +76,7 @@ export function NisitPracticePage() {
       return
     }
     const next: LocalNisitProfile = { studentId: parsed.code, fullName: cleanName }
-    setProfile(next)
+    setLocalProfile(next)
     setProfileError('')
     setIsEditingProfile(false)
     try {
@@ -69,7 +87,7 @@ export function NisitPracticePage() {
   }
 
   const handleClearProfile = () => {
-    setProfile(null)
+    setLocalProfile(null)
     setStudentIdInput('')
     setFullNameInput('')
     setProfileError('')
@@ -80,6 +98,59 @@ export function NisitPracticePage() {
       // Ignore storage errors.
     }
   }
+
+  const handleChangePassword = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!authProfile || !supabaseClient || passwordBusy) return
+    setPasswordError('')
+    setPasswordSaved(false)
+
+    const studentCode = authProfile.student_code ?? ''
+    if (!isAcceptableStudentPassword(newPassword, studentCode)) {
+      setPasswordError(
+        isEnglish
+          ? 'Use at least 12 characters and avoid your student ID or monkchat+ID.'
+          : 'กรุณาตั้งรหัสผ่านใหม่อย่างน้อย 12 ตัวอักษร และห้ามใช้รหัส 7 หลักหรือ monkchat+รหัส',
+      )
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError(
+        isEnglish ? 'Passwords do not match.' : 'รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน',
+      )
+      return
+    }
+
+    setPasswordBusy(true)
+    try {
+      const { error } = await supabaseClient.auth.updateUser({ password: newPassword })
+      if (error) {
+        setPasswordError(
+          isEnglish ? 'Could not update password. Please try again.' : 'ไม่สามารถเปลี่ยนรหัสผ่านได้ในขณะนี้ กรุณาลองใหม่',
+        )
+        return
+      }
+      setNewPassword('')
+      setConfirmPassword('')
+      setPasswordSaved(true)
+      setShowPasswordForm(false)
+    } catch {
+      setPasswordError(
+        isEnglish ? 'Could not update password. Please try again.' : 'ไม่สามารถเปลี่ยนรหัสผ่านได้ในขณะนี้ กรุณาลองใหม่',
+      )
+    } finally {
+      setPasswordBusy(false)
+    }
+  }
+
+  const activeStudentProfileId = isSignedStudent && authProfile ? authProfile.id : undefined
+
+  const defaultMonkLabel =
+    isSignedStudent && authProfile
+      ? `${authProfile.display_name}${authProfile.dharma_name ? ` (${authProfile.dharma_name})` : ''}${authProfile.student_code ? ` · ${authProfile.student_code}` : ''}`
+      : localProfile
+        ? `${localProfile.fullName} (${localProfile.studentId})`
+        : undefined
 
   const tabs: Array<{ id: NisitTab; icon: GuideIconName; th: string; en: string }> = [
     { id: 'vocab', icon: 'book', th: 'คำศัพท์ & การ์ด', en: 'Vocab & Cards' },
@@ -118,102 +189,250 @@ export function NisitPracticePage() {
           </Link>
         </div>
 
-        {/* Local Cohort Study Profile & Phase 2 Readiness Bar */}
+        {/* Student Account Bar & Local Study Profile */}
         <div className="mt-6 rounded-xl border border-brand-border bg-[#FAF2E6]/70 p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <GuideIcon name="user" className="mt-0.5 h-5 w-5 text-brand-maroon" />
-              <div>
-                {profile && parsedCurrentId ? (
-                  <>
+          {isSignedStudent && authProfile ? (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  <GuideIcon name="user" className="mt-0.5 h-5 w-5 text-brand-maroon" />
+                  <div>
                     <p className="text-sm font-medium text-brand-maroon">
-                      {profile.fullName}{' '}
-                      <span className="font-normal text-brand-muted tabular-nums">({parsedCurrentId.code})</span>
+                      {authProfile.display_name}
+                      {authProfile.dharma_name ? ` · ${authProfile.dharma_name}` : ''}{' '}
+                      {authProfile.student_code && (
+                        <span className="font-normal text-brand-muted tabular-nums">({authProfile.student_code})</span>
+                      )}
                     </p>
                     <p className="mt-0.5 text-xs text-brand-muted tabular-nums">
                       {isEnglish
-                        ? `Cohort Year ${parsedCurrentId.thaiYear} · Code ${parsedCurrentId.statusCode} · Seat ${String(parsedCurrentId.seatNumber).padStart(2, '0')} · Stored locally on this device`
-                        : `รุ่นปี ${parsedCurrentId.thaiYear} · รหัสสถานะ ${parsedCurrentId.statusCode} · เลขที่ ${String(parsedCurrentId.seatNumber).padStart(2, '0')} · บันทึกเฉพาะเครื่องนี้ (เฟส 1)`}
+                        ? `Cohort Year ${authProfile.cohort_year ?? parsedAuthStudentId?.thaiYear ?? '-'} · Signed in as student · Progress synced to database`
+                        : `รุ่นปี ${authProfile.cohort_year ?? parsedAuthStudentId?.thaiYear ?? '-'} · บัญชีพระนิสิต · บันทึกความก้าวหน้าลงฐานข้อมูลอัตโนมัติ`}
                     </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm font-medium text-brand-maroon">
-                      {isEnglish ? 'Set local student profile (optional)' : 'ระบุรหัส 7 หลักและชื่อ–ฉายา (เก็บในเครื่องนี้ — เฟส 1)'}
-                    </p>
-                    <p className="mt-0.5 text-xs leading-5 text-brand-muted">
-                      {isEnglish
-                        ? 'Enter your 7-digit ID (4011001–6911060) to tag Thank-You cards locally. Phase 2 cohort Invite Code accounts connect to the database next.'
-                        : 'กรอกรหัส 7 หลัก (4011001–6911060) เพื่อแสดงชื่อผู้แนะนำบนการ์ดขอบคุณ ระบบสมัครด้วยรหัสเชิญรุ่นและบทบาท student จะเชื่อมฐานข้อมูลในเฟส 2'}
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
+                  </div>
+                </div>
 
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setIsEditingProfile((v) => !v)}
-                className="min-h-11 cursor-pointer rounded-xl border border-brand-border-dark bg-brand-surface px-4 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
-              >
-                {isEditingProfile
-                  ? (isEnglish ? 'Close' : 'ปิด')
-                  : profile
-                    ? (isEnglish ? 'Edit profile' : 'แก้ไขข้อมูลฝึก')
-                    : (isEnglish ? 'Enter ID & Name' : 'ระบุรหัสและชื่อ')}
-              </button>
-              {profile && (
-                <button
-                  type="button"
-                  onClick={handleClearProfile}
-                  className="min-h-11 cursor-pointer rounded-xl border border-brand-border px-3 text-xs font-medium text-brand-muted hover:bg-white"
-                >
-                  {isEnglish ? 'Clear' : 'ล้างข้อมูล'}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {isEditingProfile && (
-            <form onSubmit={handleSaveProfile} className="mt-4 grid gap-3 border-t border-brand-border pt-4 sm:grid-cols-3">
-              <label className="block text-sm font-medium text-brand-maroon">
-                <span>{isEnglish ? '7-digit Student ID' : 'รหัสนิสิต 7 หลัก (4011001–6911060)'}</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={7}
-                  value={studentIdInput}
-                  onChange={(e) => setStudentIdInput(e.target.value)}
-                  placeholder="6611018"
-                  className="mt-1 min-h-11 w-full rounded-xl border border-brand-border bg-white px-3 py-2 text-base text-brand-text tabular-nums"
-                />
-              </label>
-              <label className="block text-sm font-medium text-brand-maroon">
-                <span>{isEnglish ? 'Name & Dharma Name' : 'ชื่อ – ฉายา – นามสกุล'}</span>
-                <input
-                  type="text"
-                  maxLength={80}
-                  value={fullNameInput}
-                  onChange={(e) => setFullNameInput(e.target.value)}
-                  placeholder={isEnglish ? 'e.g. Phra ...' : 'เช่น พระมหา... ฉายา...'}
-                  className="mt-1 min-h-11 w-full rounded-xl border border-brand-border bg-white px-3 py-2 text-base text-brand-text"
-                />
-              </label>
-              <div className="flex items-end">
-                <button
-                  type="submit"
-                  className="min-h-11 w-full cursor-pointer rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
-                >
-                  {isEnglish ? 'Save on this device' : 'บันทึกบนเครื่องนี้'}
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordForm((v) => !v)
+                      setPasswordError('')
+                      setPasswordSaved(false)
+                    }}
+                    className="min-h-11 cursor-pointer rounded-xl border border-brand-border-dark bg-brand-surface px-4 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
+                  >
+                    {showPasswordForm
+                      ? (isEnglish ? 'Close' : 'ปิด')
+                      : (isEnglish ? 'Change password' : 'เปลี่ยนรหัสผ่าน')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { void signOut() }}
+                    className="min-h-11 cursor-pointer rounded-xl border border-brand-border px-4 text-sm font-medium text-brand-muted hover:bg-white"
+                  >
+                    {isEnglish ? 'Sign out' : 'ออกจากระบบ'}
+                  </button>
+                </div>
               </div>
-              {profileError && (
-                <p role="alert" className="text-sm text-red-700 sm:col-span-3">
-                  {profileError}
+
+              {passwordSaved && (
+                <p role="status" className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+                  {isEnglish ? 'Password updated.' : 'เปลี่ยนรหัสผ่านสำเร็จแล้ว'}
                 </p>
               )}
-            </form>
+
+              {showPasswordForm && (
+                <form
+                  onSubmit={handleChangePassword}
+                  className="mt-4 grid gap-3 border-t border-brand-border pt-4 sm:grid-cols-3"
+                >
+                  <label className="block text-sm font-medium text-brand-maroon">
+                    <span>{isEnglish ? 'New password (12+ chars)' : 'รหัสผ่านใหม่ (อย่างน้อย 12 ตัว)'}</span>
+                    <input
+                      type="password"
+                      required
+                      minLength={12}
+                      maxLength={128}
+                      autoComplete="new-password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="mt-1 min-h-11 w-full rounded-xl border border-brand-border bg-white px-3 py-2 text-base text-brand-text"
+                    />
+                  </label>
+                  <label className="block text-sm font-medium text-brand-maroon">
+                    <span>{isEnglish ? 'Confirm new password' : 'ยืนยันรหัสผ่านใหม่'}</span>
+                    <input
+                      type="password"
+                      required
+                      minLength={12}
+                      maxLength={128}
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="mt-1 min-h-11 w-full rounded-xl border border-brand-border bg-white px-3 py-2 text-base text-brand-text"
+                    />
+                  </label>
+                  <div className="flex items-end">
+                    <button
+                      type="submit"
+                      disabled={passwordBusy}
+                      className="min-h-11 w-full cursor-pointer rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark disabled:opacity-50"
+                    >
+                      {passwordBusy
+                        ? (isEnglish ? 'Saving...' : 'กำลังบันทึก...')
+                        : (isEnglish ? 'Update password' : 'บันทึกรหัสผ่านใหม่')}
+                    </button>
+                  </div>
+                  {passwordError && (
+                    <p role="alert" className="text-sm text-red-700 sm:col-span-3">
+                      {passwordError}
+                    </p>
+                  )}
+                </form>
+              )}
+            </>
+          ) : isSuspendedSession ? (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p role="alert" className="text-sm font-medium text-red-700">
+                {isEnglish
+                  ? 'This student account is currently suspended. Contact your MonkChat coordinator.'
+                  : 'บัญชีนิสิตนี้ถูกระงับการใช้งานชั่วคราว กรุณาติดต่อผู้ดูแลโครงการ'}
+              </p>
+              <button
+                type="button"
+                onClick={() => { void signOut() }}
+                className="min-h-11 cursor-pointer rounded-xl border border-brand-border bg-white px-4 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
+              >
+                {isEnglish ? 'Sign out' : 'ออกจากระบบ'}
+              </button>
+            </div>
+          ) : (
+            <>
+              {isSignedCmsStaff && authProfile && (
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-brand-border pb-3 text-xs text-brand-muted">
+                  <span>
+                    {isEnglish
+                      ? `Browsing as staff: ${authProfile.display_name}`
+                      : `เข้าดูด้วยบัญชีทีมงาน: ${authProfile.display_name}`}
+                  </span>
+                  <Link
+                    to={authProfile.role === 'owner' ? '/admin/students' : '/admin'}
+                    className="font-medium text-brand-maroon underline"
+                  >
+                    {authProfile.role === 'owner'
+                      ? (isEnglish ? 'Manage student cohorts' : 'จัดการรุ่นนิสิต (/admin/students)')
+                      : (isEnglish ? 'Open CMS' : 'กลับสู่หน้าจัดการเว็บ')}
+                  </Link>
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  <GuideIcon name="user" className="mt-0.5 h-5 w-5 text-brand-maroon" />
+                  <div>
+                    {localProfile && parsedCurrentId ? (
+                      <>
+                        <p className="text-sm font-medium text-brand-maroon">
+                          {localProfile.fullName}{' '}
+                          <span className="font-normal text-brand-muted tabular-nums">({parsedCurrentId.code})</span>
+                        </p>
+                        <p className="mt-0.5 text-xs text-brand-muted tabular-nums">
+                          {isEnglish
+                            ? `Cohort Year ${parsedCurrentId.thaiYear} · Code ${parsedCurrentId.statusCode} · Seat ${String(parsedCurrentId.seatNumber).padStart(2, '0')} · Stored locally on this device`
+                            : `รุ่นปี ${parsedCurrentId.thaiYear} · รหัสสถานะ ${parsedCurrentId.statusCode} · เลขที่ ${String(parsedCurrentId.seatNumber).padStart(2, '0')} · บันทึกเฉพาะเครื่องนี้`}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm font-medium text-brand-maroon">
+                          {isEnglish
+                            ? 'Sign in with Cohort ID or practice locally on this device'
+                            : 'เข้าสู่ระบบด้วยรหัสนิสิต 7 หลัก หรือทดลองฝึกบนเครื่องนี้'}
+                        </p>
+                        <p className="mt-0.5 text-xs leading-5 text-brand-muted">
+                          {isEnglish
+                            ? 'Student accounts sync vocabulary & Q&A progress automatically. Guests can set a local 7-digit ID for Thank-You cards.'
+                            : 'เมื่อเข้าสู่ระบบด้วยรหัส 7 หลัก ระบบจะบันทึกความก้าวหน้าลงฐานข้อมูล หรือระบุชื่อบนเครื่องชั่วคราวสำหรับซ้อมออกการ์ดขอบคุณ'}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {!isSignedCmsStaff && (
+                    <Link
+                      to="/nisit/login"
+                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+                    >
+                      <span>{isEnglish ? 'Student Sign In / Register' : 'เข้าสู่ระบบ / สมัครด้วยรหัสเชิญรุ่น'}</span>
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingProfile((v) => !v)}
+                    className="min-h-11 cursor-pointer rounded-xl border border-brand-border-dark bg-brand-surface px-4 text-sm font-medium text-brand-maroon hover:bg-brand-gold-soft"
+                  >
+                    {isEditingProfile
+                      ? (isEnglish ? 'Close' : 'ปิด')
+                      : localProfile
+                        ? (isEnglish ? 'Edit profile' : 'แก้ไขข้อมูลฝึก')
+                        : (isEnglish ? 'Enter ID & Name' : 'ระบุรหัสและชื่อ')}
+                  </button>
+                  {localProfile && (
+                    <button
+                      type="button"
+                      onClick={handleClearProfile}
+                      className="min-h-11 cursor-pointer rounded-xl border border-brand-border px-3 text-xs font-medium text-brand-muted hover:bg-white"
+                    >
+                      {isEnglish ? 'Clear' : 'ล้างข้อมูล'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {isEditingProfile && (
+                <form onSubmit={handleSaveProfile} className="mt-4 grid gap-3 border-t border-brand-border pt-4 sm:grid-cols-3">
+                  <label className="block text-sm font-medium text-brand-maroon">
+                    <span>{isEnglish ? '7-digit Student ID' : 'รหัสนิสิต 7 หลัก (4011001–6911060)'}</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={7}
+                      value={studentIdInput}
+                      onChange={(e) => setStudentIdInput(e.target.value)}
+                      placeholder="6611018"
+                      className="mt-1 min-h-11 w-full rounded-xl border border-brand-border bg-white px-3 py-2 text-base text-brand-text tabular-nums"
+                    />
+                  </label>
+                  <label className="block text-sm font-medium text-brand-maroon">
+                    <span>{isEnglish ? 'Name & Dharma Name' : 'ชื่อ – ฉายา – นามสกุล'}</span>
+                    <input
+                      type="text"
+                      maxLength={80}
+                      value={fullNameInput}
+                      onChange={(e) => setFullNameInput(e.target.value)}
+                      placeholder={isEnglish ? 'e.g. Phra ...' : 'เช่น พระมหา... ฉายา...'}
+                      className="mt-1 min-h-11 w-full rounded-xl border border-brand-border bg-white px-3 py-2 text-base text-brand-text"
+                    />
+                  </label>
+                  <div className="flex items-end">
+                    <button
+                      type="submit"
+                      className="min-h-11 w-full cursor-pointer rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+                    >
+                      {isEnglish ? 'Save on this device' : 'บันทึกบนเครื่องนี้'}
+                    </button>
+                  </div>
+                  {profileError && (
+                    <p role="alert" className="text-sm text-red-700 sm:col-span-3">
+                      {profileError}
+                    </p>
+                  )}
+                </form>
+              )}
+            </>
           )}
         </div>
       </header>
@@ -255,14 +474,26 @@ export function NisitPracticePage() {
           aria-labelledby={`tab-${activeTab}`}
           className="mt-6"
         >
-          {activeTab === 'vocab' && <NisitVocabCards isEnglish={isEnglish} />}
+          {activeTab === 'vocab' && (
+            <NisitVocabCards
+              key={`vocab-${activeStudentProfileId ?? 'guest'}`}
+              isEnglish={isEnglish}
+              studentProfileId={activeStudentProfileId}
+            />
+          )}
           {activeTab === 'audio' && <NisitAudioTeleprompter isEnglish={isEnglish} />}
           {activeTab === 'videos' && <NisitVideoStudy isEnglish={isEnglish} />}
-          {activeTab === 'qa' && <NisitFlashcards isEnglish={isEnglish} />}
+          {activeTab === 'qa' && (
+            <NisitFlashcards
+              key={`qa-${activeStudentProfileId ?? 'guest'}`}
+              isEnglish={isEnglish}
+              studentProfileId={activeStudentProfileId}
+            />
+          )}
           {activeTab === 'cards' && (
             <NisitThankYouCard
               isEnglish={isEnglish}
-              defaultMonkLabel={profile ? `${profile.fullName} (${profile.studentId})` : undefined}
+              defaultMonkLabel={defaultMonkLabel}
             />
           )}
         </div>

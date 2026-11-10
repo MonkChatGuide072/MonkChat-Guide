@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabaseClient } from '../../lib/supabase'
+import { fetchStudentCompletedKeys, setStudentItemCompleted } from '../../lib/studentPractice'
 import { GuideIcon } from '../GuideIcon'
 
 interface QATranslationRow {
@@ -18,7 +19,13 @@ interface QAItemRow {
 const MASTERED_STORAGE_KEY = 'monkchat_nisit_qa_mastered_v1'
 
 /** Verified Q&A flashcard drill so student monks build confidence answering visitor questions. */
-export function NisitFlashcards({ isEnglish }: { isEnglish: boolean }) {
+export function NisitFlashcards({
+  isEnglish,
+  studentProfileId,
+}: {
+  isEnglish: boolean
+  studentProfileId?: string
+}) {
   const [items, setItems] = useState<QAItemRow[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -62,21 +69,36 @@ export function NisitFlashcards({ isEnglish }: { isEnglish: boolean }) {
     void fetchVerifiedQA()
   }, [fetchVerifiedQA])
 
+  useEffect(() => {
+    if (!studentProfileId) return
+    let active = true
+    fetchStudentCompletedKeys(studentProfileId, 'qa_flashcard').then((keys) => {
+      if (active && keys !== null) {
+        setMasteredIds(keys)
+      }
+    })
+    return () => {
+      active = false
+    }
+  }, [studentProfileId])
+
   const categories = ['All', ...Array.from(new Set(items.map((i) => i.category).filter(Boolean)))]
   const filtered = selectedCategory === 'All' ? items : items.filter((i) => i.category === selectedCategory)
   const boundedIndex = filtered.length > 0 ? Math.min(cardIndex, filtered.length - 1) : 0
   const current = filtered[boundedIndex]
 
   const toggleMastered = (id: string) => {
-    setMasteredIds((prev) => {
-      const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-      try {
-        localStorage.setItem(MASTERED_STORAGE_KEY, JSON.stringify(next))
-      } catch {
-        // Ignore storage quota issues.
-      }
-      return next
-    })
+    const wasMastered = masteredIds.includes(id)
+    const next = wasMastered ? masteredIds.filter((item) => item !== id) : [...masteredIds, id]
+    setMasteredIds(next)
+    try {
+      localStorage.setItem(MASTERED_STORAGE_KEY, JSON.stringify(next))
+    } catch {
+      // Ignore storage quota issues.
+    }
+    if (studentProfileId) {
+      void setStudentItemCompleted(studentProfileId, 'qa_flashcard', id, !wasMastered)
+    }
   }
 
   if (isLoading) {
