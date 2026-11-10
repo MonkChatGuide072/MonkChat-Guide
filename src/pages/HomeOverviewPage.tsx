@@ -50,6 +50,8 @@ export function HomeOverviewPage() {
         ? 'Friendly conversations with MCU student monks under the shade trees of Wat Mahathat.'
         : 'พูดคุยแลกเปลี่ยนมุมมองพระพุทธศาสนาและวิถีชีวิตกับพระนิสิต มจร อย่างเป็นกันเอง',
       img: '/images/home/monkchat-slide-1.webp',
+      width: 560,
+      height: 315,
     },
     {
       title: isEnglish ? 'Guided meditation (5–10 min)' : 'ฝึกสมาธิเบื้องต้น 5–10 นาที',
@@ -57,6 +59,8 @@ export function HomeOverviewPage() {
         ? 'Simple breathing and center-of-body practice suitable for complete beginners.'
         : 'เรียนรู้ท่านั่ง การผ่อนคลาย และการวางใจเบา ๆ เหมาะสำหรับผู้เริ่มต้นทุกพื้นฐาน',
       img: '/images/home/monkchat-meditation-hero.webp',
+      width: 1672,
+      height: 941,
     },
     {
       title: isEnglish ? 'Thoughtful Q&A' : 'คลังถาม–ตอบข้อสงสัย',
@@ -64,6 +68,8 @@ export function HomeOverviewPage() {
         ? 'Browse verified introductory answers about Buddhist ethics, meditation, and temple etiquette.'
         : 'สืบค้นคำตอบพื้นฐานที่ผ่านการตรวจรับรองเกี่ยวกับสมาธิและธรรมะในชีวิตประจำวัน',
       img: '/images/home/monkchat-slide-2.webp',
+      width: 560,
+      height: 315,
     },
     {
       title: isEnglish ? 'Heritage setting' : 'บรรยากาศเมืองประวัติศาสตร์',
@@ -71,6 +77,8 @@ export function HomeOverviewPage() {
         ? 'Take away quiet moments and reflection among Ayutthaya’s historic temple grounds.'
         : 'สัมผัสความสงบเรียบง่ายท่ามกลางลานโบราณสถานวัดมหาธาตุ พระนครศรีอยุธยา',
       img: '/images/home/monkchat-slide-4.webp',
+      width: 560,
+      height: 315,
     },
   ]
 
@@ -232,7 +240,14 @@ export function HomeOverviewPage() {
                 className="flex overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:flex-col"
               >
                 <div className="relative w-24 shrink-0 overflow-hidden bg-[#FAF2E6] sm:h-36 sm:w-full">
-                  <img src={item.img} alt={item.title} loading="lazy" className="h-full w-full object-cover" />
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    width={item.width}
+                    height={item.height}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <div className="flex flex-1 flex-col p-4">
                   <h3 className="font-sans text-base font-medium text-brand-maroon">{item.title}</h3>

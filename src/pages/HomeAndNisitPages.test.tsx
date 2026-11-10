@@ -8,7 +8,7 @@ import en from '../locales/en/common.json'
 import { HomeOverviewPage } from './HomeOverviewPage'
 import { VisitPage } from './VisitPage'
 import { NisitPracticePage } from './NisitPracticePage'
-import { parseNisitStudentId, parseSafeYouTubeEmbedUrl } from '../content/nisitPractice'
+import { getNextRovingTabIndex, parseNisitStudentId, parseSafeYouTubeEmbedUrl } from '../content/nisitPractice'
 import { VISITOR_LANGUAGE_SESSION_KEY } from '../lib/language'
 
 const mocks = vi.hoisted(() => ({
@@ -79,6 +79,14 @@ describe('nisitPractice helpers', () => {
     expect(parseSafeYouTubeEmbedUrl('http://youtube.com/watch?v=F-0V8aYV1rQ')).toBeNull()
     expect(parseSafeYouTubeEmbedUrl('javascript:alert(1)')).toBeNull()
     expect(parseSafeYouTubeEmbedUrl('https://evil.example/F-0V8aYV1rQ')).toBeNull()
+  })
+
+  it('computes roving tab indices for keyboard tablist navigation', () => {
+    expect(getNextRovingTabIndex('ArrowRight', 4, 5)).toBe(0)
+    expect(getNextRovingTabIndex('ArrowLeft', 0, 5)).toBe(4)
+    expect(getNextRovingTabIndex('Home', 3, 5)).toBe(0)
+    expect(getNextRovingTabIndex('End', 1, 5)).toBe(4)
+    expect(getNextRovingTabIndex('Enter', 1, 5)).toBeNull()
   })
 })
 

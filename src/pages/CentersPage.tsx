@@ -122,7 +122,7 @@ export function CentersPage() {
             <h1 className="mt-3 font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{t('centers.title')}</h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-brand-muted sm:text-base">{t('centers.subtitle')}</p>
           </div>
-          <img src="/images/home/monkchat-slide-3.webp" alt={isEnglish ? 'A monk speaking with visitors in Ayutthaya' : 'พระสงฆ์สนทนากับผู้มาเยือนในอยุธยา'} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
+          <img src="/images/home/monkchat-slide-3.webp" alt={isEnglish ? 'A monk speaking with visitors in Ayutthaya' : 'พระสงฆ์สนทนากับผู้มาเยือนในอยุธยา'} width={560} height={315} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
         </div>
 
       </section>

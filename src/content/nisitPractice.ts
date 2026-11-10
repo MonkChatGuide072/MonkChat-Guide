@@ -10,6 +10,16 @@ export interface ParsedNisitId {
 
 const NISIT_ID_PATTERN = /^([4-6]\d)(110)(0[1-9]|[1-5]\d|60)$/
 
+/** Computes the next index when handling ArrowLeft/ArrowRight/Home/End on a tablist. */
+export function getNextRovingTabIndex(key: string, currentIndex: number, count: number): number | null {
+  if (count <= 0) return null
+  if (key === 'Home') return 0
+  if (key === 'End') return count - 1
+  if (key === 'ArrowRight') return (currentIndex + 1) % count
+  if (key === 'ArrowLeft') return (currentIndex - 1 + count) % count
+  return null
+}
+
 /** Parses and validates MCU student monk codes 4011001–6911060 (year + 110 + seat 01–60). */
 export function parseNisitStudentId(raw: string): ParsedNisitId | null {
   const cleaned = raw.trim()

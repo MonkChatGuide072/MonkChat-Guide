@@ -115,18 +115,26 @@ export function Layout() {
 
   return (
     <div className="relative isolate flex min-h-screen flex-col overflow-x-clip bg-[#FFF8EE] text-[#30251E]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-lg focus:bg-[#681B16] focus:px-4 focus:text-sm focus:font-medium focus:text-white"
+      >
+        {isEnglish ? 'Skip to main content' : 'ข้ามไปยังเนื้อหาหลัก'}
+      </a>
       {/* Sticky Navigation Header */}
       <header className="sticky top-0 z-40 w-full border-b border-[#EADCC6] bg-[#FFFDF7]/95 shadow-[0_2px_12px_rgba(104,27,22,0.03)] backdrop-blur-md">
         <div className="mx-auto flex max-w-[76rem] items-center justify-between gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3 lg:px-8">
           {/* Logo & Brand */}
           <NavLink
             to="/"
-            className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3 text-[#681B16] transition-colors duration-150"
+            className="group flex min-h-11 min-w-0 shrink items-center gap-2.5 sm:gap-3 text-[#681B16] transition-colors duration-150"
           >
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#FFFDF7] p-0.5 shadow-xs ring-1 ring-[#D5BD94]/70  sm:h-11 sm:w-11">
               <img
                 src="/images/logo/ayutthaya-monk-chat-logo.png"
                 alt="อยุธยา มังค์แชท — Ayutthaya Monk Chat"
+                width={1001}
+                height={1024}
                 className="h-full w-full object-contain"
               />
             </div>
@@ -215,10 +223,12 @@ export function Layout() {
 
       {/* Main Content Area */}
       <main
+        id="main-content"
+        tabIndex={-1}
         className={
           location.pathname === '/' || location.pathname === '/home' || location.pathname === '/visit'
-            ? 'w-full flex-1'
-            : 'mx-auto w-full max-w-[76rem] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8'
+            ? 'w-full flex-1 scroll-mt-20 outline-none'
+            : 'mx-auto w-full max-w-[76rem] flex-1 scroll-mt-20 px-4 py-6 outline-none sm:px-6 sm:py-8 lg:px-8'
         }
       >
         <Outlet />

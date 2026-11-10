@@ -189,9 +189,9 @@ export function NisitThankYouCard({
         {/* Left Column: Quick Visitor Notes */}
         <section className="space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5">
           <div>
-            <h3 className="font-serif text-lg font-semibold text-brand-maroon">
+            <h2 className="font-serif text-lg font-semibold text-brand-maroon">
               {isEnglish ? '1. On-site visitor quick notes' : '1. จดชื่อผู้มาเยือนระหว่างสนทนา'}
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-brand-muted">
               {isEnglish
                 ? 'Tap a name after saving to fill the Thank-You Card automatically.'
@@ -279,9 +279,9 @@ export function NisitThankYouCard({
         {/* Right Column: Thank-You Card Editor + Visual Preview + Download */}
         <section className="space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5">
           <div>
-            <h3 className="font-serif text-lg font-semibold text-brand-maroon">
+            <h2 className="font-serif text-lg font-semibold text-brand-maroon">
               {isEnglish ? '2. On-site Thank-You Card' : '2. สร้างการ์ดขอบคุณที่เข้าร่วมโครงการ'}
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-brand-muted">
               {isEnglish
                 ? 'Customize and save a remembrance PNG card for your visitor to keep or photograph.'
@@ -349,14 +349,16 @@ export function NisitThankYouCard({
               <img
                 src="/images/logo/ayutthaya-monk-chat-logo.png"
                 alt="Ayutthaya Monk Chat"
+                width={1001}
+                height={1024}
                 className="mx-auto h-14 w-14 object-contain"
               />
               <p className="mt-2 text-xs font-medium tracking-normal text-brand-terracotta">
                 Ayutthaya Monk Chat · Wat Mahathat
               </p>
-              <h4 className="mt-1 font-serif text-xl font-semibold text-brand-maroon">
+              <h3 className="mt-1 font-serif text-xl font-semibold text-brand-maroon">
                 With Gratitude &amp; Inner Peace
-              </h4>
+              </h3>
               <p className="mt-3 text-xs text-brand-muted">Thank you for joining us today,</p>
               <p className="mt-1 border-b border-brand-border pb-2 font-serif text-2xl font-semibold text-brand-maroon">
                 {effectiveVisitor}

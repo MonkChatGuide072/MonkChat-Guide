@@ -53,9 +53,9 @@ export function NisitVocabCards({
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4 sm:p-5">
         <div>
-          <h3 className="font-serif text-lg font-semibold text-brand-maroon">
+          <h2 className="font-serif text-lg font-semibold text-brand-maroon">
             {isEnglish ? 'Meditation Guiding Cards & Essential Vocabulary' : 'การ์ดนำนั่งสมาธิและคำศัพท์ภาษาอังกฤษที่จำเป็น'}
-          </h3>
+          </h2>
           <p className="mt-1 text-sm text-brand-muted">
             {isEnglish
               ? 'Study the visual concept, read the English phrase aloud, and check off stages as you build fluency.'

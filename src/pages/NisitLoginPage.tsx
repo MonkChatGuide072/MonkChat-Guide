@@ -1,9 +1,9 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../lib/auth'
 import { supabaseClient } from '../lib/supabase'
-import { parseNisitStudentId } from '../content/nisitPractice'
+import { getNextRovingTabIndex, parseNisitStudentId } from '../content/nisitPractice'
 import {
   invokeStudentRegister,
   isAcceptableStudentPassword,
@@ -19,6 +19,7 @@ export function NisitLoginPage() {
   const { session, profile, isLoading: isAuthLoading, signOut } = useAuth()
 
   const [mode, setMode] = useState<'login' | 'register'>('login')
+  const modeTabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [loginCode, setLoginCode] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
 
@@ -223,6 +224,8 @@ export function NisitLoginPage() {
             <img
               src="/images/logo/ayutthaya-monk-chat-logo.png"
               alt="Ayutthaya Monk Chat"
+              width={1001}
+              height={1024}
               className="h-16 w-16 object-contain"
             />
             <p className="text-xs font-medium text-brand-terracotta">
@@ -257,10 +260,20 @@ export function NisitLoginPage() {
         <section className="p-6 sm:p-8">
           <div role="tablist" className="grid grid-cols-2 gap-2 rounded-xl border border-brand-border bg-brand-cream p-1">
             <button
+              ref={(el) => { modeTabRefs.current[0] = el }}
               type="button"
               role="tab"
               aria-selected={mode === 'login'}
+              tabIndex={mode === 'login' ? 0 : -1}
               onClick={() => { setMode('login'); setErrorMsg('') }}
+              onKeyDown={(e) => {
+                const next = getNextRovingTabIndex(e.key, 0, 2)
+                if (next == null) return
+                e.preventDefault()
+                setMode(next === 0 ? 'login' : 'register')
+                setErrorMsg('')
+                modeTabRefs.current[next]?.focus()
+              }}
               className={`min-h-11 cursor-pointer rounded-lg px-3 text-sm font-medium transition-colors duration-150 ${
                 mode === 'login' ? 'bg-brand-terracotta text-white' : 'text-brand-maroon hover:bg-brand-gold-soft'
               }`}
@@ -268,10 +281,20 @@ export function NisitLoginPage() {
               {isEnglish ? 'Sign in' : 'เข้าสู่ระบบ'}
             </button>
             <button
+              ref={(el) => { modeTabRefs.current[1] = el }}
               type="button"
               role="tab"
               aria-selected={mode === 'register'}
+              tabIndex={mode === 'register' ? 0 : -1}
               onClick={() => { setMode('register'); setErrorMsg('') }}
+              onKeyDown={(e) => {
+                const next = getNextRovingTabIndex(e.key, 1, 2)
+                if (next == null) return
+                e.preventDefault()
+                setMode(next === 0 ? 'login' : 'register')
+                setErrorMsg('')
+                modeTabRefs.current[next]?.focus()
+              }}
               className={`min-h-11 cursor-pointer rounded-lg px-3 text-sm font-medium transition-colors duration-150 ${
                 mode === 'register' ? 'bg-brand-terracotta text-white' : 'text-brand-maroon hover:bg-brand-gold-soft'
               }`}
@@ -292,7 +315,10 @@ export function NisitLoginPage() {
                 <span>{isEnglish ? '7-digit Student ID' : 'รหัสนิสิต 7 หลัก'}</span>
                 <input
                   type="text"
+                  name="student_code"
                   inputMode="numeric"
+                  autoComplete="username"
+                  spellCheck={false}
                   required
                   maxLength={7}
                   value={loginCode}
@@ -306,6 +332,7 @@ export function NisitLoginPage() {
                 <span>{isEnglish ? 'Password' : 'รหัสผ่านส่วนตัว'}</span>
                 <input
                   type="password"
+                  name="password"
                   required
                   autoComplete="current-password"
                   value={loginPassword}
@@ -331,6 +358,9 @@ export function NisitLoginPage() {
                 <span>{isEnglish ? 'Cohort Invite Code' : 'รหัสเชิญประจำรุ่น (Invite Code)'}</span>
                 <input
                   type="text"
+                  name="invite_code"
+                  autoComplete="off"
+                  spellCheck={false}
                   required
                   maxLength={40}
                   value={inviteCode}
@@ -344,7 +374,10 @@ export function NisitLoginPage() {
                 <span>{isEnglish ? '7-digit Student ID (4011001–6911060)' : 'รหัสนิสิต 7 หลัก (4011001–6911060)'}</span>
                 <input
                   type="text"
+                  name="student_code"
                   inputMode="numeric"
+                  autoComplete="username"
+                  spellCheck={false}
                   required
                   maxLength={7}
                   value={regCode}
@@ -359,6 +392,8 @@ export function NisitLoginPage() {
                   <span>{isEnglish ? 'Full name' : 'ชื่อ – นามสกุล'}</span>
                   <input
                     type="text"
+                    name="display_name"
+                    autoComplete="name"
                     required
                     maxLength={80}
                     value={regName}
@@ -372,6 +407,7 @@ export function NisitLoginPage() {
                   <span>{isEnglish ? 'Dharma name (optional)' : 'ฉายา (ถ้ามี)'}</span>
                   <input
                     type="text"
+                    name="dharma_name"
                     maxLength={80}
                     value={regDharmaName}
                     onChange={(e) => setRegDharmaName(e.target.value)}
@@ -386,6 +422,7 @@ export function NisitLoginPage() {
                   <span>{isEnglish ? 'Choose password (12+ chars)' : 'ตั้งรหัสผ่าน (12 ตัวขึ้นไป)'}</span>
                   <input
                     type="password"
+                    name="new_password"
                     required
                     minLength={12}
                     maxLength={128}
@@ -400,6 +437,7 @@ export function NisitLoginPage() {
                   <span>{isEnglish ? 'Confirm password' : 'ยืนยันรหัสผ่าน'}</span>
                   <input
                     type="password"
+                    name="confirm_password"
                     required
                     minLength={12}
                     maxLength={128}

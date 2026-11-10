@@ -109,12 +109,12 @@ export function QAPage() {
             <h1 className="mt-3 font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{t('qa.title')}</h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-brand-muted sm:text-base">{t('qa.subtitle')}</p>
           </div>
-          <img src="/images/home/monkchat-slide-2.webp" alt={isEnglish ? 'A monk among Ayutthaya ruins' : 'พระสงฆ์ท่ามกลางโบราณสถานอยุธยา'} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
+          <img src="/images/home/monkchat-slide-2.webp" alt={isEnglish ? 'A monk among Ayutthaya ruins' : 'พระสงฆ์ท่ามกลางโบราณสถานอยุธยา'} width={560} height={315} className="order-1 h-32 w-full object-cover object-[center_35%] md:order-2 md:h-full" />
         </div>
         <form role="search" onSubmit={event => { event.preventDefault(); resultsHeadingRef.current?.focus() }} className="flex flex-col gap-3 border-t border-brand-border p-5 sm:flex-row sm:p-6 md:px-8">
           <div className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-lg border border-brand-border bg-brand-surface px-3 focus-within:border-brand-terracotta focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-terracotta">
             <GuideIcon name="search" className="h-[18px] w-[18px] text-brand-muted" />
-            <input value={searchQuery} onChange={event => setSearchQuery(event.target.value)} aria-label={t('qa.searchPlaceholder')} placeholder={t('qa.searchPlaceholder')} className="min-h-11 min-w-0 flex-1 bg-transparent text-sm text-brand-text outline-none placeholder:text-brand-muted" />
+            <input value={searchQuery} onChange={event => setSearchQuery(event.target.value)} aria-label={t('qa.searchPlaceholder')} placeholder={t('qa.searchPlaceholder')} className="min-h-11 min-w-0 flex-1 bg-transparent text-base text-brand-text outline-none placeholder:text-brand-muted" />
             {searchQuery && <button type="button" onClick={() => setSearchQuery('')} aria-label={t('qa.clearSearch')} className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-brand-muted hover:bg-brand-gold-soft"><GuideIcon name="close" /></button>}
           </div>
           <button type="submit" className="inline-flex min-h-12 cursor-pointer items-center justify-center rounded-lg bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark">{isEnglish ? 'Search' : 'ค้นหา'}</button>

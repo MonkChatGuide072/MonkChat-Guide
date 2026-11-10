@@ -256,7 +256,7 @@ function SyncedScriptPlayer({
       <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h3 className="font-serif text-lg font-semibold text-brand-maroon">{translation.title}</h3>
+            <h2 className="font-serif text-lg font-semibold text-brand-maroon">{translation.title}</h2>
             <p className="mt-1 text-xs text-brand-muted tabular-nums">
               {isEnglish ? 'Language:' : 'ภาษาต้นฉบับ:'} {track.source_language_code.toUpperCase()} ·{' '}
               {Math.max(1, Math.round(track.duration_seconds / 60))} {isEnglish ? 'min' : 'นาที'}
@@ -327,9 +327,9 @@ function SyncedScriptPlayer({
         <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h4 className="font-sans text-base font-medium text-brand-maroon">
+              <h3 className="font-sans text-base font-medium text-brand-maroon">
                 {isEnglish ? 'Click any line to jump & repeat' : 'แตะที่แต่ละท่อนเพื่อกระโดดเสียงไปฝึกพูดซ้ำ'}
-              </h4>
+              </h3>
               <p className="mt-1 text-xs text-brand-muted">
                 {isEnglish
                   ? `${cues.length} synchronized segments`

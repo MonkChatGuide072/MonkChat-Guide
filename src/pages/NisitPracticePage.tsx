@@ -1,7 +1,7 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
-import { parseNisitStudentId } from '../content/nisitPractice'
+import { getNextRovingTabIndex, parseNisitStudentId } from '../content/nisitPractice'
 import { useAuth } from '../lib/auth'
 import { supabaseClient } from '../lib/supabase'
 import { isAcceptableStudentPassword } from '../lib/studentPractice'
@@ -34,6 +34,7 @@ export function NisitPracticePage() {
   const isSuspendedSession = Boolean(session && authProfile && !authProfile.is_active)
 
   const [activeTab, setActiveTab] = useState<NisitTab>('vocab')
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [localProfile, setLocalProfile] = useState<LocalNisitProfile | null>(() => {
     try {
       const raw = localStorage.getItem(PROFILE_STORAGE_KEY)
@@ -251,6 +252,7 @@ export function NisitPracticePage() {
                     <span>{isEnglish ? 'New password (12+ chars)' : 'รหัสผ่านใหม่ (อย่างน้อย 12 ตัว)'}</span>
                     <input
                       type="password"
+                      name="new_password"
                       required
                       minLength={12}
                       maxLength={128}
@@ -264,6 +266,7 @@ export function NisitPracticePage() {
                     <span>{isEnglish ? 'Confirm new password' : 'ยืนยันรหัสผ่านใหม่'}</span>
                     <input
                       type="password"
+                      name="confirm_password"
                       required
                       minLength={12}
                       maxLength={128}
@@ -398,7 +401,9 @@ export function NisitPracticePage() {
                     <span>{isEnglish ? '7-digit Student ID' : 'รหัสนิสิต 7 หลัก (4011001–6911060)'}</span>
                     <input
                       type="text"
+                      name="student_code"
                       inputMode="numeric"
+                      spellCheck={false}
                       maxLength={7}
                       value={studentIdInput}
                       onChange={(e) => setStudentIdInput(e.target.value)}
@@ -410,6 +415,7 @@ export function NisitPracticePage() {
                     <span>{isEnglish ? 'Name & Dharma Name' : 'ชื่อ – ฉายา – นามสกุล'}</span>
                     <input
                       type="text"
+                      name="full_name"
                       maxLength={80}
                       value={fullNameInput}
                       onChange={(e) => setFullNameInput(e.target.value)}
@@ -444,17 +450,26 @@ export function NisitPracticePage() {
           aria-label={isEnglish ? 'Student training modules' : 'หมวดหมู่การฝึกพระนิสิต'}
           className="flex flex-wrap gap-2 rounded-2xl border border-brand-border bg-brand-surface p-2"
         >
-          {tabs.map((tab) => {
+          {tabs.map((tab, index) => {
             const active = activeTab === tab.id
             return (
               <button
                 key={tab.id}
+                ref={(el) => { tabRefs.current[index] = el }}
                 role="tab"
                 type="button"
                 id={`tab-${tab.id}`}
                 aria-selected={active}
                 aria-controls={`panel-${tab.id}`}
+                tabIndex={active ? 0 : -1}
                 onClick={() => setActiveTab(tab.id)}
+                onKeyDown={(e) => {
+                  const nextIndex = getNextRovingTabIndex(e.key, index, tabs.length)
+                  if (nextIndex == null) return
+                  e.preventDefault()
+                  setActiveTab(tabs[nextIndex].id)
+                  tabRefs.current[nextIndex]?.focus()
+                }}
                 className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-150 ${
                   active
                     ? 'bg-brand-terracotta text-white'

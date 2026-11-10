@@ -186,21 +186,29 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
       title: isEnglish ? 'Meet the monks' : 'พบและสนทนากับพระสงฆ์',
       desc: isEnglish ? 'Have an open, respectful conversation about Buddhist life and mindfulness.' : 'สนทนาธรรมและแลกเปลี่ยนมุมมองชีวิตกับพระนิสิตอย่างเป็นกันเอง',
       img: '/images/home/monkchat-slide-1.webp',
+      width: 560,
+      height: 315,
     },
     {
       title: isEnglish ? 'Short meditation' : 'ฝึกสมาธิเบื้องต้น',
       desc: isEnglish ? 'A simple, guided meditation to help you relax and be present.' : 'สมาธิสั้น 5-10 นาที ช่วยผ่อนคลายและสร้างสติรู้ตัว',
       img: '/images/home/monkchat-meditation-hero.webp',
+      width: 1672,
+      height: 941,
     },
     {
       title: isEnglish ? 'Q&A' : 'ถาม-ตอบข้อสงสัย',
       desc: isEnglish ? 'Ask questions about Buddhism, daily life, and practical wisdom.' : 'ซักถามข้อสงสัยเกี่ยวกับวิถีพุทธและหลักธรรมนำมาปรับใช้',
       img: '/images/home/monkchat-slide-2.webp',
+      width: 560,
+      height: 315,
     },
     {
       title: isEnglish ? 'Photo souvenir' : 'ภาพความทรงจำ',
       desc: isEnglish ? 'Capture a meaningful memory at the historic Ayutthaya site.' : 'เก็บภาพความประทับใจและความทรงจำอันทรงคุณค่า ณ เมืองประวัติศาสตร์',
       img: '/images/home/monkchat-slide-4.webp',
+      width: 560,
+      height: 315,
     },
   ]
 
@@ -211,6 +219,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         ? 'Real open-air conversations with MCU student monks where visitors can ask about Thai monastic life, mindfulness, and practical Buddhism.'
         : 'บรรยากาศสนทนาธรรมจริงใต้ร่มไม้ภายในวัดมหาธาตุ พูดคุยซักถามวิถีพระสงฆ์ วัฒนธรรมไทย และแนวคิดความสุขอย่างเป็นกันเอง',
       img: '/images/home/monkchat-slide-3.webp',
+      width: 560,
+      height: 315,
     },
     {
       title: isEnglish ? 'Shaded ruins & accessible stillness' : 'ความสงบเรียบง่ายที่เริ่มต้นได้ทุกคน',
@@ -218,6 +228,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         ? 'Rest among Ayutthaya heritage grounds with five to ten minutes of gentle breathing and center-of-body stillness—no prior experience required.'
         : 'พักใจท่ามกลางโบราณสถานอยุธยาด้วยสมาธิเบื้องต้น 5–10 นาที เหมาะสำหรับผู้เริ่มต้นทุกเชื้อชาติและทุกความเชื่อ',
       img: '/images/home/monkchat-meditation-field.webp',
+      width: 1672,
+      height: 941,
     },
   ]
 
@@ -263,7 +275,10 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           <div className="relative h-48 w-full sm:h-full">
             <img
               src="/images/home/monkchat-meditation-ruins.webp"
-              alt={isEnglish ? 'A meditation scene among Ayutthaya ruins' : 'ภาพบรรยากาศนั่งสมาธิท่ามกลางโบราณสถานอยุธยา'} loading="lazy"
+              alt={isEnglish ? 'A meditation scene among Ayutthaya ruins' : 'ภาพบรรยากาศนั่งสมาธิท่ามกลางโบราณสถานอยุธยา'}
+              width={1672}
+              height={941}
+              loading="lazy"
               className="h-full w-full object-cover"
             />
           </div>
@@ -343,7 +358,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
               className="flex overflow-hidden rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] sm:flex-col"
             >
               <div className="relative w-24 shrink-0 overflow-hidden bg-[#FAF2E6] sm:h-36 sm:w-full">
-                <img src={item.img} alt={item.title} loading="lazy" className="h-full w-full object-cover" />
+                <img src={item.img} alt={item.title} width={item.width} height={item.height} loading="lazy" className="h-full w-full object-cover" />
               </div>
               <div className="flex flex-1 flex-col p-4">
                 <h3 className="font-sans text-base font-medium text-[#681B16]">
@@ -378,7 +393,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
               className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface"
             >
               <div className="h-56 w-full overflow-hidden bg-[#FAF2E6]">
-                <img src={moment.img} alt={moment.title} loading="lazy" className="h-full w-full object-cover object-center" />
+                <img src={moment.img} alt={moment.title} width={moment.width} height={moment.height} loading="lazy" className="h-full w-full object-cover object-center" />
               </div>
               <figcaption className="p-5">
                 <h3 className="font-sans text-base font-medium text-brand-maroon">{moment.title}</h3>
@@ -577,7 +592,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                     }}
                     className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#EADCC6] bg-brand-surface px-3 text-sm font-medium text-[#681B16] hover:bg-[#FDF4E3]"
                   >
-                    {imageUrl ? <img src={imageUrl} alt="" className="h-4 w-4 rounded-full object-cover" /> : <LinkIcon />}
+                    {imageUrl ? <img src={imageUrl} alt="" width={16} height={16} className="h-4 w-4 rounded-full object-cover" /> : <LinkIcon />}
                     <span>{title}</span>
                     <ExternalLinkIcon />
                   </a>
@@ -626,7 +641,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
               <GuideIcon name="question" />
               <span>FAQ</span>
             </div>
-            <Link to="/qa" className="text-sm font-medium text-[#A43D1D] hover:underline">
+            <Link to="/qa" className="inline-flex min-h-11 items-center text-sm font-medium text-[#A43D1D] hover:underline">
               {isEnglish ? 'View all FAQ →' : 'ดูคำถามทั้งหมด →'}
             </Link>
           </div>

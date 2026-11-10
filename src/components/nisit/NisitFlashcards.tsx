@@ -189,9 +189,9 @@ export function NisitFlashcards({
               {isEnglish ? 'Visitor question (try answering aloud first)' : 'คำถามจากผู้มาเยือน (ลองนึกหรือฝึกพูดตอบเป็นภาษาอังกฤษก่อนเปิดเฉลย)'}
             </p>
             {enRow && (
-              <h3 className="font-serif text-xl font-semibold leading-snug text-brand-maroon sm:text-2xl">
+              <h2 className="font-serif text-xl font-semibold leading-snug text-brand-maroon sm:text-2xl">
                 {enRow.question}
-              </h3>
+              </h2>
             )}
             {thRow && (
               <p className="text-sm leading-6 text-brand-muted">

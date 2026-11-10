@@ -1,5 +1,18 @@
 # MonkChat Guide — Current Handoff
 
+## สกิลตรวจ UX Flow / Accessibility (`.agents/skills/monkchat-ux-a11y-audit`) และปรับปรุง A11y — 11 พฤศจิกายน 2569
+
+- **สกิลใหม่ในโปรเจกต์:**
+  - `.agents/skills/monkchat-ux-a11y-audit/SKILL.md` — ขั้นตอนตรวจ UX Flow ของ MonkChat (`/`, `/home`, `/visit`, `/nisit`, `/nisit/login`, `/admin`), Keyboard/Focus, Form, และ WCAG Accessibility
+  - `.agents/skills/monkchat-ux-a11y-audit/references/vercel-web-guidelines.md` — มาตรฐานจาก `vercel-labs/web-interface-guidelines` (MIT License) ที่ปรับให้สอดคล้องกับ Sentence case, Vite CSR PWA และ `AGENTS.md` / `unslop`
+- **จุดที่แก้ไขจากผลตรวจรอบแรก:**
+  - เพิ่ม Skip-to-content link (`#main-content` ใน `src/components/Layout.tsx` และ `#admin-main-content` ใน `src/components/AdminLayout.tsx`) พร้อม `min-h-11` บนลิงก์โลโก้หัวเว็บ
+  - แก้ลำดับ Heading ใน `/nisit` (`src/components/nisit/NisitVocabCards.tsx`, `NisitAudioTeleprompter.tsx`, `NisitVideoStudy.tsx`, `NisitFlashcards.tsx`, `NisitThankYouCard.tsx`) เป็น `<h1>` → `<h2>` → `<h3>` ไม่ข้ามระดับ
+  - เพิ่ม `getNextRovingTabIndex` ใน `src/content/nisitPractice.ts` และเชื่อมต่อปุ่มลูกศร (`ArrowLeft`/`ArrowRight`/`Home`/`End`) ใน `role="tablist"` บน `NisitPracticePage.tsx` และ `NisitLoginPage.tsx` พร้อม `name`, `autoComplete`, และ `spellCheck={false}`
+  - ปรับขนาดตัวอักษรช่องค้นหาใน `src/pages/QAPage.tsx` เป็น `text-base` (`16 px`) และปรับลิงก์ `"View all FAQ →"` ใน `src/pages/VisitPage.tsx` เป็น `min-h-11` (`>= 44 px`)
+  - ใส่ `width` / `height` HTML attribute บนรูปภาพหลักใน `Layout.tsx`, `AdminLayout.tsx`, `HomeOverviewPage.tsx`, `VisitPage.tsx`, `QAPage.tsx`, `CentersPage.tsx`, `NisitLoginPage.tsx`, และ `NisitThankYouCard.tsx`
+- **ผลตรวจหลังแก้ไข:** ผ่าน `vitest` **15 files / 93 tests**, `oxlint` (**0 warnings / 0 errors** บน 117 ไฟล์), `tsc -b && vite build`, `git diff --check`, และ Chrome CDP A11y re-audit ครบ 9 เส้นทาง (`skipLinks: 1`, `skippedLevels: []`, `missingDimsImgs: []`, `qaSearchFontPx: 16`, `overflow: false`, และไม่มีลิงก์/ปุ่มที่มองเห็น `< 44 px`)
+
 ## ระบบบัญชีพระนิสิตประจำรุ่น · Cohort Invite Code · บทบาท `student` และ `/admin/students` (เฟส 2) — 10 พฤศจิกายน 2569
 
 - **ฐานงานและ branch:** แตกจาก `feat/home-visit-nisit-phase1` (commit `55ff83f`, PR #20) เป็น branch ใหม่ `feat/nisit-student-accounts-phase2` ใน worktree `..\monkchat-guide-wt-nisit` (ยังไม่ commit/push, ยังไม่ merge เข้า `main`, ยังไม่ apply migration หรือ deploy production)
