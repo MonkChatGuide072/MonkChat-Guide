@@ -182,21 +182,22 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
 
   afterEach(cleanup)
 
-  it('HomeOverviewPage unifies / and /visit: displays language gate first, then visitor home, 5 shortcuts and /nisit gateway', async () => {
-    renderWithRouter(<HomeOverviewPage />)
+  it('HomeOverviewPage unifies / and /visit without exposing /nisit publicly to visitors', async () => {
+    const { container } = renderWithRouter(<HomeOverviewPage />)
     expect(screen.getByRole('heading', { name: /เลือกภาษา \/ Choose language/i })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'English' }))
 
     expect(await screen.findByRole('heading', { name: 'MonkChat Guide' })).toBeInTheDocument()
     const shortcuts = screen.getByRole('navigation', { name: 'Home shortcuts' })
     expect(shortcuts.querySelectorAll('a')).toHaveLength(5)
-    expect(screen.getByRole('link', { name: /Open Student Training/i })).toHaveAttribute('href', '/nisit')
+    expect(container.querySelector('a[href="/nisit"]')).toBeNull()
+    expect(screen.queryByRole('link', { name: /Student Training|Student Monks|พระนิสิต/i })).not.toBeInTheDocument()
   })
 
-  it('Layout keeps 5 visitor shortcuts persistent on sub-pages and places chatbot in header (including /meditation)', async () => {
+  it('Layout keeps 5 visitor shortcuts persistent on sub-pages, keeps chatbot in header, and hides /nisit links publicly', async () => {
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
     sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
-    renderWithRouter(
+    const { container } = renderWithRouter(
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="activities" element={<div>Subpage body</div>} />
@@ -206,6 +207,7 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
       ['/meditation'],
     )
 
+    expect(container.querySelector('a[href="/nisit"]')).toBeNull()
     const bar = screen.getByRole('navigation', { name: 'Visitor quick shortcuts' })
     expect(bar.querySelectorAll('a')).toHaveLength(5)
     expect(within(bar).getByRole('link', { name: 'Meditate', current: 'page' })).toHaveAttribute('href', '/meditation')

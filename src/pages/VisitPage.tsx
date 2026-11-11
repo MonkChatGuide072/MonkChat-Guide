@@ -260,29 +260,6 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </dl>
       </section>
 
-      <section
-        aria-label={isEnglish ? 'Student monk training portal' : 'มุมฝึกพระนิสิต'}
-        className="flex flex-col gap-3 rounded-2xl border border-brand-gold/30 bg-brand-gold-soft/75 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
-      >
-        <div className="min-w-0">
-          <p className="text-xs font-medium text-brand-gold">
-            {isEnglish ? 'For MCU student monks' : 'สำหรับพระนิสิต มจร'}
-          </p>
-          <p className="mt-0.5 text-sm font-medium leading-6 text-brand-maroon">
-            {isEnglish
-              ? 'Open Student Training for audio teleprompter, flashcards, and cohort practice check-in.'
-              : 'เข้ามุมฝึกพระนิสิต เพื่อฝึกนำสมาธิพร้อมเสียง คำศัพท์ และลงชื่อรุ่นผู้ใช้งาน'}
-          </p>
-        </div>
-        <Link
-          to="/nisit"
-          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-brand-terracotta bg-brand-surface px-4 text-sm font-medium text-brand-terracotta transition-colors duration-150 hover:bg-brand-terracotta hover:text-white"
-        >
-          <span>{isEnglish ? 'Open Student Training' : 'เข้ามุมฝึกพระนิสิต'}</span>
-          <GuideIcon name="arrow" />
-        </Link>
-      </section>
-
       {/* 3. LOCATION & MAP SECTION */}
       <section id="location-details" className="scroll-mt-8 space-y-4">
         <div>

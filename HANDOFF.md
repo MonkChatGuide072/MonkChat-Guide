@@ -1,5 +1,13 @@
 # MonkChat Guide — Current Handoff
 
+## ซ่อนทางเข้า `/nisit` ออกจากทุกส่วนสาธารณะ (รู้เฉพาะวงใน) — 11 พฤศจิกายน 2569
+
+- ตามคำยืนยันเจ้าของโครงการ (**หน้าพระนิสิตต้องไม่โชว์สาธารณะ ให้รู้เฉพาะวงใน ไม่แสดงแก่นักท่องเที่ยว**):
+  - นำเมนู `พระนิสิต / Student Monks` และลิงก์ `มุมฝึกพระนิสิต (/nisit)` ออกจาก Navigation หลัก, เมนูมือถือ และ Footer ของ [src/components/Layout.tsx](src/components/Layout.tsx)
+  - นำการ์ดทางเข้า `"สำหรับพระนิสิต มจร · เข้ามุมฝึกพระนิสิต"` ออกจาก [src/pages/VisitPage.tsx](src/pages/VisitPage.tsx) (`/`, `/home`, `/visit`)
+  - ยังคงเส้นทางตรง `/nisit` และ `/nisit/login` ไว้สำหรับพระนิสิตและทีมงานวงในเข้าใช้งานผ่าน URL โดยตรง
+  - อัปเดต [src/pages/HomeAndNisitPages.test.tsx](src/pages/HomeAndNisitPages.test.tsx) ยืนยันว่าหน้าผู้มาเยือนและ `Layout` สาธารณะไม่แสดงลิงก์ `/nisit`
+
 ## ปรับความสอดคล้อง Header แชทบอท `/meditation`, PWA manifest, A11y และตรวจระบบจริง — 11 พฤศจิกายน 2569
 
 - **งานที่ทำเพิ่มเติมใน branch `chore/monkchat-ux-a11y-audit-skill` (ยังไม่ commit/merge):**
