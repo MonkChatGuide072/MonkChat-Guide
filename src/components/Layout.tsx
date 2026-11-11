@@ -180,7 +180,6 @@ export function Layout() {
           {/* Right actions: Chatbot (header trigger), Language Switcher & Mobile menu toggle */}
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
             {!location.pathname.startsWith('/admin')
-              && !location.pathname.startsWith('/meditation')
               && !location.pathname.startsWith('/nisit') && <ChatbotServiceCard placement="header" />}
             <LanguageSwitcher tone="terracotta" />
 

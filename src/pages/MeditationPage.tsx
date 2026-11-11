@@ -5,7 +5,6 @@ import { supabaseClient } from '../lib/supabase'
 import { MeditationPlayer } from '../components/MeditationPlayer'
 import { MeditationBeginnerGuide } from '../components/MeditationBeginnerGuide'
 import { GuideIcon } from '../components/GuideIcon'
-import { ChatbotServiceCard } from '../components/ChatbotServiceCard'
 
 interface TrackTranslationRow {
   language_code: string
@@ -394,8 +393,6 @@ export function MeditationPage() {
 
         </section>
       )}
-
-      <div className="border-t border-brand-border pt-6"><ChatbotServiceCard inline /></div>
     </div>
   )
 }

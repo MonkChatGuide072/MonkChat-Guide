@@ -77,6 +77,7 @@ describe('Meditation flow', () => {
 
   it('opens the linked track, changes tracks and restores selection on browser back', async () => {
     openPage(<MeditationPage />, '/meditation?trackId=b')
+    expect(screen.queryByRole('heading', { name: 'Ask the chatbot' })).not.toBeInTheDocument()
     const audioB = await screen.findByLabelText('Meditation Audio Player: Track B')
     expect(audioB).toHaveAttribute('src', 'https://example.org/b.mp3')
     expect(mocks.selects.some(value => value.includes('source_language_code'))).toBe(true)

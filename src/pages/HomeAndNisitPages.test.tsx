@@ -193,21 +193,22 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     expect(screen.getByRole('link', { name: /Open Student Training/i })).toHaveAttribute('href', '/nisit')
   })
 
-  it('Layout keeps 5 visitor shortcuts persistent on sub-pages and places chatbot in header', async () => {
+  it('Layout keeps 5 visitor shortcuts persistent on sub-pages and places chatbot in header (including /meditation)', async () => {
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
     sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
     renderWithRouter(
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="activities" element={<div>Subpage body</div>} />
+          <Route path="meditation" element={<div>Meditation body</div>} />
         </Route>
       </Routes>,
-      ['/activities'],
+      ['/meditation'],
     )
 
     const bar = screen.getByRole('navigation', { name: 'Visitor quick shortcuts' })
     expect(bar.querySelectorAll('a')).toHaveLength(5)
-    expect(within(bar).getByRole('link', { name: 'Activities', current: 'page' })).toHaveAttribute('href', '/activities')
+    expect(within(bar).getByRole('link', { name: 'Meditate', current: 'page' })).toHaveAttribute('href', '/meditation')
 
     const header = screen.getByRole('banner')
     const chatButton = header.querySelector('button[aria-controls="reviewed-chatbot-panel"]')

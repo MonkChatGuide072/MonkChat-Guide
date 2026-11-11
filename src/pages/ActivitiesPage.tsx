@@ -16,6 +16,8 @@ export function ActivitiesPage() {
         ? 'Open, welcoming conversation between student monks from Mahachulalongkornrajavidyalaya University (MCU) and foreign visitors. Discuss Buddhism, monastic life, meditation, and Thai culture in a relaxed, friendly setting.'
         : 'กิจกรรมสนทนาธรรมภาษาอังกฤษแบบเปิดกว้าง เป็นกันเอง ระหว่างพระนิสิต มจร และผู้มาเยือนชาวต่างชาติ แลกเปลี่ยนมุมมองเรื่องพระพุทธศาสนา วิถีชีวิตพระสงฆ์ และวัฒนธรรมไทย',
       image: '/images/home/monkchat-slide-1.webp',
+      imageWidth: 560,
+      imageHeight: 315,
       badge: isEnglish ? 'Official Activity' : 'กิจกรรมหลักที่ยืนยันแล้ว',
       ctaText: isEnglish ? 'Plan Your Visit' : 'วางแผนการมาเยือน',
       ctaLink: '/',
@@ -28,6 +30,8 @@ export function ActivitiesPage() {
         ? 'A gentle introduction to breath meditation guided by student monks at the historic ruins or practiced anywhere through the web audio player. Free and suitable for beginners of all backgrounds.'
         : 'การนำนั่งสมาธิกำหนดลมหายใจเบื้องต้นโดยพระสงฆ์ในพื้นที่ หรือฝึกฝนด้วยตนเองผ่านเสียงนำสมาธิในเว็บแอปพลิเคชัน เหมาะสำหรับผู้เริ่มต้นทุกเชื้อชาติและศาสนา',
       image: '/images/home/monkchat-meditation-hero.webp',
+      imageWidth: 1672,
+      imageHeight: 941,
       badge: isEnglish ? 'Meditation Practice' : 'การฝึกสมาธิที่ยืนยันแล้ว',
       ctaText: isEnglish ? 'Try Guided Audio' : 'ฟังเสียงนำสมาธิ 5 นาที',
       ctaLink: '/meditation',
@@ -46,7 +50,7 @@ export function ActivitiesPage() {
   ]
 
   return (
-    <div className="space-y-12 bg-brand-cream pb-24 text-brand-text sm:space-y-16">
+    <div className="space-y-12 bg-brand-cream pb-8 text-brand-text sm:space-y-16">
       {/* Hero Header */}
       <section className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-6 sm:p-8">
         <div className="relative z-10 max-w-3xl">
@@ -112,6 +116,8 @@ export function ActivitiesPage() {
                   <img
                     src={act.image}
                     alt={act.title}
+                    width={act.imageWidth}
+                    height={act.imageHeight}
                     className="h-full w-full object-cover"
                     loading="lazy"
                   />

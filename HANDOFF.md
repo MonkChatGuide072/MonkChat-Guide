@@ -1,5 +1,21 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับความสอดคล้อง Header แชทบอท `/meditation`, PWA manifest, A11y และตรวจระบบจริง — 11 พฤศจิกายน 2569
+
+- **งานที่ทำเพิ่มเติมใน branch `chore/monkchat-ux-a11y-audit-skill` (ยังไม่ commit/merge):**
+  - **ปุ่มแชทบอทบน Header หน้า `/meditation`:** นำเงื่อนไขยกเว้น `/meditation` ออกใน [src/components/Layout.tsx](src/components/Layout.tsx) และนำการ์ด `<ChatbotServiceCard inline />` ด้านล่างออกจาก [src/pages/MeditationPage.tsx](src/pages/MeditationPage.tsx) เพื่อให้ปุ่มแชทบอทอยู่บน Header เหมือนกันครบทุกหน้าสาธารณะ (`/`, `/activities`, `/meditation`, `/qa`, `/centers`)
+  - **PWA Manifest (`vite.config.ts`) & ขนาดภาพป้องกัน CLS (`width`/`height`):** อัปเดต `background_color` (`#F7F7F4`) และ `theme_color` (`#11223C`) ใน `vite.config.ts` ให้ตรงกับ [index.html](index.html) และชุดสี White/Navy/Gold; เติม `width`/`height` จริงให้ภาพใน [src/pages/ActivitiesPage.tsx](src/pages/ActivitiesPage.tsx) (`560×315`, `1672×941` พร้อมลด `pb-24` → `pb-8`), [src/pages/LoginPage.tsx](src/pages/LoginPage.tsx) (`1001×1024`), และ [src/pages/NotFoundPage.tsx](src/pages/NotFoundPage.tsx) (`1001×1024`)
+  - **อัปเดตเทสต์:** เพิ่มการตรวจ Header Chatbot บน `/meditation` และไม่แสดงการ์ดแชทซ้ำท้ายหน้าใน [src/pages/HomeAndNisitPages.test.tsx](src/pages/HomeAndNisitPages.test.tsx) และ [src/pages/PublicPages.test.tsx](src/pages/PublicPages.test.tsx)
+- **ผลตรวจหลังแก้ไขโค้ดและเทสต์:**
+  - `vitest run --run`: **15 files / 94 tests passed**
+  - `oxlint`: **0 warnings / 0 errors** บน 118 ไฟล์
+  - `tsc -b && vite build`: ผ่าน (`PWA v1.3.0`, precache 67 entries / `2422.06 KiB`)
+  - Chrome Headless CDP Audit: **45/45 checks** (`360/390/768/1024/1440 px` × 9 เส้นทาง) `failureCount: 0` (ไม่มี overflow, ไม่มีภาพขาด `width/height`, ไม่มีปุ่ม/ลิงก์ที่มองเห็น `< 44 px`, มีปุ่มแชทบอทบน Header หน้า `/meditation` ครบ)
+- **ผลตรวจสภาพแวดล้อมจริง (Read-only diagnostic บน Production / PR #22 Preview / Supabase CLI):**
+  - Supabase Migrations 14/14 และ Edge Functions 3 ตัว (`team-management` v3, `student-cohorts` v1, `student-register` v1) อัปขึ้นระบบและสถานะ `ACTIVE` ครบแล้ว และ `origin/main` รวม PR #19–#21 แล้ว (`f89a468`)
+  - Endpoint `/meditation` บนพรีวิวล่าสุดโหลด `signedUrl` เสียง (.mp3) และ `meditation-subtitles` `.vtt` ได้จริง (`HTTP 200`); endpoint `/api/monk-assistant` ตอบ `401` เมื่อยังไม่ล็อกอิน (พร้อมใช้งานและตรวจสิทธิ์); และ CORS `CMS_ALLOWED_ORIGINS` เปิดรับ `https://monkchat-guide.pages.dev` (`204`) ส่วนพรีวิว (`71994abf.monkchat-guide.pages.dev`) ติด `403` ตามการตั้งค่าความปลอดภัย
+  - **งานที่ยังรอการดำเนินการ / ตัดสินใจจากเจ้าของโครงการ:** (1) merge `PR #22` ขึ้น `main` เมื่อพร้อมเผยแพร่, (2) ล็อกอินบัญชี Owner จริงสร้าง Invite Code รุ่นแรกที่ `/admin/students` เพื่อทดสอบ E2E `/nisit/login` และ `/admin/assistant` บนโดเมนหลัก `monkchat-guide.pages.dev`, (3) ตรวจเสียงนำสมาธิ 326s กับซับ VTT และเพิ่มคลังเสียง/Q&A จริง (ปัจจุบันเห็นเผยแพร่ 1 เสียง EN 5 นาที และ 4 Q&A)
+
 ## รวมหน้าแรก `/` · `/home` · `/visit`, ไอคอนลัดคงค้าง, แชทบอทบน Header และโทนสี White/Navy/Gold — 11 พฤศจิกายน 2569
 
 - **รวมหน้าแรกของผู้มาเยือน (`/` · `/home` · `/visit`):**

@@ -135,7 +135,7 @@ export function LoginPage() {
   return (
     <div className="mx-auto grid max-w-4xl overflow-hidden rounded-2xl border border-brand-border bg-brand-surface lg:grid-cols-[0.9fr_1.1fr]">
       <section className="hidden flex-col justify-center gap-8 border-r border-brand-border bg-[#F5F1E9] p-8 lg:flex">
-        <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="Ayutthaya Monk Chat" className="h-20 w-20 object-contain" />
+        <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="Ayutthaya Monk Chat" width={1001} height={1024} className="h-20 w-20 object-contain" />
         <div>
           <h2 className="font-serif text-2xl font-medium leading-snug text-brand-maroon">{t('management.loginPanelTitle')}</h2>
           <p className="mt-4 text-sm leading-7 text-brand-muted">{t('management.loginPanelDescription')}</p>
