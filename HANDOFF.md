@@ -1,5 +1,12 @@
 # MonkChat Guide — Current Handoff
 
+## ซ่อนทางเข้า `/nisit` และ `/admin` ออกจากทุกส่วนสาธารณะ + ปิด PR ค้างเก่า (11 พฤศจิกายน 2569)
+
+- ตามคำยืนยันเจ้าของโครงการ:
+  - **ซ่อนทางเข้าวงในทั้งหมดจากผู้มาเยือน:** นำเมนู `พระนิสิต / Student Monks` และลิงก์ Footer `/nisit` กับ `/admin/login` ออกจาก [src/components/Layout.tsx](src/components/Layout.tsx) และนำการ์ด `"เข้ามุมฝึกพระนิสิต"` ออกจาก [src/pages/VisitPage.tsx](src/pages/VisitPage.tsx) โดยยังคงเข้าใช้งาน `/nisit`, `/nisit/login`, และ `/admin` ผ่าน URL โดยตรงได้ตามเดิม
+  - **เก็บกวาด PR ค้างเก่า:** ปิด PR เก่าที่ถูกแทนที่แล้ว ได้แก่ `#7, #9, #10, #13, #15, #18` เหลือเฉพาะ `PR #22` เปิดอยู่
+  - อัปเดต [src/pages/HomeAndNisitPages.test.tsx](src/pages/HomeAndNisitPages.test.tsx) ยืนยันว่าหน้าผู้มาเยือนและ `Layout` สาธารณะไม่แสดงทั้ง `a[href="/nisit"]` และ `a[href="/admin/login"]`
+
 ## ซ่อนทางเข้า `/nisit` ออกจากทุกส่วนสาธารณะ (รู้เฉพาะวงใน) — 11 พฤศจิกายน 2569
 
 - ตามคำยืนยันเจ้าของโครงการ (**หน้าพระนิสิตต้องไม่โชว์สาธารณะ ให้รู้เฉพาะวงใน ไม่แสดงแก่นักท่องเที่ยว**):

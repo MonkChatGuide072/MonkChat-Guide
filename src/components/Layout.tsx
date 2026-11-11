@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router'
+import { NavLink, Outlet, useLocation } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { MeditationMark } from './MeditationMark'
@@ -273,11 +273,6 @@ export function Layout() {
           <p className="text-xs font-medium text-brand-gold">
             Ayutthaya Monk Chat · Ayutthaya, Thailand
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-1 text-xs">
-            <Link to="/admin/login" className="inline-flex min-h-11 items-center px-2 text-brand-muted hover:text-brand-maroon hover:underline">
-              {isEnglish ? 'Team CMS (/admin)' : 'ระบบทีมงาน (/admin)'}
-            </Link>
-          </div>
         </div>
       </footer>
     </div>

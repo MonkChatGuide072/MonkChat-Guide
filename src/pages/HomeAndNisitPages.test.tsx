@@ -208,6 +208,7 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     )
 
     expect(container.querySelector('a[href="/nisit"]')).toBeNull()
+    expect(container.querySelector('a[href="/admin/login"]')).toBeNull()
     const bar = screen.getByRole('navigation', { name: 'Visitor quick shortcuts' })
     expect(bar.querySelectorAll('a')).toHaveLength(5)
     expect(within(bar).getByRole('link', { name: 'Meditate', current: 'page' })).toHaveAttribute('href', '/meditation')
