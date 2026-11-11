@@ -44,6 +44,16 @@ export function ChatbotServiceCard({
     wasOpen.current = isOpen
   }, [isOpen])
 
+  useEffect(() => {
+    if (mode !== 'header') return
+    const handleOpenRequest = (event: Event) => {
+      event.preventDefault()
+      setIsOpen(true)
+    }
+    window.addEventListener('monkchat:open-chatbot', handleOpenRequest)
+    return () => window.removeEventListener('monkchat:open-chatbot', handleOpenRequest)
+  }, [mode])
+
   const renderPanel = (className: string, isDialog = false) => (
     <section
       id="reviewed-chatbot-panel"

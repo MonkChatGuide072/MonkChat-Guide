@@ -1,5 +1,19 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับหน้า `/activities` แบบ 6 การ์ดภาพบรรยากาศจริง + แถบติดต่อสี Terracotta (11 พฤศจิกายน 2569)
+
+- **โครงสร้างใหม่ของหน้ากิจกรรม:**
+  - แยกเนื้อหาและข้อมูลภาพ 2 ภาษา (`TH`/`EN`) ไปที่ [src/content/activitiesContent.ts](src/content/activitiesContent.ts) และปรับการแสดงผลใน [src/pages/ActivitiesPage.tsx](src/pages/ActivitiesPage.tsx):
+    - **Hero Header:** ป้ายวัดมหาธาตุ, ชื่อกิจกรรม `MONK CHAT & MEDITATION` และชิปข้อมูลสำคัญ (`Free Walk-in`, `ทุกวันจันทร์และวันศุกร์ 13:15 น. เป็นต้นไป`, `ใต้ร่มไม้ใหญ่ วัดมหาธาตุ`)
+    - **แกลเลอรีบรรยากาศจริง 6 การ์ด (`3×2` บน Desktop):** ใช้ภาพถ่ายจริงจากวัดมหาธาตุ 6 ภาพใน `public/images/activities/activity-1.jpg` ถึง `activity-6.jpg` พร้อมลิงก์ไป `/meditation` และกล่องข้อแนะนำตารางกิจกรรม
+    - **แถบติดต่อเน้นสี Terracotta (`#A33D19`):** ลิงก์ตรงเพจทางการ `MonkChat Ayutthaya` (`https://web.facebook.com/MonkChatAyutthaya/`) และปุ่ม `คุยกับแชทบอท` ที่สั่งเปิด `#reviewed-chatbot-panel` บน Header (ผ่าน [src/components/ChatbotServiceCard.tsx](src/components/ChatbotServiceCard.tsx) + [src/components/GuideIcon.tsx](src/components/GuideIcon.tsx)) พร้อมงดแสดงเบอร์/อีเมลจากภาพตัวอย่างที่ยังไม่ผ่านการยืนยัน
+    - **ข้อแนะนำเบื้องต้น 3 ข้อ:** การแต่งกายสุภาพ, ถอดรองเท้า, กิริยาที่สงบสำรวม
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (119 files)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed** (เพิ่มเทสต์หน้า `/activities` 6 การ์ดและปุ่มแชทบอทใน [src/pages/PublicPages.test.tsx](src/pages/PublicPages.test.tsx))
+  - Chrome Headless CDP Audit (`360/390/768/1024/1440 px`): **40/40 checks passed** (`failureCount: 0`)
+
 ## ซ่อนทางเข้า `/nisit` และ `/admin` ออกจากทุกส่วนสาธารณะ + ปิด PR ค้างเก่า (11 พฤศจิกายน 2569)
 
 - ตามคำยืนยันเจ้าของโครงการ:

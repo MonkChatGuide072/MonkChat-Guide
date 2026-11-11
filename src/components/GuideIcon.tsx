@@ -25,6 +25,9 @@ const paths = {
   user: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM5 21a7 7 0 0 1 14 0',
   search: 'M18 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Zm-2 5 5 5',
   book: 'M12 6v15M3 4c4-1 6-1 9 2 3-3 5-3 9-2v15c-4-1-6-1-9 2-3-3-5-3-9-2V4Z',
+  camera: 'M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Zm8 3a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z',
+  thumbsUp: 'M7 10v10H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h3Zm3 10h6.6a2 2 0 0 0 2-1.6l1.2-6A2 2 0 0 0 17.8 10H14V6a2 2 0 0 0-2-2l-2 6v10Z',
+  volumeMute: 'M11 5 6 9H3v6h3l5 4V5Zm5 5 4 4m0-4-4 4',
 } as const
 
 export type GuideIconName = keyof typeof paths

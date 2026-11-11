@@ -215,10 +215,31 @@ describe('reviewed chatbot and centers', () => {
   it('limits activity listings to project sessions without an invented end time', async () => {
     openPage(<ActivitiesPage />, '/activities')
     expect(screen.getByRole('heading', { name: 'Monk Chat at Wat Mahathat' })).toBeInTheDocument()
+    expect(screen.getAllByRole('article')).toHaveLength(6)
     expect(screen.queryByText(/15:30|Friday Evening Chanting|Heritage Walk|First Sunday/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/035-241-724|081-853-9118|monkchat\.ayutthaya@gmail\.com/)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /MonkChat Ayutthaya/ })).toHaveAttribute(
+      'href',
+      'https://web.facebook.com/MonkChatAyutthaya/',
+    )
+    expect(screen.getByRole('heading', { name: 'Dress Modestly' })).toBeInTheDocument()
     await act(async () => { await i18n.changeLanguage('th') })
     expect(screen.getByRole('heading', { name: 'สนทนาธรรม Monk Chat ณ วัดมหาธาตุ' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'ติดต่อสอบถาม & ติดตามเพจอย่างเป็นทางการ' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'การแต่งกายสุภาพ' })).toBeInTheDocument()
     expect(screen.queryByText(/15:30|สวดมนต์ทำวัตรเย็นวันศุกร์|พิธีบุญประจำวันอาทิตย์/)).not.toBeInTheDocument()
+  })
+
+  it('opens the header chatbot dialog when clicking the Activities contact chatbot button', async () => {
+    openPage(
+      <>
+        <ChatbotServiceCard placement="header" />
+        <ActivitiesPage />
+      </>,
+      '/activities',
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Ask the Chatbot' }))
+    expect(await screen.findByRole('dialog', { name: 'Ask the chatbot' })).toBeInTheDocument()
   })
 
   it('keeps the searchable Q&A page and offers a separate service card', async () => {
