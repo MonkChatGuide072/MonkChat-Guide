@@ -1,5 +1,22 @@
 # MonkChat Guide — Current Handoff
 
+## ติดตั้ง AI Design Skills (Elaya Design) และยกระดับความสวยงามประณีตหน้านิสิตและคลัง Q&A 200 ข้อ (13 พฤศจิกายน 2569)
+
+- **ติดตั้งชุดสกิล AI Design Skills จากคุณ Elaya สู่ Antigravity Global Skills:**
+  - ติดตั้ง `landing-page-design` (`C:\Users\VICTUS GAMING 16\.gemini\config\skills\landing-page-design\SKILL.md`) สำหรับระบบการออกแบบหน้าเว็บ จัดวาง Typography, Spacing, Color tokens และ Contrast
+  - ติดตั้ง `figma-designer` (`C:\Users\VICTUS GAMING 16\.gemini\config\skills\figma-designer\SKILL.md`) สำหรับการออกแบบเชื่อมโยง Design System
+  - ติดตั้ง `redesign-existing-projects` (`C:\Users\VICTUS GAMING 16\.gemini\config\skills\redesign-existing-projects\SKILL.md`) สำหรับการตรวจสอบและอัปเกรดหน้าเว็บเดิมให้พรีเมียม สวยงาม สมบูรณ์แบบโดยไม่กระทบโครงสร้างหลัก
+- **ยกระดับความประณีตหน้านิสิต (/nisit) และคลังแฟลชการ์ด 200 ข้อ โดยคงโครงสร้างเดิมที่ผู้ใช้อนุมัติไว้ 100%:**
+  - **Header Hero Banner ([src/pages/NisitPracticePage.tsx](src/pages/NisitPracticePage.tsx)):** เพิ่ม Watermark ลายเส้นองค์พระสมาธิ (`MeditationMark`) จางเบาบางที่มุมขวาล่าง สร้างบรรยากาศที่สงบ สง่างาม เสริมป้าย Pill Badge ปากทางเข้า และปุ่ม Quick Jump ไปยังคลัง 200 ข้อด้วยแสง Pulse สีมรกต
+  - **Card Surface & Typography ([src/components/nisit/NisitFlashcards.tsx](src/components/nisit/NisitFlashcards.tsx)):** ปรับกล่องการ์ดคำถามเป็นทรงโค้งมนพรีเมียม (`rounded-3xl`) พร้อมเงาละมุน (`shadow-[0_4px_24px_rgba(43,24,16,0.06)]`), คำถามภาษาอังกฤษใช้ฟอนต์ Serif ขนาดพอเหมาะพร้อม `[text-wrap:balance]` สบายตา
+  - **Revealed Answer Parchment Style:** เมื่อกดดูเฉลย พื้นที่แสดงคำตอบปรับเป็นสัมผัสสีงาช้างอบอุ่น (`bg-[#FAF7F2]`), ขอบทองบางเบา (`border-brand-gold/40`), คำตอบภาษาอังกฤษจัดเป็น Blockquote ชัดเจน ส่วนคำอธิบายภาษาไทยวาทะศิลป์หลวงพ่อทัตตชีโวจัดวางในกล่องการ์ดสีขาวนวลพร้อมป้ายคำแนะนำอย่างเป็นระบบ
+  - **Interactive Controls:** ปรับปุ่ม Previous/Next และ Jump to card ให้มีมิติ มี Hover/Active transition นุ่มนวล ไม่กระตุก รองรับปุ่มสัมผัสขนาดมาตรฐานมือถือ (>= 44px)
+- **ผลตรวจการทำงานและคุณภาพ:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (124 files)
+  - `npm run build` (`tsc -b && vite build`): ผ่านฉลุย (`✓ built in 278ms`, `PWA precache 65 entries`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - `git diff --check`: ผ่านฉลุย ไม่มี trailing whitespace หรือ formatting error
+
 ## บรรจุคลัง 200 ข้อ (สไตล์หลวงพ่อทัตตชีโว) ถาวร พร้อมทางลัดและเปิดตรงผ่าน URL /nisit?tab=qa (13 พฤศจิกายน 2569)
 
 - **รับประกันคลัง 200 ข้อแสดงผล 100% เสมอ ([src/components/nisit/NisitFlashcards.tsx](src/components/nisit/NisitFlashcards.tsx)):**
