@@ -9,6 +9,7 @@ import { NisitLoginPage } from './NisitLoginPage'
 import { LoginPage } from './LoginPage'
 import { NisitPracticePage } from './NisitPracticePage'
 import { AdminStudentsPage } from './admin/AdminStudentsPage'
+import { NisitProtectedRoute } from '../components/NisitProtectedRoute'
 import type { Profile } from '../lib/auth'
 
 const mocks = vi.hoisted(() => ({
@@ -408,5 +409,62 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
       }),
     )
     expect(screen.getByText('Suspended')).toBeInTheDocument()
+  })
+
+  it('NisitProtectedRoute requires active student/staff login for /nisit and redirects guests to /nisit/login', async () => {
+    const renderProtectedNisit = () =>
+      renderRoute(
+        <Routes>
+          <Route path="/nisit" element={<NisitProtectedRoute />}>
+            <Route index element={<p>Protected Practice Hub</p>} />
+          </Route>
+          <Route path="/nisit/login" element={<NisitLoginPage />} />
+        </Routes>,
+        ['/nisit'],
+      )
+
+    // Unauthenticated visitor -> redirected to /nisit/login
+    const r1 = renderProtectedNisit()
+    expect(screen.queryByText('Protected Practice Hub')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Cohort Training Access' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/')
+    r1.unmount()
+
+    // Suspended student -> blocked from /nisit and redirected to /nisit/login suspended view
+    mocks.authState.session = { user: { id: 'stu-suspended' } }
+    mocks.authState.profile = {
+      id: 'stu-suspended',
+      display_name: 'Phra Suspended',
+      role: 'student',
+      is_active: false,
+    }
+    const r2 = renderProtectedNisit()
+    expect(screen.queryByText('Protected Practice Hub')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Account suspended or missing' })).toBeInTheDocument()
+    r2.unmount()
+
+    // Active student -> allowed
+    mocks.authState.session = { user: { id: 'stu-active' } }
+    mocks.authState.profile = {
+      id: 'stu-active',
+      display_name: 'Phra Somchai',
+      role: 'student',
+      is_active: true,
+    }
+    const r3 = renderProtectedNisit()
+    expect(screen.getByText('Protected Practice Hub')).toBeInTheDocument()
+    r3.unmount()
+
+    // Active team_member -> allowed
+    mocks.authState.session = { user: { id: 'team-1' } }
+    mocks.authState.profile = {
+      id: 'team-1',
+      display_name: 'Team Monk',
+      role: 'team_member',
+      is_active: true,
+    }
+    const r4 = renderProtectedNisit()
+    expect(screen.getByText('Protected Practice Hub')).toBeInTheDocument()
+    r4.unmount()
   })
 })

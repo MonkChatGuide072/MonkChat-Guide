@@ -201,8 +201,8 @@ export function NisitLoginPage() {
           </h1>
           <p className="mt-2 text-sm leading-6 text-brand-muted">
             {isEnglish
-              ? 'Your account is currently inactive. Please contact the coordinator or sign out to continue as a guest.'
-              : 'บัญชีนี้ถูกระงับการใช้งานชั่วคราว กรุณาติดต่ออาจารย์/ผู้ดูแลระบบ หรือออกจากระบบเพื่อเข้าโหมดฝึกแบบไม่ล็อกอิน'}
+              ? 'Your account is currently inactive. Please contact the coordinator or sign out.'
+              : 'บัญชีนี้ถูกระงับการใช้งานชั่วคราว กรุณาติดต่ออาจารย์/ผู้ดูแลระบบ หรือออกจากระบบ'}
           </p>
           <button
             type="button"
@@ -248,11 +248,11 @@ export function NisitLoginPage() {
                 : 'บัญชีนิสิต (role: student) แยกสิทธิ์จากระบบหลังบ้าน CMS (/admin) อย่างชัดเจน'}
             </p>
             <Link
-              to="/nisit"
+              to="/"
               className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-maroon hover:underline"
             >
               <GuideIcon name="arrow" className="h-[18px] w-[18px] rotate-180" />
-              <span>{isEnglish ? 'Back to practice hub' : 'กลับสู่มุมฝึกพระนิสิต'}</span>
+              <span>{isEnglish ? 'Back to home' : 'กลับหน้าหลักเว็บไซต์'}</span>
             </Link>
           </div>
         </section>

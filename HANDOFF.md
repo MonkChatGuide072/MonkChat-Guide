@@ -1,5 +1,17 @@
 # MonkChat Guide — Current Handoff
 
+## บังคับล็อกอินก่อนเข้าหน้า `/nisit` ผ่าน `NisitProtectedRoute` (12 พฤศจิกายน 2569)
+
+- **การป้องกันสิทธิ์เข้าถึง `/nisit`:**
+  - สร้าง [src/components/NisitProtectedRoute.tsx](src/components/NisitProtectedRoute.tsx) และครอบ `<Route path="nisit">` ใน [src/App.tsx](src/App.tsx) ให้ผู้ที่ยังไม่ล็อกอิน บัญชีที่ถูกระงับ (`!profile.is_active`) หรือบทบาทที่ไม่ใช่ `'student' | 'team_member' | 'owner'` ถูก Redirect ไปยัง `/nisit/login` ทันที
+  - ปรับ [src/pages/NisitLoginPage.tsx](src/pages/NisitLoginPage.tsx) ลบลิงก์และข้อความที่อ้างโหมดไม่ล็อกอินบน `/nisit` (เปลี่ยนลิงก์ด้านล่างจาก `/nisit` เป็น `/` กลับหน้าหลักเว็บไซต์)
+  - เพิ่มเทสต์ `NisitProtectedRoute` ใน [src/pages/NisitPhase2Pages.test.tsx](src/pages/NisitPhase2Pages.test.tsx)
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (121 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 97 tests passed**
+  - Chrome Headless (`360/390/768/1024/1440 px`): เปิด `/nisit` ขณะยังไม่ล็อกอิน redirect ไป `/nisit/login` ครบทั้ง 5 ขนาด และไม่มี overflow หรือ error
+
 ## ปรับหน้า `/centers` ใช้ภาพสถานที่จริง ตรงตามแผนที่ + ตัวเลือกโซนในไทย/ต่างประเทศ (12 พฤศจิกายน 2569)
 
 - **ภาพสถานที่จริงทั้ง 6 แห่ง (`public/images/centers/`):**
