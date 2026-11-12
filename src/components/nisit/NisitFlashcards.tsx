@@ -1,22 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabaseClient } from '../../lib/supabase'
 import { fetchStudentCompletedKeys, setStudentItemCompleted } from '../../lib/studentPractice'
+import { NISIT_MASTER_QA_ITEMS, type QAItemRow } from '../../content/nisitQAData'
 import { GuideIcon } from '../GuideIcon'
 
-interface QATranslationRow {
-  language_code: string
-  question: string
-  short_answer: string
-  detailed_answer: string | null
-}
-
-interface QAItemRow {
-  id: string
-  category: string
-  qa_translations: QATranslationRow[]
-}
-
 const MASTERED_STORAGE_KEY = 'monkchat_nisit_qa_mastered_v1'
+
+const DEFAULT_STARTER_QA_ITEMS: QAItemRow[] = NISIT_MASTER_QA_ITEMS
+
+const CATEGORY_LABELS: Record<string, { th: string; en: string }> = {
+  All: { th: 'ทุกหมวด', en: 'All topics' },
+  Meditation: { th: 'สมาธิ & จิตตภาวนา', en: 'Meditation' },
+  'Monastic Life': { th: 'วิถีชีวิตสมณะ', en: 'Monastic Life' },
+  Dhammakaya: { th: 'วัดพระธรรมกาย', en: 'Dhammakaya' },
+  'Buddhism & Life': { th: 'วัฒนธรรม & ร่วมสมัย', en: 'Buddhism & Life' },
+}
 
 /** Verified Q&A flashcard drill so student monks build confidence answering visitor questions. */
 export function NisitFlashcards({
@@ -26,9 +24,9 @@ export function NisitFlashcards({
   isEnglish: boolean
   studentProfileId?: string
 }) {
-  const [items, setItems] = useState<QAItemRow[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(false)
+  const [items, setItems] = useState<QAItemRow[]>(DEFAULT_STARTER_QA_ITEMS)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isUsingFallback, setIsUsingFallback] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [cardIndex, setCardIndex] = useState(0)
   const [revealed, setRevealed] = useState(false)
@@ -42,12 +40,12 @@ export function NisitFlashcards({
 
   const fetchVerifiedQA = useCallback(async () => {
     if (!supabaseClient) {
-      setError(true)
+      setItems(DEFAULT_STARTER_QA_ITEMS)
+      setIsUsingFallback(true)
       setIsLoading(false)
       return
     }
     setIsLoading(true)
-    setError(false)
     try {
       const { data, error: dbError } = await supabaseClient
         .from('qa_items')
@@ -57,9 +55,17 @@ export function NisitFlashcards({
         .eq('is_published', true)
         .order('created_at', { ascending: false })
       if (dbError) throw dbError
-      setItems((data as QAItemRow[]) ?? [])
+      const loaded = (data as QAItemRow[]) ?? []
+      if (loaded.length > 0) {
+        setItems(loaded)
+        setIsUsingFallback(false)
+      } else {
+        setItems(DEFAULT_STARTER_QA_ITEMS)
+        setIsUsingFallback(true)
+      }
     } catch {
-      setError(true)
+      setItems(DEFAULT_STARTER_QA_ITEMS)
+      setIsUsingFallback(true)
     } finally {
       setIsLoading(false)
     }
@@ -109,20 +115,6 @@ export function NisitFlashcards({
     )
   }
 
-  if (error) {
-    return (
-      <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-800">
-        <p>{isEnglish ? 'Unable to load Q&A flashcards right now.' : 'ไม่สามารถโหลดคลังคำถามฝึกตอบได้ในขณะนี้'}</p>
-        <button
-          type="button"
-          onClick={() => void fetchVerifiedQA()}
-          className="mt-3 min-h-11 cursor-pointer rounded-xl border border-red-300 bg-white px-4 text-sm font-medium text-red-900 hover:bg-red-100"
-        >
-          {isEnglish ? 'Retry' : 'ลองใหม่'}
-        </button>
-      </div>
-    )
-  }
 
   if (items.length === 0) {
     return (
@@ -143,33 +135,45 @@ export function NisitFlashcards({
       {/* Category & Progress Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4">
         <div className="flex flex-wrap gap-2" role="group" aria-label={isEnglish ? 'Question categories' : 'หมวดหมู่คำถาม'}>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              aria-pressed={selectedCategory === cat}
-              onClick={() => {
-                setSelectedCategory(cat)
-                setCardIndex(0)
-                setRevealed(false)
-              }}
-              className={`min-h-11 cursor-pointer rounded-xl border px-3 text-sm font-medium transition-colors duration-150 ${
-                selectedCategory === cat
-                  ? 'border-brand-terracotta bg-brand-terracotta text-white'
-                  : 'border-brand-border bg-brand-cream text-brand-maroon hover:bg-brand-gold-soft'
-              }`}
-            >
-              {cat === 'All' ? (isEnglish ? 'All topics' : 'ทุกหมวด') : cat}
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const label = CATEGORY_LABELS[cat]
+            const text = label ? (isEnglish ? label.en : label.th) : cat
+            const count = cat === 'All' ? items.length : items.filter((i) => i.category === cat).length
+            return (
+              <button
+                key={cat}
+                type="button"
+                aria-pressed={selectedCategory === cat}
+                onClick={() => {
+                  setSelectedCategory(cat)
+                  setCardIndex(0)
+                  setRevealed(false)
+                }}
+                className={`min-h-11 cursor-pointer rounded-xl border px-3 text-sm font-medium transition-colors duration-150 ${
+                  selectedCategory === cat
+                    ? 'border-brand-terracotta bg-brand-terracotta text-white'
+                    : 'border-brand-border bg-brand-cream text-brand-maroon hover:bg-brand-gold-soft'
+                }`}
+              >
+                {text} <span className="text-xs opacity-80 tabular-nums">({count})</span>
+              </button>
+            )
+          })}
         </div>
 
-        <p className="text-sm text-brand-muted tabular-nums">
-          {isEnglish ? 'Practiced:' : 'ฝึกคล่องแล้ว:'}{' '}
-          <strong className="font-medium text-brand-maroon">
-            {masteredIds.filter((id) => items.some((i) => i.id === id)).length} / {items.length}
-          </strong>
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          {isUsingFallback && (
+            <span className="rounded-full border border-brand-border bg-brand-gold-soft px-2.5 py-1 text-xs font-medium text-brand-maroon">
+              {isEnglish ? 'Starter practice deck' : 'คลังคำถามชุดฝึกมาตรฐาน'}
+            </span>
+          )}
+          <p className="text-sm text-brand-muted tabular-nums">
+            {isEnglish ? 'Practiced:' : 'ฝึกคล่องแล้ว:'}{' '}
+            <strong className="font-medium text-brand-maroon">
+              {masteredIds.filter((id) => items.some((i) => i.id === id)).length} / {items.length}
+            </strong>
+          </p>
+        </div>
       </div>
 
       {/* Flashcard Stage */}
@@ -252,7 +256,7 @@ export function NisitFlashcards({
           )}
 
           {/* Prev / Next Navigation */}
-          <div className="mt-6 flex items-center justify-between border-t border-brand-border pt-4">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-brand-border pt-4">
             <button
               type="button"
               disabled={boundedIndex === 0}
@@ -265,6 +269,26 @@ export function NisitFlashcards({
               <GuideIcon name="arrow" className="h-[18px] w-[18px] rotate-180" />
               <span>{isEnglish ? 'Previous' : 'ข้อก่อนหน้า'}</span>
             </button>
+
+            <div className="flex items-center gap-2 text-xs text-brand-muted">
+              <span>{isEnglish ? 'Jump to:' : 'ไปยังข้อ:'}</span>
+              <select
+                value={boundedIndex}
+                onChange={(e) => {
+                  setCardIndex(Number(e.target.value))
+                  setRevealed(false)
+                }}
+                aria-label={isEnglish ? 'Select question number' : 'เลือกหมายเลขข้อ'}
+                className="min-h-11 rounded-lg border border-brand-border bg-white px-2 py-1 text-sm font-medium text-brand-maroon tabular-nums"
+              >
+                {filtered.map((_, idx) => (
+                  <option key={idx} value={idx}>
+                    {idx + 1}
+                  </option>
+                ))}
+              </select>
+              <span>/ {filtered.length}</span>
+            </div>
 
             <button
               type="button"

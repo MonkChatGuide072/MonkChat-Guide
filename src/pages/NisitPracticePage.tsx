@@ -319,14 +319,23 @@ export function NisitPracticePage() {
                       ? `Browsing as staff: ${authProfile.display_name}`
                       : `เข้าดูด้วยบัญชีทีมงาน: ${authProfile.display_name}`}
                   </span>
-                  <Link
-                    to={authProfile.role === 'owner' ? '/admin/students' : '/admin'}
-                    className="font-medium text-brand-maroon underline"
-                  >
-                    {authProfile.role === 'owner'
-                      ? (isEnglish ? 'Manage student cohorts' : 'จัดการรุ่นนิสิต (/admin/students)')
-                      : (isEnglish ? 'Open CMS' : 'กลับสู่หน้าจัดการเว็บ')}
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      to={authProfile.role === 'owner' ? '/admin/students' : '/admin'}
+                      className="font-medium text-brand-maroon underline"
+                    >
+                      {authProfile.role === 'owner'
+                        ? (isEnglish ? 'Manage student cohorts' : 'จัดการรุ่นนิสิต (/admin/students)')
+                        : (isEnglish ? 'Open CMS' : 'กลับสู่หน้าจัดการเว็บ')}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => { void signOut() }}
+                      className="cursor-pointer font-medium text-brand-muted underline hover:text-brand-maroon"
+                    >
+                      {isEnglish ? 'Sign out' : 'ออกจากระบบ'}
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -344,6 +353,17 @@ export function NisitPracticePage() {
                           {isEnglish
                             ? `Cohort Year ${parsedCurrentId.thaiYear} · Code ${parsedCurrentId.statusCode} · Seat ${String(parsedCurrentId.seatNumber).padStart(2, '0')} · Stored locally on this device`
                             : `รุ่นปี ${parsedCurrentId.thaiYear} · รหัสสถานะ ${parsedCurrentId.statusCode} · เลขที่ ${String(parsedCurrentId.seatNumber).padStart(2, '0')} · บันทึกเฉพาะเครื่องนี้`}
+                        </p>
+                      </>
+                    ) : isSignedCmsStaff ? (
+                      <>
+                        <p className="text-sm font-medium text-brand-maroon">
+                          {isEnglish ? 'Instructor Preview Mode' : 'โหมดอาจารย์ผู้สอน / ผู้ดูแลระบบ'}
+                        </p>
+                        <p className="mt-0.5 text-xs leading-5 text-brand-muted">
+                          {isEnglish
+                            ? 'Previewing all 5 training modules. Practice records will remain local on this browser.'
+                            : 'เข้าดูและทดลองชุดฝึกทั้ง 5 หมวดในมุมมองครูผู้สอน ข้อมูลการฝึกซ้อมจะจำลองเฉพาะบนเบราว์เซอร์นี้'}
                         </p>
                       </>
                     ) : (
