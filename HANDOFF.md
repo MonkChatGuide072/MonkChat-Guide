@@ -1,5 +1,18 @@
 # MonkChat Guide — Current Handoff
 
+## เปลี่ยนภาพหน้าเลือกภาษา (`LanguageGate`) และจุดที่เหลือเป็นภาพถ่ายสถานที่จริง (13 พฤศจิกายน 2569)
+
+- **เปลี่ยนภาพหน้าเลือกภาษา (`src/components/LanguageGate.tsx`):**
+  - เปลี่ยนจากภาพวาด AI เดิม (`monkchat-meditation-ruins.webp`) เป็นภาพถ่ายสถานที่จริงของ Ayutthaya Monk Chat ณ วัดมหาธาตุ (`public/images/home/monkchat-language-gate-real.jpg` ขนาด 1024×707) แสดงภาพพระสงฆ์ 2 รูปและชาวต่างชาตินั่งสนทนาธรรม/ฝึกสมาธิใต้ร่มไม้ใหญ่ โดยมีโบราณสถานวัดมหาธาตุเป็นฉากหลังอย่างสงบ งดงาม และตรงตามบริบท
+- **เก็บจุดอ้างอิงภาพ AI อื่นในระบบ:**
+  - เปลี่ยนภาพ Avatar ในการ์ดเครื่องเล่นเสียง [src/pages/MeditationPage.tsx](src/pages/MeditationPage.tsx) จากภาพ AI (`monkchat-meditation-hero.webp`) เป็นภาพสถานที่จริง [src/pages/MeditationPage.tsx](src/pages/MeditationPage.tsx) (`monkchat-real-meditation.jpg`)
+  - อัปเดตข้อมูลภาพตัวอย่างใน [src/pages/ProjectInfoPage.tsx](src/pages/ProjectInfoPage.tsx) เป็นภาพสถานที่จริงทั้งหมด
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (123 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - Chrome Headless CDP (`360/390/768/1024/1440 px`): `hasRealImg: true`, `brokenImgs: 0`, `missingDim: 0`, `sub44: 0`, `overflow: false`
+
 ## ปรับหน้า `/centers` ลดส่วนซ้ำซ้อน แปลงทวีป/พื้นที่เป็นป็อปอัป เพิ่มศูนย์สาขาต่างประเทศและในไทยพร้อมรูปจริง/แผนที่/ช่องทางติดต่อ และเพิ่มแท็บเลขแบ่งหน้า (13 พฤศจิกายน 2569)
 
 - **ตัดส่วนซ้ำซ้อนและปรับป็อปอัปค้นหา:**
