@@ -24,56 +24,11 @@ const fakeI18n = vi.hoisted(() => ({
 }))
 const translate = vi.hoisted(() => vi.fn((key: string, fallback?: string) => fallback ?? key))
 
-const queryResults = vi.hoisted(() => ({
-  tracks: { data: [] as unknown[], error: null as Error | null },
-  links: { data: [] as unknown[], error: null as Error | null },
-}))
-
-const fromMock = vi.hoisted(() => vi.fn((table: string) => {
-  if (table === 'meditation_tracks') {
-    return {
-      select: () => ({
-        eq: () => ({
-          eq: () => ({
-            eq: () => Promise.resolve(queryResults.tracks),
-          }),
-        }),
-      }),
-    }
-  }
-
-  if (table === 'bio_links') {
-    return {
-      select: () => ({
-        eq: () => ({
-          eq: () => ({
-            order: () => Promise.resolve(queryResults.links),
-          }),
-        }),
-      }),
-    }
-  }
-
-  throw new Error(`Unexpected table: ${table}`)
-}))
-
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: translate,
     i18n: fakeI18n,
   }),
-}))
-
-vi.mock('../lib/supabase', () => ({
-  supabaseClient: { from: fromMock },
-}))
-
-vi.mock('../lib/analytics', () => ({
-  trackUsageEvent: vi.fn(),
-}))
-
-vi.mock('../lib/bioLinkImages', () => ({
-  getBioLinkImageUrl: vi.fn(() => null),
 }))
 
 function renderVisitPage() {
@@ -91,8 +46,6 @@ describe('VisitPage', () => {
     sessionStorage.clear()
     fakeI18n.language = 'en'
     fakeI18n.resolvedLanguage = 'en'
-    queryResults.tracks = { data: [], error: null }
-    queryResults.links = { data: [], error: null }
   })
 
   it('shows the language gate before a visitor chooses a language', () => {
@@ -103,7 +56,7 @@ describe('VisitPage', () => {
     expect(screen.getByRole('button', { name: 'English' })).toBeInTheDocument()
   })
 
-  it('saves the session choice and changes the shared i18n language', async () => {
+  it('saves the session choice, renders core home sections + official contact banner, and updates on language switch', async () => {
     renderVisitPage()
 
     fireEvent.click(screen.getByRole('button', { name: 'English' }))
@@ -111,105 +64,37 @@ describe('VisitPage', () => {
     expect(sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY)).toBe('en')
     expect(fakeI18n.changeLanguage).toHaveBeenCalledWith('en')
     expect(await screen.findByRole('heading', { name: 'MonkChat Guide' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'About Ayutthaya Monk Chat' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Location & map' })).toBeInTheDocument()
+    expect(screen.getByAltText(/Real Monk Chat outdoor meeting spot/i)).toHaveAttribute(
+      'src',
+      '/images/home/monkchat-spot-wat-mahathat.jpg',
+    )
+    expect(screen.getByTitle('Google Map of Wat Mahathat, Ayutthaya')).toHaveAttribute(
+      'src',
+      'https://maps.google.com/maps?q=14.3570,100.5675&z=17&output=embed',
+    )
+    const imgSources = Array.from(document.querySelectorAll('img')).map((img) => img.getAttribute('src') ?? '')
+    expect(imgSources.some((src) => /monkchat-meditation-(ruins|hero|field)\.webp/.test(src))).toBe(false)
+    expect(imgSources.some((src) => src.includes('/images/activities/'))).toBe(false)
+    expect(new Set(imgSources).size).toBe(imgSources.length)
+    expect(screen.getByRole('heading', { name: 'What to expect' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Atmosphere & surroundings' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Official Contact & Announcements' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /MonkChat Ayutthaya/ })).toHaveAttribute(
+      'href',
+      'https://web.facebook.com/MonkChatAyutthaya/',
+    )
+    expect(screen.queryByRole('heading', { name: /How to start in three gentle steps|Meditation sanctuaries/i })).not.toBeInTheDocument()
     expect(screen.queryByText(/Academic background|Zero Budget Policy|research purpose/)).not.toBeInTheDocument()
-  })
-
-  it('shows only tracks and Bio Links that are safe and translated for the active language', async () => {
-    sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
-    queryResults.tracks = {
-      data: [
-        {
-          id: 'track-en',
-          source_language_code: 'en',
-          duration_seconds: 600,
-          meditation_track_translations: [
-            { language_code: 'en', title: 'English Track', description: 'Description' },
-          ],
-        },
-        {
-          id: 'track-th',
-          source_language_code: 'th',
-          duration_seconds: 600,
-          meditation_track_translations: [
-            { language_code: 'th', title: 'Thai Track', description: 'คำอธิบาย' },
-          ],
-        },
-      ],
-      error: null,
-    }
-    queryResults.links = {
-      data: [
-        {
-          id: 'link-en',
-          url: 'https://example.com/english',
-          display_order: 1,
-          image_storage_path: null,
-          bio_link_translations: [{ language_code: 'en', title: 'English Link' }],
-        },
-        {
-          id: 'link-th',
-          url: 'https://example.com/thai',
-          display_order: 2,
-          image_storage_path: null,
-          bio_link_translations: [{ language_code: 'th', title: 'Thai Link' }],
-        },
-        {
-          id: 'link-unsafe',
-          url: 'javascript:alert(1)',
-          display_order: 3,
-          image_storage_path: null,
-          bio_link_translations: [{ language_code: 'en', title: 'Unsafe Link' }],
-        },
-      ],
-      error: null,
-    }
-
-    renderVisitPage()
-
-    expect(await screen.findByText('English Track')).toBeInTheDocument()
-    expect(screen.queryByText('Thai Track')).not.toBeInTheDocument()
-    const englishLink = await screen.findByRole('link', { name: /English Link/i })
-    expect(englishLink).toHaveAttribute('href', 'https://example.com/english')
-    expect(screen.queryByText('Thai Link')).not.toBeInTheDocument()
-    expect(screen.queryByText('Unsafe Link')).not.toBeInTheDocument()
-  })
-
-  it('refetches visitor content when the shared language changes', async () => {
-    sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
-    queryResults.tracks = {
-      data: [{
-        id: 'track-en',
-        source_language_code: 'en',
-        duration_seconds: 600,
-        meditation_track_translations: [
-          { language_code: 'en', title: 'English Track', description: 'Description' },
-        ],
-      }],
-      error: null,
-    }
-
-    renderVisitPage()
-    expect(await screen.findByText('English Track')).toBeInTheDocument()
-
-    queryResults.tracks = {
-      data: [{
-        id: 'track-th',
-        source_language_code: 'th',
-        duration_seconds: 480,
-        meditation_track_translations: [
-          { language_code: 'th', title: 'เสียงภาษาไทย', description: 'คำอธิบาย' },
-        ],
-      }],
-      error: null,
-    }
 
     await act(async () => {
       await fakeI18n.changeLanguage('th')
     })
 
-    expect(await screen.findByText('เสียงภาษาไทย')).toBeInTheDocument()
-    expect(screen.queryByText('English Track')).not.toBeInTheDocument()
-    expect(fromMock).toHaveBeenCalledWith('bio_links')
+    expect(await screen.findByRole('heading', { name: 'สถานที่และแผนที่' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'สิ่งที่จะได้สัมผัสในกิจกรรม' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'บรรยากาศกิจกรรมและสถานที่' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'ติดต่อสอบถาม & ติดตามเพจอย่างเป็นทางการ' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'คุยกับแชทบอท' })).toBeInTheDocument()
   })
 })

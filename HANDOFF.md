@@ -1,5 +1,136 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับหน้า `/centers` ลดส่วนซ้ำซ้อน แปลงทวีป/พื้นที่เป็นป็อปอัป เพิ่มศูนย์สาขาต่างประเทศและในไทยพร้อมรูปจริง/แผนที่/ช่องทางติดต่อ และเพิ่มแท็บเลขแบ่งหน้า (13 พฤศจิกายน 2569)
+
+- **ตัดส่วนซ้ำซ้อนและปรับป็อปอัปค้นหา:**
+  - นำส่วน `"ช่องทางหลักสำหรับเรียนรู้เพิ่มเติม"` (`practiceDestinations`) และ `"แหล่งเรียนรู้และข้อมูลเพิ่มเติม"` (`bio_links`) ออกจาก [src/pages/CentersPage.tsx](src/pages/CentersPage.tsx)
+  - แปลงแผงเครือข่ายทวีปและพื้นที่ตั้งศูนย์เป็นป็อปอัป/ดรอปดาวน์ **`เลือกทวีปและพื้นที่ตั้งศูนย์`** ซ่อนอยู่ภายในกล่องค้นหา (ค่าเริ่มต้นยุบเก็บไว้ เพื่อให้รายการการ์ดศูนย์ปฏิบัติธรรมและภาพจริงแสดงผลต่อเนื่องทันทีใต้กล่องค้นหา และมีปุ่มปิด / ปุ่ม `Esc`)
+- **ขยายศูนย์ปฏิบัติธรรมชาวต่างชาติ 18 แห่งพร้อมภาพสถานที่จริง แผนที่ และช่องทางติดต่อ:**
+  - ปรับ [src/content/centersDirectory.ts](src/content/centersDirectory.ts) รวบรวมศูนย์ปฏิบัติธรรมในประเทศไทย 6 แห่งแรก (ศูนย์ปฏิบัติธรรมอโยธยา, **ศูนย์ปฏิบัติธรรมนานาชาติป่าแป๋ (Pa Pae, เชียงใหม่)**, วัดพระธรรมกาย สำนักงานใหญ่, ศูนย์ฝึกสมาธินานาชาติเกาะสมุย (SIMC), สถาบันฝึกสมาธิมัชฌิมา (MMI / POP House), ศูนย์ปฏิบัติธรรมเวิลด์พีซ วัลเล่ย์ เขาใหญ่) และศูนย์สาขาต่างประเทศ 12 แห่งครอบคลุม 5 ทวีป (สิงคโปร์, โตเกียว, ลอนดอน, สกอตแลนด์, เนเธอร์แลนด์, เบลเยียม, สวิตเซอร์แลนด์, สหรัฐฯ 4 แห่ง, ซิดนีย์ ออสเตรเลีย)
+  - เพิ่มภาพถ่ายสถานที่จริงใหม่ 12 ภาพใน `public/images/centers/` (`th-papae.jpg`, `th-samui.jpg`, `th-pophouse.jpg`, `th-wpv.webp`, `jp-tokyo.webp`, `gb-london.jpg`, `gb-scotland.jpg`, `be-benelux.jpg`, `ch-switzerland.webp`, `us-seattle.jpg`, `us-chicago.jpg`, `us-newjersey.jpg`) พร้อมขนาดจริงป้องกัน CLS
+  - แสดงข้อมูลที่อยู่จริง, ลิงก์ Google Maps, ปุ่มโทรออก (`tel:`), อีเมล (`mailto:`) และ LINE ID บนการ์ดทุกแห่ง
+- **ระบบแบ่งหน้าด้วยแท็บตัวเลข (`Pagination`):**
+  - แสดงผลหน้าละ 6 แห่ง (`CENTERS_PER_PAGE = 6`) เหมาะสมกับ Desktop (`3×2`) และ Mobile
+  - แถบนำทางด้านล่าง `<nav aria-label="เปลี่ยนหน้าศูนย์ปฏิบัติธรรม">` มีปุ่ม `← ก่อนหน้า`, ปุ่มตัวเลขหน้า `1`, `2`, `3` และ `ถัดไป →` ขนาดมาตรฐานสัมผัสได้สะดวก (`min-h-11 min-w-11`)
+  - รีเซ็ตหน้ากลับเป็นหน้า 1 อัตโนมัติเมื่อพิมพ์คำค้นหา หรือเลือกโซน/ทวีป/เมือง
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (123 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed** (อัปเดต [src/pages/PublicPages.test.tsx](src/pages/PublicPages.test.tsx))
+  - Chrome Headless CDP (`360/390/768/1024/1440 px`): `overflow: false`, `brokenImgs: 0`, `missingDim: 0`, `sub44: 0`, ทดสอบคลิกหน้า 2 แสดงสาขาต่างประเทศถูกต้อง
+
+## ปรับหน้าแรก `/` ให้กระชับตามภาพจริง ใส่ภาพจุดกิจกรรมจริง แผนที่จริง และย้ายแถบติดต่อจาก `/activities` (12 พฤศจิกายน 2569)
+
+- **โครงสร้างหน้าแรก (`/` · `/home` · `/visit`):**
+  - ปรับ [src/pages/VisitPage.tsx](src/pages/VisitPage.tsx) ให้เหลือเฉพาะส่วนหลักของหน้าแรก (`HomeHeroIntro` + ตารางสรุปเวลา + `สถานที่และแผนที่` + `สิ่งที่จะได้สัมผัสในกิจกรรม` 4 การ์ด + `บรรยากาศกิจกรรมและสถานที่` 2 การ์ด) และต่อท้ายด้วยแถบสี Terracotta [src/components/OfficialContactBanner.tsx](src/components/OfficialContactBanner.tsx) ([src/content/officialContactContent.ts](src/content/officialContactContent.ts)) โดยยังคงซ่อนทางเข้า `/nisit` และ `/admin/login` จากผู้มาเยือนตามเดิม
+  - เปลี่ยนภาพบนหน้าแรกเป็นภาพถ่ายสถานที่จริงของ Ayutthaya Monk Chat ณ วัดมหาธาตุทั้งหมดและ **ไม่ซ้ำกับภาพในหน้า `/activities` (`activity-1.jpg`–`activity-6.jpg`)** พร้อมตรงตามบริบทแต่ละหัวข้อ (`public/images/home/`: `monkchat-spot-wat-mahathat.jpg`, `monkchat-meet-monks.jpg`, `monkchat-real-meditation.jpg`, `monkchat-qa-dialogue.jpg`, `monkchat-souvenir.jpg`, `monkchat-real-atmosphere.jpg`, `monkchat-real-stillness.jpg`)
+  - เพิ่มแผนที่ Google Maps จริงแบบฝัง (`14.3570, 100.5675`) ในส่วน `สถานที่และแผนที่` (ไม่ต้องใช้ API key / งบ 0 บาท)
+- **หน้ากิจกรรม (`/activities`):**
+  - ตัดแถบติดต่อ Terracotta ออกจาก [src/pages/ActivitiesPage.tsx](src/pages/ActivitiesPage.tsx) และ [src/content/activitiesContent.ts](src/content/activitiesContent.ts) เหลือ Hero + แกลเลอรีบรรยากาศจริง 6 การ์ด + ข้อแนะนำเบื้องต้น 3 ข้อ
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (123 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed** (อัปเดต [VisitPage.test.tsx](src/pages/VisitPage.test.tsx), [HomeAndNisitPages.test.tsx](src/pages/HomeAndNisitPages.test.tsx), [PublicPages.test.tsx](src/pages/PublicPages.test.tsx))
+  - Chrome Headless (`360/390/768/1024/1440 px` ทั้ง `/` และ `/activities`): `overflow: false`, `brokenImgs: 0`, `missingDim: 0`, `sub44: 0`, `hasNisitLink: false`, `hasAdminLink: false`
+
+## บังคับล็อกอินก่อนเข้าหน้า `/nisit` ผ่าน `NisitProtectedRoute` (12 พฤศจิกายน 2569)
+
+- **การป้องกันสิทธิ์เข้าถึง `/nisit`:**
+  - สร้าง [src/components/NisitProtectedRoute.tsx](src/components/NisitProtectedRoute.tsx) และครอบ `<Route path="nisit">` ใน [src/App.tsx](src/App.tsx) ให้ผู้ที่ยังไม่ล็อกอิน บัญชีที่ถูกระงับ (`!profile.is_active`) หรือบทบาทที่ไม่ใช่ `'student' | 'team_member' | 'owner'` ถูก Redirect ไปยัง `/nisit/login` ทันที
+  - ปรับ [src/pages/NisitLoginPage.tsx](src/pages/NisitLoginPage.tsx) ลบลิงก์และข้อความที่อ้างโหมดไม่ล็อกอินบน `/nisit` (เปลี่ยนลิงก์ด้านล่างจาก `/nisit` เป็น `/` กลับหน้าหลักเว็บไซต์)
+  - เพิ่มเทสต์ `NisitProtectedRoute` ใน [src/pages/NisitPhase2Pages.test.tsx](src/pages/NisitPhase2Pages.test.tsx)
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (121 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 97 tests passed**
+  - Chrome Headless (`360/390/768/1024/1440 px`): เปิด `/nisit` ขณะยังไม่ล็อกอิน redirect ไป `/nisit/login` ครบทั้ง 5 ขนาด และไม่มี overflow หรือ error
+
+## ปรับหน้า `/centers` ใช้ภาพสถานที่จริง ตรงตามแผนที่ + ตัวเลือกโซนในไทย/ต่างประเทศ (12 พฤศจิกายน 2569)
+
+- **ภาพสถานที่จริงทั้ง 6 แห่ง (`public/images/centers/`):**
+  - แยกข้อมูลและตรรกะการจับคู่ภาพไปที่ [src/content/centersDirectory.ts](src/content/centersDirectory.ts) (ใช้เฉพาะภาพสถานที่จริงที่ตรงตามตำแหน่งแผนที่เท่านั้น ศูนย์อื่นที่ยังไม่ยืนยันจะไม่ใส่ภาพจำลอง):
+    - **ในประเทศไทย:** `th-ayothaya.jpg` (ศูนย์ปฏิบัติธรรมอโยธยา), `th-dhammakaya.jpg` (วัดพระธรรมกาย สำนักงานใหญ่ ปทุมธานี + ลิงก์แผนที่ทางการ `https://maps.app.goo.gl/YjxbKFSBEP8YEp7P8`)
+    - **ต่างประเทศ:** `nl-afferden.jpg` (เนเธอร์แลนด์), `sg-punggol.jpg` (สิงคโปร์), `au-sydney.jpg` (ซิดนีย์), `us-azusa.jpg` (อาซูซา, แคลิฟอร์เนีย)
+- **ตัวกรองโซนโลกและทวีปตาม `en.dhammakaya.net/branches/`:**
+  - เพิ่มไอคอน `building` และ `compass` ใน [src/components/GuideIcon.tsx](src/components/GuideIcon.tsx) และปรับ [src/pages/CentersPage.tsx](src/pages/CentersPage.tsx) ให้เลือก `ทั้งหมด (ทั่วโลก)`, `ในประเทศไทย`, `ต่างประเทศ (สาขาทั่วโลก)` พร้อมชิปทวีป/เมือง และส่วนเชื่อมตรงไปยังเครือข่าย 6 ทวีปของ Dhammakaya Foundation (`Asia`, `Europe`, `UK`, `Americas`, `Oceania`, `Africa`)
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (120 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 96 tests passed** (เพิ่มเทสต์หน้า `/centers` ใน [src/pages/PublicPages.test.tsx](src/pages/PublicPages.test.tsx))
+  - Chrome Headless Audit (`360/390/768/1024/1440 px` พร้อมข้อมูล Supabase จริง): ตรวจครบ 6 การ์ด (`ทั้งหมด 6`, `ในประเทศไทย 2`, `ต่างประเทศ 4`) และไม่มี overflow หรือลิงก์วงในหลุด
+
+## ปรับหน้า `/activities` แบบ 6 การ์ดภาพบรรยากาศจริง + แถบติดต่อสี Terracotta (11 พฤศจิกายน 2569)
+
+- **โครงสร้างใหม่ของหน้ากิจกรรม:**
+  - แยกเนื้อหาและข้อมูลภาพ 2 ภาษา (`TH`/`EN`) ไปที่ [src/content/activitiesContent.ts](src/content/activitiesContent.ts) และปรับการแสดงผลใน [src/pages/ActivitiesPage.tsx](src/pages/ActivitiesPage.tsx):
+    - **Hero Header:** ป้ายวัดมหาธาตุ, ชื่อกิจกรรม `MONK CHAT & MEDITATION` และชิปข้อมูลสำคัญ (`Free Walk-in`, `ทุกวันจันทร์และวันศุกร์ 13:15 น. เป็นต้นไป`, `ใต้ร่มไม้ใหญ่ วัดมหาธาตุ`)
+    - **แกลเลอรีบรรยากาศจริง 6 การ์ด (`3×2` บน Desktop):** ใช้ภาพถ่ายจริงจากวัดมหาธาตุ 6 ภาพใน `public/images/activities/activity-1.jpg` ถึง `activity-6.jpg` พร้อมลิงก์ไป `/meditation` และกล่องข้อแนะนำตารางกิจกรรม
+    - **แถบติดต่อเน้นสี Terracotta (`#A33D19`):** ลิงก์ตรงเพจทางการ `MonkChat Ayutthaya` (`https://web.facebook.com/MonkChatAyutthaya/`) และปุ่ม `คุยกับแชทบอท` ที่สั่งเปิด `#reviewed-chatbot-panel` บน Header (ผ่าน [src/components/ChatbotServiceCard.tsx](src/components/ChatbotServiceCard.tsx) + [src/components/GuideIcon.tsx](src/components/GuideIcon.tsx)) พร้อมงดแสดงเบอร์/อีเมลจากภาพตัวอย่างที่ยังไม่ผ่านการยืนยัน
+    - **ข้อแนะนำเบื้องต้น 3 ข้อ:** การแต่งกายสุภาพ, ถอดรองเท้า, กิริยาที่สงบสำรวม
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (119 files)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed** (เพิ่มเทสต์หน้า `/activities` 6 การ์ดและปุ่มแชทบอทใน [src/pages/PublicPages.test.tsx](src/pages/PublicPages.test.tsx))
+  - Chrome Headless CDP Audit (`360/390/768/1024/1440 px`): **40/40 checks passed** (`failureCount: 0`)
+
+## ซ่อนทางเข้า `/nisit` และ `/admin` ออกจากทุกส่วนสาธารณะ + ปิด PR ค้างเก่า (11 พฤศจิกายน 2569)
+
+- ตามคำยืนยันเจ้าของโครงการ:
+  - **ซ่อนทางเข้าวงในทั้งหมดจากผู้มาเยือน:** นำเมนู `พระนิสิต / Student Monks` และลิงก์ Footer `/nisit` กับ `/admin/login` ออกจาก [src/components/Layout.tsx](src/components/Layout.tsx) และนำการ์ด `"เข้ามุมฝึกพระนิสิต"` ออกจาก [src/pages/VisitPage.tsx](src/pages/VisitPage.tsx) โดยยังคงเข้าใช้งาน `/nisit`, `/nisit/login`, และ `/admin` ผ่าน URL โดยตรงได้ตามเดิม
+  - **เก็บกวาด PR ค้างเก่า:** ปิด PR เก่าที่ถูกแทนที่แล้ว ได้แก่ `#7, #9, #10, #13, #15, #18` เหลือเฉพาะ `PR #22` เปิดอยู่
+  - อัปเดต [src/pages/HomeAndNisitPages.test.tsx](src/pages/HomeAndNisitPages.test.tsx) ยืนยันว่าหน้าผู้มาเยือนและ `Layout` สาธารณะไม่แสดงทั้ง `a[href="/nisit"]` และ `a[href="/admin/login"]`
+
+## ซ่อนทางเข้า `/nisit` ออกจากทุกส่วนสาธารณะ (รู้เฉพาะวงใน) — 11 พฤศจิกายน 2569
+
+- ตามคำยืนยันเจ้าของโครงการ (**หน้าพระนิสิตต้องไม่โชว์สาธารณะ ให้รู้เฉพาะวงใน ไม่แสดงแก่นักท่องเที่ยว**):
+  - นำเมนู `พระนิสิต / Student Monks` และลิงก์ `มุมฝึกพระนิสิต (/nisit)` ออกจาก Navigation หลัก, เมนูมือถือ และ Footer ของ [src/components/Layout.tsx](src/components/Layout.tsx)
+  - นำการ์ดทางเข้า `"สำหรับพระนิสิต มจร · เข้ามุมฝึกพระนิสิต"` ออกจาก [src/pages/VisitPage.tsx](src/pages/VisitPage.tsx) (`/`, `/home`, `/visit`)
+  - ยังคงเส้นทางตรง `/nisit` และ `/nisit/login` ไว้สำหรับพระนิสิตและทีมงานวงในเข้าใช้งานผ่าน URL โดยตรง
+  - อัปเดต [src/pages/HomeAndNisitPages.test.tsx](src/pages/HomeAndNisitPages.test.tsx) ยืนยันว่าหน้าผู้มาเยือนและ `Layout` สาธารณะไม่แสดงลิงก์ `/nisit`
+
+## ปรับความสอดคล้อง Header แชทบอท `/meditation`, PWA manifest, A11y และตรวจระบบจริง — 11 พฤศจิกายน 2569
+
+- **งานที่ทำเพิ่มเติมใน branch `chore/monkchat-ux-a11y-audit-skill` (ยังไม่ commit/merge):**
+  - **ปุ่มแชทบอทบน Header หน้า `/meditation`:** นำเงื่อนไขยกเว้น `/meditation` ออกใน [src/components/Layout.tsx](src/components/Layout.tsx) และนำการ์ด `<ChatbotServiceCard inline />` ด้านล่างออกจาก [src/pages/MeditationPage.tsx](src/pages/MeditationPage.tsx) เพื่อให้ปุ่มแชทบอทอยู่บน Header เหมือนกันครบทุกหน้าสาธารณะ (`/`, `/activities`, `/meditation`, `/qa`, `/centers`)
+  - **PWA Manifest (`vite.config.ts`) & ขนาดภาพป้องกัน CLS (`width`/`height`):** อัปเดต `background_color` (`#F7F7F4`) และ `theme_color` (`#11223C`) ใน `vite.config.ts` ให้ตรงกับ [index.html](index.html) และชุดสี White/Navy/Gold; เติม `width`/`height` จริงให้ภาพใน [src/pages/ActivitiesPage.tsx](src/pages/ActivitiesPage.tsx) (`560×315`, `1672×941` พร้อมลด `pb-24` → `pb-8`), [src/pages/LoginPage.tsx](src/pages/LoginPage.tsx) (`1001×1024`), และ [src/pages/NotFoundPage.tsx](src/pages/NotFoundPage.tsx) (`1001×1024`)
+  - **อัปเดตเทสต์:** เพิ่มการตรวจ Header Chatbot บน `/meditation` และไม่แสดงการ์ดแชทซ้ำท้ายหน้าใน [src/pages/HomeAndNisitPages.test.tsx](src/pages/HomeAndNisitPages.test.tsx) และ [src/pages/PublicPages.test.tsx](src/pages/PublicPages.test.tsx)
+- **ผลตรวจหลังแก้ไขโค้ดและเทสต์:**
+  - `vitest run --run`: **15 files / 94 tests passed**
+  - `oxlint`: **0 warnings / 0 errors** บน 118 ไฟล์
+  - `tsc -b && vite build`: ผ่าน (`PWA v1.3.0`, precache 67 entries / `2422.06 KiB`)
+  - Chrome Headless CDP Audit: **45/45 checks** (`360/390/768/1024/1440 px` × 9 เส้นทาง) `failureCount: 0` (ไม่มี overflow, ไม่มีภาพขาด `width/height`, ไม่มีปุ่ม/ลิงก์ที่มองเห็น `< 44 px`, มีปุ่มแชทบอทบน Header หน้า `/meditation` ครบ)
+- **ผลตรวจสภาพแวดล้อมจริง (Read-only diagnostic บน Production / PR #22 Preview / Supabase CLI):**
+  - Supabase Migrations 14/14 และ Edge Functions 3 ตัว (`team-management` v3, `student-cohorts` v1, `student-register` v1) อัปขึ้นระบบและสถานะ `ACTIVE` ครบแล้ว และ `origin/main` รวม PR #19–#21 แล้ว (`f89a468`)
+  - Endpoint `/meditation` บนพรีวิวล่าสุดโหลด `signedUrl` เสียง (.mp3) และ `meditation-subtitles` `.vtt` ได้จริง (`HTTP 200`); endpoint `/api/monk-assistant` ตอบ `401` เมื่อยังไม่ล็อกอิน (พร้อมใช้งานและตรวจสิทธิ์); และ CORS `CMS_ALLOWED_ORIGINS` เปิดรับ `https://monkchat-guide.pages.dev` (`204`) ส่วนพรีวิว (`71994abf.monkchat-guide.pages.dev`) ติด `403` ตามการตั้งค่าความปลอดภัย
+  - **งานที่ยังรอการดำเนินการ / ตัดสินใจจากเจ้าของโครงการ:** (1) merge `PR #22` ขึ้น `main` เมื่อพร้อมเผยแพร่, (2) ล็อกอินบัญชี Owner จริงสร้าง Invite Code รุ่นแรกที่ `/admin/students` เพื่อทดสอบ E2E `/nisit/login` และ `/admin/assistant` บนโดเมนหลัก `monkchat-guide.pages.dev`, (3) ตรวจเสียงนำสมาธิ 326s กับซับ VTT และเพิ่มคลังเสียง/Q&A จริง (ปัจจุบันเห็นเผยแพร่ 1 เสียง EN 5 นาที และ 4 Q&A)
+
+## รวมหน้าแรก `/` · `/home` · `/visit`, ไอคอนลัดคงค้าง, แชทบอทบน Header และโทนสี White/Navy/Gold — 11 พฤศจิกายน 2569
+
+- **รวมหน้าแรกของผู้มาเยือน (`/` · `/home` · `/visit`):**
+  - ตามคำยืนยันเจ้าของ (`/visit` คือหน้าแรกสำหรับชาวต่างชาติ ไม่ใช่หน้าซ้ำอีกหน้า) ปรับ `src/App.tsx` ให้ `/` (`index`), `/home` และ `/visit` เรนเดอร์ `src/pages/VisitPage.tsx` เพียงชุดเดียว (และ `src/pages/HomeOverviewPage.tsx` คงเป็น re-export เพื่อไม่ให้ import เดิมขาด)
+  - เพิ่มการ์ดทางเข้า **`/nisit` ("สำหรับพระนิสิต มจร · เข้ามุมฝึกพระนิสิต")** ต่อจากตารางเวลาใน `VisitPage.tsx` พร้อมอัปเดตเมนูหลักและ Footer ใน `src/components/Layout.tsx`
+- **แถบทางลัด 5 ไอคอนคงค้างในหน้าย่อย:**
+  - แยกข้อมูลทางลัด 5 รายการไว้ใน `src/content/publicShortcuts.ts` (`/` หน้าแรก, `/activities` กิจกรรม, `/meditation` สมาธิ, `/qa` ถาม–ตอบ, `/centers` ศูนย์)
+  - ให้ `src/components/HomeHeroIntro.tsx` แสดงบนหน้าแรก และให้ `Layout.tsx` แสดงแถบ 5 ไอคอนใต้ Header บนหน้าย่อย (`/activities`, `/meditation`, `/qa`, `/centers`) สำหรับจอมือถือ–แท็บเล็ต (`lg:hidden`) เพื่อให้ไอคอนไม่หายเมื่อกดเข้าหน้าย่อย
+- **ย้ายปุ่มแชทบอทขึ้น Header (ไม่บังเนื้อหา):**
+  - เพิ่มโหมด `placement="header"` ใน `src/components/ChatbotServiceCard.tsx` (เปิด dialog ผ่าน React Portal แตะด้านนอกหรือกด Escape เพื่อปิด, รักษา focus และรองรับปุ่ม trigger 44×44 px บนมือถือ) และย้ายการเรียกใช้ใน `Layout.tsx` จากมุมขวาล่างที่ลอยทับตัวอักษรขึ้น Header พร้อมตัด `pb-24` ส่วนเกินออก
+- **ปรับชุดสีเป็น White + Soft Gold + Deep Navy ตาม `AGENTS.md` / `DECISIONS.md` #24:**
+  - อัปเดต `src/index.css`, `index.html`, `Layout.tsx`, `LanguageSwitcher.tsx`, `HomeHeroIntro.tsx`, `MeditationGuide.css`, `MeditationGuideVisual.tsx`, `MeditationPlayer.tsx`, `MeditationSupplementary.tsx`, `VisitPage.tsx`, `ActivitiesPage.tsx`, `MeditationPage.tsx`, `QAPage.tsx`, `CentersPage.tsx`, และกลุ่ม `/nisit` (รวมถึงสีภาพ PNG ใน `NisitThankYouCard.tsx`) เป็นพื้นขาวสว่างสะอาด (`#F7F7F4` / `#FFFFFF`), ตัวอักษรและปุ่มกรมท่า (`#11223C` / `#16324F`), และทองสุภาพ (`#8F6419` / `#FAF5E8`) ให้เข้ากับภาพแบนเนอร์และภาพสถานที่จริง
+- **ผลตรวจหลังแก้ไข:** ผ่าน `vitest run --run` **15 files / 94 tests**, `oxlint` (**0 warnings / 0 errors** บน 118 ไฟล์), `tsc -b && vite build`, `git diff --check`, และตรวจ Chrome headless screenshot ครบมือถือ (`360/390 px`) และเดสก์ท็อป (`1280 px`)
+
+## สกิลตรวจ UX Flow / Accessibility (`.agents/skills/monkchat-ux-a11y-audit`) และปรับปรุง A11y — 11 พฤศจิกายน 2569
+
+- **สกิลใหม่ในโปรเจกต์:**
+  - `.agents/skills/monkchat-ux-a11y-audit/SKILL.md` — ขั้นตอนตรวจ UX Flow ของ MonkChat (`/`, `/home`, `/visit`, `/nisit`, `/nisit/login`, `/admin`), Keyboard/Focus, Form, และ WCAG Accessibility
+  - `.agents/skills/monkchat-ux-a11y-audit/references/vercel-web-guidelines.md` — มาตรฐานจาก `vercel-labs/web-interface-guidelines` (MIT License) ที่ปรับให้สอดคล้องกับ Sentence case, Vite CSR PWA และ `AGENTS.md` / `unslop`
+- **จุดที่แก้ไขจากผลตรวจรอบแรก:**
+  - เพิ่ม Skip-to-content link (`#main-content` ใน `src/components/Layout.tsx` และ `#admin-main-content` ใน `src/components/AdminLayout.tsx`) พร้อม `min-h-11` บนลิงก์โลโก้หัวเว็บ
+  - แก้ลำดับ Heading ใน `/nisit` (`src/components/nisit/NisitVocabCards.tsx`, `NisitAudioTeleprompter.tsx`, `NisitVideoStudy.tsx`, `NisitFlashcards.tsx`, `NisitThankYouCard.tsx`) เป็น `<h1>` → `<h2>` → `<h3>` ไม่ข้ามระดับ
+  - เพิ่ม `getNextRovingTabIndex` ใน `src/content/nisitPractice.ts` และเชื่อมต่อปุ่มลูกศร (`ArrowLeft`/`ArrowRight`/`Home`/`End`) ใน `role="tablist"` บน `NisitPracticePage.tsx` และ `NisitLoginPage.tsx` พร้อม `name`, `autoComplete`, และ `spellCheck={false}`
+  - ปรับขนาดตัวอักษรช่องค้นหาใน `src/pages/QAPage.tsx` เป็น `text-base` (`16 px`) และปรับลิงก์ `"View all FAQ →"` ใน `src/pages/VisitPage.tsx` เป็น `min-h-11` (`>= 44 px`)
+  - ใส่ `width` / `height` HTML attribute บนรูปภาพหลักใน `Layout.tsx`, `AdminLayout.tsx`, `HomeOverviewPage.tsx`, `VisitPage.tsx`, `QAPage.tsx`, `CentersPage.tsx`, `NisitLoginPage.tsx`, และ `NisitThankYouCard.tsx`
+- **ผลตรวจหลังแก้ไข:** ผ่าน `vitest` **15 files / 93 tests**, `oxlint` (**0 warnings / 0 errors** บน 117 ไฟล์), `tsc -b && vite build`, `git diff --check`, และ Chrome CDP A11y re-audit ครบ 9 เส้นทาง (`skipLinks: 1`, `skippedLevels: []`, `missingDimsImgs: []`, `qaSearchFontPx: 16`, `overflow: false`, และไม่มีลิงก์/ปุ่มที่มองเห็น `< 44 px`)
+
 ## ระบบบัญชีพระนิสิตประจำรุ่น · Cohort Invite Code · บทบาท `student` และ `/admin/students` (เฟส 2) — 10 พฤศจิกายน 2569
 
 - **ฐานงานและ branch:** แตกจาก `feat/home-visit-nisit-phase1` (commit `55ff83f`, PR #20) เป็น branch ใหม่ `feat/nisit-student-accounts-phase2` ใน worktree `..\monkchat-guide-wt-nisit` (ยังไม่ commit/push, ยังไม่ merge เข้า `main`, ยังไม่ apply migration หรือ deploy production)

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
 import { matchReviewedQuestion, type ReviewedQuestion } from '../lib/qaMatch'
@@ -22,10 +23,17 @@ interface Message {
   text: string
 }
 
-export function ChatbotServiceCard({ inline = false }: { inline?: boolean }) {
+export function ChatbotServiceCard({
+  inline = false,
+  placement = inline ? 'inline' : 'floating',
+}: {
+  inline?: boolean
+  placement?: 'floating' | 'header' | 'inline'
+}) {
   const { i18n } = useTranslation()
   const language = (i18n.resolvedLanguage || i18n.language).startsWith('en') ? 'en' : 'th'
   const copy = reviewedChatbotCopy[language]
+  const mode = inline ? 'inline' : placement
   const [isOpen, setIsOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -36,19 +44,120 @@ export function ChatbotServiceCard({ inline = false }: { inline?: boolean }) {
     wasOpen.current = isOpen
   }, [isOpen])
 
-  return <aside className={inline ? 'text-brand-text' : 'fixed bottom-4 right-4 z-50 max-w-[calc(100vw-2rem)] text-brand-text sm:bottom-6 sm:right-6'} aria-label={copy.serviceTitle}>
-    {isOpen ? <section id="reviewed-chatbot-panel" aria-labelledby="reviewed-chatbot-title" onKeyDown={event => { if (event.key === 'Escape') setIsOpen(false) }} className={`flex max-h-[min(78dvh,42rem)] ${inline ? 'w-full max-w-[25rem]' : 'w-[min(25rem,calc(100vw-2rem))]'} flex-col overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-[0_8px_24px_rgba(0,0,0,.12)]`}>
+  useEffect(() => {
+    if (mode !== 'header') return
+    const handleOpenRequest = (event: Event) => {
+      event.preventDefault()
+      setIsOpen(true)
+    }
+    window.addEventListener('monkchat:open-chatbot', handleOpenRequest)
+    return () => window.removeEventListener('monkchat:open-chatbot', handleOpenRequest)
+  }, [mode])
+
+  const renderPanel = (className: string, isDialog = false) => (
+    <section
+      id="reviewed-chatbot-panel"
+      role={isDialog ? 'dialog' : undefined}
+      aria-modal={isDialog ? true : undefined}
+      aria-labelledby="reviewed-chatbot-title"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') setIsOpen(false)
+      }}
+      className={className}
+    >
       <div className="flex shrink-0 items-start justify-between gap-3 border-b border-brand-border px-4 py-4">
-        <div><p className="text-xs leading-5 text-brand-muted">MonkChat Guide</p><h2 id="reviewed-chatbot-title" className="mt-1 text-base font-medium text-brand-maroon">{copy.serviceTitle}</h2></div>
-        <button ref={closeRef} type="button" onClick={() => setIsOpen(false)} className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-brand-muted transition-colors duration-150 hover:bg-brand-gold-soft" aria-label={copy.close}><GuideIcon name="close" /></button>
+        <div>
+          <p className="text-xs leading-5 text-brand-muted">MonkChat Guide</p>
+          <h2 id="reviewed-chatbot-title" className="mt-1 text-base font-medium text-brand-maroon">
+            {copy.serviceTitle}
+          </h2>
+        </div>
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={() => setIsOpen(false)}
+          className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-brand-muted transition-colors duration-150 hover:bg-brand-gold-soft"
+          aria-label={copy.close}
+        >
+          <GuideIcon name="close" />
+        </button>
       </div>
       <ReviewedChatbot key={language} language={language} />
-    </section> : <button ref={triggerRef} type="button" aria-label={copy.serviceTitle} aria-expanded={false} aria-controls="reviewed-chatbot-panel" onClick={() => setIsOpen(true)}
-      className="ml-auto flex min-h-12 cursor-pointer items-center gap-2 rounded-xl border border-brand-border bg-brand-surface px-4 py-3 text-left text-brand-maroon shadow-[0_4px_16px_rgba(0,0,0,.08)] transition-colors duration-150 hover:bg-brand-gold-soft">
-      <GuideIcon name="chat" />
-      <span className="min-w-0"><strong className="block text-sm font-medium">{copy.serviceTitle}</strong><small className="mt-1 hidden text-xs text-brand-muted sm:block">{copy.serviceDescription}</small></span>
-    </button>}
-  </aside>
+    </section>
+  )
+
+  if (mode === 'header') {
+    return (
+      <>
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-label={copy.serviceTitle}
+          aria-expanded={isOpen}
+          aria-controls="reviewed-chatbot-panel"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={`inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-full border px-2.5 text-sm font-medium transition-colors duration-150 sm:px-3.5 ${
+            isOpen
+              ? 'border-brand-terracotta bg-brand-terracotta text-white'
+              : 'border-brand-border bg-brand-surface text-brand-maroon hover:border-brand-terracotta hover:bg-brand-gold-soft'
+          }`}
+        >
+          <GuideIcon name="chat" className="h-4 w-4 shrink-0" />
+          <span className="hidden whitespace-nowrap sm:inline lg:hidden xl:inline">{copy.serviceTitle}</span>
+        </button>
+        {isOpen && typeof document !== 'undefined' && createPortal(
+          <div
+            role="presentation"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setIsOpen(false)
+            }}
+            className="fixed inset-0 z-50 flex items-start justify-end bg-brand-maroon/25 p-3 pt-16 backdrop-blur-[1px] sm:p-6 sm:pt-20"
+          >
+            {renderPanel(
+              'flex max-h-[min(78dvh,42rem)] w-[min(25rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-brand-border bg-brand-surface text-brand-text shadow-[0_12px_32px_rgba(17,34,60,0.18)]',
+              true,
+            )}
+          </div>,
+          document.body,
+        )}
+      </>
+    )
+  }
+
+  return (
+    <aside
+      className={
+        mode === 'inline'
+          ? 'text-brand-text'
+          : 'fixed bottom-4 right-4 z-50 max-w-[calc(100vw-2rem)] text-brand-text sm:bottom-6 sm:right-6'
+      }
+      aria-label={copy.serviceTitle}
+    >
+      {isOpen ? (
+        renderPanel(
+          `flex max-h-[min(78dvh,42rem)] ${
+            mode === 'inline' ? 'w-full max-w-[25rem]' : 'w-[min(25rem,calc(100vw-2rem))]'
+          } flex-col overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-[0_8px_24px_rgba(0,0,0,.12)]`,
+        )
+      ) : (
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-label={copy.serviceTitle}
+          aria-expanded={false}
+          aria-controls="reviewed-chatbot-panel"
+          onClick={() => setIsOpen(true)}
+          className="ml-auto flex min-h-12 cursor-pointer items-center gap-2 rounded-xl border border-brand-border bg-brand-surface px-4 py-3 text-left text-brand-maroon shadow-[0_4px_16px_rgba(0,0,0,.08)] transition-colors duration-150 hover:bg-brand-gold-soft"
+        >
+          <GuideIcon name="chat" />
+          <span className="min-w-0">
+            <strong className="block text-sm font-medium">{copy.serviceTitle}</strong>
+            <small className="mt-1 hidden text-xs text-brand-muted sm:block">{copy.serviceDescription}</small>
+          </span>
+        </button>
+      )}
+    </aside>
+  )
 }
 
 function ReviewedChatbot({ language }: { language: 'th' | 'en' }) {
@@ -148,7 +257,7 @@ function ReviewedChatbot({ language }: { language: 'th' | 'en' }) {
         <label htmlFor="chatbot-question" className="block text-sm font-medium text-brand-text">{copy.placeholder}</label>
         <textarea id="chatbot-question" required minLength={2} maxLength={280} rows={2} value={draft}
           onChange={event => setDraft(event.target.value)}
-          className="mt-2 min-h-16 w-full resize-y rounded-lg border border-brand-border p-3 text-sm focus:border-[#a86100]" />
+          className="mt-2 min-h-16 w-full resize-y rounded-lg border border-brand-border p-3 text-base focus:border-brand-terracotta" />
         <div className="mt-3 flex justify-end"><button type="submit" disabled={!draft.trim()}
           className="min-h-11 rounded-lg bg-brand-terracotta px-6 text-sm font-medium text-white disabled:opacity-50">{copy.ask}</button></div>
       </form>

@@ -105,17 +105,17 @@ export function NisitThankYouCard({
     if (!ctx) return
 
     const drawCard = (logo?: HTMLImageElement) => {
-      // Warm cream parchment background
-      ctx.fillStyle = '#FFF8EE'
+      // Clean white card with deep navy and soft gold framing
+      ctx.fillStyle = '#F7F7F4'
       ctx.fillRect(0, 0, 1200, 800)
 
       // Inner card surface & hairline borders
-      ctx.fillStyle = '#FFFDF7'
+      ctx.fillStyle = '#FFFFFF'
       ctx.fillRect(48, 48, 1104, 704)
-      ctx.strokeStyle = '#D5BD94'
+      ctx.strokeStyle = '#C8A252'
       ctx.lineWidth = 3
       ctx.strokeRect(48, 48, 1104, 704)
-      ctx.strokeStyle = '#EADCC6'
+      ctx.strokeStyle = '#E2E6EB'
       ctx.lineWidth = 1.5
       ctx.strokeRect(64, 64, 1072, 672)
 
@@ -124,33 +124,33 @@ export function NisitThankYouCard({
       }
 
       ctx.textAlign = 'center'
-      ctx.fillStyle = '#A43D1D'
+      ctx.fillStyle = '#8F6419'
       ctx.font = '600 22px Georgia, serif'
       ctx.fillText('AYUTTHAYA MONK CHAT · WAT MAHATHAT', 600, 224)
 
-      ctx.fillStyle = '#681B16'
+      ctx.fillStyle = '#11223C'
       ctx.font = '600 44px Georgia, serif'
       ctx.fillText('With Gratitude & Inner Peace', 600, 286)
 
-      ctx.fillStyle = '#6B5C48'
+      ctx.fillStyle = '#526071'
       ctx.font = '500 24px sans-serif'
       ctx.fillText('Thank you for joining us today,', 600, 350)
 
-      ctx.fillStyle = '#681B16'
+      ctx.fillStyle = '#11223C'
       ctx.font = '600 48px Georgia, serif'
       ctx.fillText(effectiveVisitor.slice(0, 42), 600, 412)
 
-      ctx.strokeStyle = '#D5BD94'
+      ctx.strokeStyle = '#C8A252'
       ctx.beginPath()
       ctx.moveTo(360, 434)
       ctx.lineTo(840, 434)
       ctx.stroke()
 
-      ctx.fillStyle = '#30251E'
+      ctx.fillStyle = '#1E293B'
       ctx.font = '400 25px sans-serif'
       wrapCanvasText(ctx, selectedTemplate.en, 600, 492, 860, 38)
 
-      ctx.fillStyle = '#6B5C48'
+      ctx.fillStyle = '#526071'
       ctx.font = '500 20px sans-serif'
       const footerParts = [`Wat Mahathat, Phra Nakhon Si Ayutthaya`, cardDate]
       if (cardMonkName.trim()) {
@@ -176,7 +176,7 @@ export function NisitThankYouCard({
   return (
     <div className="space-y-6">
       {/* Privacy Reminder Banner */}
-      <div className="rounded-xl border border-brand-border bg-[#FAF2E6]/70 p-4 text-sm leading-6 text-brand-muted">
+      <div className="rounded-xl border border-brand-border bg-brand-gold-soft/70 p-4 text-sm leading-6 text-brand-muted">
         <strong className="font-medium text-brand-maroon">
           {isEnglish ? 'Device-only storage (Zero DB): ' : 'เก็บเฉพาะในเครื่องนี้เท่านั้น (ไม่ส่งชื่อขึ้นฐานข้อมูล): '}
         </strong>
@@ -189,9 +189,9 @@ export function NisitThankYouCard({
         {/* Left Column: Quick Visitor Notes */}
         <section className="space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5">
           <div>
-            <h3 className="font-serif text-lg font-semibold text-brand-maroon">
+            <h2 className="font-serif text-lg font-semibold text-brand-maroon">
               {isEnglish ? '1. On-site visitor quick notes' : '1. จดชื่อผู้มาเยือนระหว่างสนทนา'}
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-brand-muted">
               {isEnglish
                 ? 'Tap a name after saving to fill the Thank-You Card automatically.'
@@ -279,9 +279,9 @@ export function NisitThankYouCard({
         {/* Right Column: Thank-You Card Editor + Visual Preview + Download */}
         <section className="space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5">
           <div>
-            <h3 className="font-serif text-lg font-semibold text-brand-maroon">
+            <h2 className="font-serif text-lg font-semibold text-brand-maroon">
               {isEnglish ? '2. On-site Thank-You Card' : '2. สร้างการ์ดขอบคุณที่เข้าร่วมโครงการ'}
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-brand-muted">
               {isEnglish
                 ? 'Customize and save a remembrance PNG card for your visitor to keep or photograph.'
@@ -349,14 +349,16 @@ export function NisitThankYouCard({
               <img
                 src="/images/logo/ayutthaya-monk-chat-logo.png"
                 alt="Ayutthaya Monk Chat"
+                width={1001}
+                height={1024}
                 className="mx-auto h-14 w-14 object-contain"
               />
               <p className="mt-2 text-xs font-medium tracking-normal text-brand-terracotta">
                 Ayutthaya Monk Chat · Wat Mahathat
               </p>
-              <h4 className="mt-1 font-serif text-xl font-semibold text-brand-maroon">
+              <h3 className="mt-1 font-serif text-xl font-semibold text-brand-maroon">
                 With Gratitude &amp; Inner Peace
-              </h4>
+              </h3>
               <p className="mt-3 text-xs text-brand-muted">Thank you for joining us today,</p>
               <p className="mt-1 border-b border-brand-border pb-2 font-serif text-2xl font-semibold text-brand-maroon">
                 {effectiveVisitor}

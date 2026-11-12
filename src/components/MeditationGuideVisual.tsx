@@ -21,10 +21,10 @@ export function MeditationGuideVisual({ base, still = false, scene = 'sit', medi
         <path d="m208 91-20-26H139L169 102 141 154 132 259V220" stroke="#B8A591" strokeWidth="2" strokeDasharray="4 5" />
         <path d="M107 259h95" stroke="#A0907A" strokeDasharray="4 4" />
         <circle cx="195" cy="259" r="3" fill="#825A48" />
-        {base === 7 && <path d="M168 220h12m-6 0v39m-6 0h12" stroke="#A43D1D" strokeWidth="2" />}
+        {base === 7 && <path d="M168 220h12m-6 0v39m-6 0h12" stroke="#16324F" strokeWidth="2" />}
         {points.map(([cx, cy], index) => <g key={index} opacity={base === index + 1 ? 1 : .85}>
-          <circle cx={cx} cy={cy} r={base === index + 1 ? 17 : 14} fill={base === index + 1 ? '#A43D1D' : '#FFFDF7'} stroke={base === index + 1 ? '#A43D1D' : '#A0907A'} strokeWidth="1.5" />
-          <text x={cx} y={cy + 7} textAnchor="middle" fontFamily="sans-serif" fontSize="20" fontWeight="500" fill={base === index + 1 ? '#FFFFFF' : '#685B4D'}>{index + 1}</text>
+          <circle cx={cx} cy={cy} r={base === index + 1 ? 17 : 14} fill={base === index + 1 ? '#16324F' : '#FFFFFF'} stroke={base === index + 1 ? '#16324F' : '#8A94A3'} strokeWidth="1.5" />
+          <text x={cx} y={cy + 7} textAnchor="middle" fontFamily="sans-serif" fontSize="20" fontWeight="500" fill={base === index + 1 ? '#FFFFFF' : '#475569'}>{index + 1}</text>
         </g>)}
       </> : <>
         <path d="M18 172h58v-32h28v32h31m120 0h48v-47h-25v47" stroke="#DAB99C" strokeWidth="6" strokeLinejoin="round" />
@@ -40,7 +40,7 @@ export function MeditationGuideVisual({ base, still = false, scene = 'sit', medi
         <path d="M115 131q2 29 28 31m63-31q-5 30-33 31" stroke="#F7D3AE" strokeWidth="13" strokeLinecap="round" />
         <path d="M141 159q12-6 23 1 10-7 18-1-9 12-22 9-12 2-19-9Z" fill="#F7D3AE" stroke="#A66C36" strokeWidth="1.5" />
         <path d="M126 177q20 5 48 10m-7-11 35-5" stroke="#A66C36" strokeWidth="2" strokeLinecap="round" />
-        {(still || scene === 'center') && <><circle cx="161" cy="133" r="15" fill="#FFFDF7" stroke="#B77A24" strokeWidth="2" /><circle cx="156" cy="128" r="4" fill="#DAEDF1" /></>}
+        {(still || scene === 'center') && <><circle cx="161" cy="133" r="15" fill="#FFFFFF" stroke="#8F6419" strokeWidth="2" /><circle cx="156" cy="128" r="4" fill="#DAEDF1" /></>}
         {scene === 'crystal' && <g>
           <circle cx="160" cy="133" r="21" fill="#E6F3F5" stroke="#7498A4" strokeWidth="1.5" />
           <path d="m160 112-14 11 5 23h18l5-23Zm-14 11h28m-23 23 9-34 9 34" stroke="#97B8C3" strokeWidth="1.2" />
@@ -48,9 +48,9 @@ export function MeditationGuideVisual({ base, still = false, scene = 'sit', medi
         </g>}
         {scene === 'breathe' && <g>
           <path d="M23 83q30-25 77 0m-10-14 11 14-17 3" stroke="#7498A4" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M219 83q32 26 77 0m-15-3 16 3-8 14" stroke="#A43D1D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M219 83q32 26 77 0m-15-3 16 3-8 14" stroke="#16324F" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
           <text x="62" y="123" textAnchor="middle" fontFamily="sans-serif" fontSize="18" fill="#426572">{breathLabels[0]}</text>
-          <text x="258" y="123" textAnchor="middle" fontFamily="sans-serif" fontSize="18" fill="#A43D1D">{breathLabels[1]}</text>
+          <text x="258" y="123" textAnchor="middle" fontFamily="sans-serif" fontSize="18" fill="#16324F">{breathLabels[1]}</text>
         </g>}
         {scene === 'relax' && <g stroke="#7498A4" strokeWidth="3" strokeLinecap="round">
           <path d="M31 93q13-10 26 0t26 0M26 108q16-10 32 0t32 0M36 123q12-8 24 0t24 0" />
@@ -62,13 +62,13 @@ export function MeditationGuideVisual({ base, still = false, scene = 'sit', medi
           <path d="M242 47h31m-31 10h20m-20 10h26" stroke="#A59682" strokeWidth="3" strokeLinecap="round" />
           <path d="m280 48 10-5m-10 14h14m-14 10 10 5" stroke="#DAB99C" strokeWidth="2" />
         </g>}
-        {scene === 'wandering' && <g fill="#FFFDF7" stroke="#A59682" strokeWidth="1.5">
+        {scene === 'wandering' && <g fill="#FFFFFF" stroke="#8A94A3" strokeWidth="1.5">
           <circle cx="115" cy="35" r="4" /><circle cx="102" cy="24" r="6" />
           <path d="M25 17h59q15 0 15 15v22q0 15-15 15H25q-15 0-15-15V32q0-15 15-15Z" />
           <path d="m27 38 11-9 9 19 13-19 15 15 8-9" fill="none" stroke="#7498A4" strokeWidth="2" />
-          <circle cx="265" cy="48" r="20" /><path d="M265 36v13l9 5" stroke="#B77A24" strokeWidth="2" />
+          <circle cx="265" cy="48" r="20" /><path d="M265 36v13l9 5" stroke="#8F6419" strokeWidth="2" />
         </g>}
-        {scene === 'straining' && <g stroke="#A43D1D" strokeWidth="2" strokeLinecap="round">
+        {scene === 'straining' && <g stroke="#16324F" strokeWidth="2" strokeLinecap="round">
           <path d="m140 52 11 3m18 0 11-3M105 82q-10 16-5 30m115-30q10 16 5 30M83 129l-7 9 9 9m151-18 7 9-9 9" />
         </g>}
         {scene === 'lightness' && <g stroke="#97AD83" strokeWidth="2" strokeLinecap="round">
@@ -91,7 +91,7 @@ export function MeditationGuideVisual({ base, still = false, scene = 'sit', medi
           <circle cx="63" cy="73" r="22" fill="#FFF1CD" /><path d="M63 38v-8m0 86v-8m35-35h8m-86 0h8m10-25-6-6m56 56 6 6m-6-56 6-6m-56 56-6 6" />
           <ellipse cx="160" cy="133" rx="23" ry="24" fill="#FFF1CD" fillOpacity=".85" stroke="none" />
         </g>}
-        {scene === 'other' && <g fill="#FFFDF7" stroke="#A59682" strokeWidth="1.5">
+        {scene === 'other' && <g fill="#FFFFFF" stroke="#8A94A3" strokeWidth="1.5">
           <path d="M29 32h54q13 0 13 13v23q0 13-13 13H55L41 93V81H29q-13 0-13-13V45q0-13 13-13Z" />
           {[38, 56, 74].map(cx => <circle key={cx} cx={cx} cy="57" r="3" fill="#7498A4" stroke="none" />)}
         </g>}

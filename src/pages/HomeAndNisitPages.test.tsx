@@ -1,14 +1,15 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter, Route, Routes } from 'react-router'
 import { createInstance } from 'i18next'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
 import th from '../locales/th/common.json'
 import en from '../locales/en/common.json'
+import { Layout } from '../components/Layout'
 import { HomeOverviewPage } from './HomeOverviewPage'
 import { VisitPage } from './VisitPage'
 import { NisitPracticePage } from './NisitPracticePage'
-import { parseNisitStudentId, parseSafeYouTubeEmbedUrl } from '../content/nisitPractice'
+import { getNextRovingTabIndex, parseNisitStudentId, parseSafeYouTubeEmbedUrl } from '../content/nisitPractice'
 import { VISITOR_LANGUAGE_SESSION_KEY } from '../lib/language'
 
 const mocks = vi.hoisted(() => ({
@@ -42,10 +43,10 @@ await i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 })
 
-function renderWithRouter(ui: React.ReactNode) {
+function renderWithRouter(ui: React.ReactNode, initialEntries: string[] = ['/']) {
   return render(
     <I18nextProvider i18n={i18n}>
-      <MemoryRouter>{ui}</MemoryRouter>
+      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
     </I18nextProvider>,
   )
 }
@@ -79,6 +80,14 @@ describe('nisitPractice helpers', () => {
     expect(parseSafeYouTubeEmbedUrl('http://youtube.com/watch?v=F-0V8aYV1rQ')).toBeNull()
     expect(parseSafeYouTubeEmbedUrl('javascript:alert(1)')).toBeNull()
     expect(parseSafeYouTubeEmbedUrl('https://evil.example/F-0V8aYV1rQ')).toBeNull()
+  })
+
+  it('computes roving tab indices for keyboard tablist navigation', () => {
+    expect(getNextRovingTabIndex('ArrowRight', 4, 5)).toBe(0)
+    expect(getNextRovingTabIndex('ArrowLeft', 0, 5)).toBe(4)
+    expect(getNextRovingTabIndex('Home', 3, 5)).toBe(0)
+    expect(getNextRovingTabIndex('End', 1, 5)).toBe(4)
+    expect(getNextRovingTabIndex('Enter', 1, 5)).toBeNull()
   })
 })
 
@@ -173,29 +182,62 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
 
   afterEach(cleanup)
 
-  it('HomeOverviewPage displays language gate first, then clear /visit and /nisit gateways', async () => {
-    renderWithRouter(<HomeOverviewPage />)
+  it('HomeOverviewPage unifies / and /visit without exposing /nisit publicly to visitors', async () => {
+    const { container } = renderWithRouter(<HomeOverviewPage />)
     expect(screen.getByRole('heading', { name: /เลือกภาษา \/ Choose language/i })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'English' }))
 
-    expect(await screen.findByRole('heading', { name: 'Choose your space' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Enter Visitor Guide/i })).toHaveAttribute('href', '/visit')
-    expect(screen.getByRole('link', { name: /Open Student Training/i })).toHaveAttribute('href', '/nisit')
+    expect(await screen.findByRole('heading', { name: 'MonkChat Guide' })).toBeInTheDocument()
+    const shortcuts = screen.getByRole('navigation', { name: 'Home shortcuts' })
+    expect(shortcuts.querySelectorAll('a')).toHaveLength(5)
+    expect(container.querySelector('a[href="/nisit"]')).toBeNull()
+    expect(screen.queryByRole('link', { name: /Student Training|Student Monks|พระนิสิต/i })).not.toBeInTheDocument()
   })
 
-  it('VisitPage renders visitor atmosphere, 3 gentle meditation cards and verified practice places', async () => {
+  it('Layout keeps 5 visitor shortcuts persistent on sub-pages, keeps chatbot in header, and hides /nisit links publicly', async () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
+    const { container } = renderWithRouter(
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="activities" element={<div>Subpage body</div>} />
+          <Route path="meditation" element={<div>Meditation body</div>} />
+        </Route>
+      </Routes>,
+      ['/meditation'],
+    )
+
+    expect(container.querySelector('a[href="/nisit"]')).toBeNull()
+    expect(container.querySelector('a[href="/admin/login"]')).toBeNull()
+    const bar = screen.getByRole('navigation', { name: 'Visitor quick shortcuts' })
+    expect(bar.querySelectorAll('a')).toHaveLength(5)
+    expect(within(bar).getByRole('link', { name: 'Meditate', current: 'page' })).toHaveAttribute('href', '/meditation')
+
+    const header = screen.getByRole('banner')
+    const chatButton = header.querySelector('button[aria-controls="reviewed-chatbot-panel"]')
+    expect(chatButton).not.toBeNull()
+    fireEvent.click(chatButton as HTMLButtonElement)
+    const dialog = await screen.findByRole('dialog', { name: 'Ask the chatbot' })
+    expect(dialog).toBeInTheDocument()
+    fireEvent.keyDown(dialog, { key: 'Escape' })
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Ask the chatbot' })).not.toBeInTheDocument())
+  })
+
+  it('VisitPage renders only core home sections plus the official contact banner', async () => {
     sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
     renderWithRouter(<VisitPage />)
 
-    expect(await screen.findByRole('heading', { name: 'Atmosphere & surroundings' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'How to start in three gentle steps' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Sit comfortably' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Close your eyes gently' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Breathe slowly' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Visit center website/i })).toHaveAttribute(
+    expect(await screen.findByRole('heading', { name: 'Location & map' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'What to expect' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Atmosphere & surroundings' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Official Contact & Announcements' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /MonkChat Ayutthaya/i })).toHaveAttribute(
       'href',
-      'https://ayothayameditation.com/',
+      'https://web.facebook.com/MonkChatAyutthaya/',
     )
+    expect(screen.getByRole('button', { name: 'Ask the Chatbot' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'How to start in three gentle steps' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Meditation sanctuaries & places to stay' })).not.toBeInTheDocument()
   })
 
   it('NisitPracticePage supports student profile validation and all 5 learning modules', async () => {

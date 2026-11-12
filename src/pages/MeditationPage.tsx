@@ -5,7 +5,6 @@ import { supabaseClient } from '../lib/supabase'
 import { MeditationPlayer } from '../components/MeditationPlayer'
 import { MeditationBeginnerGuide } from '../components/MeditationBeginnerGuide'
 import { GuideIcon } from '../components/GuideIcon'
-import { ChatbotServiceCard } from '../components/ChatbotServiceCard'
 
 interface TrackTranslationRow {
   language_code: string
@@ -162,14 +161,14 @@ export function MeditationPage() {
       <div id="meditation-audio" className="scroll-mt-24 space-y-5">
         <div className="flex items-center gap-2.5">
 
-          <h2 className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+          <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
             {isEnglish ? 'Meditation audio' : 'ฟังเสียงสมาธิ'}
           </h2>
         </div>
 
         {isLoading && (
-          <div role="status" aria-label={t('meditation.loadingAudio')} className="flex min-h-64 items-center justify-center rounded-2xl border border-[#EADCC6] bg-[#FFFDF7]">
-            <div className="h-9 w-9 animate-spin rounded-full border-3 border-[#A43D1D]/20 border-t-[#A43D1D]" />
+          <div role="status" aria-label={t('meditation.loadingAudio')} className="flex min-h-64 items-center justify-center rounded-2xl border border-brand-border bg-brand-surface">
+            <div className="h-9 w-9 animate-spin rounded-full border-3 border-brand-terracotta/20 border-t-brand-terracotta" />
           </div>
         )}
 
@@ -180,7 +179,7 @@ export function MeditationPage() {
             <button
               type="button"
               onClick={() => void fetchTracks()}
-              className="mt-3 min-h-11 rounded-xl bg-[#A43D1D] px-5 text-sm font-medium text-white"
+              className="mt-3 min-h-11 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white"
             >
               {t('meditation.retry')}
             </button>
@@ -188,8 +187,8 @@ export function MeditationPage() {
         )}
 
         {!isLoading && !error && tracks.length === 0 && (
-          <div className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-8 text-center">
-            <h2 className="text-lg font-semibold text-[#681B16]">{t('meditation.emptyTitle')}</h2>
+          <div className="rounded-2xl border border-brand-border bg-brand-surface p-8 text-center">
+            <h2 className="text-lg font-semibold text-brand-maroon">{t('meditation.emptyTitle')}</h2>
             <p className="mx-auto mt-2 max-w-md text-sm text-brand-muted">{t('meditation.emptyDesc')}</p>
           </div>
         )}
@@ -197,11 +196,11 @@ export function MeditationPage() {
         {!isLoading && !error && currentTrack && trackTranslation && (
           <div className="grid items-start gap-6 lg:grid-cols-[1.3fr_0.7fr]">
             {/* Main Featured Player Card */}
-            <section className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6">
+            <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
               {/* Header with Lotus Thumbnail, Title, and Save/Share actions */}
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-4">
-                  <div className="hidden h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-[#EADCC6] bg-[#FAF2E6] sm:block">
+                  <div className="hidden h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-brand-border bg-brand-gold-soft sm:block">
                     <img
                       src="/images/home/monkchat-meditation-hero.webp"
                       alt=""
@@ -209,10 +208,10 @@ export function MeditationPage() {
                     />
                   </div>
                   <div>
-                    <span className="text-xs font-medium text-[#A43D1D]">
+                    <span className="text-xs font-medium text-brand-terracotta">
                       {currentTrack.is_recommended ? t('meditation.recommended') : (isEnglish ? 'Guided meditation' : 'เสียงนำสมาธิ')}
                     </span>
-                    <h3 className="mt-1 font-sans text-xl font-medium text-[#681B16] sm:text-2xl">
+                    <h3 className="mt-1 font-sans text-xl font-medium text-brand-maroon sm:text-2xl">
                       {trackTranslation.title}
                     </h3>
                     {trackTranslation.description && (
@@ -245,8 +244,8 @@ export function MeditationPage() {
                     aria-pressed={isSaved}
                     className={`inline-flex min-h-11 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors duration-150 cursor-pointer ${
                       isSaved
-                        ? 'border-[#A43D1D] bg-[#A43D1D] text-white'
-                        : 'border-[#EADCC6] bg-[#FFFDF7] text-[#681B16] hover:bg-[#FDF4E3]'
+                        ? 'border-brand-terracotta bg-brand-terracotta text-white'
+                        : 'border-brand-border bg-brand-surface text-brand-maroon hover:bg-brand-gold-soft'
                     }`}
                   >
                     <GuideIcon name="bookmark" />
@@ -257,7 +256,7 @@ export function MeditationPage() {
                     type="button"
                     onClick={handleShare}
                     aria-label="Share meditation link"
-                    className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-[#EADCC6] bg-[#FFFDF7] px-3 py-1.5 text-sm font-medium text-[#681B16] transition-colors duration-150 hover:bg-[#FDF4E3] cursor-pointer"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-brand-border bg-brand-surface px-3 py-1.5 text-sm font-medium text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft cursor-pointer"
                   >
                     <GuideIcon name="share" />
                     <span>{isEnglish ? 'Share' : 'แชร์'}</span>
@@ -267,13 +266,13 @@ export function MeditationPage() {
 
               {/* Toast Feedback for Save/Share */}
               {shareFeedback && (
-                <div role="status" className="mt-3 rounded-lg bg-[#FDF4E3] p-2 text-center text-sm font-semibold text-[#A43D1D] border border-[#EADCC6]">
+                <div role="status" className="mt-3 rounded-lg bg-brand-gold-soft p-2 text-center text-sm font-semibold text-brand-terracotta border border-brand-border">
                   {shareFeedback}
                 </div>
               )}
 
               {/* Player and Synchronized Captions */}
-              <div className="mt-6 border-t border-[#EADCC6]/80 pt-5">
+              <div className="mt-6 border-t border-brand-border/80 pt-5">
                 <MeditationPlayer
                   key={JSON.stringify([currentTrack.id, currentLang, currentTrack.audio_storage_path, trackTranslation.subtitle_vtt_storage_path])}
                   trackId={currentTrack.id}
@@ -286,16 +285,16 @@ export function MeditationPage() {
             </section>
 
             {/* Track Switcher Sidebar */}
-            <section className="rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5">
-              <div className="flex items-center justify-between border-b border-[#EADCC6] pb-3">
-                <h3 className="font-sans text-base font-medium text-[#681B16]">
+            <section className="rounded-2xl border border-brand-border bg-brand-surface p-5">
+              <div className="flex items-center justify-between border-b border-brand-border pb-3">
+                <h3 className="font-sans text-base font-medium text-brand-maroon">
                   {t('meditation.selectTrackTitle')}
                 </h3>
                 <span className="text-sm text-brand-muted">
                   {tracks.length} {t('qa.itemCount', { count: tracks.length })}
                 </span>
               </div>
-              <div className="divide-y divide-[#EADCC6]/60" role="group" aria-label={t('meditation.selectTrackTitle')}>
+              <div className="divide-y divide-brand-border/60" role="group" aria-label={t('meditation.selectTrackTitle')}>
                 {tracks.map((track, index) => {
                   const translation = track.meditation_track_translations.find(item => item.language_code === currentLang)
                   const isSelected = track.id === selectedTrackId
@@ -306,11 +305,11 @@ export function MeditationPage() {
                       aria-pressed={isSelected}
                       onClick={() => setSearchParams({ trackId: track.id })}
                       className={`grid w-full grid-cols-[2rem_1fr_auto] items-center gap-3 py-3 text-left transition-colors duration-150 cursor-pointer ${
-                        isSelected ? 'text-[#A43D1D]' : 'text-[#30251E] hover:text-[#A43D1D]'
+                        isSelected ? 'text-brand-terracotta' : 'text-brand-text hover:text-brand-terracotta'
                       }`}
                     >
                       <span className={`grid h-7 w-7 place-items-center rounded-full text-sm font-medium ${
-                        isSelected ? 'bg-[#A43D1D] text-white' : 'bg-[#FDF4E3] text-[#681B16]'
+                        isSelected ? 'bg-brand-terracotta text-white' : 'bg-brand-gold-soft text-brand-maroon'
                       }`}>
                         {index + 1}
                       </span>
@@ -322,7 +321,7 @@ export function MeditationPage() {
                           {Math.max(1, Math.round(track.duration_seconds / 60))} {t('meditation.minutes')}
                         </small>
                       </span>
-                      <span className="text-sm font-medium text-[#D5BD94]">›</span>
+                      <span className="text-sm font-medium text-brand-border-dark">›</span>
                     </button>
                   )
                 })}
@@ -336,17 +335,17 @@ export function MeditationPage() {
       {!isLoading && !error && currentTrack && trackTranslation && (
         <section
           id="meditation-transcript"
-          className="scroll-mt-24 space-y-4 rounded-2xl border border-[#EADCC6] bg-[#FFFDF7] p-5 sm:p-6"
+          className="scroll-mt-24 space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6"
         >
           <div className="flex items-center gap-2.5">
 
-            <h2 className="font-serif text-2xl font-semibold text-[#681B16] sm:text-3xl">
+            <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
               {t('meditation.transcriptTitle')}
             </h2>
           </div>
 
           {/* Excerpt Card as shown in mockup */}
-          <div className="rounded-xl border border-[#EADCC6] bg-[#FAF2E6]/60 p-5 sm:p-6">
+          <div className="rounded-xl border border-brand-border bg-brand-gold-soft/60 p-5 sm:p-6">
             <div className="flex items-center gap-2 text-sm font-medium text-brand-muted">
               <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -354,14 +353,14 @@ export function MeditationPage() {
               <span>{isEnglish ? 'Meditation Transcript (Excerpt)' : 'ข้อความถอดเสียงนำสมาธิ (สังเขป)'}</span>
             </div>
 
-            <blockquote className="mt-3 border-l-3 border-[#A43D1D] pl-4 text-sm leading-6 text-brand-muted sm:text-sm">
+            <blockquote className="mt-3 border-l-3 border-brand-terracotta pl-4 text-sm leading-6 text-brand-muted sm:text-sm">
               {trackTranslation.transcript
                 ? <>&ldquo;{trackTranslation.transcript.slice(0, 240)}{trackTranslation.transcript.length > 240 ? '…' : ''}&rdquo;</>
                 : t('meditation.noTranscript')}
             </blockquote>
 
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-[#EADCC6]/80 pt-3">
-              <span className="text-sm font-semibold text-[#681B16]">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-brand-border/80 pt-3">
+              <span className="text-sm font-semibold text-brand-maroon">
                 {trackTranslation.title}
               </span>
               <button
@@ -369,7 +368,7 @@ export function MeditationPage() {
                 onClick={() => setIsFullTranscriptOpen(!isFullTranscriptOpen)}
                 aria-expanded={isFullTranscriptOpen}
                 aria-controls="full-meditation-transcript"
-                className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-[#A43D1D] hover:underline cursor-pointer"
+                className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-brand-terracotta hover:underline cursor-pointer"
               >
                 <span>{isFullTranscriptOpen ? (isEnglish ? 'Hide Full Transcript' : 'ซ่อนข้อความเต็ม') : (isEnglish ? 'View Full Transcript →' : 'ดูข้อความถอดเสียงเต็ม →')}</span>
               </button>
@@ -378,12 +377,12 @@ export function MeditationPage() {
 
           {/* Full Transcript Expandable Section */}
           {isFullTranscriptOpen && (
-            <div id="full-meditation-transcript" className="mt-4 rounded-xl border border-[#EADCC6] bg-[#FFF8EE] p-5">
-              <h3 className="font-sans text-sm font-medium text-[#681B16]">
+            <div id="full-meditation-transcript" className="mt-4 rounded-xl border border-brand-border bg-brand-cream p-5">
+              <h3 className="font-sans text-sm font-medium text-brand-maroon">
                 {trackTranslation.title}
               </h3>
               {trackTranslation.transcript ? (
-                <p className="mt-3 whitespace-pre-wrap border-l-3 border-[#A43D1D] pl-4 text-sm leading-6 text-[#4A3B32] sm:text-sm">
+                <p className="mt-3 whitespace-pre-wrap border-l-3 border-brand-terracotta pl-4 text-sm leading-6 text-brand-text sm:text-sm">
                   {trackTranslation.transcript}
                 </p>
               ) : (
@@ -394,8 +393,6 @@ export function MeditationPage() {
 
         </section>
       )}
-
-      <div className="border-t border-brand-border pt-6"><ChatbotServiceCard inline /></div>
     </div>
   )
 }

@@ -31,9 +31,9 @@ export function NisitVideoStudy({ isEnglish }: { isEnglish: boolean }) {
           <GuideIcon name="play" />
           <span>{isEnglish ? 'External video practice (0 THB bandwidth)' : 'ฝึกฟังและออกเสียงผ่านวิดีโอภายนอก (ไม่เปลืองพื้นที่ระบบ)'}</span>
         </div>
-        <h3 className="mt-2 font-serif text-lg font-semibold text-brand-maroon">
+        <h2 className="mt-2 font-serif text-lg font-semibold text-brand-maroon">
           {isEnglish ? 'Open a class listening or pronunciation video' : 'เปิดคลิปวิดีโอฝึกฟังและพูดตามสำหรับห้องเรียน'}
-        </h3>
+        </h2>
         <p className="mt-1 text-sm leading-6 text-brand-muted">
           {isEnglish
             ? 'Paste a YouTube link provided by your instructor to listen and shadow-speak alongside the vocabulary.'
@@ -84,9 +84,9 @@ export function NisitVideoStudy({ isEnglish }: { isEnglish: boolean }) {
       {/* Curated Official Sources */}
       <section className="space-y-4">
         <div>
-          <h3 className="font-serif text-lg font-semibold text-brand-maroon">
+          <h2 className="font-serif text-lg font-semibold text-brand-maroon">
             {isEnglish ? 'Recommended listening & reference links' : 'คลังแหล่งเรียนรู้และฝึกการสื่อสารที่แนะนำ'}
-          </h3>
+          </h2>
           <p className="mt-1 text-sm text-brand-muted">
             {isEnglish
               ? 'Official Dhammakaya English/Thai references already reviewed in the project.'
@@ -101,9 +101,9 @@ export function NisitVideoStudy({ isEnglish }: { isEnglish: boolean }) {
                 <p className="text-xs font-medium text-brand-terracotta">
                   {isEnglish ? res.categoryEn : res.categoryTh}
                 </p>
-                <h4 className="mt-1 font-sans text-base font-medium text-brand-maroon">
+                <h3 className="mt-1 font-sans text-base font-medium text-brand-maroon">
                   {isEnglish ? res.titleEn : res.titleTh}
-                </h4>
+                </h3>
                 <p className="mt-2 text-sm leading-6 text-brand-muted">
                   {isEnglish ? res.descriptionEn : res.descriptionTh}
                 </p>

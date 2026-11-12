@@ -2,13 +2,13 @@ import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { Layout } from './components/Layout'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { NisitProtectedRoute } from './components/NisitProtectedRoute'
 import { OwnerRoute } from './components/OwnerRoute'
 import { AdminLayout } from './components/AdminLayout'
 import { UsageTracker } from './components/UsageTracker'
 import { AuthProvider } from './lib/auth'
 
 // Public Routes (Lazy)
-const HomeOverviewPage = lazy(() => import('./pages/HomeOverviewPage').then(m => ({ default: m.HomeOverviewPage })))
 const VisitPage = lazy(() => import('./pages/VisitPage').then(m => ({ default: m.VisitPage })))
 const NisitPracticePage = lazy(() => import('./pages/NisitPracticePage').then(m => ({ default: m.NisitPracticePage })))
 const NisitLoginPage = lazy(() => import('./pages/NisitLoginPage').then(m => ({ default: m.NisitLoginPage })))
@@ -52,10 +52,12 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Layout />}>
-              <Route index element={<HomeOverviewPage />} />
-              <Route path="home" element={<HomeOverviewPage />} />
+              <Route index element={<VisitPage />} />
+              <Route path="home" element={<VisitPage />} />
               <Route path="visit" element={<VisitPage />} />
-              <Route path="nisit" element={<NisitPracticePage />} />
+              <Route path="nisit" element={<NisitProtectedRoute />}>
+                <Route index element={<NisitPracticePage />} />
+              </Route>
               <Route path="nisit/login" element={<NisitLoginPage />} />
               <Route path="activities" element={<ActivitiesPage />} />
               <Route path="meditation" element={<MeditationPage />} />

@@ -66,11 +66,17 @@ export function AdminLayout() {
 
   return (
     <div className="cms-shell min-h-screen bg-[#F7F7F5] font-sans text-neutral-900">
+      <a
+        href="#admin-main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-lg focus:bg-[#11223C] focus:px-4 focus:text-sm focus:font-medium focus:text-white"
+      >
+        {isEnglish ? 'Skip to main content' : 'ข้ามไปยังเนื้อหาหลัก'}
+      </a>
       {signOutError && <p role="alert" className="bg-red-50 p-4 text-center text-red-800">{t('management.signOutError')}</p>}
       <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white">
         <div className="mx-auto flex min-h-20 max-w-[96rem] items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <Link to="/admin" className="flex min-w-0 items-center gap-3 text-brand-maroon">
-            <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="" className="h-12 w-10 shrink-0 object-contain" />
+          <Link to="/admin" className="flex min-h-11 min-w-0 items-center gap-3 text-brand-maroon">
+            <img src="/images/logo/ayutthaya-monk-chat-logo.png" alt="" width={1001} height={1024} className="h-11 w-11 shrink-0 object-contain" />
             <span className="text-sm font-medium sm:text-base">MonkChat CMS</span>
           </Link>
           <div className="hidden items-center gap-4 lg:flex">
@@ -104,7 +110,7 @@ export function AdminLayout() {
       </header>
       <div className="mx-auto grid max-w-[96rem] lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside className="sticky top-20 hidden h-[calc(100dvh-5rem)] overflow-y-auto border-r border-neutral-200 bg-white p-4 lg:block">{navigation()}</aside>
-        <main className="min-w-0 px-4 py-6 sm:px-6 lg:p-8"><Outlet /></main>
+        <main id="admin-main-content" tabIndex={-1} className="min-w-0 scroll-mt-24 px-4 py-6 outline-none sm:px-6 lg:p-8"><Outlet /></main>
       </div>
     </div>
   )
