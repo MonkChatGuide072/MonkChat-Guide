@@ -316,19 +316,26 @@ describe('reviewed chatbot and centers', () => {
     network.mockRestore()
   })
 
-  it('matches an exact city and restores all centers after an empty search', async () => {
+  it('matches an exact city, keeps continent/region directory in a toggleable search popover, and omits duplicate sections', async () => {
     mocks.rows.dci_centers = [
       { id: 'york', country_code: 'GB', city: 'York', address: 'York address', map_url: null, website_url: null, contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'York Center', description: 'York fixture' }] },
       { id: 'new-york', country_code: 'US', city: 'New York', address: 'New York address', map_url: null, website_url: null, contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'New York Center', description: 'New York fixture' }] },
     ]
     openPage(<CentersPage />, '/centers')
-    await screen.findByRole('heading', { name: 'York Center' })
-    expect(screen.getByRole('heading', { name: 'Continue your practice' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Visit center website/ })).toHaveAttribute('href', 'https://ayothayameditation.com/')
-    expect(screen.getByRole('link', { name: /View temple contact details/ })).toHaveAttribute('href', 'https://en.dhammakaya.net/contact/')
-    expect(screen.getByRole('link', { name: /Explore branch centers/ })).toHaveAttribute('href', 'https://en.dhammakaya.net/branches/')
-    const destinations = screen.getByRole('region', { name: 'Places you can explore' })
-    expect(destinations.compareDocumentPosition(screen.getByRole('search')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    await screen.findByText(/Page 1\/\d+/)
+    expect(screen.queryByRole('heading', { name: 'Places you can explore' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Learn More & Resources' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Continents and center regions' })).not.toBeInTheDocument()
+
+    const browseToggle = screen.getByRole('button', { name: /Browse continents & areas/i })
+    expect(browseToggle).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(browseToggle)
+    expect(browseToggle).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('region', { name: 'Continents and center regions' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Explore International Zones by Continent' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Close continent browser' }))
+    expect(screen.queryByRole('region', { name: 'Continents and center regions' })).not.toBeInTheDocument()
+
     fireEvent.click(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: 'York' }))
     expect(screen.getByRole('heading', { name: 'York Center' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'New York Center' })).not.toBeInTheDocument()
@@ -337,48 +344,57 @@ describe('reviewed chatbot and centers', () => {
     expect(screen.getByRole('heading', { name: 'Meditation centers' })).toHaveFocus()
     expect(screen.getByRole('heading', { name: 'No centers match your search' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Show all centers' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Page 2' }))
     expect(screen.getByRole('heading', { name: 'York Center' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'New York Center' })).toBeInTheDocument()
   })
 
-  it('keeps center details when Bio Links fail and omits unsafe contact URLs', async () => {
+  it('renders safe center map links while omitting unsafe website and contact URLs', async () => {
     mocks.rows.dci_centers = [{ id: 'center-1', country_code: 'TH', city: 'Example city', address: 'Example address', map_url: 'https://example.org/map', website_url: 'javascript:alert(1)', contact_url: 'data:text/html,example', dci_center_translations: [{ language_code: 'en', name: 'Example center', description: 'Test fixture' }] }]
-    mocks.failures.add('bio_links')
     openPage(<CentersPage />, '/centers')
-    expect((await screen.findAllByText('Example center')).length).toBeGreaterThan(0)
-    expect(screen.getByRole('link', { name: 'Map' })).toHaveAttribute('href', 'https://example.org/map')
-    expect(screen.getByText('1 center')).toBeInTheDocument()
+    await screen.findByText(/Page 1\/\d+/)
+    expect(screen.getByRole('status')).toHaveTextContent(/Page 1\/\d+ · 1–6 of \d+ centers/)
+    expect(screen.queryByText('1 center')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Browse continents & areas/i }))
+    expect((await screen.findAllByText('1 center')).length).toBeGreaterThan(0)
     expect(screen.queryByText('4 centers')).not.toBeInTheDocument()
     expect(screen.queryByText('🌱 Beginner-friendly')).not.toBeInTheDocument()
-    expect(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: /Example city/ })).toBeInTheDocument()
+
+    const exampleCityChip = within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: /Example city/ })
+    fireEvent.click(exampleCityChip)
+    expect(screen.getByRole('heading', { name: 'Example center' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Map' })).toHaveAttribute('href', 'https://example.org/map')
     expect(screen.queryByRole('link', { name: 'Website' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Contact' })).not.toBeInTheDocument()
-    expect(screen.getByRole('alert')).toHaveTextContent('Could not load links')
     expect(screen.queryByRole('link', { name: 'Back to visitor home' })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Visit Monk Chat/ })).toHaveAttribute('href', '/activities')
-    mocks.failures.clear()
-    fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
-    await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument())
   })
 
-  it('filters between Thailand and international zones and matches only verified real location photos', async () => {
+  it('paginates centers into numbered pages and filters Thailand vs international branches with real photos', async () => {
     mocks.rows.dci_centers = [
       { id: 'nl-1', country_code: 'NL', city: 'Afferden', address: 'Koningstraat 47, 6654 AA Afferden', map_url: 'https://maps.google.com/?q=Afferden', website_url: 'https://www.stichting-dhammakaya.nl/nl/', contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'Wat Phra Dhammakaya Netherlands', description: 'Dutch sanctuary' }] },
       { id: 'sg-1', country_code: 'SG', city: 'Singapore', address: '6 Sumang Walk, Punggol', map_url: 'https://maps.google.com/?q=Singapore', website_url: 'https://dhammakaya.sg/', contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'Dhammakaya Centre Singapore', description: 'Singapore sanctuary' }] },
       { id: 'unknown-1', country_code: 'GB', city: 'York', address: 'York address', map_url: null, website_url: 'https://unknown.example/', contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'York Mystery Center', description: 'Should have no fake image' }] },
     ]
     openPage(<CentersPage />, '/centers')
-    await screen.findByRole('heading', { name: 'Dhammakaya Centre Singapore' })
+    await screen.findByRole('heading', { name: 'Ayothaya Meditation Center' })
 
-    const nlImg = screen.getByRole('img', { name: 'Wat Phra Dhammakaya Netherlands' })
-    expect(nlImg).toHaveAttribute('src', '/images/centers/nl-afferden.jpg')
-    const sgImg = screen.getByRole('img', { name: 'Dhammakaya Centre Singapore' })
-    expect(sgImg).toHaveAttribute('src', '/images/centers/sg-punggol.jpg')
+    // Page 1 shows Thailand retreats first (6 cards), and pagination shows numbered page buttons
+    const pagination = screen.getByRole('navigation', { name: 'Centers pagination' })
+    expect(within(pagination).getByRole('button', { name: 'Page 1', current: 'page' })).toBeInTheDocument()
+    expect(within(pagination).getByRole('button', { name: 'Page 2' })).toBeInTheDocument()
     expect(screen.queryByRole('img', { name: 'York Mystery Center' })).not.toBeInTheDocument()
 
-    // Switch to Thailand zone -> only verified Thailand sanctuaries remain
+    // Navigate to Page 2 to view international branches
+    fireEvent.click(within(pagination).getByRole('button', { name: 'Page 2' }))
+    expect(screen.getByRole('img', { name: 'Wat Phra Dhammakaya Netherlands' })).toHaveAttribute('src', '/images/centers/nl-afferden.jpg')
+    expect(screen.getByRole('img', { name: 'Dhammakaya Centre Singapore' })).toHaveAttribute('src', '/images/centers/sg-punggol.jpg')
+    expect(screen.queryByRole('img', { name: 'York Mystery Center' })).not.toBeInTheDocument()
+
+    // Switch to Thailand zone -> resets to Page 1 with only verified Thailand sanctuaries (including Pa Pae)
     fireEvent.click(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: /In Thailand/i }))
     expect(screen.getByRole('heading', { name: 'Wat Phra Dhammakaya (Headquarters)' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Pa Pae Meditation Retreat' })).toBeInTheDocument()
+    expect(screen.getByText(/papaemeditation@gmail\.com/)).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Dhammakaya Centre Singapore' })).not.toBeInTheDocument()
 
     // Switch to International zone -> overseas centers shown with continent sub-filters

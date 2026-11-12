@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { isSafeWebUrl } from '../lib/publicContent'
 import { GuideIcon, type GuideIconName } from '../components/GuideIcon'
-import { practiceDestinations } from '../content/continuePractice'
 import {
   GLOBAL_BRANCH_CONTINENTS,
-  VERIFIED_THAILAND_CENTERS,
+  VERIFIED_DIRECTORY_CENTERS,
   getContinentLabel,
   resolveCenterMedia,
   type CenterZone,
@@ -33,19 +31,6 @@ interface CenterRow {
   dci_center_translations: CenterTranslationRow[]
 }
 
-interface BioLinkTranslationRow {
-  language_code: string
-  title: string
-}
-
-interface BioLinkRow {
-  id: string
-  url: string
-  display_order: number
-  image_storage_path: string | null
-  bio_link_translations: BioLinkTranslationRow[]
-}
-
 interface RenderableCenterCard {
   id: string
   source: 'verified-th' | 'database'
@@ -62,9 +47,15 @@ interface RenderableCenterCard {
   image: string | null
   imageWidth: number
   imageHeight: number
+  imageClassName?: string
   badgeLabel: string
   topTag: string
+  phone?: string
+  email?: string
+  lineId?: string
 }
+
+const CENTERS_PER_PAGE = 6
 
 function normalizeUrlHost(url: string | null | undefined): string {
   if (!url) return ''
@@ -84,54 +75,38 @@ export function CentersPage() {
   const [selectedZone, setSelectedZone] = useState<CenterZone>('all')
   const [selectedContinent, setSelectedContinent] = useState<'All' | WorldContinentKey>('All')
   const [selectedRegion, setSelectedRegion] = useState<string>('All')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isRegionBrowserOpen, setIsRegionBrowserOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [allCenters, setCenters] = useState<CenterRow[]>([])
-  const [allLinks, setBioLinks] = useState<BioLinkRow[]>([])
-  const [linksError, setLinksError] = useState(false)
 
   const centers = allCenters.filter((center) =>
     center.dci_center_translations.some((translation) => translation.language_code === currentLang),
   )
-  const bioLinks = allLinks.filter((link) =>
-    isSafeWebUrl(link.url) && link.bio_link_translations.some((translation) => translation.language_code === currentLang),
-  )
 
   const fetchData = useCallback(async () => {
     if (!supabaseClient) {
-      setError(t('centers.errorNoClient'))
+      setError(null)
       setIsLoading(false)
       return
     }
     setIsLoading(true)
     setError(null)
-    setLinksError(false)
     try {
-      const [centerResult, linkResult] = await Promise.allSettled([
-        supabaseClient
-          .from('dci_centers')
-          .select(`
-            id, country_code, city, address, map_url, website_url, contact_url,
-            content_status, is_published,
-            dci_center_translations (language_code, name, description)
-          `)
-          .eq('content_status', 'published')
-          .eq('is_published', true)
-          .order('created_at', { ascending: false }),
-        supabaseClient
-          .from('bio_links')
-          .select('id, url, display_order, image_storage_path, bio_link_translations(language_code, title)')
-          .eq('content_status', 'published')
-          .eq('is_published', true)
-          .order('display_order', { ascending: true }),
-      ])
-      if (centerResult.status === 'rejected') throw centerResult.reason
-      const centersResponse = centerResult.value
-      if (centersResponse.error) throw centersResponse.error
-      const linksResponse = linkResult.status === 'fulfilled' ? linkResult.value : null
-      setLinksError(!linksResponse || !!linksResponse.error)
-      setCenters((centersResponse.data as CenterRow[]) ?? [])
-      setBioLinks((linksResponse && !linksResponse.error ? linksResponse.data ?? [] : []) as BioLinkRow[])
+      const { data, error: centersError } = await supabaseClient
+        .from('dci_centers')
+        .select(`
+          id, country_code, city, address, map_url, website_url, contact_url,
+          content_status, is_published,
+          dci_center_translations (language_code, name, description)
+        `)
+        .eq('content_status', 'published')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false })
+
+      if (centersError) throw centersError
+      setCenters((data as CenterRow[]) ?? [])
     } catch {
       setError(t('centers.errorLoad'))
     } finally {
@@ -142,6 +117,17 @@ export function CentersPage() {
   useEffect(() => {
     void fetchData()
   }, [fetchData])
+
+  useEffect(() => {
+    if (!isRegionBrowserOpen) return
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsRegionBrowserOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isRegionBrowserOpen])
 
   const normalizedSearch = searchQuery.toLocaleLowerCase(currentLang).trim()
 
@@ -171,13 +157,16 @@ export function CentersPage() {
         imageHeight: media.height,
         badgeLabel: continentLabel,
         topTag: center.city || center.country_code,
+        phone: media.phone,
+        email: media.email,
+        lineId: media.lineId,
       }
     })
   }, [centers, currentLang, isEnglish, t])
 
-  const thailandShowcaseCards = useMemo<RenderableCenterCard[]>(() => {
+  const verifiedDirectoryCards = useMemo<RenderableCenterCard[]>(() => {
     const dbHosts = new Set(dbCards.map((c) => normalizeUrlHost(c.websiteUrl)).filter(Boolean))
-    return VERIFIED_THAILAND_CENTERS.filter((item) => !dbHosts.has(normalizeUrlHost(item.websiteUrl))).map((item) => ({
+    return VERIFIED_DIRECTORY_CENTERS.filter((item) => !dbHosts.has(normalizeUrlHost(item.websiteUrl))).map((item) => ({
       id: item.id,
       source: 'verified-th',
       countryCode: item.countryCode,
@@ -193,61 +182,72 @@ export function CentersPage() {
       image: item.image,
       imageWidth: item.imageWidth,
       imageHeight: item.imageHeight,
+      imageClassName: item.imageClassName,
       badgeLabel: item.badge[currentLang],
       topTag: item.city[currentLang],
+      phone: item.phone,
+      email: item.email,
+      lineId: item.lineId,
     }))
   }, [currentLang, dbCards])
 
-  const filteredDbCards = useMemo(() => {
-    return dbCards.filter((card) => {
+  const allCombinedCards = useMemo<RenderableCenterCard[]>(() => {
+    const thailandVerified = verifiedDirectoryCards.filter((card) => card.zone === 'thailand')
+    const thailandDb = dbCards.filter((card) => card.zone === 'thailand')
+    const internationalDb = dbCards.filter((card) => card.zone === 'international')
+    const internationalVerified = verifiedDirectoryCards.filter((card) => card.zone === 'international')
+    return [...thailandVerified, ...thailandDb, ...internationalDb, ...internationalVerified]
+  }, [dbCards, verifiedDirectoryCards])
+
+  const visibleCards = useMemo(() => {
+    return allCombinedCards.filter((card) => {
       if (selectedZone !== 'all' && card.zone !== selectedZone) return false
       if (selectedContinent !== 'All' && card.continent !== selectedContinent) return false
       if (selectedRegion !== 'All' && card.city !== selectedRegion) return false
       if (!normalizedSearch) return true
-      return `${card.name} ${card.description} ${card.city} ${card.address} ${card.countryCode}`
+      return `${card.name} ${card.description} ${card.city} ${card.address} ${card.countryCode} ${card.phone ?? ''} ${card.email ?? ''} Thailand ไทย`
         .toLocaleLowerCase(currentLang)
         .includes(normalizedSearch)
     })
-  }, [currentLang, dbCards, normalizedSearch, selectedContinent, selectedRegion, selectedZone])
+  }, [allCombinedCards, currentLang, normalizedSearch, selectedContinent, selectedRegion, selectedZone])
 
-  const filteredThailandCards = useMemo(() => {
-    if (selectedZone === 'international') return []
-    if (selectedRegion !== 'All') return []
-    if (selectedContinent !== 'All' && selectedContinent !== 'asia') return []
-    return thailandShowcaseCards.filter((card) => {
-      if (!normalizedSearch) return true
-      return `${card.name} ${card.description} ${card.city} ${card.address} Thailand ไทย`
-        .toLocaleLowerCase(currentLang)
-        .includes(normalizedSearch)
-    })
-  }, [currentLang, normalizedSearch, selectedContinent, selectedRegion, selectedZone, thailandShowcaseCards])
-
-  const visibleCards = useMemo(
-    () => [...filteredThailandCards, ...filteredDbCards],
-    [filteredDbCards, filteredThailandCards],
-  )
-
-  const regionCounts = [...new Set(centers.map((center) => center.city).filter(Boolean))]
-    .map((city) => ({ city, count: centers.filter((center) => center.city === city).length }))
+  const regionCounts = [...new Set(allCombinedCards.map((center) => center.city).filter(Boolean))]
+    .map((city) => ({ city, count: allCombinedCards.filter((center) => center.city === city).length }))
 
   const availableContinents = useMemo(() => {
     const keys = new Set(
-      dbCards
+      allCombinedCards
         .filter((card) => selectedZone === 'all' || card.zone === selectedZone)
         .map((card) => card.continent)
         .filter((k): k is WorldContinentKey => Boolean(k)),
     )
     return GLOBAL_BRANCH_CONTINENTS.filter((item) => keys.has(item.key))
-  }, [dbCards, selectedZone])
+  }, [allCombinedCards, selectedZone])
 
-  const thailandTotalCount = thailandShowcaseCards.length + dbCards.filter((c) => c.zone === 'thailand').length
-  const internationalTotalCount = dbCards.filter((c) => c.zone === 'international').length
-  const allTotalCount = thailandShowcaseCards.length + dbCards.length
+  const thailandTotalCount = allCombinedCards.filter((c) => c.zone === 'thailand').length
+  const internationalTotalCount = allCombinedCards.filter((c) => c.zone === 'international').length
+  const allTotalCount = allCombinedCards.length
+
+  const totalPages = Math.max(1, Math.ceil(visibleCards.length / CENTERS_PER_PAGE))
+  const safePage = Math.min(currentPage, totalPages)
+  const pageStartIndex = (safePage - 1) * CENTERS_PER_PAGE
+  const paginatedCards = visibleCards.slice(pageStartIndex, pageStartIndex + CENTERS_PER_PAGE)
+  const visibleRangeStart = visibleCards.length === 0 ? 0 : pageStartIndex + 1
+  const visibleRangeEnd = pageStartIndex + paginatedCards.length
+
+  function goToPage(page: number) {
+    const nextPage = Math.max(1, Math.min(page, totalPages))
+    setCurrentPage(nextPage)
+    if (typeof resultsHeadingRef.current?.scrollIntoView === 'function') {
+      resultsHeadingRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   function selectZone(zone: CenterZone) {
     setSelectedZone(zone)
     setSelectedContinent('All')
     setSelectedRegion('All')
+    setCurrentPage(1)
   }
 
   function resetAllFilters() {
@@ -255,6 +255,7 @@ export function CentersPage() {
     setSelectedZone('all')
     setSelectedContinent('All')
     setSelectedRegion('All')
+    setCurrentPage(1)
   }
 
   const zoneOptions: ReadonlyArray<{
@@ -286,71 +287,40 @@ export function CentersPage() {
         </p>
       </section>
 
-      {/* 2. OFFICIAL PATHWAYS ANCHOR (Required before directory search per scope & accessibility order) */}
-      <section aria-labelledby="continue-practice-heading" className="space-y-4">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 id="continue-practice-heading" className="font-serif text-xl font-semibold text-brand-maroon sm:text-2xl">
-              {isEnglish ? 'Places you can explore' : 'ช่องทางหลักสำหรับเรียนรู้เพิ่มเติม'}
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-brand-muted">
-              {isEnglish
-                ? 'MonkChat Guide connects you directly with these official websites.'
-                : 'MonkChat Guide เชื่อมต่อคุณเข้ากับเว็บไซต์ทางการของแต่ละแห่งโดยตรง'}
-            </p>
-          </div>
-          <p className="text-xs leading-5 text-brand-muted sm:max-w-xs sm:text-right">
-            {isEnglish
-              ? 'Check schedules, languages, and participation details directly with each destination.'
-              : 'ตรวจสอบรอบกิจกรรม ภาษาที่ให้บริการ และเงื่อนไขการเข้าร่วมกับสถานที่นั้นโดยตรงก่อนเดินทาง'}
-          </p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          {practiceDestinations.map((destination) => {
-            const copy = destination[currentLang]
-            return (
-              <article
-                key={destination.id}
-                className="flex min-w-0 flex-col justify-between rounded-2xl border border-brand-border bg-brand-surface p-5"
-              >
-                <div>
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-brand-border bg-[#FDF4EE] text-[#A33D19]">
-                    <GuideIcon name={destination.icon} className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-3 text-lg font-medium leading-7 text-brand-maroon">{copy.title}</h3>
-                  <p className="mt-1.5 text-sm leading-6 text-brand-muted">{copy.description}</p>
-                </div>
-                <a
-                  href={destination.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-flex min-h-11 items-center justify-between gap-2 rounded-lg border border-brand-border bg-[#F8F8F6] px-3.5 py-2 text-sm font-medium leading-5 text-brand-maroon transition-colors hover:border-[#A33D19]/40 hover:bg-[#FDF4EE]"
-                >
-                  <span>{copy.action}</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </article>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* 3. UNIFIED SEARCH + GLOBAL ZONE & REGION FILTER PANEL */}
-      <section aria-labelledby="centers-search-heading" className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6 space-y-5">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+      {/* 2. UNIFIED SEARCH + GLOBAL ZONE FILTER + DROPDOWN CONTINENT/REGION POPOVER */}
+      <section aria-labelledby="centers-search-heading" className="relative rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6 space-y-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 id="centers-search-heading" className="text-lg font-medium text-brand-maroon">
             {isEnglish ? 'Search centers & choose world zone' : 'ค้นหาศูนย์ปฏิบัติธรรมและเลือกโซนทั่วโลก'}
           </h2>
-          <a
-            href="https://en.dhammakaya.net/branches/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center gap-1.5 text-xs font-medium text-[#8C3213] hover:underline sm:text-sm"
-          >
-            <GuideIcon name="globe" className="h-4 w-4 shrink-0" />
-            <span>{isEnglish ? 'Browse all Dhammakaya Foundation branches ↗' : 'ดูรายชื่อสาขาทั่วโลกทั้งหมด (Dhammakaya Branches) ↗'}</span>
-          </a>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsRegionBrowserOpen((open) => !open)}
+              aria-expanded={isRegionBrowserOpen}
+              aria-controls="centers-world-directory-panel"
+              className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-3.5 text-xs font-semibold transition-colors sm:text-sm ${
+                isRegionBrowserOpen
+                  ? 'border-[#A33D19] bg-[#A33D19] text-white'
+                  : 'border-[#A33D19]/35 bg-[#FDF4EE] text-[#8C3213] hover:border-[#A33D19] hover:bg-[#FCECE2]'
+              }`}
+            >
+              <GuideIcon name="compass" className="h-4 w-4 shrink-0" />
+              <span>{isEnglish ? 'Browse continents & areas' : 'เลือกทวีปและพื้นที่ตั้งศูนย์'}</span>
+              <span aria-hidden="true" className="text-xs leading-none">
+                {isRegionBrowserOpen ? '▲' : '▼'}
+              </span>
+            </button>
+            <a
+              href="https://en.dhammakaya.net/branches/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-2 text-xs font-medium text-[#8C3213] hover:underline sm:text-sm"
+            >
+              <GuideIcon name="globe" className="h-4 w-4 shrink-0" />
+              <span>{isEnglish ? 'All Dhammakaya branches ↗' : 'ดูรายชื่อสาขาทั่วโลกทั้งหมด ↗'}</span>
+            </a>
+          </div>
         </div>
 
         <form
@@ -365,7 +335,10 @@ export function CentersPage() {
             <GuideIcon name="search" className="h-[18px] w-[18px] text-brand-muted" />
             <input
               value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
+              onChange={(event) => {
+                setSearchQuery(event.target.value)
+                setCurrentPage(1)
+              }}
               aria-label={isEnglish ? 'Search centers' : 'ค้นหาศูนย์ปฏิบัติธรรม'}
               placeholder={isEnglish ? 'Search center name, city, country or address...' : 'ค้นหาชื่อศูนย์ เมือง ประเทศ หรือที่อยู่...'}
               className="min-h-11 min-w-0 flex-1 bg-transparent text-base text-brand-text outline-none placeholder:text-brand-muted"
@@ -374,7 +347,10 @@ export function CentersPage() {
               <button
                 type="button"
                 aria-label={isEnglish ? 'Clear search' : 'ล้างคำค้น'}
-                onClick={() => setSearchQuery('')}
+                onClick={() => {
+                  setSearchQuery('')
+                  setCurrentPage(1)
+                }}
                 className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-brand-muted hover:bg-brand-gold-soft"
               >
                 <GuideIcon name="close" />
@@ -432,6 +408,7 @@ export function CentersPage() {
                     onClick={() => {
                       setSelectedContinent('All')
                       setSelectedRegion('All')
+                      setCurrentPage(1)
                     }}
                     aria-pressed={selectedContinent === 'All'}
                     className={`inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-colors ${
@@ -452,6 +429,7 @@ export function CentersPage() {
                         onClick={() => {
                           setSelectedContinent(continent.key)
                           setSelectedRegion('All')
+                          setCurrentPage(1)
                         }}
                         aria-pressed={active}
                         className={`inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-colors ${
@@ -468,16 +446,17 @@ export function CentersPage() {
                 </>
               )}
 
-              {regionCounts.map((region) => {
-                const isActive = selectedRegion === region.city
+              {allCombinedCards.some((card) => card.source === 'database') && dbCards.filter((c) => c.city).length > 0 && dbCards.map((c) => c.city).filter((city, index, self) => Boolean(city) && self.indexOf(city) === index).map((city) => {
+                const isActive = selectedRegion === city
                 return (
                   <button
-                    key={region.city}
+                    key={city}
                     type="button"
                     onClick={() => {
                       setSelectedZone('all')
                       setSelectedContinent('All')
-                      setSelectedRegion(isActive ? 'All' : region.city)
+                      setSelectedRegion(isActive ? 'All' : city)
+                      setCurrentPage(1)
                     }}
                     aria-pressed={isActive}
                     className={`inline-flex min-h-11 max-w-full shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-colors sm:text-sm ${
@@ -487,13 +466,119 @@ export function CentersPage() {
                     }`}
                   >
                     <GuideIcon name="pin" className="h-3.5 w-3.5 shrink-0" />
-                    <span>{region.city}</span>
+                    <span>{city}</span>
                   </button>
                 )
               })}
             </div>
           )}
         </section>
+
+        {isRegionBrowserOpen && (
+          <div
+            id="centers-world-directory-panel"
+            role="region"
+            aria-label={isEnglish ? 'Continents and center regions' : 'เลือกตามทวีปและพื้นที่ตั้งศูนย์'}
+            className="grid items-start gap-6 rounded-2xl border border-[#A33D19]/30 bg-brand-cream p-4 shadow-lg sm:p-5 lg:grid-cols-[1.35fr_0.65fr]"
+          >
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#A33D19] sm:text-sm">
+                    <GuideIcon name="globe" className="h-4 w-4" />
+                    <span>{isEnglish ? 'Worldwide Network · en.dhammakaya.net' : 'เครือข่ายสาขาทั่วโลก · Dhammakaya Branches'}</span>
+                  </span>
+                  <h3 className="mt-1 font-serif text-lg font-semibold text-brand-maroon sm:text-xl">
+                    {isEnglish ? 'Explore International Zones by Continent' : 'เลือกสำรวจศูนย์สาขาต่างประเทศตามทวีป'}
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="https://en.dhammakaya.net/branches/#w-map"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-brand-border-dark bg-white px-3 text-xs font-medium text-brand-maroon hover:bg-brand-gold-soft"
+                  >
+                    <span>{isEnglish ? 'World Branch Map ↗' : 'เปิดแผนที่สาขาทั่วโลก ↗'}</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setIsRegionBrowserOpen(false)}
+                    aria-label={isEnglish ? 'Close continent browser' : 'ปิดหน้าต่างเลือกทวีปและพื้นที่'}
+                    className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg border border-brand-border-dark bg-white px-3 text-xs font-medium text-brand-maroon hover:bg-brand-gold-soft"
+                  >
+                    <GuideIcon name="close" className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {GLOBAL_BRANCH_CONTINENTS.map((continent) => (
+                  <a
+                    key={continent.key}
+                    href={continent.anchorUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex min-h-16 flex-col justify-between rounded-xl border border-brand-border bg-white p-3.5 transition-colors hover:border-[#A33D19]/40 hover:bg-[#FDF4EE]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-maroon">
+                        <GuideIcon name={continent.icon} className="h-4 w-4 text-[#A33D19]" />
+                        <span>{isEnglish ? continent.en : continent.th}</span>
+                      </span>
+                      <span aria-hidden="true" className="text-xs text-[#8C3213]">↗</span>
+                    </div>
+                    <p className="mt-1.5 text-xs leading-5 text-brand-muted">
+                      {isEnglish ? continent.noteEn : continent.noteTh}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <aside className="rounded-xl border border-brand-border bg-white p-4 sm:p-5">
+              <div className="flex items-center gap-2 text-sm font-medium text-[#A33D19]">
+                <GuideIcon name="pin" />
+                <span>{isEnglish ? 'Browse regions' : 'เลือกตามพื้นที่'}</span>
+              </div>
+              <h4 className="mt-1 font-sans text-base font-medium text-brand-maroon">
+                {isEnglish ? 'Regions' : 'พื้นที่ตั้งศูนย์'}
+              </h4>
+              <p className="mt-1 text-xs leading-5 text-brand-muted">
+                {isEnglish ? 'Choose an area to filter listed centers.' : 'เลือกพื้นที่ในรายชื่อเพื่อกรองดูข้อมูลเฉพาะจุด'}
+              </p>
+
+              {regionCounts.length > 0 ? (
+                <div className="mt-3 divide-y divide-brand-border/60 rounded-xl border border-brand-border bg-brand-gold-soft/60">
+                  {regionCounts.map((region) => (
+                    <button
+                      key={region.city}
+                      type="button"
+                      onClick={() => {
+                        setSelectedZone('all')
+                        setSelectedContinent('All')
+                        setSelectedRegion(region.city)
+                        setCurrentPage(1)
+                        setIsRegionBrowserOpen(false)
+                      }}
+                      aria-pressed={selectedRegion === region.city}
+                      className="flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 p-3 text-left text-sm hover:bg-white/60"
+                    >
+                      <span className="font-medium text-brand-maroon">{region.city}</span>
+                      <span className="text-brand-muted tabular-nums">
+                        {region.count} {isEnglish ? (region.count === 1 ? 'center' : 'centers') : 'แห่ง'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 rounded-xl border border-brand-border bg-[#F8F8F6] p-3 text-xs text-brand-muted">
+                  {isEnglish ? 'Use the zone buttons above to switch between Thailand and international branches.' : 'เลือกโซนในไทยหรือต่างประเทศจากแถบด้านบนได้เลย'}
+                </p>
+              )}
+            </aside>
+          </div>
+        )}
       </section>
 
       {/* 4. AUTHENTIC CENTERS DIRECTORY GRID */}
@@ -521,8 +606,8 @@ export function CentersPage() {
               className="rounded-full border border-brand-border bg-brand-surface px-3.5 py-1 text-xs font-medium text-brand-maroon tabular-nums sm:text-sm"
             >
               {isEnglish
-                ? `${visibleCards.length} of ${allTotalCount} centers`
-                : `แสดง ${visibleCards.length} จาก ${allTotalCount} แห่ง`}
+                ? `Page ${safePage}/${totalPages} · ${visibleRangeStart}–${visibleRangeEnd} of ${visibleCards.length} centers`
+                : `หน้า ${safePage}/${totalPages} · แสดง ${visibleRangeStart}–${visibleRangeEnd} จาก ${visibleCards.length} แห่ง`}
             </p>
           )}
         </div>
@@ -550,7 +635,7 @@ export function CentersPage() {
           </div>
         )}
 
-        {!isLoading && !error && centers.length === 0 && filteredThailandCards.length === 0 && (
+        {!isLoading && !error && allCombinedCards.length === 0 && (
           <div className="rounded-2xl border border-brand-border bg-brand-surface p-8 text-center text-sm text-brand-muted">
             {t('centers.empty')}
           </div>
@@ -571,9 +656,10 @@ export function CentersPage() {
           </div>
         )}
 
-        {!isLoading && visibleCards.length > 0 && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {visibleCards.map((card) => (
+        {!isLoading && paginatedCards.length > 0 && (
+          <div className="space-y-6">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {paginatedCards.map((card) => (
               <article
                 key={card.id}
                 aria-labelledby={`center-title-${card.id}`}
@@ -588,7 +674,7 @@ export function CentersPage() {
                         width={card.imageWidth}
                         height={card.imageHeight}
                         loading="lazy"
-                        className="h-full w-full object-cover object-center"
+                        className={`h-full w-full object-cover ${card.imageClassName ?? 'object-center'}`}
                       />
                       <span className="absolute left-3 top-3 inline-flex max-w-[calc(100%-1.5rem)] items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-brand-maroon shadow-xs">
                         <GuideIcon name="pin" className="h-3.5 w-3.5 shrink-0 text-[#A33D19]" />
@@ -634,6 +720,35 @@ export function CentersPage() {
                       <GuideIcon name="pin" className="mt-0.5 h-4 w-4 shrink-0 text-[#A33D19]" />
                       <span>{card.address}</span>
                     </div>
+
+                    {(card.phone || card.email || card.lineId) && (
+                      <div className="mt-2.5 space-y-1 rounded-xl border border-brand-border/80 bg-brand-cream/60 px-3.5 py-2.5 text-xs leading-5 text-brand-maroon">
+                        {card.phone && (
+                          <p className="flex items-start gap-2">
+                            <GuideIcon name="chat" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A33D19]" />
+                            <span className="tabular-nums">
+                              <strong>{isEnglish ? 'Tel:' : 'โทร:'}</strong> {card.phone}
+                            </span>
+                          </p>
+                        )}
+                        {card.email && (
+                          <p className="flex items-start gap-2 break-all">
+                            <GuideIcon name="link" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A33D19]" />
+                            <span>
+                              <strong>{isEnglish ? 'Email:' : 'อีเมล:'}</strong> {card.email}
+                            </span>
+                          </p>
+                        )}
+                        {card.lineId && (
+                          <p className="flex items-start gap-2">
+                            <GuideIcon name="info" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A33D19]" />
+                            <span>
+                              <strong>LINE:</strong> {card.lineId}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -679,205 +794,57 @@ export function CentersPage() {
                   )}
                 </div>
               </article>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 5. DHAMMAKAYA WORLDWIDE CONTINENTS PORTAL + REGION COUNTS SUMMARY */}
-      <div className="grid items-start gap-6 lg:grid-cols-[1.35fr_0.65fr]">
-        <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#A33D19] sm:text-sm">
-                <GuideIcon name="globe" className="h-4 w-4" />
-                <span>{isEnglish ? 'Worldwide Network · en.dhammakaya.net' : 'เครือข่ายสาขาทั่วโลก · Dhammakaya Branches'}</span>
-              </span>
-              <h2 className="mt-1 font-serif text-xl font-semibold text-brand-maroon sm:text-2xl">
-                {isEnglish ? 'Explore International Zones by Continent' : 'เลือกสำรวจศูนย์สาขาต่างประเทศตามทวีป'}
-              </h2>
-            </div>
-            <a
-              href="https://en.dhammakaya.net/branches/#w-map"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-brand-border-dark px-3.5 text-xs font-medium text-brand-maroon hover:bg-brand-gold-soft sm:text-sm"
-            >
-              <span>{isEnglish ? 'World Branch Map ↗' : 'เปิดแผนที่สาขาทั่วโลก ↗'}</span>
-            </a>
-          </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {GLOBAL_BRANCH_CONTINENTS.map((continent) => (
-              <a
-                key={continent.key}
-                href={continent.anchorUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex min-h-16 flex-col justify-between rounded-xl border border-brand-border bg-[#F8F8F6] p-3.5 transition-colors hover:border-[#A33D19]/40 hover:bg-[#FDF4EE]"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-maroon">
-                    <GuideIcon name={continent.icon} className="h-4 w-4 text-[#A33D19]" />
-                    <span>{isEnglish ? continent.en : continent.th}</span>
-                  </span>
-                  <span aria-hidden="true" className="text-xs text-[#8C3213]">↗</span>
-                </div>
-                <p className="mt-1.5 text-xs leading-5 text-brand-muted">
-                  {isEnglish ? continent.noteEn : continent.noteTh}
-                </p>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        <aside className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
-          <div className="flex items-center gap-2 text-sm font-medium text-[#A33D19]">
-            <GuideIcon name="pin" />
-            <span>{isEnglish ? 'Browse regions' : 'เลือกตามพื้นที่'}</span>
-          </div>
-          <h3 className="mt-1 font-sans text-lg font-medium text-brand-maroon">
-            {isEnglish ? 'Regions' : 'พื้นที่ตั้งศูนย์'}
-          </h3>
-          <p className="mt-1.5 text-sm leading-6 text-brand-muted">
-            {isEnglish ? 'Choose an area to filter listed centers.' : 'เลือกพื้นที่ในรายชื่อเพื่อกรองดูข้อมูลเฉพาะจุด'}
-          </p>
-
-          {regionCounts.length > 0 ? (
-            <div className="mt-4 divide-y divide-brand-border/60 rounded-xl border border-brand-border bg-brand-gold-soft/60">
-              {regionCounts.map((region) => (
-                <button
-                  key={region.city}
-                  type="button"
-                  onClick={() => {
-                    setSelectedZone('all')
-                    setSelectedContinent('All')
-                    setSelectedRegion(region.city)
-                  }}
-                  aria-pressed={selectedRegion === region.city}
-                  className="flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 p-3 text-left text-sm"
-                >
-                  <span className="font-medium text-brand-maroon">{region.city}</span>
-                  <span className="text-brand-muted tabular-nums">
-                    {region.count} {isEnglish ? (region.count === 1 ? 'center' : 'centers') : 'แห่ง'}
-                  </span>
-                </button>
               ))}
             </div>
-          ) : (
-            <p className="mt-4 rounded-xl border border-brand-border bg-[#F8F8F6] p-3 text-xs text-brand-muted">
-              {isEnglish ? 'Use the zone buttons above to switch between Thailand and international branches.' : 'เลือกโซนในไทยหรือต่างประเทศจากแถบด้านบนได้เลย'}
-            </p>
-          )}
-        </aside>
-      </div>
 
-      {/* Bio Links Error Alert */}
-      {!isLoading && !error && linksError && (
-        <div role="alert" className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          <p>{t('home.errorLoadLinks')}</p>
-          <button
-            type="button"
-            onClick={() => void fetchData()}
-            className="mt-2 inline-flex min-h-11 items-center rounded-lg border border-amber-400 bg-white px-3 font-medium"
-          >
-            {t('home.retry')}
-          </button>
-        </div>
-      )}
+            {totalPages > 1 && (
+              <nav
+                aria-label={isEnglish ? 'Centers pagination' : 'เปลี่ยนหน้าศูนย์ปฏิบัติธรรม'}
+                className="flex flex-wrap items-center justify-center gap-2 pt-2"
+              >
+                <button
+                  type="button"
+                  onClick={() => goToPage(safePage - 1)}
+                  disabled={safePage <= 1}
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-xl border border-brand-border bg-brand-surface px-3.5 text-sm font-medium text-brand-maroon transition-colors hover:border-[#A33D19]/40 hover:bg-[#FDF4EE] disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  <span aria-hidden="true">←</span>
+                  <span>{isEnglish ? 'Previous' : 'ก่อนหน้า'}</span>
+                </button>
 
-      {/* 6. BOTTOM SECTION: LEARN MORE & RESOURCES */}
-      <section className="space-y-5 rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
-        <div>
-          <h2 className="font-serif text-2xl font-semibold text-brand-maroon">
-            {isEnglish ? 'Learn More & Resources' : 'แหล่งเรียนรู้และข้อมูลเพิ่มเติม'}
-          </h2>
-          <p className="mt-1 text-sm text-brand-muted">
-            {isEnglish
-              ? 'Deepen your practice with curated learning materials and related links.'
-              : 'เลือกดูสื่อและช่องทางเพิ่มเติมได้ตามความสนใจ'}
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            to="/meditation"
-            className="group flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4 transition hover:border-brand-border-dark"
-          >
-            <div>
-              <GuideIcon name="play" />
-              <h3 className="mt-2 font-sans text-sm font-medium text-brand-maroon group-hover:text-brand-terracotta">
-                {isEnglish ? 'Guided Meditations' : 'เสียงนำสมาธิ'}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-brand-muted">
-                {isEnglish ? 'Guided meditation audio' : 'ไฟล์เสียงนำสมาธิสั้นกระชับ'}
-              </p>
-            </div>
-            <span className="mt-3 text-sm font-medium text-brand-terracotta">→</span>
-          </Link>
-
-          <Link
-            to="/qa"
-            className="group flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4 transition hover:border-brand-border-dark"
-          >
-            <div>
-              <GuideIcon name="book" />
-              <h3 className="mt-2 font-sans text-sm font-medium text-brand-maroon group-hover:text-brand-terracotta">
-                {isEnglish ? 'Dhamma Q&A' : 'ถาม-ตอบธรรมะ'}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-brand-muted">
-                {isEnglish ? 'Teachings & practical insights' : 'คำตอบธรรมะสำหรับผู้มาเยือน'}
-              </p>
-            </div>
-            <span className="mt-3 text-sm font-medium text-brand-terracotta">→</span>
-          </Link>
-
-          <Link
-            to="/activities"
-            className="group flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4 transition hover:border-brand-border-dark"
-          >
-            <div>
-              <GuideIcon name="pin" />
-              <h3 className="mt-2 font-sans text-sm font-medium text-brand-maroon group-hover:text-brand-terracotta">
-                {isEnglish ? 'Visit Monk Chat' : 'ร่วมกิจกรรมหน้างาน'}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-brand-muted">
-                {isEnglish ? 'On-site sessions at Wat Mahathat' : 'พบปะและสนทนาธรรมที่วัดมหาธาตุ'}
-              </p>
-            </div>
-            <span className="mt-3 text-sm font-medium text-brand-terracotta">→</span>
-          </Link>
-
-          <div className="flex flex-col justify-between rounded-xl border border-brand-border bg-brand-cream/60 p-4">
-            <div>
-              <GuideIcon name="link" />
-              <h3 className="mt-2 font-sans text-sm font-medium text-brand-maroon">
-                {isEnglish ? 'Helpful Links' : 'ลิงก์เพิ่มเติม'}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-brand-muted">
-                {isEnglish ? 'Related learning links' : 'เว็บไซต์และแหล่งเรียนรู้เพิ่มเติม'}
-              </p>
-            </div>
-            {bioLinks.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-1">
-                {bioLinks.slice(0, 2).map((link) => {
-                  const title = link.bio_link_translations.find((tr) => tr.language_code === currentLang)?.title
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => {
+                  const isActivePage = page === safePage
                   return (
-                    <a
-                      key={link.id}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium text-brand-terracotta hover:underline"
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => goToPage(page)}
+                      aria-current={isActivePage ? 'page' : undefined}
+                      aria-label={isEnglish ? `Page ${page}` : `หน้าที่ ${page}`}
+                      className={`inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-xl px-3 text-sm font-semibold tabular-nums transition-colors ${
+                        isActivePage
+                          ? 'bg-[#A33D19] text-white shadow-xs'
+                          : 'border border-brand-border bg-brand-surface text-brand-maroon hover:border-[#A33D19]/40 hover:bg-[#FDF4EE]'
+                      }`}
                     >
-                      {title} ↗
-                    </a>
+                      {page}
+                    </button>
                   )
                 })}
-              </div>
+
+                <button
+                  type="button"
+                  onClick={() => goToPage(safePage + 1)}
+                  disabled={safePage >= totalPages}
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-xl border border-brand-border bg-brand-surface px-3.5 text-sm font-medium text-brand-maroon transition-colors hover:border-[#A33D19]/40 hover:bg-[#FDF4EE] disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  <span>{isEnglish ? 'Next' : 'ถัดไป'}</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+              </nav>
             )}
           </div>
-        </div>
+        )}
       </section>
 
       <div className="flex items-start gap-2.5 rounded-xl border border-brand-border bg-[#EFEFE9] px-4 py-3 text-xs leading-5 text-brand-muted sm:text-sm">
