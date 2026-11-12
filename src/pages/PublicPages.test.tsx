@@ -355,4 +355,35 @@ describe('reviewed chatbot and centers', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
     await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument())
   })
+
+  it('filters between Thailand and international zones and matches only verified real location photos', async () => {
+    mocks.rows.dci_centers = [
+      { id: 'nl-1', country_code: 'NL', city: 'Afferden', address: 'Koningstraat 47, 6654 AA Afferden', map_url: 'https://maps.google.com/?q=Afferden', website_url: 'https://www.stichting-dhammakaya.nl/nl/', contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'Wat Phra Dhammakaya Netherlands', description: 'Dutch sanctuary' }] },
+      { id: 'sg-1', country_code: 'SG', city: 'Singapore', address: '6 Sumang Walk, Punggol', map_url: 'https://maps.google.com/?q=Singapore', website_url: 'https://dhammakaya.sg/', contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'Dhammakaya Centre Singapore', description: 'Singapore sanctuary' }] },
+      { id: 'unknown-1', country_code: 'GB', city: 'York', address: 'York address', map_url: null, website_url: 'https://unknown.example/', contact_url: null, dci_center_translations: [{ language_code: 'en', name: 'York Mystery Center', description: 'Should have no fake image' }] },
+    ]
+    openPage(<CentersPage />, '/centers')
+    await screen.findByRole('heading', { name: 'Dhammakaya Centre Singapore' })
+
+    const nlImg = screen.getByRole('img', { name: 'Wat Phra Dhammakaya Netherlands' })
+    expect(nlImg).toHaveAttribute('src', '/images/centers/nl-afferden.jpg')
+    const sgImg = screen.getByRole('img', { name: 'Dhammakaya Centre Singapore' })
+    expect(sgImg).toHaveAttribute('src', '/images/centers/sg-punggol.jpg')
+    expect(screen.queryByRole('img', { name: 'York Mystery Center' })).not.toBeInTheDocument()
+
+    // Switch to Thailand zone -> only verified Thailand sanctuaries remain
+    fireEvent.click(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: /In Thailand/i }))
+    expect(screen.getByRole('heading', { name: 'Wat Phra Dhammakaya (Headquarters)' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Dhammakaya Centre Singapore' })).not.toBeInTheDocument()
+
+    // Switch to International zone -> overseas centers shown with continent sub-filters
+    fireEvent.click(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: /International Branches/i }))
+    expect(screen.getByRole('heading', { name: 'Dhammakaya Centre Singapore' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Wat Phra Dhammakaya (Headquarters)' })).not.toBeInTheDocument()
+
+    // Filter by Europe continent inside International zone
+    fireEvent.click(within(screen.getByRole('region', { name: 'Region filters' })).getByRole('button', { name: 'Europe' }))
+    expect(screen.getByRole('heading', { name: 'Wat Phra Dhammakaya Netherlands' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Dhammakaya Centre Singapore' })).not.toBeInTheDocument()
+  })
 })

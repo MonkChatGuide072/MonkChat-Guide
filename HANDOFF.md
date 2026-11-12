@@ -1,5 +1,19 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับหน้า `/centers` ใช้ภาพสถานที่จริง ตรงตามแผนที่ + ตัวเลือกโซนในไทย/ต่างประเทศ (12 พฤศจิกายน 2569)
+
+- **ภาพสถานที่จริงทั้ง 6 แห่ง (`public/images/centers/`):**
+  - แยกข้อมูลและตรรกะการจับคู่ภาพไปที่ [src/content/centersDirectory.ts](src/content/centersDirectory.ts) (ใช้เฉพาะภาพสถานที่จริงที่ตรงตามตำแหน่งแผนที่เท่านั้น ศูนย์อื่นที่ยังไม่ยืนยันจะไม่ใส่ภาพจำลอง):
+    - **ในประเทศไทย:** `th-ayothaya.jpg` (ศูนย์ปฏิบัติธรรมอโยธยา), `th-dhammakaya.jpg` (วัดพระธรรมกาย สำนักงานใหญ่ ปทุมธานี + ลิงก์แผนที่ทางการ `https://maps.app.goo.gl/YjxbKFSBEP8YEp7P8`)
+    - **ต่างประเทศ:** `nl-afferden.jpg` (เนเธอร์แลนด์), `sg-punggol.jpg` (สิงคโปร์), `au-sydney.jpg` (ซิดนีย์), `us-azusa.jpg` (อาซูซา, แคลิฟอร์เนีย)
+- **ตัวกรองโซนโลกและทวีปตาม `en.dhammakaya.net/branches/`:**
+  - เพิ่มไอคอน `building` และ `compass` ใน [src/components/GuideIcon.tsx](src/components/GuideIcon.tsx) และปรับ [src/pages/CentersPage.tsx](src/pages/CentersPage.tsx) ให้เลือก `ทั้งหมด (ทั่วโลก)`, `ในประเทศไทย`, `ต่างประเทศ (สาขาทั่วโลก)` พร้อมชิปทวีป/เมือง และส่วนเชื่อมตรงไปยังเครือข่าย 6 ทวีปของ Dhammakaya Foundation (`Asia`, `Europe`, `UK`, `Americas`, `Oceania`, `Africa`)
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (120 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 96 tests passed** (เพิ่มเทสต์หน้า `/centers` ใน [src/pages/PublicPages.test.tsx](src/pages/PublicPages.test.tsx))
+  - Chrome Headless Audit (`360/390/768/1024/1440 px` พร้อมข้อมูล Supabase จริง): ตรวจครบ 6 การ์ด (`ทั้งหมด 6`, `ในประเทศไทย 2`, `ต่างประเทศ 4`) และไม่มี overflow หรือลิงก์วงในหลุด
+
 ## ปรับหน้า `/activities` แบบ 6 การ์ดภาพบรรยากาศจริง + แถบติดต่อสี Terracotta (11 พฤศจิกายน 2569)
 
 - **โครงสร้างใหม่ของหน้ากิจกรรม:**
