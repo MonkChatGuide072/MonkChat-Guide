@@ -223,19 +223,21 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Ask the chatbot' })).not.toBeInTheDocument())
   })
 
-  it('VisitPage renders visitor atmosphere, 3 gentle meditation cards and verified practice places', async () => {
+  it('VisitPage renders only core home sections plus the official contact banner', async () => {
     sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
     renderWithRouter(<VisitPage />)
 
-    expect(await screen.findByRole('heading', { name: 'Atmosphere & surroundings' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'How to start in three gentle steps' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Sit comfortably' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Close your eyes gently' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Breathe slowly' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Visit center website/i })).toHaveAttribute(
+    expect(await screen.findByRole('heading', { name: 'Location & map' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'What to expect' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Atmosphere & surroundings' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Official Contact & Announcements' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /MonkChat Ayutthaya/i })).toHaveAttribute(
       'href',
-      'https://ayothayameditation.com/',
+      'https://web.facebook.com/MonkChatAyutthaya/',
     )
+    expect(screen.getByRole('button', { name: 'Ask the Chatbot' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'How to start in three gentle steps' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Meditation sanctuaries & places to stay' })).not.toBeInTheDocument()
   })
 
   it('NisitPracticePage supports student profile validation and all 5 learning modules', async () => {

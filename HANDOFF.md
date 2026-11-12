@@ -1,5 +1,19 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับหน้าแรก `/` ให้กระชับตามภาพจริง ใส่ภาพจุดกิจกรรมจริง แผนที่จริง และย้ายแถบติดต่อจาก `/activities` (12 พฤศจิกายน 2569)
+
+- **โครงสร้างหน้าแรก (`/` · `/home` · `/visit`):**
+  - ปรับ [src/pages/VisitPage.tsx](src/pages/VisitPage.tsx) ให้เหลือเฉพาะส่วนหลักของหน้าแรก (`HomeHeroIntro` + ตารางสรุปเวลา + `สถานที่และแผนที่` + `สิ่งที่จะได้สัมผัสในกิจกรรม` 4 การ์ด + `บรรยากาศกิจกรรมและสถานที่` 2 การ์ด) และต่อท้ายด้วยแถบสี Terracotta [src/components/OfficialContactBanner.tsx](src/components/OfficialContactBanner.tsx) ([src/content/officialContactContent.ts](src/content/officialContactContent.ts)) โดยยังคงซ่อนทางเข้า `/nisit` และ `/admin/login` จากผู้มาเยือนตามเดิม
+  - เปลี่ยนภาพบนหน้าแรกเป็นภาพถ่ายสถานที่จริงของ Ayutthaya Monk Chat ณ วัดมหาธาตุทั้งหมดและ **ไม่ซ้ำกับภาพในหน้า `/activities` (`activity-1.jpg`–`activity-6.jpg`)** พร้อมตรงตามบริบทแต่ละหัวข้อ (`public/images/home/`: `monkchat-spot-wat-mahathat.jpg`, `monkchat-meet-monks.jpg`, `monkchat-real-meditation.jpg`, `monkchat-qa-dialogue.jpg`, `monkchat-souvenir.jpg`, `monkchat-real-atmosphere.jpg`, `monkchat-real-stillness.jpg`)
+  - เพิ่มแผนที่ Google Maps จริงแบบฝัง (`14.3570, 100.5675`) ในส่วน `สถานที่และแผนที่` (ไม่ต้องใช้ API key / งบ 0 บาท)
+- **หน้ากิจกรรม (`/activities`):**
+  - ตัดแถบติดต่อ Terracotta ออกจาก [src/pages/ActivitiesPage.tsx](src/pages/ActivitiesPage.tsx) และ [src/content/activitiesContent.ts](src/content/activitiesContent.ts) เหลือ Hero + แกลเลอรีบรรยากาศจริง 6 การ์ด + ข้อแนะนำเบื้องต้น 3 ข้อ
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (123 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่าน (`✓ built`, `PWA v1.3.0`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed** (อัปเดต [VisitPage.test.tsx](src/pages/VisitPage.test.tsx), [HomeAndNisitPages.test.tsx](src/pages/HomeAndNisitPages.test.tsx), [PublicPages.test.tsx](src/pages/PublicPages.test.tsx))
+  - Chrome Headless (`360/390/768/1024/1440 px` ทั้ง `/` และ `/activities`): `overflow: false`, `brokenImgs: 0`, `missingDim: 0`, `sub44: 0`, `hasNisitLink: false`, `hasAdminLink: false`
+
 ## บังคับล็อกอินก่อนเข้าหน้า `/nisit` ผ่าน `NisitProtectedRoute` (12 พฤศจิกายน 2569)
 
 - **การป้องกันสิทธิ์เข้าถึง `/nisit`:**

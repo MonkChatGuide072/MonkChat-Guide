@@ -44,27 +44,12 @@ export interface ActivitiesPageContent {
     scheduleNoteBody: string
     cards: ActivityMomentCard[]
   }
-  contact: {
-    eyebrow: string
-    title: string
-    description: string
-    facebookLabel: string
-    facebookUrl: string
-    chatbotLabel: string
-    infoPills: ActivityHeroChip[]
-  }
   etiquette: {
     eyebrow: string
     title: string
     items: ActivityEtiquetteItem[]
   }
 }
-
-/**
- * Verified Facebook URL used elsewhere in the project (`src/locales/projectLanding.ts`).
- * Keep phone numbers / email addresses omitted until confirmed directly by the Project Owner.
- */
-const OFFICIAL_FACEBOOK_URL = 'https://web.facebook.com/MonkChatAyutthaya/'
 
 const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
   th: {
@@ -171,19 +156,6 @@ const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
           metaLeft: 'Cultural Exchange',
           metaRight: 'ทุกคนร่วมได้',
         },
-      ],
-    },
-    contact: {
-      eyebrow: 'OFFICIAL CONTACT & SOCIAL',
-      title: 'ติดต่อสอบถาม & ติดตามเพจอย่างเป็นทางการ',
-      description:
-        'ติดตามตารางรอบนำสมาธิ ประกาศกิจกรรม และภาพบรรยากาศ Monk Chat วัดมหาธาตุ อยุธยา ได้ทางเพจทางการ หรือสอบถามเบื้องต้นผ่านแชทบอท',
-      facebookLabel: 'MonkChat Ayutthaya',
-      facebookUrl: OFFICIAL_FACEBOOK_URL,
-      chatbotLabel: 'คุยกับแชทบอท',
-      infoPills: [
-        { icon: 'calendar', label: 'จันทร์ & ศุกร์ · 13:15 น. เป็นต้นไป' },
-        { icon: 'pin', label: 'วัดมหาธาตุ พระนครศรีอยุธยา' },
       ],
     },
     etiquette: {
@@ -315,19 +287,6 @@ const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
           metaLeft: 'Cultural Exchange',
           metaRight: 'All welcome',
         },
-      ],
-    },
-    contact: {
-      eyebrow: 'OFFICIAL CONTACT & SOCIAL',
-      title: 'Official Contact & Announcements',
-      description:
-        'Follow updated meditation schedules, daily announcements, and Wat Mahathat activity highlights on our official Facebook page or ask the Q&A chatbot.',
-      facebookLabel: 'MonkChat Ayutthaya',
-      facebookUrl: OFFICIAL_FACEBOOK_URL,
-      chatbotLabel: 'Ask the Chatbot',
-      infoPills: [
-        { icon: 'calendar', label: 'Mon & Fri · 13:15 onwards' },
-        { icon: 'pin', label: 'Wat Mahathat, Ayutthaya' },
       ],
     },
     etiquette: {
