@@ -1,5 +1,18 @@
 # MonkChat Guide — Current Handoff
 
+## ปลดล็อกการเข้าสู่หน้านิสิต (/nisit) แบบ Guest / Preview Mode และเพิ่มทางเข้าด่วน (13 พฤศจิกายน 2569)
+
+- **เปิดให้เข้าสู่หน้านิสิต ([src/components/NisitProtectedRoute.tsx](src/components/NisitProtectedRoute.tsx)):**
+  - ปรับ `NisitProtectedRoute` ให้ผู้ใช้ทั่วไป / ผู้ตรวจ / พระนิสิตที่ยังไม่ได้ลงทะเบียน สามารถเข้าชมและทดลองใช้งานหน้านิสิต (`/nisit`) ได้ทันทีในโหมดบุคคลทั่วไป (Guest / Local Practice Mode)
+  - ยังคงสิทธิ์ความปลอดภัยสำหรับบัญชีที่ถูกระงับ (`is_active: false`) โดยจะถูกบล็อกและรีไดเรกต์ไปยังหน้าแจ้งเตือนของ `/nisit/login` ตามเดิม
+- **เพิ่มทางเข้าด่วนบนหน้าล็อกอิน ([src/pages/NisitLoginPage.tsx](src/pages/NisitLoginPage.tsx)):**
+  - เพิ่มปุ่มและแบนเนอร์ทางเข้าด่วน `เข้าสู่หน้านิสิตทันที (/nisit)` ทั้งในคอลัมน์ซ้ายและใต้ฟอร์มล็อกอิน ช่วยให้ผู้ใช้สามารถคลิกเข้าสู่ศูนย์ฝึกนิสิตได้ในคลิกเดียวโดยไม่ต้องมีรหัสผ่าน
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (124 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่านฉลุย (`✓ built in 267ms`, `PWA precache 64 entries`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - `git diff --check`: ผ่านฉลุย ไม่มี trailing whitespace หรือ error
+
 ## บรรจุคลังคำถาม-คำตอบ 200 ข้อ (สไตล์หลวงพ่อทัตตชีโว) สู่ระบบฝึกพระนิสิต ([src/content/nisitQAData.ts](src/content/nisitQAData.ts)) — 13 พฤศจิกายน 2569
 
 - **คลังคำถาม 200 ข้อ สไตล์หลวงพ่อทัตตชีโว (4 หมวด หมวดละ 50 ข้อ):**

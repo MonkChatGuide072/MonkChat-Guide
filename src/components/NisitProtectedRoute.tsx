@@ -4,7 +4,13 @@ import { useAuth } from '../lib/auth'
 
 const ALLOWED_NISIT_ROLES = new Set(['student', 'owner', 'team_member'])
 
-/** Requires an authenticated active student, team member, or owner account for `/nisit`. */
+/**
+ * Route access for `/nisit`:
+ * - Active students, owners, and team members are granted full access.
+ * - Suspended student accounts are redirected to `/nisit/login`.
+ * - Unauthenticated visitors / guest learners can freely review and practice
+ *   all 5 training modules in local on-device mode.
+ */
 export function NisitProtectedRoute() {
   const { session, profile, isLoading } = useAuth()
   const { t } = useTranslation()
@@ -17,7 +23,13 @@ export function NisitProtectedRoute() {
     )
   }
 
-  if (!session || !profile || !profile.is_active || !ALLOWED_NISIT_ROLES.has(profile.role)) {
+  // Suspended accounts are blocked
+  if (session && profile && !profile.is_active) {
+    return <Navigate to="/nisit/login" replace />
+  }
+
+  // Authenticated accounts with non-allowed roles are redirected
+  if (session && profile && !ALLOWED_NISIT_ROLES.has(profile.role)) {
     return <Navigate to="/nisit/login" replace />
   }
 

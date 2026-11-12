@@ -241,19 +241,28 @@ export function NisitLoginPage() {
             </p>
           </div>
 
-          <div className="space-y-2 border-t border-brand-border pt-4 text-xs leading-5 text-brand-muted">
+          <div className="space-y-3 border-t border-brand-border pt-4 text-xs leading-5 text-brand-muted">
             <p>
               {isEnglish
                 ? 'Student accounts (student) are isolated from the team CMS (/admin).'
                 : 'บัญชีนิสิต (role: student) แยกสิทธิ์จากระบบหลังบ้าน CMS (/admin) อย่างชัดเจน'}
             </p>
-            <Link
-              to="/"
-              className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-maroon hover:underline"
-            >
-              <GuideIcon name="arrow" className="h-[18px] w-[18px] rotate-180" />
-              <span>{isEnglish ? 'Back to home' : 'กลับหน้าหลักเว็บไซต์'}</span>
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                to="/"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-maroon hover:underline"
+              >
+                <GuideIcon name="arrow" className="h-[18px] w-[18px] rotate-180" />
+                <span>{isEnglish ? 'Back to home' : 'กลับหน้าหลักเว็บไซต์'}</span>
+              </Link>
+              <Link
+                to="/nisit"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-terracotta hover:underline"
+              >
+                <span>{isEnglish ? 'Guest Practice (/nisit)' : 'เข้าฝึกโหมดบุคคลทั่วไป (/nisit)'}</span>
+                <GuideIcon name="arrow" className="h-[18px] w-[18px]" />
+              </Link>
+            </div>
           </div>
         </section>
 
@@ -474,6 +483,29 @@ export function NisitLoginPage() {
               </button>
             </form>
           )}
+
+          {/* Quick-Access Guest Training Mode */}
+          <div className="mt-6 rounded-xl border border-brand-gold/40 bg-brand-gold-soft/60 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-brand-maroon">
+                  {isEnglish ? 'Explore without signing in?' : 'ต้องการทดลองใช้งานโดยไม่ต้องล็อกอิน?'}
+                </p>
+                <p className="mt-0.5 text-xs leading-5 text-brand-muted">
+                  {isEnglish
+                    ? 'Preview all 200 Q&A flashcards, audio scripts, videos, and vocab cards directly in local mode.'
+                    : 'ทดลองคลัง Q&A 200 ข้อ, เสียงนำสมาธิซิงก์ซับ, วิดีโอศึกษา, และการ์ดคำศัพท์บนเครื่องนี้ได้ทันที'}
+                </p>
+              </div>
+              <Link
+                to="/nisit"
+                className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+              >
+                <span>{isEnglish ? 'Enter /nisit as Guest' : 'เข้าสู่หน้านิสิตทันที (/nisit)'}</span>
+                <GuideIcon name="arrow" className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
         </section>
       </div>
     </div>
