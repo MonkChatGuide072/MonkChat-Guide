@@ -33,7 +33,17 @@ export function NisitPracticePage() {
   )
   const isSuspendedSession = Boolean(session && authProfile && !authProfile.is_active)
 
-  const [activeTab, setActiveTab] = useState<NisitTab>('vocab')
+  const [activeTab, setActiveTab] = useState<NisitTab>(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get('tab')
+      if (param === 'qa' || param === 'audio' || param === 'vocab' || param === 'videos' || param === 'cards') {
+        return param
+      }
+    } catch {
+      // Ignore
+    }
+    return 'vocab'
+  })
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [localProfile, setLocalProfile] = useState<LocalNisitProfile | null>(() => {
     try {
@@ -157,7 +167,7 @@ export function NisitPracticePage() {
     { id: 'vocab', icon: 'book', th: 'คำศัพท์ & การ์ด', en: 'Vocab & Cards' },
     { id: 'audio', icon: 'play', th: 'เสียง + บทอ่านวิ่ง', en: 'Audio & Script' },
     { id: 'videos', icon: 'globe', th: 'วิดีโอฝึกฟัง', en: 'Listening Videos' },
-    { id: 'qa', icon: 'question', th: 'คลัง Q&A ฝึกตอบ', en: 'Q&A Flashcards' },
+    { id: 'qa', icon: 'question', th: 'คลัง Q&A ฝึกตอบ (200 ข้อ)', en: '200 Q&A Flashcards' },
     { id: 'cards', icon: 'clipboard', th: 'จดชื่อ & การ์ดขอบคุณ', en: 'Notes & Card' },
   ]
 
@@ -176,8 +186,8 @@ export function NisitPracticePage() {
             </h1>
             <p className="mt-2 text-sm leading-6 text-brand-muted sm:text-base">
               {isEnglish
-                ? 'Prepare meditation English vocabulary, practice with live synchronized audio scripts, drill verified Q&A flashcards, and prepare visitor Thank-You cards on-site.'
-                : 'ฝึกคำศัพท์นำนั่งสมาธิ ซ้อมอ่านออกเสียงตามคลิปซิงก์ซับไตเติล ทบทวนคลัง Q&A ให้มั่นใจ และเตรียมการ์ดขอบคุณผู้มาเยือนหน้างาน'}
+                ? 'Master 200 diplomatic Buddhist Q&As in Luang Por Dattajeevo style (50 per category), practice live synchronized meditation audio scripts, vocabulary cards, and create visitor Thank-You cards.'
+                : 'คลังคำถาม-คำตอบ 200 ข้อสไตล์หลวงพ่อทัตตชีโว (4 หมวด หมวดละ 50 ข้อ), ซ้อมอ่านนำสมาธิตามเสียงซิงก์ซับ, คำศัพท์ภาษาอังกฤษ, และเตรียมการ์ดขอบคุณผู้มาเยือนหน้างาน'}
             </p>
           </div>
 
@@ -465,6 +475,34 @@ export function NisitPracticePage() {
 
       {/* 5-Tab Workspace Navigation */}
       <div>
+        {/* Quick Jump Callout for 200 Q&As */}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-gold/60 bg-brand-gold-soft/80 p-4">
+          <div>
+            <p className="text-sm font-semibold text-brand-maroon">
+              {isEnglish
+                ? 'Master 200 Buddhist Q&As (Luang Por Dattajeevo Style)'
+                : 'คลังคำถาม-คำตอบ 200 ข้อ (สไตล์หลวงพ่อทัตตชีโว)'}
+            </p>
+            <p className="mt-0.5 text-xs text-brand-muted">
+              {isEnglish
+                ? '50 questions each on Meditation, Monastic Life, Dhammakaya, and Contemporary Culture.'
+                : 'รวบรวมครบ 4 หมวด หมวดละ 50 ข้อ พร้อมแนวคิดประนีประนอม สุภาพ และสคริปต์พูดภาษาอังกฤษ'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab('qa')}
+            className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-medium transition-colors cursor-pointer ${
+              activeTab === 'qa'
+                ? 'bg-brand-maroon text-white'
+                : 'bg-brand-terracotta text-white hover:bg-brand-terracotta-dark'
+            }`}
+          >
+            <GuideIcon name="question" />
+            <span>{isEnglish ? 'View 200 Q&A Flashcards' : 'เปิดดูคลัง Q&A 200 ข้อ'}</span>
+          </button>
+        </div>
+
         <div
           role="tablist"
           aria-label={isEnglish ? 'Student training modules' : 'หมวดหมู่การฝึกพระนิสิต'}

@@ -1,5 +1,22 @@
 # MonkChat Guide — Current Handoff
 
+## บรรจุคลัง 200 ข้อ (สไตล์หลวงพ่อทัตตชีโว) ถาวร พร้อมทางลัดและเปิดตรงผ่าน URL /nisit?tab=qa (13 พฤศจิกายน 2569)
+
+- **รับประกันคลัง 200 ข้อแสดงผล 100% เสมอ ([src/components/nisit/NisitFlashcards.tsx](src/components/nisit/NisitFlashcards.tsx)):**
+  - แก้ไขจุดที่ `fetchVerifiedQA` ดึงข้อมูลจาก Supabase แล้วไปแทนที่คลัง 200 ข้อ โดยปรับเป็นการรวมคลัง 200 ข้อ (`NISIT_MASTER_QA_ITEMS`) เป็นชุดหลักเสมอ และผนวกรายการเพิ่มเติมจากฐานข้อมูล ทำให้คำถามทั้ง 200 ข้อไม่มีวันถูกเขียนทับ
+  - อัปเกรดตัวเลือกข้ามข้อ (`<select>`) ให้แสดงชื่อคำถามภาษาไทย/อังกฤษ (เช่น `1. ฟุ้งซ่าน คิดเรื่องงานหรือเรื่องครอบครัว…`) ช่วยให้ค้นหาและกระโดดไปข้อที่ต้องการได้ทันที
+- **เพิ่มทางลัดและรองรับ Deep Link /nisit?tab=qa ([src/pages/NisitPracticePage.tsx](src/pages/NisitPracticePage.tsx)):**
+  - เพิ่มการตรวจสอบพารามิเตอร์ `?tab=qa` ให้เปิดตรงเข้าแท็บแฟลชการ์ด 200 ข้อได้ทันที
+  - เพิ่มแบนเนอร์ทางลัดเด่นด้านบนแท็บบาร์ `เปิดดูคลัง Q&A 200 ข้อ` ช่วยให้ผู้ใช้กดสลับมาดู 200 ข้อได้ในคลิกเดียว
+  - ระบุชื่อแท็บชัดเจน `คลัง Q&A ฝึกตอบ (200 ข้อ)`
+- **เพิ่มแบนเนอร์เชื่อมโยงบนหน้าถาม-ตอบสาธารณะ ([src/pages/QAPage.tsx](src/pages/QAPage.tsx)):**
+  - เพิ่มแบนเนอร์แนะนำคลัง Q&A 200 ข้อบนหน้า `/qa` พร้อมปุ่มกดตรงเข้าสู่ `/nisit`
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (124 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่านฉลุย (`✓ built in 274ms`, `PWA precache 64 entries`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - `git diff --check`: ผ่านฉลุย ไม่มี trailing whitespace หรือ error
+
 ## ปลดล็อกการเข้าสู่หน้านิสิต (/nisit) แบบ Guest / Preview Mode และเพิ่มทางเข้าด่วน (13 พฤศจิกายน 2569)
 
 - **เปิดให้เข้าสู่หน้านิสิต ([src/components/NisitProtectedRoute.tsx](src/components/NisitProtectedRoute.tsx)):**

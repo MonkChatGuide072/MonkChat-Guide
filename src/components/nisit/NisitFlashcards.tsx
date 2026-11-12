@@ -6,8 +6,6 @@ import { GuideIcon } from '../GuideIcon'
 
 const MASTERED_STORAGE_KEY = 'monkchat_nisit_qa_mastered_v1'
 
-const DEFAULT_STARTER_QA_ITEMS: QAItemRow[] = NISIT_MASTER_QA_ITEMS
-
 const CATEGORY_LABELS: Record<string, { th: string; en: string }> = {
   All: { th: 'ทุกหมวด', en: 'All topics' },
   Meditation: { th: 'สมาธิ & จิตตภาวนา', en: 'Meditation' },
@@ -24,7 +22,7 @@ export function NisitFlashcards({
   isEnglish: boolean
   studentProfileId?: string
 }) {
-  const [items, setItems] = useState<QAItemRow[]>(DEFAULT_STARTER_QA_ITEMS)
+  const [items, setItems] = useState<QAItemRow[]>(NISIT_MASTER_QA_ITEMS)
   const [isLoading, setIsLoading] = useState(false)
   const [isUsingFallback, setIsUsingFallback] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('All')
@@ -40,7 +38,7 @@ export function NisitFlashcards({
 
   const fetchVerifiedQA = useCallback(async () => {
     if (!supabaseClient) {
-      setItems(DEFAULT_STARTER_QA_ITEMS)
+      setItems(NISIT_MASTER_QA_ITEMS)
       setIsUsingFallback(true)
       setIsLoading(false)
       return
@@ -57,14 +55,17 @@ export function NisitFlashcards({
       if (dbError) throw dbError
       const loaded = (data as QAItemRow[]) ?? []
       if (loaded.length > 0) {
-        setItems(loaded)
+        // Keep DB items while guaranteeing all 200 master questions are present
+        const loadedIds = new Set(loaded.map((item) => item.id))
+        const masterRemaining = NISIT_MASTER_QA_ITEMS.filter((item) => !loadedIds.has(item.id))
+        setItems([...loaded, ...masterRemaining])
         setIsUsingFallback(false)
       } else {
-        setItems(DEFAULT_STARTER_QA_ITEMS)
+        setItems(NISIT_MASTER_QA_ITEMS)
         setIsUsingFallback(true)
       }
     } catch {
-      setItems(DEFAULT_STARTER_QA_ITEMS)
+      setItems(NISIT_MASTER_QA_ITEMS)
       setIsUsingFallback(true)
     } finally {
       setIsLoading(false)
@@ -279,13 +280,19 @@ export function NisitFlashcards({
                   setRevealed(false)
                 }}
                 aria-label={isEnglish ? 'Select question number' : 'เลือกหมายเลขข้อ'}
-                className="min-h-11 rounded-lg border border-brand-border bg-white px-2 py-1 text-sm font-medium text-brand-maroon tabular-nums"
+                className="min-h-11 max-w-[200px] sm:max-w-[320px] rounded-lg border border-brand-border bg-white px-2 py-1 text-sm font-medium text-brand-maroon truncate tabular-nums"
               >
-                {filtered.map((_, idx) => (
-                  <option key={idx} value={idx}>
-                    {idx + 1}
-                  </option>
-                ))}
+                {filtered.map((item, idx) => {
+                  const thQ = item.qa_translations.find((t) => t.language_code === 'th')?.question
+                  const enQ = item.qa_translations.find((t) => t.language_code === 'en')?.question
+                  const preview = isEnglish ? (enQ || thQ) : (thQ || enQ)
+                  const short = preview && preview.length > 36 ? `${preview.slice(0, 36)}…` : preview
+                  return (
+                    <option key={item.id} value={idx}>
+                      {idx + 1}. {short}
+                    </option>
+                  )
+                })}
               </select>
               <span>/ {filtered.length}</span>
             </div>
