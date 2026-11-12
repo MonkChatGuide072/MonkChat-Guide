@@ -202,8 +202,10 @@ export function MeditationPage() {
                 <div className="flex items-start gap-4">
                   <div className="hidden h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-brand-border bg-brand-gold-soft sm:block">
                     <img
-                      src="/images/home/monkchat-meditation-hero.webp"
+                      src="/images/home/monkchat-real-meditation.jpg"
                       alt=""
+                      width={64}
+                      height={64}
                       className="h-full w-full object-cover"
                     />
                   </div>

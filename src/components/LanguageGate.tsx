@@ -37,10 +37,10 @@ export function LanguageGate({
         <div className="mt-8 overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:mt-12 lg:grid lg:grid-cols-2">
           <div>
             <img
-              src="/images/home/monkchat-meditation-ruins.webp"
-              alt="พระสงฆ์และผู้มาเยือนนั่งสมาธิท่ามกลางโบราณสถานอยุธยา / A monk and visitors meditating in Ayutthaya"
-              width={1672}
-              height={941}
+              src="/images/home/monkchat-language-gate-real.jpg"
+              alt="พระสงฆ์และผู้มาเยือนนั่งสนทนาธรรมและฝึกสมาธิ ณ วัดมหาธาตุ พระนครศรีอยุธยา / Monks and visitors engaging in Monk Chat and meditation at Wat Mahathat, Ayutthaya"
+              width={1024}
+              height={707}
               className="h-48 w-full object-cover sm:h-64 lg:h-full"
             />
           </div>

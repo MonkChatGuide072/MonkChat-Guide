@@ -24,7 +24,7 @@ export function ProjectInfoPage() {
       desc: isEnglish
         ? 'Notice your breath naturally, in and out, without force.'
         : 'รับรู้ลมหายใจเข้า-ออกอย่างเป็นธรรมชาติ ไม่เกร็งหรือบังคับ',
-      img: '/images/home/monkchat-meditation-hero.webp',
+      img: '/images/home/monkchat-real-meditation.jpg',
     },
     {
       num: '3',
@@ -33,7 +33,7 @@ export function ProjectInfoPage() {
       desc: isEnglish
         ? 'Gently bring your attention to the present moment.'
         : 'ค่อยๆ น้อมใจให้อยู่กับขณะปัจจุบันอย่างอ่อนโยน',
-      img: '/images/home/monkchat-slide-2.webp',
+      img: '/images/home/monkchat-real-stillness.jpg',
     },
     {
       num: '4',
@@ -42,7 +42,7 @@ export function ProjectInfoPage() {
       desc: isEnglish
         ? 'Notice how you feel, with kindness and openness.'
         : 'สังเกตความรู้สึกในใจด้วยความเมตตาและเปิดกว้าง',
-      img: '/images/home/monkchat-slide-4.webp',
+      img: '/images/home/monkchat-real-atmosphere.jpg',
     },
   ]
 
@@ -51,21 +51,21 @@ export function ProjectInfoPage() {
       title: isEnglish ? 'Wat Mahathat Monk Chat' : 'Monk Chat วัดมหาธาตุ',
       location: isEnglish ? 'Phra Nakhon Si Ayutthaya' : 'พระนครศรีอยุธยา',
       desc: isEnglish ? 'Meditation sessions and Dhamma talks with monks at historic temple.' : 'กิจกรรมสนทนาธรรมและฝึกสมาธิเบื้องต้นกับพระนิสิต',
-      img: '/images/home/monkchat-meditation-ruins.webp',
+      img: '/images/home/monkchat-spot-wat-mahathat.jpg',
       tag: isEnglish ? 'Beginner-friendly' : 'เหมาะสำหรับผู้เริ่มต้น',
     },
     {
       title: isEnglish ? 'Ayutthaya Meditation Experience' : 'ศูนย์ปฏิบัติธรรมอยุธยา',
       location: isEnglish ? 'Ayutthaya' : 'อยุธยา',
       desc: isEnglish ? 'Hands-on mindfulness practice combining calm presence and heritage.' : 'ฝึกสมาธิเจริญสติท่ามกลางมรดกทางวัฒนธรรม',
-      img: '/images/home/monkchat-slide-3.webp',
+      img: '/images/centers/th-ayothaya.jpg',
       tag: isEnglish ? 'Guided meditation' : 'มีผู้นำสมาธิ',
     },
     {
       title: isEnglish ? 'Dhamma Learning Center' : 'ศูนย์เรียนรู้พระธรรมวินัย',
       location: isEnglish ? 'Bang Pa-in' : 'บางปะอิน',
       desc: isEnglish ? 'Dedicated space for studying Buddhist teachings and meditation practice.' : 'พื้นที่เรียนรู้คำสอนทางพระพุทธศาสนาและฝึกภาวนา',
-      img: '/images/home/monkchat-meditation-field.webp',
+      img: '/images/centers/th-dhammakaya.jpg',
       tag: isEnglish ? 'English support' : 'รองรับภาษาอังกฤษ',
     },
   ]
@@ -77,7 +77,7 @@ export function ProjectInfoPage() {
         {/* Background Image with warm gradient overlay */}
         <div className="absolute inset-0 -z-20">
           <img
-            src="/images/home/monkchat-meditation-hero.webp"
+            src="/images/home/monkchat-real-meditation.jpg"
             alt="Monks in meditation at Ayutthaya"
             className="h-full w-full object-cover object-[center_35%] opacity-40 brightness-95 filter transition-transform duration-1000 ease-out"
           />
