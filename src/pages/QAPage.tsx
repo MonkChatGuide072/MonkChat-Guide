@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
+import { CURATED_VISITOR_QA_ITEMS } from '../content/visitorCuratedQA'
 import { GuideIcon, type GuideIconName } from '../components/GuideIcon'
 
 interface QATranslationRow {
@@ -34,7 +35,8 @@ export function QAPage() {
 
   const fetchQAItems = useCallback(async () => {
     if (!supabaseClient) {
-      setError(t('qa.errorNoClient'))
+      setItems(CURATED_VISITOR_QA_ITEMS as QAItemRow[])
+      setOpenIds(new Set([CURATED_VISITOR_QA_ITEMS[0].id]))
       setIsLoading(false)
       return
     }
@@ -50,14 +52,20 @@ export function QAPage() {
         .order('created_at', { ascending: false })
       if (dbError) throw dbError
       const loadedItems = (data as QAItemRow[]) ?? []
-      setItems(loadedItems)
-      setOpenIds(new Set(loadedItems[0] ? [loadedItems[0].id] : []))
+      if (loadedItems.length > 0) {
+        setItems(loadedItems)
+        setOpenIds(new Set(loadedItems[0] ? [loadedItems[0].id] : []))
+      } else {
+        setItems(CURATED_VISITOR_QA_ITEMS as QAItemRow[])
+        setOpenIds(new Set([CURATED_VISITOR_QA_ITEMS[0].id]))
+      }
     } catch {
-      setError(t('qa.errorLoad'))
+      setItems(CURATED_VISITOR_QA_ITEMS as QAItemRow[])
+      setOpenIds(new Set([CURATED_VISITOR_QA_ITEMS[0].id]))
     } finally {
       setIsLoading(false)
     }
-  }, [t])
+  }, [])
 
   useEffect(() => {
     void fetchQAItems()
@@ -121,34 +129,6 @@ export function QAPage() {
         </form>
       </section>
 
-      {/* 200 Master Q&A Callout Banner */}
-      <section aria-label={isEnglish ? 'Master 200 Q&A Training Deck' : 'คลังคำถาม-คำตอบ 200 ข้อ พระนิสิต'} className="rounded-2xl border border-brand-gold/60 bg-brand-gold-soft/80 p-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="max-w-2xl">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-terracotta">
-              <GuideIcon name="book" className="h-4 w-4" />
-              <span>{isEnglish ? 'Student Monk Practice Hub · 200 Questions' : 'ศูนย์ฝึกพระนิสิต · คลัง Q&A 200 ข้อ (สไตล์หลวงพ่อทัตตชีโว)'}</span>
-            </div>
-            <h2 className="mt-1 font-serif text-lg font-semibold text-brand-maroon sm:text-xl">
-              {isEnglish
-                ? 'Master 200 Q&A Flashcard Deck (50 per category)'
-                : 'คลังคำถาม-คำตอบ 200 ข้อ ครบ 4 หมวด (หมวดละ 50 ข้อ)'}
-            </h2>
-            <p className="mt-1 text-xs leading-5 text-brand-muted sm:text-sm">
-              {isEnglish
-                ? 'Practice answering foreign visitor questions on Meditation, Monastic Life, Dhammakaya, and Contemporary Buddhism with diplomatic spoken English scripts.'
-                : 'รวบรวมคำถามที่ชาวต่างชาติถามบ่อย พร้อมแนวคิดตอบแบบประนีประนอม สุภาพ ไม่ยกตนข่มท่าน และประโยคฝึกตอบภาษาอังกฤษ'}
-            </p>
-          </div>
-          <Link
-            to="/nisit"
-            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors hover:bg-brand-terracotta-dark"
-          >
-            <span>{isEnglish ? 'Open 200 Q&A Flashcards (/nisit)' : 'เปิดคลัง Q&A 200 ข้อ (/nisit)'}</span>
-            <GuideIcon name="arrow" className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
 
       {/* 2. CATEGORY PILLS */}
       <section aria-label="Question categories" className="pb-1">
