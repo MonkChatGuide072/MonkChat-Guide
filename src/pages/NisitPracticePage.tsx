@@ -6,6 +6,7 @@ import { useAuth } from '../lib/auth'
 import { supabaseClient } from '../lib/supabase'
 import { isAcceptableStudentPassword } from '../lib/studentPractice'
 import { GuideIcon, type GuideIconName } from '../components/GuideIcon'
+import { MeditationMark } from '../components/MeditationMark'
 import { NisitVocabCards } from '../components/nisit/NisitVocabCards'
 import { NisitAudioTeleprompter } from '../components/nisit/NisitAudioTeleprompter'
 import { NisitVideoStudy } from '../components/nisit/NisitVideoStudy'
@@ -33,7 +34,17 @@ export function NisitPracticePage() {
   )
   const isSuspendedSession = Boolean(session && authProfile && !authProfile.is_active)
 
-  const [activeTab, setActiveTab] = useState<NisitTab>('vocab')
+  const [activeTab, setActiveTab] = useState<NisitTab>(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get('tab')
+      if (param === 'qa' || param === 'audio' || param === 'vocab' || param === 'videos' || param === 'cards') {
+        return param
+      }
+    } catch {
+      // Ignore
+    }
+    return 'vocab'
+  })
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [localProfile, setLocalProfile] = useState<LocalNisitProfile | null>(() => {
     try {
@@ -157,33 +168,34 @@ export function NisitPracticePage() {
     { id: 'vocab', icon: 'book', th: 'คำศัพท์ & การ์ด', en: 'Vocab & Cards' },
     { id: 'audio', icon: 'play', th: 'เสียง + บทอ่านวิ่ง', en: 'Audio & Script' },
     { id: 'videos', icon: 'globe', th: 'วิดีโอฝึกฟัง', en: 'Listening Videos' },
-    { id: 'qa', icon: 'question', th: 'คลัง Q&A ฝึกตอบ', en: 'Q&A Flashcards' },
+    { id: 'qa', icon: 'question', th: 'คลัง Q&A ฝึกตอบ (200 ข้อ)', en: '200 Q&A Flashcards' },
     { id: 'cards', icon: 'clipboard', th: 'จดชื่อ & การ์ดขอบคุณ', en: 'Notes & Card' },
   ]
 
   return (
     <div className="space-y-8 pb-20 text-brand-text break-words [overflow-wrap:anywhere]">
       {/* Header Banner */}
-      <header className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-8">
+      <header className="relative isolate overflow-hidden rounded-3xl border border-brand-border bg-brand-surface p-6 sm:p-8 shadow-xs">
+        <MeditationMark className="pointer-events-none absolute -bottom-16 -right-10 -z-10 w-64 text-brand-gold/10" />
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl">
-            <div className="flex items-center gap-2 text-xs font-medium text-brand-terracotta">
-              <GuideIcon name="book" />
-              <span>{isEnglish ? 'Student Monk Training · /nisit' : 'พื้นที่ฝึกทักษะพระนิสิต · /nisit'}</span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand-terracotta/30 bg-brand-terracotta/5 px-3 py-1 text-xs font-medium text-brand-terracotta">
+              <GuideIcon name="book" className="h-3.5 w-3.5" />
+              <span>{isEnglish ? 'Student Monk Training Hub · /nisit' : 'พื้นที่ฝึกทักษะพระนิสิต · /nisit'}</span>
             </div>
-            <h1 className="mt-2 font-serif text-2xl font-semibold leading-snug text-brand-maroon sm:text-4xl">
+            <h1 className="mt-3 font-serif text-2xl font-semibold leading-snug text-brand-maroon sm:text-4xl [text-wrap:balance]">
               {isEnglish ? 'Ayutthaya Monk Chat Practice Hub' : 'ศูนย์ฝึกนำสมาธิและสนทนาธรรมพระนิสิต'}
             </h1>
-            <p className="mt-2 text-sm leading-6 text-brand-muted sm:text-base">
+            <p className="mt-2.5 max-w-3xl text-sm leading-relaxed text-brand-muted sm:text-base [text-wrap:pretty]">
               {isEnglish
-                ? 'Prepare meditation English vocabulary, practice with live synchronized audio scripts, drill verified Q&A flashcards, and prepare visitor Thank-You cards on-site.'
-                : 'ฝึกคำศัพท์นำนั่งสมาธิ ซ้อมอ่านออกเสียงตามคลิปซิงก์ซับไตเติล ทบทวนคลัง Q&A ให้มั่นใจ และเตรียมการ์ดขอบคุณผู้มาเยือนหน้างาน'}
+                ? 'Master 200 diplomatic Buddhist Q&As in Luang Por Dattajeevo style (50 per category), practice live synchronized meditation audio scripts, vocabulary cards, and create visitor Thank-You cards.'
+                : 'คลังคำถาม-คำตอบ 200 ข้อสไตล์หลวงพ่อทัตตชีโว (4 หมวด หมวดละ 50 ข้อ), ซ้อมอ่านนำสมาธิตามเสียงซิงก์ซับ, คำศัพท์ภาษาอังกฤษ, และเตรียมการ์ดขอบคุณผู้มาเยือนหน้างาน'}
             </p>
           </div>
 
           <Link
             to="/visit"
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-brand-border bg-brand-cream px-4 text-sm font-medium text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-brand-border bg-brand-surface px-4 text-sm font-medium text-brand-maroon shadow-2xs transition-all duration-200 hover:border-brand-terracotta hover:bg-brand-gold-soft hover:shadow-xs"
           >
             <span>{isEnglish ? 'View visitor page' : 'ดูฝั่งนักท่องเที่ยว (/visit)'}</span>
             <GuideIcon name="external" />
@@ -191,7 +203,7 @@ export function NisitPracticePage() {
         </div>
 
         {/* Student Account Bar & Local Study Profile */}
-        <div className="mt-6 rounded-xl border border-brand-border bg-brand-gold-soft/70 p-4">
+        <div className="mt-6 rounded-2xl border border-brand-gold/30 bg-[#FAF7F2] p-4 sm:p-5 shadow-2xs">
           {isSignedStudent && authProfile ? (
             <>
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -319,14 +331,23 @@ export function NisitPracticePage() {
                       ? `Browsing as staff: ${authProfile.display_name}`
                       : `เข้าดูด้วยบัญชีทีมงาน: ${authProfile.display_name}`}
                   </span>
-                  <Link
-                    to={authProfile.role === 'owner' ? '/admin/students' : '/admin'}
-                    className="font-medium text-brand-maroon underline"
-                  >
-                    {authProfile.role === 'owner'
-                      ? (isEnglish ? 'Manage student cohorts' : 'จัดการรุ่นนิสิต (/admin/students)')
-                      : (isEnglish ? 'Open CMS' : 'กลับสู่หน้าจัดการเว็บ')}
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      to={authProfile.role === 'owner' ? '/admin/students' : '/admin'}
+                      className="font-medium text-brand-maroon underline"
+                    >
+                      {authProfile.role === 'owner'
+                        ? (isEnglish ? 'Manage student cohorts' : 'จัดการรุ่นนิสิต (/admin/students)')
+                        : (isEnglish ? 'Open CMS' : 'กลับสู่หน้าจัดการเว็บ')}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => { void signOut() }}
+                      className="cursor-pointer font-medium text-brand-muted underline hover:text-brand-maroon"
+                    >
+                      {isEnglish ? 'Sign out' : 'ออกจากระบบ'}
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -344,6 +365,17 @@ export function NisitPracticePage() {
                           {isEnglish
                             ? `Cohort Year ${parsedCurrentId.thaiYear} · Code ${parsedCurrentId.statusCode} · Seat ${String(parsedCurrentId.seatNumber).padStart(2, '0')} · Stored locally on this device`
                             : `รุ่นปี ${parsedCurrentId.thaiYear} · รหัสสถานะ ${parsedCurrentId.statusCode} · เลขที่ ${String(parsedCurrentId.seatNumber).padStart(2, '0')} · บันทึกเฉพาะเครื่องนี้`}
+                        </p>
+                      </>
+                    ) : isSignedCmsStaff ? (
+                      <>
+                        <p className="text-sm font-medium text-brand-maroon">
+                          {isEnglish ? 'Instructor Preview Mode' : 'โหมดอาจารย์ผู้สอน / ผู้ดูแลระบบ'}
+                        </p>
+                        <p className="mt-0.5 text-xs leading-5 text-brand-muted">
+                          {isEnglish
+                            ? 'Previewing all 5 training modules. Practice records will remain local on this browser.'
+                            : 'เข้าดูและทดลองชุดฝึกทั้ง 5 หมวดในมุมมองครูผู้สอน ข้อมูลการฝึกซ้อมจะจำลองเฉพาะบนเบราว์เซอร์นี้'}
                         </p>
                       </>
                     ) : (
@@ -445,10 +477,46 @@ export function NisitPracticePage() {
 
       {/* 5-Tab Workspace Navigation */}
       <div>
+        {/* Quick Jump Callout for 200 Q&As */}
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand-gold/40 bg-[#FAF7F2] p-4 sm:p-5 shadow-xs transition-all duration-200 hover:border-brand-gold/60">
+          <div className="flex items-start gap-3.5 max-w-2xl">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-terracotta/10 text-brand-terracotta ring-1 ring-brand-terracotta/20">
+              <GuideIcon name="question" className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="inline-block h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
+                <p className="text-sm font-semibold text-brand-maroon">
+                  {isEnglish
+                    ? 'Master 200 Buddhist Q&As (Luang Por Dattajeevo Style)'
+                    : 'คลังคำถาม-คำตอบ 200 ข้อ (สไตล์หลวงพ่อทัตตชีโว)'}
+                </p>
+              </div>
+              <p className="mt-1 text-xs text-brand-muted leading-relaxed sm:text-sm">
+                {isEnglish
+                  ? '50 questions each on Meditation, Monastic Life, Dhammakaya, and Contemporary Culture.'
+                  : 'รวบรวมครบ 4 หมวด หมวดละ 50 ข้อ พร้อมแนวคิดประนีประนอม สุภาพ ไม่ยกตนข่มท่าน และสคริปต์พูดภาษาอังกฤษ'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab('qa')}
+            className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-5 text-sm font-medium shadow-xs transition-all duration-200 cursor-pointer ${
+              activeTab === 'qa'
+                ? 'bg-brand-maroon text-white ring-2 ring-brand-maroon/20'
+                : 'bg-brand-terracotta text-white hover:bg-brand-terracotta-dark hover:shadow-sm active:scale-[0.99]'
+            }`}
+          >
+            <GuideIcon name="question" />
+            <span>{isEnglish ? 'View 200 Q&A Flashcards' : 'เปิดดูคลัง Q&A 200 ข้อ'}</span>
+          </button>
+        </div>
+
         <div
           role="tablist"
           aria-label={isEnglish ? 'Student training modules' : 'หมวดหมู่การฝึกพระนิสิต'}
-          className="flex flex-wrap gap-2 rounded-2xl border border-brand-border bg-brand-surface p-2"
+          className="flex flex-wrap gap-1.5 sm:gap-2 rounded-2xl border border-brand-border bg-brand-surface p-1.5 sm:p-2 shadow-2xs"
         >
           {tabs.map((tab, index) => {
             const active = activeTab === tab.id
@@ -470,13 +538,13 @@ export function NisitPracticePage() {
                   setActiveTab(tabs[nextIndex].id)
                   tabRefs.current[nextIndex]?.focus()
                 }}
-                className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-150 ${
+                className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl px-3.5 sm:px-4 py-2 text-sm font-medium transition-all duration-200 ${
                   active
-                    ? 'bg-brand-terracotta text-white'
-                    : 'text-brand-maroon hover:bg-brand-gold-soft'
+                    ? 'bg-brand-terracotta text-white shadow-xs'
+                    : 'text-brand-maroon hover:bg-brand-gold-soft/70'
                 }`}
               >
-                <GuideIcon name={tab.icon} />
+                <GuideIcon name={tab.icon} className="h-4 w-4 shrink-0" />
                 <span>{isEnglish ? tab.en : tab.th}</span>
               </button>
             )

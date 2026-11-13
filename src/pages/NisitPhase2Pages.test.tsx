@@ -158,6 +158,9 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
 
     renderRoute(<NisitLoginPage />, ['/nisit/login'])
 
+    expect(screen.getByRole('link', { name: 'Enter /nisit as Guest' })).toHaveAttribute('href', '/nisit')
+    expect(screen.getByRole('link', { name: 'Guest Practice (/nisit)' })).toHaveAttribute('href', '/nisit')
+
     // Invalid 7-digit ID caught client-side
     fireEvent.change(screen.getByLabelText('7-digit Student ID'), { target: { value: '661018' } })
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'DhammaPractice66!' } })
@@ -411,7 +414,7 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
     expect(screen.getByText('Suspended')).toBeInTheDocument()
   })
 
-  it('NisitProtectedRoute requires active student/staff login for /nisit and redirects guests to /nisit/login', async () => {
+  it('NisitProtectedRoute allows active student/staff and guest local practice, while blocking suspended accounts', async () => {
     const renderProtectedNisit = () =>
       renderRoute(
         <Routes>
@@ -423,11 +426,11 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
         ['/nisit'],
       )
 
-    // Unauthenticated visitor -> redirected to /nisit/login
+    // Unauthenticated visitor -> allowed into /nisit for local guest practice
+    mocks.authState.session = null
+    mocks.authState.profile = null
     const r1 = renderProtectedNisit()
-    expect(screen.queryByText('Protected Practice Hub')).not.toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Cohort Training Access' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/')
+    expect(screen.getByText('Protected Practice Hub')).toBeInTheDocument()
     r1.unmount()
 
     // Suspended student -> blocked from /nisit and redirected to /nisit/login suspended view

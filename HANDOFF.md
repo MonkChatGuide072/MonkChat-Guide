@@ -1,5 +1,92 @@
 # MonkChat Guide — Current Handoff
 
+## ติดตั้ง AI Design Skills (Elaya Design) และยกระดับความสวยงามประณีตหน้านิสิตและคลัง Q&A 200 ข้อ (13 พฤศจิกายน 2569)
+
+- **ติดตั้งชุดสกิล AI Design Skills จากคุณ Elaya สู่ Antigravity Global Skills:**
+  - ติดตั้ง `landing-page-design` (`C:\Users\VICTUS GAMING 16\.gemini\config\skills\landing-page-design\SKILL.md`) สำหรับระบบการออกแบบหน้าเว็บ จัดวาง Typography, Spacing, Color tokens และ Contrast
+  - ติดตั้ง `figma-designer` (`C:\Users\VICTUS GAMING 16\.gemini\config\skills\figma-designer\SKILL.md`) สำหรับการออกแบบเชื่อมโยง Design System
+  - ติดตั้ง `redesign-existing-projects` (`C:\Users\VICTUS GAMING 16\.gemini\config\skills\redesign-existing-projects\SKILL.md`) สำหรับการตรวจสอบและอัปเกรดหน้าเว็บเดิมให้พรีเมียม สวยงาม สมบูรณ์แบบโดยไม่กระทบโครงสร้างหลัก
+- **ยกระดับความประณีตหน้านิสิต (/nisit) และคลังแฟลชการ์ด 200 ข้อ โดยคงโครงสร้างเดิมที่ผู้ใช้อนุมัติไว้ 100%:**
+  - **Header Hero Banner ([src/pages/NisitPracticePage.tsx](src/pages/NisitPracticePage.tsx)):** เพิ่ม Watermark ลายเส้นองค์พระสมาธิ (`MeditationMark`) จางเบาบางที่มุมขวาล่าง สร้างบรรยากาศที่สงบ สง่างาม เสริมป้าย Pill Badge ปากทางเข้า และปุ่ม Quick Jump ไปยังคลัง 200 ข้อด้วยแสง Pulse สีมรกต
+  - **Card Surface & Typography ([src/components/nisit/NisitFlashcards.tsx](src/components/nisit/NisitFlashcards.tsx)):** ปรับกล่องการ์ดคำถามเป็นทรงโค้งมนพรีเมียม (`rounded-3xl`) พร้อมเงาละมุน (`shadow-[0_4px_24px_rgba(43,24,16,0.06)]`), คำถามภาษาอังกฤษใช้ฟอนต์ Serif ขนาดพอเหมาะพร้อม `[text-wrap:balance]` สบายตา
+  - **Revealed Answer Parchment Style:** เมื่อกดดูเฉลย พื้นที่แสดงคำตอบปรับเป็นสัมผัสสีงาช้างอบอุ่น (`bg-[#FAF7F2]`), ขอบทองบางเบา (`border-brand-gold/40`), คำตอบภาษาอังกฤษจัดเป็น Blockquote ชัดเจน ส่วนคำอธิบายภาษาไทยวาทะศิลป์หลวงพ่อทัตตชีโวจัดวางในกล่องการ์ดสีขาวนวลพร้อมป้ายคำแนะนำอย่างเป็นระบบ
+  - **Interactive Controls:** ปรับปุ่ม Previous/Next และ Jump to card ให้มีมิติ มี Hover/Active transition นุ่มนวล ไม่กระตุก รองรับปุ่มสัมผัสขนาดมาตรฐานมือถือ (>= 44px)
+- **ผลตรวจการทำงานและคุณภาพ:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (124 files)
+  - `npm run build` (`tsc -b && vite build`): ผ่านฉลุย (`✓ built in 278ms`, `PWA precache 65 entries`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - `git diff --check`: ผ่านฉลุย ไม่มี trailing whitespace หรือ formatting error
+
+## บรรจุคลัง 200 ข้อ (สไตล์หลวงพ่อทัตตชีโว) ถาวร พร้อมทางลัดและเปิดตรงผ่าน URL /nisit?tab=qa (13 พฤศจิกายน 2569)
+
+- **รับประกันคลัง 200 ข้อแสดงผล 100% เสมอ ([src/components/nisit/NisitFlashcards.tsx](src/components/nisit/NisitFlashcards.tsx)):**
+  - แก้ไขจุดที่ `fetchVerifiedQA` ดึงข้อมูลจาก Supabase แล้วไปแทนที่คลัง 200 ข้อ โดยปรับเป็นการรวมคลัง 200 ข้อ (`NISIT_MASTER_QA_ITEMS`) เป็นชุดหลักเสมอ และผนวกรายการเพิ่มเติมจากฐานข้อมูล ทำให้คำถามทั้ง 200 ข้อไม่มีวันถูกเขียนทับ
+  - อัปเกรดตัวเลือกข้ามข้อ (`<select>`) ให้แสดงชื่อคำถามภาษาไทย/อังกฤษ (เช่น `1. ฟุ้งซ่าน คิดเรื่องงานหรือเรื่องครอบครัว…`) ช่วยให้ค้นหาและกระโดดไปข้อที่ต้องการได้ทันที
+- **เพิ่มทางลัดและรองรับ Deep Link /nisit?tab=qa ([src/pages/NisitPracticePage.tsx](src/pages/NisitPracticePage.tsx)):**
+  - เพิ่มการตรวจสอบพารามิเตอร์ `?tab=qa` ให้เปิดตรงเข้าแท็บแฟลชการ์ด 200 ข้อได้ทันที
+  - เพิ่มแบนเนอร์ทางลัดเด่นด้านบนแท็บบาร์ `เปิดดูคลัง Q&A 200 ข้อ` ช่วยให้ผู้ใช้กดสลับมาดู 200 ข้อได้ในคลิกเดียว
+  - ระบุชื่อแท็บชัดเจน `คลัง Q&A ฝึกตอบ (200 ข้อ)`
+- **เพิ่มแบนเนอร์เชื่อมโยงบนหน้าถาม-ตอบสาธารณะ ([src/pages/QAPage.tsx](src/pages/QAPage.tsx)):**
+  - เพิ่มแบนเนอร์แนะนำคลัง Q&A 200 ข้อบนหน้า `/qa` พร้อมปุ่มกดตรงเข้าสู่ `/nisit`
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (124 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่านฉลุย (`✓ built in 274ms`, `PWA precache 64 entries`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - `git diff --check`: ผ่านฉลุย ไม่มี trailing whitespace หรือ error
+
+## ปลดล็อกการเข้าสู่หน้านิสิต (/nisit) แบบ Guest / Preview Mode และเพิ่มทางเข้าด่วน (13 พฤศจิกายน 2569)
+
+- **เปิดให้เข้าสู่หน้านิสิต ([src/components/NisitProtectedRoute.tsx](src/components/NisitProtectedRoute.tsx)):**
+  - ปรับ `NisitProtectedRoute` ให้ผู้ใช้ทั่วไป / ผู้ตรวจ / พระนิสิตที่ยังไม่ได้ลงทะเบียน สามารถเข้าชมและทดลองใช้งานหน้านิสิต (`/nisit`) ได้ทันทีในโหมดบุคคลทั่วไป (Guest / Local Practice Mode)
+  - ยังคงสิทธิ์ความปลอดภัยสำหรับบัญชีที่ถูกระงับ (`is_active: false`) โดยจะถูกบล็อกและรีไดเรกต์ไปยังหน้าแจ้งเตือนของ `/nisit/login` ตามเดิม
+- **เพิ่มทางเข้าด่วนบนหน้าล็อกอิน ([src/pages/NisitLoginPage.tsx](src/pages/NisitLoginPage.tsx)):**
+  - เพิ่มปุ่มและแบนเนอร์ทางเข้าด่วน `เข้าสู่หน้านิสิตทันที (/nisit)` ทั้งในคอลัมน์ซ้ายและใต้ฟอร์มล็อกอิน ช่วยให้ผู้ใช้สามารถคลิกเข้าสู่ศูนย์ฝึกนิสิตได้ในคลิกเดียวโดยไม่ต้องมีรหัสผ่าน
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (124 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่านฉลุย (`✓ built in 267ms`, `PWA precache 64 entries`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - `git diff --check`: ผ่านฉลุย ไม่มี trailing whitespace หรือ error
+
+## บรรจุคลังคำถาม-คำตอบ 200 ข้อ (สไตล์หลวงพ่อทัตตชีโว) สู่ระบบฝึกพระนิสิต ([src/content/nisitQAData.ts](src/content/nisitQAData.ts)) — 13 พฤศจิกายน 2569
+
+- **คลังคำถาม 200 ข้อ สไตล์หลวงพ่อทัตตชีโว (4 หมวด หมวดละ 50 ข้อ):**
+  - สร้าง [src/content/nisitQAData.ts](src/content/nisitQAData.ts) รวบรวม 200 ข้อคำถามที่ชาวต่างชาติถามบ่อย พร้อมแนวคิดวาทะศิลป์ภาษาไทยที่ประนีประนอม สุภาพ ไม่ยกตนข่มท่าน และประโยคโมเดลภาษาอังกฤษที่สละสลวย นุ่มนวล สำหรับพระนิสิตใช้สนทนาจริง
+  - **หมวดที่ 1 (สมาธิ & จิตตภาวนา - 50 ข้อ):** ฟุ้งซ่านทำอย่างไร, หลับตามืดตื้อ, ง่วงนอน, ปวดเมื่อย, นั่งเก้าอี้, วางใจฐานที่ 7, แสงสว่าง, ปีติ, สัมมาอะระหัง, การฝึกในชีวิตประจำวัน
+  - **หมวดที่ 2 (วิถีชีวิตสมณะ & ข้อสงสัยพุทธศาสนา - 50 ข้อ):** ทำไมไม่เชื่อพระเจ้า, โกนผม-คิ้ว, จีวรสีส้ม, ไม่แตะต้องสตรี, ฉัน 2 มื้อไม่ฉันเย็น, บิณฑบาตไม่ใช่ขอทาน, ศีล 227 ข้อ, ชาวต่างชาติบวชพระ
+  - **หมวดที่ 3 (วัดพระธรรมกายโดยเฉพาะ - 50 ข้อ):** นั่งสมาธิที่นี่ดีที่สุดไหม, ทำไมสร้างใหญ่โต, มหาธรรมกายเจดีย์ทรงสถูปสาญจี, พระพุทธรูปล้านองค์, คุณยายอาจารย์ฯ, ข้อเท็จจริงเรื่องการทำบุญ, ความสะอาด-ระเบียบ-ตรงเวลา (UG5)
+  - **หมวดที่ 4 (สังคม วัฒนธรรม ปัญหาร่วมสมัย & จิปาถะ - 50 ข้อ):** การไหว้, กฎแห่งกรรม, คนทำชั่วแต่ยังรวย, ต่างศาสนาเข้าวัด, LGBTQ+, วิทยาศาสตร์กับพุทธ, ปล่อยนกปล่อยปลา, การแต่งกายเข้าวัด, AI กับจิตวิญญาณ
+- **อัปเกรดระบบแฟลชการ์ดในตัวแอป ([src/components/nisit/NisitFlashcards.tsx](src/components/nisit/NisitFlashcards.tsx)):**
+  - เชื่อมโยงคลังคำถาม 200 ข้อเข้าเป็นคลังชุดฝึกมาตรฐาน (ทำงานออฟไลน์ 100% แม้ไม่มีเน็ตหน้างาน)
+  - เพิ่มป้ายหมวดหมู่แบบสองภาษาพร้อมตัวเลขนับจำนวนข้อ: `ทุกหมวด (200)`, `สมาธิ & จิตตภาวนา (50)`, `วิถีชีวิตสมณะ (50)`, `วัดพระธรรมกาย (50)`, `วัฒนธรรม & ร่วมสมัย (50)`
+  - เพิ่มตัวเลือกกระโดดข้ามข้อ (`<select> Jump to card`) ช่วยให้พระนิสิตเลือกข้ามไปยังข้อ 1–50 ได้ในคลิกเดียว พร้อมปุ่ม `Previous` / `Next`
+  - รองรับการบันทึกสถานะ `ฝึกตอบคล่องแล้ว (Mastered)` ลงใน LocalStorage และ Sync ฐานข้อมูลเมื่อล็อกอิน
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (124 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่านฉลุย (`✓ built in 293ms`, `PWA precache 64 entries`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - `git diff --check`: ไม่มีข้อผิดพลาดค้าง
+
+## เสริมความแข็งแกร่งระบบฝึกพระนิสิต (Nisit Training Hub) รองรับออฟไลน์และมาตรฐาน A11y (13 พฤศจิกายน 2569)
+
+- **ระบบบทนำสมาธิออฟไลน์ ([src/components/nisit/NisitAudioTeleprompter.tsx](src/components/nisit/NisitAudioTeleprompter.tsx)):**
+  - เพิ่ม `DEFAULT_PRACTICE_TRACK` สำรองในเครื่อง เป็นบทนำสมาธิภาษาอังกฤษความยาว 5 นาที พร้อมคำแปลภาษาไทยและจุดฝึกจิต 5 ขั้นตอน (ท่านั่ง, ผ่อนคลายร่างกาย, รวมใจที่ศูนย์กลางกายฐานที่ 7, นึกดวงแก้วใส, ภาวนาสัมมาอะระหัง)
+  - หากสัญญาณอินเทอร์เน็ตหน้างานไม่เสถียร หรือฐานข้อมูลออฟไลน์ พระนิสิตยังสามารถเปิดซ้อมบทนำสมาธิและกดไล่สเต็ปตามจังหวะได้ 100%
+- **ระบบแฟลชการ์ดถาม-ตอบธรรมะออฟไลน์ ([src/components/nisit/NisitFlashcards.tsx](src/components/nisit/NisitFlashcards.tsx)):**
+  - เพิ่ม `DEFAULT_STARTER_QA_ITEMS` 5 ข้อมาตรฐาน (ทำไมพระสงฆ์ครองจีวรสีส้ม, ฟุ้งซ่านตอนนั่งสมาธิแก้อย่างไร, ความหมายของคำว่าสัมมาอะระหัง, การหลับตาแผ่วเบา, และการนั่งสมาธิไม่จำกัดเชื้อชาติศาสนา)
+  - พร้อมป้ายกำกับ `ชุดฝึกมาตรฐาน (Starter deck)` ใช้งานฝึกฝนได้ทันทีแม้ไม่มีการเชื่อมต่อเครือข่าย
+- **ยกระดับ Accessibility หน้าล็อกอินและลงทะเบียน ([src/pages/NisitLoginPage.tsx](src/pages/NisitLoginPage.tsx)):**
+  - เชื่อมโยง `id` และ `htmlFor` ครบทุกช่องกรอกข้อมูล (`nisit-login-code`, `nisit-login-pass`, `nisit-reg-invite`, `nisit-reg-code`, `nisit-reg-name`, `nisit-reg-dharma`, `nisit-reg-pass`, `nisit-reg-confirm`) รองรับ Screen Reader ถูกต้องตามมาตรฐาน WCAG 2.1 AA
+- **ปรับปรุงมุมมองอาจารย์ผู้สอนบนหน้าชุดฝึก ([src/pages/NisitPracticePage.tsx](src/pages/NisitPracticePage.tsx)):**
+  - ปรับแผงผู้ใช้เมื่อเข้าด้วยบัญชีอาจารย์/ทีมงาน (`isSignedCmsStaff`) ให้แสดงสถานะ `Instructor Preview Mode / โหมดอาจารย์ผู้สอน` พร้อมปุ่มออกจากระบบและลิงก์ด่วนไปยัง `/admin/students` โดยไม่สับสนกับช่องลงทะเบียนนิสิตใหม่
+- **ตรวจสอบการออกการ์ดขอบคุณ (Thank-You Card Digital Souvenir):**
+  - ตรวจสอบการวาด Canvas ขนาด 1200×800 (`thank_you_card_sample.png`) จัดวางโลโก้ต้นโพธิ์, สีกรอบทองนุ่มนวล (`#C8A252`), ข้อความภาษาอังกฤษ 3 แบบ, ชื่อผู้มาเยือน, วันที่ และชื่อพระนิสิตผู้แนะนำอย่างประณีตและดาวน์โหลดได้สมบูรณ์
+- **ผลตรวจหลังแก้ไข:**
+  - `npm run lint` (`oxlint`): `0 warnings / 0 errors` (123 ไฟล์)
+  - `npm run build` (`tsc -b && vite build`): ผ่านฉลุย (`✓ built in 294ms`, `PWA precache 64 entries`)
+  - `npm test -- --run` (`vitest`): **15 test files / 95 tests passed**
+  - Chrome Headless CDP (`360/390/768/1024/1440 px`): `overflow: false`, `sub44: 0`, `overflowReg: false`, `sub44Reg: 0`
+
+
 ## เปลี่ยนภาพหน้าเลือกภาษา (`LanguageGate`) และจุดที่เหลือเป็นภาพถ่ายสถานที่จริง (13 พฤศจิกายน 2569)
 
 - **เปลี่ยนภาพหน้าเลือกภาษา (`src/components/LanguageGate.tsx`):**
