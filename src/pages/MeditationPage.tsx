@@ -4,6 +4,8 @@ import { useSearchParams } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
 import { MeditationPlayer } from '../components/MeditationPlayer'
 import { MeditationBeginnerGuide } from '../components/MeditationBeginnerGuide'
+import { BreathingPacer } from '../components/BreathingPacer'
+import { MeditationPostureTips } from '../components/MeditationPostureTips'
 import { GuideIcon } from '../components/GuideIcon'
 
 interface TrackTranslationRow {
@@ -26,6 +28,35 @@ interface TrackRow {
   meditation_track_translations: TrackTranslationRow[]
 }
 
+const DEMO_MEDITATION_TRACKS: TrackRow[] = [
+  {
+    id: 'demo-med-01',
+    audio_storage_path: 'https://example.org/guided-meditation-5min.mp3',
+    speaker_name: 'Teaching Monk (Wat Mahathat)',
+    duration_seconds: 300,
+    content_status: 'published',
+    is_published: true,
+    is_recommended: true,
+    source_language_code: 'en',
+    meditation_track_translations: [
+      {
+        language_code: 'en',
+        title: '5-Minute Tranquil Guided Meditation',
+        description: 'Gentle instructions for settling the mind at the center of the body.',
+        transcript: 'Sit comfortably with your back upright. Close your eyes softly as if falling asleep. Let go of all worries. Bring your gentle awareness to rest at the center of your body, two finger-breadths above the navel. Breathe in calmness, breathe out tension. Feel light, peaceful, and still.',
+        subtitle_vtt_storage_path: null,
+      },
+      {
+        language_code: 'th',
+        title: 'เสียงนำสมาธิ 5 นาที เพื่อความสงบใจเบื้องต้น',
+        description: 'คำแนะนำการวางใจเบา ๆ ณ ศูนย์กลางกายฐานที่ 7 เพื่อความผ่อนคลายและสงบเย็น',
+        transcript: 'นั่งในท่าที่สบาย ปรับร่างกายให้ผ่อนคลาย หลับตาเบา ๆ คล้ายกำลังจะเคลิ้มหลับ ปล่อยวางเรื่องราวภายนอกทั้งหมด แล้วน้อมนำใจมาพักไว้ที่ศูนย์กลางกายฐานที่ 7 เหนือสะดือขึ้นมา 2 นิ้วมือ หายใจเข้าออกอย่างสบาย สัมผัสความสงบ โปร่ง โล่ง เบา สบาย',
+        subtitle_vtt_storage_path: null,
+      },
+    ],
+  },
+]
+
 export function MeditationPage() {
   const { t, i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
@@ -45,7 +76,7 @@ export function MeditationPage() {
 
   const fetchTracks = useCallback(async () => {
     if (!supabaseClient) {
-      setError(t('meditation.errorNoClient'))
+      setTracks(DEMO_MEDITATION_TRACKS)
       setIsLoading(false)
       return
     }
@@ -75,7 +106,12 @@ export function MeditationPage() {
         .eq('is_published', true)
         .order('created_at', { ascending: false })
       if (dbError) throw dbError
-      setTracks((data as TrackRow[]) ?? [])
+      const loaded = (data as TrackRow[]) ?? []
+      if (loaded.length > 0) {
+        setTracks(loaded)
+      } else {
+        setTracks(DEMO_MEDITATION_TRACKS)
+      }
     } catch {
       setError(t('meditation.errorLoadTracks'))
     } finally {
@@ -150,17 +186,30 @@ export function MeditationPage() {
   }
 
   return (
-    <div className="space-y-6 bg-brand-cream pb-8 text-brand-text break-words [overflow-wrap:anywhere]">
-      <header>
-        <h1 className="font-serif text-[1.75rem] font-semibold leading-snug text-brand-maroon sm:text-4xl">{isEnglish ? 'Dhammakaya meditation' : 'นั่งสมาธิแบบธรรมกาย'}</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-brand-muted">{isEnglish ? 'Get ready, then listen to the monk.' : 'ดูภาพก่อนเริ่ม แล้วฟังพระนำสมาธิ'}</p>
+    <div className="space-y-10 bg-brand-cream pb-16 text-brand-text break-words [overflow-wrap:anywhere]">
+      {/* 1. HEADER */}
+      <header className="rounded-3xl border border-brand-border/80 bg-white p-6 sm:p-8 shadow-[0_4px_20px_rgba(43,24,16,0.03)]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-amber-800/20 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900 shadow-2xs">
+          <GuideIcon name="lotus" className="h-3.5 w-3.5 text-amber-700" />
+          <span>{isEnglish ? 'Meditation Practice & Guidance' : 'ศูนย์เรียนรู้และฝึกสมาธิเบื้องต้น'}</span>
+        </div>
+        <h1 className="mt-3 font-serif text-2xl font-semibold leading-snug text-brand-maroon sm:text-4xl">
+          {isEnglish ? 'Dhammakaya meditation' : 'นั่งสมาธิแบบธรรมกาย'}
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base">
+          {isEnglish ? 'Prepare your body, calm your breath, and listen to the guided meditation audio.' : 'เตรียมตัวปรับท่านั่ง ปรับจังหวะลมหายใจ แล้วรับฟังเสียงนำสมาธิจากพระอาจารย์'}
+        </p>
       </header>
+
+      {/* 2. CALMING BREATH PACER */}
+      <BreathingPacer language={currentLang} />
+
+      {/* 3. STEP 1: PREPARATION & BASES CAROUSEL */}
       <MeditationBeginnerGuide />
 
-      {/* 2. AUDIO PLAYER SECTION (STEP 2) */}
+      {/* 4. STEP 2: AUDIO PLAYER SECTION */}
       <div id="meditation-audio" className="scroll-mt-24 space-y-5">
         <div className="flex items-center gap-2.5">
-
           <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
             {isEnglish ? 'Meditation audio' : 'ฟังเสียงสมาธิ'}
           </h2>
@@ -179,7 +228,7 @@ export function MeditationPage() {
             <button
               type="button"
               onClick={() => void fetchTracks()}
-              className="mt-3 min-h-11 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white"
+              className="mt-3 min-h-11 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white cursor-pointer"
             >
               {t('meditation.retry')}
             </button>
@@ -196,7 +245,7 @@ export function MeditationPage() {
         {!isLoading && !error && currentTrack && trackTranslation && (
           <div className="grid items-start gap-6 lg:grid-cols-[1.3fr_0.7fr]">
             {/* Main Featured Player Card */}
-            <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+            <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6 shadow-2xs">
               {/* Header with Lotus Thumbnail, Title, and Save/Share actions */}
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-4">
@@ -287,7 +336,7 @@ export function MeditationPage() {
             </section>
 
             {/* Track Switcher Sidebar */}
-            <section className="rounded-2xl border border-brand-border bg-brand-surface p-5">
+            <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 shadow-2xs">
               <div className="flex items-center justify-between border-b border-brand-border pb-3">
                 <h3 className="font-sans text-base font-medium text-brand-maroon">
                   {t('meditation.selectTrackTitle')}
@@ -333,14 +382,16 @@ export function MeditationPage() {
         )}
       </div>
 
-      {/* 4. STEP 3: TRANSCRIPT SECTION */}
+      {/* 5. POSTURE TIPS, SEATING OPTIONS & VIDEO DEMO GUIDE */}
+      <MeditationPostureTips language={currentLang} />
+
+      {/* 6. STEP 3: TRANSCRIPT SECTION */}
       {!isLoading && !error && currentTrack && trackTranslation && (
         <section
           id="meditation-transcript"
-          className="scroll-mt-24 space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6"
+          className="scroll-mt-24 space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6 shadow-2xs"
         >
           <div className="flex items-center gap-2.5">
-
             <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
               {t('meditation.transcriptTitle')}
             </h2>
@@ -349,9 +400,7 @@ export function MeditationPage() {
           {/* Excerpt Card as shown in mockup */}
           <div className="rounded-xl border border-brand-border bg-brand-gold-soft/60 p-5 sm:p-6">
             <div className="flex items-center gap-2 text-sm font-medium text-brand-muted">
-              <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+              <GuideIcon name="book" className="h-4.5 w-4.5 text-brand-terracotta" />
               <span>{isEnglish ? 'Meditation Transcript (Excerpt)' : 'ข้อความถอดเสียงนำสมาธิ (สังเขป)'}</span>
             </div>
 
@@ -392,7 +441,6 @@ export function MeditationPage() {
               )}
             </div>
           )}
-
         </section>
       )}
     </div>
