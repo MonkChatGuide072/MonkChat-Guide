@@ -31,6 +31,7 @@ export function QAPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [items, setItems] = useState<QAItemRow[]>([])
+  const [isFloatingMinimized, setIsFloatingMinimized] = useState(false)
 
   const fetchQAItems = useCallback(async () => {
     if (!supabaseClient) {
@@ -203,35 +204,7 @@ export function QAPage() {
         </div>
       </section>
 
-      {/* 2. CHATBOT PORTAL FOR THE FULL 200+ QUESTIONS */}
-      <section className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-50/90 via-[#FFFDF9] to-amber-50/60 p-5 sm:p-6 shadow-[0_2px_12px_rgba(43,24,16,0.03)]">
-        <div className="flex items-start gap-3.5">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-100 border border-amber-300/60 text-amber-800 shadow-2xs">
-            <GuideIcon name="chat" className="h-5 w-5 text-amber-700" />
-          </div>
-          <div>
-            <h2 className="font-sans text-base sm:text-lg font-bold text-stone-900">
-              {isEnglish ? 'Have a specific question? Ask our Dhamma Chatbot' : 'ยังคาใจเรื่องไหนอยู่ไหม? พิมพ์ถามแชทบอทได้เลย'}
-            </h2>
-            <p className="mt-1 text-xs sm:text-sm leading-relaxed text-stone-600 max-w-2xl">
-              {isEnglish
-                ? 'Can’t find your question above? Search from over 200 verified answers on monk rules, temple etiquette, and mindfulness for instant answers 24/7.'
-                : 'หากไม่พบคำถามที่ต้องการด้านบน ลองพิมพ์ถามแชทบอทตอบธรรมะได้ทันที รวบรวมคำตอบเรื่องวิถีพระ วินัยสงฆ์ ธรรมเนียมไทย และสมาธิไว้กว่า 200 ข้อ พร้อมตอบคลายข้อสงสัยได้ตลอดเวลา'}
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleOpenChatbot}
-          className="inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-maroon px-5 text-sm font-medium text-white shadow-xs transition-all duration-200 hover:bg-brand-terracotta hover:shadow-md active:scale-[0.98]"
-        >
-          <GuideIcon name="chat" className="h-4 w-4 text-amber-300" />
-          <span>{isEnglish ? 'Ask the chatbot (200+ QA)' : 'ถามแชทบอท (คลัง 200 ข้อ)'}</span>
-        </button>
-      </section>
-
-      {/* 3. GALLERY CATEGORY PILLS */}
+      {/* 2. GALLERY CATEGORY PILLS */}
       <section aria-label="Question categories" className="pb-1">
         <div className="flex flex-wrap gap-2.5">
           {categories.map((cat) => {
@@ -406,7 +379,73 @@ export function QAPage() {
             })}
           </div>
         )}
+
+        {/* BOTTOM ASSISTANT CALLOUT */}
+        {!isLoading && !error && (
+          <div className="mt-8 rounded-2xl border border-amber-200/70 bg-gradient-to-r from-amber-50/70 via-white to-amber-50/50 p-5 sm:p-6 text-center shadow-2xs">
+            <h3 className="font-sans text-base sm:text-lg font-bold text-stone-900">
+              {isEnglish ? 'Still have questions?' : 'ยังมีข้อสงสัยเรื่องอื่น ๆ?'}
+            </h3>
+            <p className="mt-1 text-xs sm:text-sm text-stone-600 max-w-xl mx-auto">
+              {isEnglish
+                ? 'Our Dhamma Chatbot is ready to help answer questions about temple etiquette, monk discipline, and meditation.'
+                : 'พิมพ์ถามแชทบอทตอบธรรมะได้ทันที พร้อมช่วยตอบเรื่องวิถีพระ วินัยสงฆ์ ธรรมเนียมไทย และสมาธิ'}
+            </p>
+            <button
+              type="button"
+              onClick={handleOpenChatbot}
+              className="mt-3.5 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-maroon px-5 text-sm font-medium text-white shadow-xs transition-all duration-150 hover:bg-brand-terracotta active:scale-[0.98]"
+            >
+              <GuideIcon name="chat" className="h-4 w-4 text-amber-300" />
+              <span>{isEnglish ? 'Ask Chatbot' : 'ถามแชทบอท'}</span>
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* 4. FLOATING EDGE CHATBOT BUTTON */}
+      <aside
+        aria-label={isEnglish ? 'Dhamma Chatbot shortcut' : 'ทางลัดแชทบอทตอบธรรมะ'}
+        className="fixed bottom-5 right-4 z-40 sm:bottom-6 sm:right-6 transition-all duration-300"
+      >
+        {isFloatingMinimized ? (
+          <button
+            type="button"
+            onClick={() => setIsFloatingMinimized(false)}
+            aria-label={isEnglish ? 'Show Chatbot button' : 'แสดงปุ่มแชทบอท'}
+            title={isEnglish ? 'Chatbot' : 'แชทบอท'}
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-amber-300/60 bg-brand-maroon text-amber-300 shadow-[0_8px_24px_rgba(43,24,16,0.25)] transition-all duration-200 hover:scale-105 hover:bg-brand-terracotta active:scale-95"
+          >
+            <GuideIcon name="chat" className="h-5 w-5" />
+          </button>
+        ) : (
+          <div className="flex items-center gap-1.5 rounded-full border border-amber-300/60 bg-brand-maroon/95 p-1.5 pl-3.5 pr-2.5 text-white shadow-[0_10px_30px_rgba(43,24,16,0.28)] backdrop-blur-md transition-all duration-200 hover:bg-brand-maroon hover:shadow-[0_12px_36px_rgba(43,24,16,0.35)]">
+            <button
+              type="button"
+              onClick={handleOpenChatbot}
+              className="flex cursor-pointer items-center gap-2 text-left active:scale-[0.98]"
+              aria-label={isEnglish ? 'Chatbot' : 'แชทบอท'}
+            >
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-400/20 text-amber-300">
+                <GuideIcon name="chat" className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-medium tracking-wide text-amber-100 pr-1">
+                {isEnglish ? 'Chatbot' : 'แชทบอท'}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsFloatingMinimized(true)}
+              aria-label={isEnglish ? 'Minimize chatbot button' : 'ย่อปุ่มแชทบอท'}
+              title={isEnglish ? 'Minimize' : 'ย่อเก็บ'}
+              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <span className="text-xs leading-none">✕</span>
+            </button>
+          </div>
+        )}
+      </aside>
     </div>
   )
 }
