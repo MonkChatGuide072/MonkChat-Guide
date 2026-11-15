@@ -56,13 +56,13 @@ const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
     hero: {
       badge: 'วัดมหาธาตุ · มรดกโลกอยุธยา',
       eyebrow: 'MONK CHAT & MEDITATION',
-      title: 'กิจกรรมและการปฏิบัติธรรม ณ วัดมหาธาตุ พระนครศรีอยุธยา',
+      title: 'ล้อมวงคุยสบายๆ ใต้ร่มไม้ใหญ่ และพักใจกับพระสงฆ์ ณ วัดมหาธาตุ',
       description:
-        'สัมผัสประสบการณ์แห่งความสงบทางใจท่ามกลางบรรยากาศโบราณสถานอันทรงคุณค่า ร่วมล้อมวงใต้ร่มเงาไม้ใหญ่ สนทนาธรรมแลกเปลี่ยนมุมมองชีวิต ภาษา และวัฒนธรรมกับพระนิสิต มจร อย่างเป็นกันเอง พร้อมเจริญสติภาวนาสั้น ๆ เพื่อเติมเต็มความสุขสงบในใจ',
+        'เดินเที่ยวโบราณสถานเหนื่อยๆ แวะหลบไอร้อนมานั่งเก้าอี้สบายๆ ใต้ร่มไม้ใหญ่ พูดคุยแลกเปลี่ยนมุมมองชีวิต ภาษา และวัฒนธรรมกับพระสงฆ์อย่างเป็นกันเอง ถามได้ทุกเรื่องที่สงสัยโดยไม่ต้องเกร็ง พร้อมฝึกหายใจผ่อนคลาย 5 นาทีเพื่อความสงบใจ — เปิดรับทุกคน ทุกความเชื่อ เข้าร่วมฟรีได้ทันที',
       chips: [
-        { icon: 'lotus', label: 'Free Walk-in' },
+        { icon: 'lotus', label: 'Free Walk-in · เข้าร่วมได้ทันที' },
         { icon: 'calendar', label: 'ทุกวันจันทร์และวันศุกร์ 13:15 น. เป็นต้นไป' },
-        { icon: 'pin', label: 'ใต้ร่มไม้ใหญ่ วัดมหาธาตุ' },
+        { icon: 'pin', label: 'ลานร่มไม้ใหญ่ วัดมหาธาตุ อยุธยา' },
       ],
     },
     gallery: {
@@ -187,11 +187,11 @@ const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
     hero: {
       badge: 'Wat Mahathat · Ayutthaya Heritage',
       eyebrow: 'MONK CHAT & MEDITATION',
-      title: 'Activities & Meditation at Wat Mahathat, Ayutthaya',
+      title: 'Rest in the Shade & Have a Meaningful Chat with a Monk',
       description:
-        'Experience quiet reflection amidst historic Ayutthaya temple grounds. Sit together under shaded trees for open conversation about Buddhism, monastic life, language, and Thai culture with MCU student monks, alongside gentle 5–10 minute guided meditation.',
+        'Take a restful break from the midday heat. Sit comfortably on chairs under ancient shade trees, have a warm, open conversation about monk life, Thai culture, and mindfulness, and enjoy a gentle 5-minute breathing pause. No formalities, no preaching, open to all faiths, and 100% free walk-in.',
       chips: [
-        { icon: 'lotus', label: 'Free Walk-in' },
+        { icon: 'lotus', label: 'Free Walk-in · No Booking' },
         { icon: 'calendar', label: 'Every Mon & Fri · 13:15 onwards' },
         { icon: 'pin', label: 'Shaded courtyard, Wat Mahathat' },
       ],

@@ -20,17 +20,50 @@ interface TrackRow {
   meditation_track_translations: TrackTranslationRow[]
 }
 
+const DEFAULT_PRACTICE_TRACK: TrackRow = {
+  id: 'track-practice-5min',
+  audio_storage_path: null,
+  speaker_name: 'Dhammakaya Foundation',
+  duration_seconds: 300,
+  source_language_code: 'en',
+  meditation_track_translations: [
+    {
+      language_code: 'en',
+      title: '5-Minute Guided Meditation in English',
+      description: 'Standard English meditation guiding script for Ayutthaya Monk Chat sessions at Wat Mahathat.',
+      transcript: `Please sit comfortably with your back straight, and place your right hand gently over your left.
+Gently close your eyes as if you are going to sleep. Relax every muscle in your body, from head to toe, leaving no tension anywhere.
+Gently bring your mind to rest at the center of your body, at the seventh base, two finger breadths above the navel.
+Imagine a clear bright crystal sphere, or a pure drop of morning dew, resting softly and gently at the center of your body.
+Silently and gently repeat the soothing phrase 'Samma Arahang' in your mind, like a soft whisper, until your mind becomes completely calm, peaceful, and still.`,
+      subtitle_vtt_storage_path: null,
+    },
+    {
+      language_code: 'th',
+      title: 'บทนำสมาธิภาษาอังกฤษ 5 นาที (พร้อมคำแปลภาษาไทย)',
+      description: 'บทนำสมาธิภาษาอังกฤษมาตรฐานสำหรับกิจกรรม Ayutthaya Monk Chat ณ วัดมหาธาตุ พระนครศรีอยุธยา',
+      transcript: `กรุณานั่งให้สบาย ตั้งหลังให้ตรงพอดี และวางมือขวาซ้อนบนมือซ้ายอย่างนุ่มนวล
+ค่อยๆ หลับตาลงอย่างแผ่วเบา คล้ายตอนกำลังจะเคลิ้มหลับ ผ่อนคลายกล้ามเนื้อทุกส่วนในร่างกายตั้งแต่ศีรษะจรดปลายเท้า
+ค่อยๆ น้อมนำใจมาวางพักไว้ที่ศูนย์กลางกาย ฐานที่ 7 เหนือระดับสะดือขึ้นมาสองนิ้วมือ
+นึกจินตนาการถึงดวงแก้วใสบริสุทธิ์ หรือหยาดน้ำค้างยามเช้า วางนิ่งอยู่อย่างแผ่วเบาที่ศูนย์กลางกาย
+ภาวนาคำว่า "สัมมา อะระหัง" ในใจอย่างแผ่วเบา คล้ายเสียงกระซิบที่นุ่มนวล จนกระทั่งจิตใจสงบนิ่งและหยุดนิ่งสนิท`,
+      subtitle_vtt_storage_path: null,
+    },
+  ],
+}
+
 /** Synchronized guided-meditation audio + clickable cue script runner for student monks. */
 export function NisitAudioTeleprompter({ isEnglish }: { isEnglish: boolean }) {
-  const [tracks, setTracks] = useState<TrackRow[]>([])
-  const [selectedTrackId, setSelectedTrackId] = useState<string>('')
+  const [tracks, setTracks] = useState<TrackRow[]>([DEFAULT_PRACTICE_TRACK])
+  const [selectedTrackId, setSelectedTrackId] = useState<string>(DEFAULT_PRACTICE_TRACK.id)
   const [scriptLang, setScriptLang] = useState<'en' | 'th'>('en')
-  const [loadingTracks, setLoadingTracks] = useState(true)
+  const [loadingTracks, setLoadingTracks] = useState(false)
   const [tracksError, setTracksError] = useState(false)
 
   const fetchTracks = useCallback(async () => {
     if (!supabaseClient) {
-      setTracksError(true)
+      setTracks([DEFAULT_PRACTICE_TRACK])
+      setSelectedTrackId(DEFAULT_PRACTICE_TRACK.id)
       setLoadingTracks(false)
       return
     }
@@ -47,14 +80,18 @@ export function NisitAudioTeleprompter({ isEnglish }: { isEnglish: boolean }) {
         .order('created_at', { ascending: false })
       if (error) throw error
       const loaded = (data as TrackRow[]) ?? []
-      setTracks(loaded)
       if (loaded.length > 0) {
+        setTracks(loaded)
         const preferred =
           loaded.find((item) => item.meditation_track_translations.some((tr) => tr.language_code === 'en')) ?? loaded[0]
         setSelectedTrackId((prev) => prev || preferred.id)
+      } else {
+        setTracks([DEFAULT_PRACTICE_TRACK])
+        setSelectedTrackId(DEFAULT_PRACTICE_TRACK.id)
       }
     } catch {
-      setTracksError(true)
+      setTracks([DEFAULT_PRACTICE_TRACK])
+      setSelectedTrackId(DEFAULT_PRACTICE_TRACK.id)
     } finally {
       setLoadingTracks(false)
     }
@@ -322,20 +359,22 @@ function SyncedScriptPlayer({
         </div>
       </section>
 
-      {/* Clickable Cue-by-Cue Practice List */}
-      {cueStatus === 'ready' && cues.length > 0 && (
-        <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h3 className="font-sans text-base font-medium text-brand-maroon">
-                {isEnglish ? 'Click any line to jump & repeat' : 'แตะที่แต่ละท่อนเพื่อกระโดดเสียงไปฝึกพูดซ้ำ'}
-              </h3>
-              <p className="mt-1 text-xs text-brand-muted">
-                {isEnglish
-                  ? `${cues.length} synchronized segments`
-                  : `ทั้งหมด ${cues.length} ท่อนตามเวลาคลิป`}
-              </p>
-            </div>
+      {/* Clickable Cue-by-Cue Practice List or Numbered Script Stages */}
+      <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 className="font-sans text-base font-medium text-brand-maroon">
+              {cues.length > 0
+                ? (isEnglish ? 'Click any line to jump & repeat' : 'แตะที่แต่ละท่อนเพื่อกระโดดเสียงไปฝึกพูดซ้ำ')
+                : (isEnglish ? 'Meditation Script for Speaking Practice' : 'บทอ่านนำสมาธิสำหรับฝึกซ้อมออกเสียง')}
+            </h3>
+            <p className="mt-1 text-xs text-brand-muted">
+              {cues.length > 0
+                ? (isEnglish ? `${cues.length} synchronized segments` : `ทั้งหมด ${cues.length} ท่อนตามเวลาคลิป`)
+                : (isEnglish ? 'Standard practice script (5 guiding stages)' : 'บทฝึกซ้อมมาตรฐาน 5 ขั้นตอน')}
+            </p>
+          </div>
+          {cues.length > 0 && (
             <button
               type="button"
               onClick={() => setShowFullTranscript((v) => !v)}
@@ -345,8 +384,10 @@ function SyncedScriptPlayer({
                 ? (isEnglish ? 'Hide full transcript' : 'ซ่อนบทอ่านฉบับเต็ม')
                 : (isEnglish ? 'Show full transcript' : 'ดูบทอ่านฉบับเต็ม')}
             </button>
-          </div>
+          )}
+        </div>
 
+        {cues.length > 0 ? (
           <ol className="mt-4 max-h-80 space-y-2 overflow-y-auto pr-1">
             {cues.map((cue, index) => {
               const isCurrent = index === activeCueIndex
@@ -371,16 +412,27 @@ function SyncedScriptPlayer({
               )
             })}
           </ol>
+        ) : (
+          <div className="mt-4 space-y-3">
+            {(translation.transcript || '').split('\n').filter(Boolean).map((para, idx) => (
+              <div key={idx} className="rounded-xl border border-brand-border bg-brand-cream/50 p-4 text-sm leading-7 text-brand-text">
+                <span className="mr-2 inline-block rounded-md bg-brand-terracotta/10 px-2.5 py-0.5 text-xs font-semibold text-brand-terracotta">
+                  {idx + 1}
+                </span>
+                {para}
+              </div>
+            ))}
+          </div>
+        )}
 
-          {showFullTranscript && (
-            <div className="mt-4 rounded-xl border border-brand-border bg-brand-cream p-4">
-              <p className="whitespace-pre-wrap text-sm leading-7 text-brand-text">
-                {translation.transcript || cues.map((c) => c.text).join('\n\n')}
-              </p>
-            </div>
-          )}
-        </section>
-      )}
+        {showFullTranscript && cues.length > 0 && (
+          <div className="mt-4 rounded-xl border border-brand-border bg-brand-cream p-4">
+            <p className="whitespace-pre-wrap text-sm leading-7 text-brand-text">
+              {translation.transcript || cues.map((c) => c.text).join('\n\n')}
+            </p>
+          </div>
+        )}
+      </section>
     </div>
   )
 }

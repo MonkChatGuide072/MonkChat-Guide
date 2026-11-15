@@ -23,11 +23,11 @@ export function ActivitiesPage() {
             {content.hero.eyebrow}
           </p>
 
-          <h1 className="mt-1 font-serif text-2xl font-semibold leading-snug text-brand-maroon sm:text-4xl">
+          <h1 className="mt-1 font-serif text-2xl font-semibold leading-snug text-brand-maroon sm:text-4xl [text-wrap:balance]">
             {content.hero.title}
           </h1>
 
-          <p className="mt-3 text-sm leading-relaxed text-brand-muted sm:text-base">
+          <p className="mt-3 text-sm leading-relaxed text-brand-muted sm:text-base [text-wrap:pretty]">
             {content.hero.description}
           </p>
 

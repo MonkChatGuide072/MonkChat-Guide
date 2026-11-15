@@ -52,8 +52,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     {
       title: isEnglish ? 'Meet the monks' : 'พบและสนทนากับพระสงฆ์',
       desc: isEnglish
-        ? 'Have an open, respectful conversation about Buddhist life and mindfulness.'
-        : 'สนทนาธรรมและแลกเปลี่ยนมุมมองชีวิตกับพระนิสิตอย่างเป็นกันเอง',
+        ? 'Have an open, friendly conversation. Ask anything about monastic life, Thai culture, and finding calm.'
+        : 'พูดคุยอย่างเปิดใจ เหมือนมีเพื่อนรับฟัง ถามได้ทุกเรื่องที่สงสัยเกี่ยวกับชีวิตพระ วัฒนธรรม หรือการปล่อยวางความเครียด',
       img: '/images/home/monkchat-meet-monks.jpg',
       width: 452,
       height: 678,
@@ -62,8 +62,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     {
       title: isEnglish ? 'Short meditation' : 'ฝึกสมาธิเบื้องต้น',
       desc: isEnglish
-        ? 'A simple, guided meditation to help you relax and be present.'
-        : 'สมาธิสั้น 5-10 นาที ช่วยผ่อนคลายและสร้างสติรู้ตัว',
+        ? 'A gentle 5–10 minute breathing pause. Seated comfortably on chairs under shade trees—no experience needed.'
+        : 'สมาธิสั้น 5–10 นาที นั่งเก้าอี้สบายๆ ใต้ร่มไม้ใหญ่ หลับตาเบาๆ ผ่อนคลายร่างกาย และสร้างสติรู้ตัว',
       img: '/images/home/monkchat-real-meditation.jpg',
       width: 1024,
       height: 682,
@@ -72,8 +72,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     {
       title: isEnglish ? 'Q&A' : 'ถาม-ตอบข้อสงสัย',
       desc: isEnglish
-        ? 'Ask questions about Buddhism, daily life, and practical wisdom.'
-        : 'ซักถามข้อสงสัยเกี่ยวกับวิถีพุทธและหลักธรรมนำมาปรับใช้',
+        ? 'Every question is welcome. Ask freely about monk rules, temple etiquette, or everyday peace of mind.'
+        : 'ถามได้ทุกข้อสงสัยอย่างสบายใจ ทั้งเรื่องธรรมเนียม ข้อห้ามในวัด หรือหลักคิดในการใช้ชีวิต',
       img: '/images/home/monkchat-qa-dialogue.jpg',
       width: 1024,
       height: 682,
@@ -82,8 +82,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     {
       title: isEnglish ? 'Photo souvenir' : 'ภาพความทรงจำ',
       desc: isEnglish
-        ? 'Capture a meaningful memory at the historic Ayutthaya site.'
-        : 'เก็บภาพความประทับใจและความทรงจำอันทรงคุณค่า ณ เมืองประวัติศาสตร์',
+        ? 'Capture a memorable moment of cross-cultural friendship and kindness in ancient Ayutthaya.'
+        : 'เก็บภาพความประทับใจและมิตรภาพอันอบอุ่นร่วมกับพระสงฆ์ ณ เมืองประวัติศาสตร์อยุธยา',
       img: '/images/home/monkchat-souvenir.jpg',
       width: 828,
       height: 370,
@@ -95,10 +95,10 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     {
       title: isEnglish
         ? 'Warm cultural exchange under the trees'
-        : 'แลกเปลี่ยนเรียนรู้ท่ามกลางธรรมชาติในวัดมหาธาตุ',
+        : 'ล้อมวงคุยสบายๆ ใต้ร่มไม้ใหญ่ วัดมหาธาตุ',
       caption: isEnglish
-        ? 'Real open-air conversations with MCU student monks where visitors can ask about Thai monastic life, mindfulness, and practical Buddhism.'
-        : 'บรรยากาศสนทนาธรรมจริงใต้ร่มไม้ภายในวัดมหาธาตุ พูดคุยซักถามวิถีพระสงฆ์ วัฒนธรรมไทย และแนวคิดความสุขอย่างเป็นกันเอง',
+        ? 'Real open-air conversations with MCU student monks where you can sit comfortably and ask about Thai monastic life, mindfulness, and everyday happiness.'
+        : 'บรรยากาศสนทนาจริงใต้ร่มเงาไม้ร่มรื่น พูดคุยซักถามวิถีชีวิตพระ วัฒนธรรมไทย และการดูแลใจอย่างเป็นมิตร ไร้พิธีรีตอง',
       img: '/images/home/monkchat-real-atmosphere.jpg',
       width: 1024,
       height: 569,
@@ -106,11 +106,11 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     },
     {
       title: isEnglish
-        ? 'Shaded ruins & accessible stillness'
-        : 'ความสงบเรียบง่ายที่เริ่มต้นได้ทุกคน',
+        ? 'Rest & gentle stillness for everyone'
+        : 'พักกาย พักใจ เริ่มต้นได้ทุกคน',
       caption: isEnglish
-        ? 'Rest among Ayutthaya heritage grounds with five to ten minutes of gentle breathing and center-of-body stillness—no prior experience required.'
-        : 'พักใจท่ามกลางโบราณสถานอยุธยาด้วยสมาธิเบื้องต้น 5–10 นาที เหมาะสำหรับผู้เริ่มต้นทุกเชื้อชาติและทุกความเชื่อ',
+        ? 'Escape the midday heat and enjoy five to ten minutes of calm breathing—welcoming all backgrounds, seated comfortably on chairs.'
+        : 'หลบไอร้อนมาสัมผัสความสงบเบื้องต้น 5–10 นาที นั่งเก้าอี้สบายๆ ผ่อนคลายทั้งร่างกายและจิตใจ เหมาะสำหรับทุกคน',
       img: '/images/home/monkchat-real-stillness.jpg',
       width: 1024,
       height: 682,
@@ -180,10 +180,10 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
               {isEnglish ? 'Location & map' : 'สถานที่และแผนที่'}
             </h2>
-            <p className="text-sm leading-6 text-brand-muted">
+            <p className="text-sm leading-6 text-brand-muted [text-wrap:pretty]">
               {isEnglish
-                ? 'Monk Chat at Wat Mahathat, Ayutthaya.'
-                : 'จุดนัดพบกิจกรรม Monk Chat ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
+                ? 'How to find our shaded outdoor meeting spot inside Wat Mahathat, Ayutthaya.'
+                : 'จุดนัดพบกิจกรรม Monk Chat ใต้ร่มไม้ใหญ่ ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
             </p>
           </div>
 
@@ -216,8 +216,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-brand-muted sm:text-sm">
                   {isEnglish
-                    ? 'Inside the Wat Mahathat temple area, near the historic prang (central tower). Student monks are available to welcome visitors.'
-                    : 'บริเวณลานร่มไม้ภายในวัดมหาธาตุ ใกล้พระปรางค์ประธาน พระนิสิตพร้อมต้อนรับและสนทนาธรรม'}
+                    ? 'Shaded courtyard inside Wat Mahathat, near the central prang. Feel free to walk in and take a chair under the trees. Monks are warmly waiting to welcome you.'
+                    : 'บริเวณลานร่มไม้ใหญ่ภายในวัดมหาธาตุ ใกล้พระปรางค์ประธาน เดินเข้ามานั่งเก้าอี้ใต้ร่มไม้ได้เลย มีพระนิสิตคอยต้อนรับอย่างอบอุ่นและเป็นกันเอง'}
                 </p>
               </div>
 
@@ -240,8 +240,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 </div>
                 <p className="text-sm leading-6 text-brand-muted">
                   {isEnglish
-                    ? 'Check the real activity spot photo above and interactive map below, or open Google Maps for directions.'
-                    : 'ดูภาพจุดจัดกิจกรรมจริงด้านซ้ายและแผนที่จริงด้านล่าง หรือกด "ดูแผนที่" / "ขอเส้นทาง" เพื่อนำทางด้วย Google Maps'}
+                    ? 'Free walk-in, no booking required. Check the real spot photo above and map below to find your way.'
+                    : 'เข้าร่วมฟรี ไม่มีค่าใช้จ่าย เดินเข้ามานั่งเก้าอี้พูดคุยได้ทันที ดูภาพสถานที่จริงด้านซ้ายและแผนที่ด้านล่างเพื่อนำทาง'}
                 </p>
               </div>
 
@@ -309,10 +309,10 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
               {isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม'}
             </h2>
-            <p className="text-sm leading-6 text-brand-muted">
+            <p className="text-sm leading-6 text-brand-muted [text-wrap:pretty]">
               {isEnglish
-                ? 'A friendly and meaningful experience to learn, reflect, and connect.'
-                : 'ประสบการณ์อันทรงคุณค่าเพื่อเรียนรู้ สงบใจ และแลกเปลี่ยนอย่างเป็นมิตร'}
+                ? 'What you will experience when you take a seat under the trees with student monks.'
+                : 'สิ่งที่คุณจะได้สัมผัสเมื่อมาร่วมวงสนทนากับพระสงฆ์ใต้ร่มไม้ใหญ่'}
             </p>
           </div>
 

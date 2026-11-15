@@ -13,6 +13,7 @@ const paths = {
   check: 'm5 12 4 4L19 6',
   arrow: 'M4 12h16m-6-6 6 6-6 6',
   down: 'm6 9 6 6 6-6',
+  chevronLeft: 'm15 18-6-6 6-6',
   external: 'M14 4h6v6m0-6L10 14m-2-9H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-3',
   link: 'm10 13 4-4m-6 7-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 1 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0',
   play: 'm8 5 11 7-11 7V5Z',
@@ -30,6 +31,10 @@ const paths = {
   volumeMute: 'M11 5 6 9H3v6h3l5 4V5Zm5 5 4 4m0-4-4 4',
   building: 'M4 21h16M6 21V7l6-4 6 4v14M10 21v-4h4v4M9 10h.01M15 10h.01M9 14h.01M15 14h.01',
   compass: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm3.2-12.2-1.8 4.6-4.6 1.8 1.8-4.6 4.6-1.8Z',
+  sprout: 'M12 21v-7m0 0a5 5 0 0 1-5-5c0-3 3-5 5-5 0 2 0 5-5 5Zm0 0a5 5 0 0 0 5-5c0-3-3-5-5-5 0 2 0 5 5 5Z',
+  leaf: 'M11 20A7 7 0 0 1 4 13C4 7 11 3 20 3c0 9-4 16-9 17Zm0 0c0-6 4-10 9-14',
+  chair: 'M6 19v3m12-3v3M6 14h12M6 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v11H6V8Zm2 6v-4m8 4v-4',
+  bell: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9Zm-4.27 13a2 2 0 0 1-3.46 0',
 } as const
 
 export type GuideIconName = keyof typeof paths

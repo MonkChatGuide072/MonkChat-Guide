@@ -241,19 +241,28 @@ export function NisitLoginPage() {
             </p>
           </div>
 
-          <div className="space-y-2 border-t border-brand-border pt-4 text-xs leading-5 text-brand-muted">
+          <div className="space-y-3 border-t border-brand-border pt-4 text-xs leading-5 text-brand-muted">
             <p>
               {isEnglish
                 ? 'Student accounts (student) are isolated from the team CMS (/admin).'
                 : 'บัญชีนิสิต (role: student) แยกสิทธิ์จากระบบหลังบ้าน CMS (/admin) อย่างชัดเจน'}
             </p>
-            <Link
-              to="/"
-              className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-maroon hover:underline"
-            >
-              <GuideIcon name="arrow" className="h-[18px] w-[18px] rotate-180" />
-              <span>{isEnglish ? 'Back to home' : 'กลับหน้าหลักเว็บไซต์'}</span>
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                to="/"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-maroon hover:underline"
+              >
+                <GuideIcon name="arrow" className="h-[18px] w-[18px] rotate-180" />
+                <span>{isEnglish ? 'Back to home' : 'กลับหน้าหลักเว็บไซต์'}</span>
+              </Link>
+              <Link
+                to="/nisit"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-terracotta hover:underline"
+              >
+                <span>{isEnglish ? 'Guest Practice (/nisit)' : 'เข้าฝึกโหมดบุคคลทั่วไป (/nisit)'}</span>
+                <GuideIcon name="arrow" className="h-[18px] w-[18px]" />
+              </Link>
+            </div>
           </div>
         </section>
 
@@ -311,9 +320,10 @@ export function NisitLoginPage() {
 
           {mode === 'login' ? (
             <form onSubmit={handleSignIn} className="mt-5 space-y-4">
-              <label className="block text-sm font-medium text-brand-maroon">
+              <label htmlFor="nisit-login-code" className="block text-sm font-medium text-brand-maroon">
                 <span>{isEnglish ? '7-digit Student ID' : 'รหัสนิสิต 7 หลัก'}</span>
                 <input
+                  id="nisit-login-code"
                   type="text"
                   name="student_code"
                   inputMode="numeric"
@@ -328,9 +338,10 @@ export function NisitLoginPage() {
                 />
               </label>
 
-              <label className="block text-sm font-medium text-brand-maroon">
+              <label htmlFor="nisit-login-pass" className="block text-sm font-medium text-brand-maroon">
                 <span>{isEnglish ? 'Password' : 'รหัสผ่านส่วนตัว'}</span>
                 <input
+                  id="nisit-login-pass"
                   type="password"
                   name="password"
                   required
@@ -354,9 +365,10 @@ export function NisitLoginPage() {
             </form>
           ) : (
             <form onSubmit={handleRegister} className="mt-5 space-y-4">
-              <label className="block text-sm font-medium text-brand-maroon">
+              <label htmlFor="nisit-reg-invite" className="block text-sm font-medium text-brand-maroon">
                 <span>{isEnglish ? 'Cohort Invite Code' : 'รหัสเชิญประจำรุ่น (Invite Code)'}</span>
                 <input
+                  id="nisit-reg-invite"
                   type="text"
                   name="invite_code"
                   autoComplete="off"
@@ -370,9 +382,10 @@ export function NisitLoginPage() {
                 />
               </label>
 
-              <label className="block text-sm font-medium text-brand-maroon">
+              <label htmlFor="nisit-reg-code" className="block text-sm font-medium text-brand-maroon">
                 <span>{isEnglish ? '7-digit Student ID (4011001–6911060)' : 'รหัสนิสิต 7 หลัก (4011001–6911060)'}</span>
                 <input
+                  id="nisit-reg-code"
                   type="text"
                   name="student_code"
                   inputMode="numeric"
@@ -388,9 +401,10 @@ export function NisitLoginPage() {
               </label>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm font-medium text-brand-maroon">
+                <label htmlFor="nisit-reg-name" className="block text-sm font-medium text-brand-maroon">
                   <span>{isEnglish ? 'Full name' : 'ชื่อ – นามสกุล'}</span>
                   <input
+                    id="nisit-reg-name"
                     type="text"
                     name="display_name"
                     autoComplete="name"
@@ -403,9 +417,10 @@ export function NisitLoginPage() {
                   />
                 </label>
 
-                <label className="block text-sm font-medium text-brand-maroon">
+                <label htmlFor="nisit-reg-dharma" className="block text-sm font-medium text-brand-maroon">
                   <span>{isEnglish ? 'Dharma name (optional)' : 'ฉายา (ถ้ามี)'}</span>
                   <input
+                    id="nisit-reg-dharma"
                     type="text"
                     name="dharma_name"
                     maxLength={80}
@@ -418,9 +433,10 @@ export function NisitLoginPage() {
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm font-medium text-brand-maroon">
+                <label htmlFor="nisit-reg-pass" className="block text-sm font-medium text-brand-maroon">
                   <span>{isEnglish ? 'Choose password (12+ chars)' : 'ตั้งรหัสผ่าน (12 ตัวขึ้นไป)'}</span>
                   <input
+                    id="nisit-reg-pass"
                     type="password"
                     name="new_password"
                     required
@@ -433,9 +449,10 @@ export function NisitLoginPage() {
                   />
                 </label>
 
-                <label className="block text-sm font-medium text-brand-maroon">
+                <label htmlFor="nisit-reg-confirm" className="block text-sm font-medium text-brand-maroon">
                   <span>{isEnglish ? 'Confirm password' : 'ยืนยันรหัสผ่าน'}</span>
                   <input
+                    id="nisit-reg-confirm"
                     type="password"
                     name="confirm_password"
                     required
@@ -466,6 +483,29 @@ export function NisitLoginPage() {
               </button>
             </form>
           )}
+
+          {/* Quick-Access Guest Training Mode */}
+          <div className="mt-6 rounded-xl border border-brand-gold/40 bg-brand-gold-soft/60 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-brand-maroon">
+                  {isEnglish ? 'Explore without signing in?' : 'ต้องการทดลองใช้งานโดยไม่ต้องล็อกอิน?'}
+                </p>
+                <p className="mt-0.5 text-xs leading-5 text-brand-muted">
+                  {isEnglish
+                    ? 'Preview all 200 Q&A flashcards, audio scripts, videos, and vocab cards directly in local mode.'
+                    : 'ทดลองคลัง Q&A 200 ข้อ, เสียงนำสมาธิซิงก์ซับ, วิดีโอศึกษา, และการ์ดคำศัพท์บนเครื่องนี้ได้ทันที'}
+                </p>
+              </div>
+              <Link
+                to="/nisit"
+                className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+              >
+                <span>{isEnglish ? 'Enter /nisit as Guest' : 'เข้าสู่หน้านิสิตทันที (/nisit)'}</span>
+                <GuideIcon name="arrow" className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
         </section>
       </div>
     </div>
