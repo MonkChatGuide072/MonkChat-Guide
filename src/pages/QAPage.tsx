@@ -135,7 +135,7 @@ export function QAPage() {
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-800/20 bg-amber-50/90 px-3.5 py-1 text-xs font-semibold tracking-wide text-amber-900 shadow-2xs">
             <GuideIcon name="chat" className="h-3.5 w-3.5 text-amber-700" />
-            <span>{isEnglish ? 'Ayutthaya Monk Chat · Essential FAQs' : 'สนทนาธรรม Monk Chat ณ วัดมหาธาตุ · รวมคำถามยอดนิยม'}</span>
+            <span>{isEnglish ? 'Ayutthaya Monk Chat · Clear Answers for Visitors' : 'สนทนาธรรม Monk Chat ณ วัดมหาธาตุ · ตอบทุกข้อสงสัยผู้มาเยือน'}</span>
           </div>
 
           <h1 className="mt-4 font-serif text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-tight text-brand-maroon leading-[1.18] [text-wrap:balance]">
@@ -211,12 +211,12 @@ export function QAPage() {
           </div>
           <div>
             <h2 className="font-sans text-base sm:text-lg font-bold text-stone-900">
-              {isEnglish ? 'Looking for deeper questions? Ask the Chatbot' : 'มีข้อสงสัยเรื่องอื่น ๆ หรือต้องการค้นหาเชิงลึก? ถามแชทบอท'}
+              {isEnglish ? 'Have a specific question? Ask our Dhamma Chatbot' : 'ยังคาใจเรื่องไหนอยู่ไหม? พิมพ์ถามแชทบอทได้เลย'}
             </h2>
             <p className="mt-1 text-xs sm:text-sm leading-relaxed text-stone-600 max-w-2xl">
               {isEnglish
-                ? 'Can’t find your question above? Our Dhamma Chatbot searches from over 200 reviewed and verified answers on meditation, monastic discipline, and Thai Buddhist culture.'
-                : 'หากไม่พบคำถามที่ต้องการด้านบน ท่านสามารถถามแชทบอทตอบธรรมะ ซึ่งเชื่อมต่อคลังคำถาม-คำตอบที่ผ่านการตรวจทานแล้วกว่า 200 ข้อ เพื่อค้นหาคำตอบได้ทันที'}
+                ? 'Can’t find your question above? Search from over 200 verified answers on monk rules, temple etiquette, and mindfulness for instant answers 24/7.'
+                : 'หากไม่พบคำถามที่ต้องการด้านบน ลองพิมพ์ถามแชทบอทตอบธรรมะได้ทันที รวบรวมคำตอบเรื่องวิถีพระ วินัยสงฆ์ ธรรมเนียมไทย และสมาธิไว้กว่า 200 ข้อ พร้อมตอบคลายข้อสงสัยได้ตลอดเวลา'}
             </p>
           </div>
         </div>

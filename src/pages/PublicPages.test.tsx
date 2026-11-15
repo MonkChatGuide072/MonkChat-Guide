@@ -118,14 +118,12 @@ describe('Meditation flow', () => {
     expect(mocks.signed).toHaveBeenCalledTimes(1)
   })
 
-  it('reports playback errors and retries the signed audio URL without losing transcript', async () => {
+  it('reports playback errors and retries the signed audio URL', async () => {
     openPage(<MeditationPage />, '/meditation?trackId=a')
     fireEvent.error(await screen.findByLabelText('Meditation Audio Player: Track A'))
     const alert = await screen.findByRole('alert')
     expect(alert).toHaveTextContent('Failed to load audio')
     expect(screen.queryByText(/Gently close your eyes, if that feels comfortable/)).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'View Full Transcript →' }))
-    expect(screen.getByText('Track A transcript', { selector: 'p' })).toBeVisible()
     fireEvent.click(within(alert).getByRole('button', { name: 'Retry' }))
     expect(await screen.findByLabelText('Meditation Audio Player: Track A')).toBeInTheDocument()
     expect(mocks.signed).toHaveBeenCalledTimes(2)
@@ -162,7 +160,7 @@ describe('Meditation flow', () => {
     expect(screen.getByRole('tab', { name: /ก่อนนั่ง/ })).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('keeps seven-base detail optional before audio and preserves transcript access', async () => {
+  it('keeps seven-base detail optional before audio', async () => {
     openPage(<MeditationPage />, '/meditation?trackId=a')
     const guide = screen.getByRole('heading', { name: 'Your meditation guide' })
     const audio = screen.getByRole('heading', { name: 'Meditation audio' })
@@ -175,8 +173,6 @@ describe('Meditation flow', () => {
     expect(screen.getByRole('heading', { name: 'The seventh base' })).toBeInTheDocument()
     expect(screen.getByText('Two finger breadths above base 6, inside the abdomen.')).toBeInTheDocument()
     expect(await screen.findByLabelText('Meditation Audio Player: Track A')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'View Full Transcript →' }))
-    expect(screen.getByText('Track A transcript', { selector: 'p' })).toBeVisible()
     await act(async () => { await i18n.changeLanguage('th') })
     expect(screen.getByRole('heading', { name: 'ศูนย์กลางกายฐานที่ 7' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'อ่านฉบับเต็ม' })).toHaveAttribute('href', 'https://dhammakaya.com/4442')

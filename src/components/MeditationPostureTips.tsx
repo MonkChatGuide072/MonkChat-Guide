@@ -38,25 +38,25 @@ export function MeditationPostureTips({ language }: MeditationPostureTipsProps) 
 
   const troubles = [
     {
-      title: isEn ? 'Wandering Thoughts (ฟุ้งซ่าน)' : 'ใจคิดเรื่องอื่น (ฟุ้งซ่าน)',
+      title: isEn ? 'Wandering Thoughts' : 'ใจคิดเรื่องอื่น (ฟุ้งซ่าน)',
       solution: isEn
         ? 'Do not battle your thoughts. Smile gently at the wandering thought, let it drift away like a cloud, and softly bring your attention back to the center of your body.'
         : 'อย่าไปต่อสู้กับความคิด เมื่อรู้ตัวว่าใจลอย ให้ยิ้มรับเบา ๆ แล้วค่อย ๆ น้อมใจกลับมาพักที่ศูนย์กลางกายฐานที่ 7 อย่างผ่อนคลาย',
     },
     {
-      title: isEn ? 'Feeling Sleepy (ง่วงนอน)' : 'รู้สึกง่วงนอน',
+      title: isEn ? 'Feeling Drowsy' : 'รู้สึกง่วงนอน',
       solution: isEn
         ? 'Take 2-3 deep, refreshing breaths. Gently straighten your back and slightly open your eyelids to allow soft ambient light in before re-closing them softly.'
         : 'สูดลมหายใจเข้าลึก ๆ 2-3 ครั้ง ยืดลำตัวให้ตรงขึ้น หรือลืมตาขึ้นมารับแสงสักครู่ เมื่อสดชื่นแล้วจึงค่อย ๆ หลับตาเบา ๆ ใหม่อีกครั้ง',
     },
     {
-      title: isEn ? 'Physical Tension or Aches (ปวดเมื่อย/ตึง)' : 'ร่างกายตึงหรือปวดเมื่อย',
+      title: isEn ? 'Physical Tension or Aches' : 'ร่างกายตึงหรือปวดเมื่อย',
       solution: isEn
         ? 'Consciously scan from head to toe, relaxing facial muscles, shoulders, and abdomen. You may shift your posture gently without disturbing your inner calm.'
         : 'สำรวจร่างกายตั้งแต่ศีรษะจรดปลายเท้า คลายกล้ามเนื้อหัวไหล่และคอ หากเมื่อยสามารถขยับปรับเปลี่ยนท่านั่งได้อย่างนุ่มนวล',
     },
     {
-      title: isEn ? 'Noticing Inner Light (เห็นแสงสว่าง)' : 'เห็นแสงสว่างหรือภาพภายใน',
+      title: isEn ? 'Noticing Inner Light or Images' : 'เห็นแสงสว่างหรือภาพภายใน',
       solution: isEn
         ? 'Remain completely still and neutral. Do not get excited or try to grasp it. Simply observe it with contentment, like enjoying a peaceful sunrise.'
         : 'รักษาใจให้นิ่งเฉย ไม่ตื่นเต้นและไม่ต้องพยายามเค้นให้ชัดขึ้น ดูไปอย่างสบาย ๆ เหมือนมองดูทิวทัศน์ธรรมชาติอันสงบ',
@@ -194,3 +194,4 @@ export function MeditationPostureTips({ language }: MeditationPostureTipsProps) 
     </section>
   )
 }
+

@@ -277,13 +277,13 @@ export function CentersPage() {
           <GuideIcon name="lotus" className="h-3.5 w-3.5 shrink-0 text-[#A33D19]" />
           <span>{t('centers.heroTag')}</span>
         </span>
-        <h1 className="mt-3 font-serif text-3xl font-semibold leading-snug text-brand-maroon sm:text-4xl">
+        <h1 className="mt-3 font-serif text-3xl font-semibold leading-snug text-brand-maroon sm:text-4xl [text-wrap:balance]">
           {t('centers.title')}
         </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base">
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base [text-wrap:pretty]">
           {isEnglish
-            ? 'Explore verified meditation sanctuaries in Thailand and Dhammakaya Foundation international branches worldwide, complete with authentic place photography, maps, and official contact portals.'
-            : 'รวบรวมศูนย์ปฏิบัติธรรมที่มีบรรยากาศสงบร่มรื่น ทั้งในประเทศไทยและเครือข่ายสาขาในต่างประเทศ พร้อมภาพสถานที่จริง ลิงก์แผนที่ และช่องทางติดต่อโดยตรง'}
+            ? 'Want to continue your practice at home? Explore peaceful retreat sanctuaries across Thailand and worldwide, with real photos, directions, and direct contacts.'
+            : 'อยากฝึกสมาธิต่อเนื่องเมื่อกลับไป? รวมสถานที่ปฏิบัติธรรมบรรยากาศสัปปายะ ทั้งในไทยและสาขาต่างประเทศ พร้อมภาพจริง แผนที่ และช่องทางติดต่อตรง'}
         </p>
       </section>
 

@@ -37,9 +37,23 @@ export function HomeHeroIntro({
         <h1 id="home-intro-title" className="font-serif text-[2rem] font-semibold leading-snug text-brand-maroon sm:text-4xl lg:text-[2.75rem]">
           MonkChat Guide
         </h1>
-        <p className="mt-2 text-sm text-brand-muted">{isEnglish ? 'Your guide to Ayutthaya Monk Chat' : 'คู่มือสำหรับร่วมกิจกรรม Ayutthaya Monk Chat'}</p>
-        <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base">
-          {isEnglish ? 'Join Monk Chat and guided meditation at Wat Mahathat, Ayutthaya.' : 'ร่วมสนทนาธรรมและฝึกสมาธิ ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
+        <p className="mt-2 text-sm font-medium text-brand-terracotta sm:text-base [text-wrap:balance]">
+          {isEnglish
+            ? 'Take a seat in the shade · Open conversation with monks'
+            : 'พักกายใต้ร่มไม้ใหญ่ · เปิดใจคุยกับพระสงฆ์'}
+        </p>
+        <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base [text-wrap:pretty]">
+          {isEnglish ? (
+            <>
+              Sit comfortably under the shade trees at Wat Mahathat. Ask anything you wonder about monk life,
+              and enjoy 5 minutes of quiet meditation.<br className="hidden sm:inline" /> Friendly, welcoming, no formalities, and 100% free walk-in.
+            </>
+          ) : (
+            <>
+              นั่งเก้าอี้สบายๆ ใต้ร่มไม้วัดมหาธาตุ อยุธยา พูดคุยอย่างเป็นกันเอง ถามได้ทุกเรื่องที่สงสัย
+              และพักใจให้สงบ 5&nbsp;นาที<br className="hidden sm:inline" /> เปิดกว้างทุกศาสนา ร่วมได้ทันทีโดยไม่มีค่าใช้จ่าย
+            </>
+          )}
         </p>
 
         <nav aria-label={isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก'} className="mx-auto mt-6 grid max-w-2xl grid-cols-5 gap-1 min-[390px]:gap-2 sm:gap-3">

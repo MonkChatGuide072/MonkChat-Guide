@@ -176,3 +176,4 @@ export function BreathingPacer({ language }: BreathingPacerProps) {
     </div>
   )
 }
+

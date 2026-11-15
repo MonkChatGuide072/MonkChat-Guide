@@ -68,7 +68,6 @@ export function MeditationPage() {
   const [allTracks, setTracks] = useState<TrackRow[]>([])
   const [isSaved, setIsSaved] = useState(false)
   const [shareFeedback, setShareFeedback] = useState<string | null>(null)
-  const [isFullTranscriptOpen, setIsFullTranscriptOpen] = useState(false)
 
   const tracks = allTracks.filter(track =>
     track.meditation_track_translations.some(translation => translation.language_code === currentLang)
@@ -191,13 +190,13 @@ export function MeditationPage() {
       <header className="rounded-3xl border border-brand-border/80 bg-white p-6 sm:p-8 shadow-[0_4px_20px_rgba(43,24,16,0.03)]">
         <div className="inline-flex items-center gap-2 rounded-full border border-amber-800/20 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900 shadow-2xs">
           <GuideIcon name="lotus" className="h-3.5 w-3.5 text-amber-700" />
-          <span>{isEnglish ? 'Meditation Practice & Guidance' : 'ศูนย์เรียนรู้และฝึกสมาธิเบื้องต้น'}</span>
+          <span>{isEnglish ? 'Beginner-Friendly · 5-Minute Meditation' : 'สมาธิเบื้องต้นสำหรับทุกคน · ผ่อนคลาย 5 นาที'}</span>
         </div>
-        <h1 className="mt-3 font-serif text-2xl font-semibold leading-snug text-brand-maroon sm:text-4xl">
-          {isEnglish ? 'Dhammakaya meditation' : 'นั่งสมาธิแบบธรรมกาย'}
+        <h1 className="mt-3 font-serif text-2xl font-semibold leading-snug text-brand-maroon sm:text-4xl [text-wrap:balance]">
+          {t('meditation.title')}
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base">
-          {isEnglish ? 'Prepare your body, calm your breath, and listen to the guided meditation audio.' : 'เตรียมตัวปรับท่านั่ง ปรับจังหวะลมหายใจ แล้วรับฟังเสียงนำสมาธิจากพระอาจารย์'}
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base [text-wrap:pretty]">
+          {t('meditation.subtitle')}
         </p>
       </header>
 
@@ -384,65 +383,6 @@ export function MeditationPage() {
 
       {/* 5. POSTURE TIPS, SEATING OPTIONS & VIDEO DEMO GUIDE */}
       <MeditationPostureTips language={currentLang} />
-
-      {/* 6. STEP 3: TRANSCRIPT SECTION */}
-      {!isLoading && !error && currentTrack && trackTranslation && (
-        <section
-          id="meditation-transcript"
-          className="scroll-mt-24 space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6 shadow-2xs"
-        >
-          <div className="flex items-center gap-2.5">
-            <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
-              {t('meditation.transcriptTitle')}
-            </h2>
-          </div>
-
-          {/* Excerpt Card as shown in mockup */}
-          <div className="rounded-xl border border-brand-border bg-brand-gold-soft/60 p-5 sm:p-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-brand-muted">
-              <GuideIcon name="book" className="h-4.5 w-4.5 text-brand-terracotta" />
-              <span>{isEnglish ? 'Meditation Transcript (Excerpt)' : 'ข้อความถอดเสียงนำสมาธิ (สังเขป)'}</span>
-            </div>
-
-            <blockquote className="mt-3 border-l-3 border-brand-terracotta pl-4 text-sm leading-6 text-brand-muted sm:text-sm">
-              {trackTranslation.transcript
-                ? <>&ldquo;{trackTranslation.transcript.slice(0, 240)}{trackTranslation.transcript.length > 240 ? '…' : ''}&rdquo;</>
-                : t('meditation.noTranscript')}
-            </blockquote>
-
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-brand-border/80 pt-3">
-              <span className="text-sm font-semibold text-brand-maroon">
-                {trackTranslation.title}
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsFullTranscriptOpen(!isFullTranscriptOpen)}
-                aria-expanded={isFullTranscriptOpen}
-                aria-controls="full-meditation-transcript"
-                className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-brand-terracotta hover:underline cursor-pointer"
-              >
-                <span>{isFullTranscriptOpen ? (isEnglish ? 'Hide Full Transcript' : 'ซ่อนข้อความเต็ม') : (isEnglish ? 'View Full Transcript →' : 'ดูข้อความถอดเสียงเต็ม →')}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Full Transcript Expandable Section */}
-          {isFullTranscriptOpen && (
-            <div id="full-meditation-transcript" className="mt-4 rounded-xl border border-brand-border bg-brand-cream p-5">
-              <h3 className="font-sans text-sm font-medium text-brand-maroon">
-                {trackTranslation.title}
-              </h3>
-              {trackTranslation.transcript ? (
-                <p className="mt-3 whitespace-pre-wrap border-l-3 border-brand-terracotta pl-4 text-sm leading-6 text-brand-text sm:text-sm">
-                  {trackTranslation.transcript}
-                </p>
-              ) : (
-                <p className="mt-3 text-sm text-brand-muted">{t('meditation.noTranscript')}</p>
-              )}
-            </div>
-          )}
-        </section>
-      )}
     </div>
   )
 }
