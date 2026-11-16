@@ -5,13 +5,14 @@ import { useAuth } from '../lib/auth'
 import { supabaseClient } from '../lib/supabase'
 import { getNextRovingTabIndex, parseNisitStudentId } from '../content/nisitPractice'
 import {
+  getNisitAdmissionMode,
   invokeStudentRegister,
   isAcceptableStudentPassword,
   toStudentInternalEmail,
 } from '../lib/studentPractice'
 import { GuideIcon } from '../components/GuideIcon'
 
-/** Student monk login & Cohort Invite Code registration at `/nisit/login`. */
+/** Student monk login & direct self-registration at `/nisit/login`. */
 export function NisitLoginPage() {
   const { i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
@@ -23,7 +24,6 @@ export function NisitLoginPage() {
   const [loginCode, setLoginCode] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
 
-  const [inviteCode, setInviteCode] = useState('')
   const [regCode, setRegCode] = useState('')
   const [regName, setRegName] = useState('')
   const [regDharmaName, setRegDharmaName] = useState('')
@@ -32,6 +32,8 @@ export function NisitLoginPage() {
 
   const [busy, setBusy] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const [noticeMsg, setNoticeMsg] = useState('')
+  const admissionMode = getNisitAdmissionMode()
 
   useEffect(() => {
     if (!isAuthLoading && session && profile && profile.is_active) {
@@ -105,13 +107,6 @@ export function NisitLoginPage() {
       )
       return
     }
-    const cleanInvite = inviteCode.trim().toUpperCase().replace(/\s+/g, '')
-    if (cleanInvite.length < 6) {
-      setErrorMsg(
-        isEnglish ? 'Enter the cohort invite code provided in class.' : 'กรุณากรอกรหัสเชิญประจำรุ่นที่ได้รับจากผู้ดูแล',
-      )
-      return
-    }
     if (!regName.trim()) {
       setErrorMsg(isEnglish ? 'Enter your name and surname.' : 'กรุณากรอกชื่อ–นามสกุล')
       return
@@ -131,26 +126,39 @@ export function NisitLoginPage() {
 
     setBusy(true)
     setErrorMsg('')
+    setNoticeMsg('')
     try {
-      await invokeStudentRegister({
-        invite_code: cleanInvite,
+      const regResult = await invokeStudentRegister({
         student_code: parsed.code,
         display_name: regName.trim(),
         dharma_name: regDharmaName.trim() || undefined,
         password: regPassword,
+        admission_mode: admissionMode,
       })
 
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: toStudentInternalEmail(parsed.code),
-        password: regPassword,
-      })
-      if (error) {
+      if (regResult.is_active) {
+        // Mode A: Auto-approved -> sign in directly
+        const { error } = await supabaseClient.auth.signInWithPassword({
+          email: toStudentInternalEmail(parsed.code),
+          password: regPassword,
+        })
+        if (error) {
+          setMode('login')
+          setLoginCode(parsed.code)
+          setNoticeMsg(
+            isEnglish
+              ? 'Account created and approved! Please sign in with your new password.'
+              : 'สร้างบัญชีและอนุมัติสิทธิ์สำเร็จแล้ว กรุณากรอกรหัสผ่านที่ตั้งไว้เพื่อเข้าสู่ระบบ',
+          )
+        }
+      } else {
+        // Mode B: Pending admin approval -> notify student and prepare login tab
         setMode('login')
         setLoginCode(parsed.code)
-        setErrorMsg(
+        setNoticeMsg(
           isEnglish
-            ? 'Account created. Please sign in with your new password.'
-            : 'สร้างบัญชีสำเร็จแล้ว กรุณากรอกรหัสผ่านที่ตั้งไว้เพื่อเข้าสู่ระบบ',
+            ? 'Registration received! Your account is currently pending administrator approval. Please wait for your cohort coordinator to approve your account before signing in.'
+            : 'ลงทะเบียนสำเร็จเรียบร้อยแล้ว! บัญชีของคุณอยู่ระหว่างรอผู้ดูแลระบบหรืออาจารย์กดยืนยันสิทธิ์ เมื่อได้รับการอนุมัติแล้วจะสามารถเข้าสู่ระบบฝึกได้ทันที',
         )
       }
     } catch (cause) {
@@ -193,6 +201,68 @@ export function NisitLoginPage() {
   }
 
   if (session && (!profile || !profile.is_active)) {
+    if (profile?.role === 'student') {
+      return (
+        <div className="mx-auto max-w-lg py-8">
+          <div className="rounded-2xl border border-amber-200 bg-brand-surface p-6 shadow-sm sm:p-8">
+            <div className="flex items-center gap-3">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-800">
+                <GuideIcon name="clock" className="h-6 w-6" />
+              </span>
+              <div>
+                <span className="inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                  {isEnglish ? 'Pending Approval' : 'อยู่ระหว่างรอการอนุมัติสิทธิ์'}
+                </span>
+                <h1 className="mt-1 font-serif text-xl font-semibold text-brand-maroon">
+                  {isEnglish ? 'Registration Received' : 'ลงทะเบียนบัญชีพระนิสิตเรียบร้อย'}
+                </h1>
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-2 rounded-xl border border-amber-200/80 bg-amber-50/70 p-4 text-xs leading-5 text-amber-900">
+              <p>
+                <span className="font-semibold">{isEnglish ? 'Student ID: ' : 'รหัสนิสิต: '}</span>
+                <span className="font-mono text-sm font-bold">{profile?.student_code ?? '-'}</span>
+              </p>
+              <p>
+                <span className="font-semibold">{isEnglish ? 'Name: ' : 'ชื่อ–ฉายา: '}</span>
+                <span>{profile?.display_name} {profile?.dharma_name ? `(${profile.dharma_name})` : ''}</span>
+              </p>
+              <p className="mt-2 text-brand-muted">
+                {isEnglish
+                  ? 'Your account was created successfully. A cohort coordinator or administrator must approve your account before cloud sync can be activated. You can still practice all modules in Guest Mode in the meantime.'
+                  : 'ระบบได้รับข้อมูลการสมัครของท่านแล้ว ขณะนี้อยู่ระหว่างรออาจารย์หรือผู้ดูแลระบบกดยืนยันสิทธิ์ เมื่อได้รับการอนุมัติแล้ว ท่านจะสามารถบันทึกความก้าวหน้าออนไลน์ได้ทันที ระหว่างนี้ท่านสามารถทดลองฝึกในโหมดบุคคลทั่วไปได้'}
+              </p>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-3">
+              <Link
+                to="/nisit"
+                className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+              >
+                <span>{isEnglish ? 'Practice in Guest Mode (/nisit)' : 'เข้าฝึกโหมดบุคคลทั่วไปก่อน (/nisit)'}</span>
+                <GuideIcon name="arrow" className="h-4 w-4" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="min-h-11 w-full cursor-pointer rounded-xl border border-brand-border bg-white px-4 text-sm font-medium text-brand-maroon transition-colors duration-150 hover:bg-brand-gold-soft"
+              >
+                {isEnglish ? 'Check approval status (Refresh)' : 'ตรวจสอบสถานะอีกครั้ง (รีเฟรช)'}
+              </button>
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="min-h-11 w-full cursor-pointer rounded-xl border border-slate-200 px-4 text-sm font-medium text-slate-600 transition-colors duration-150 hover:bg-slate-50"
+              >
+                {isEnglish ? 'Sign out' : 'ออกจากระบบ'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="mx-auto max-w-md py-8">
         <div className="rounded-2xl border border-red-200 bg-brand-surface p-6">
@@ -295,22 +365,30 @@ export function NisitLoginPage() {
               role="tab"
               aria-selected={mode === 'register'}
               tabIndex={mode === 'register' ? 0 : -1}
-              onClick={() => { setMode('register'); setErrorMsg('') }}
+              onClick={() => { setMode('register'); setErrorMsg(''); setNoticeMsg('') }}
               onKeyDown={(e) => {
                 const next = getNextRovingTabIndex(e.key, 1, 2)
                 if (next == null) return
                 e.preventDefault()
                 setMode(next === 0 ? 'login' : 'register')
                 setErrorMsg('')
+                setNoticeMsg('')
                 modeTabRefs.current[next]?.focus()
               }}
               className={`min-h-11 cursor-pointer rounded-lg px-3 text-sm font-medium transition-colors duration-150 ${
                 mode === 'register' ? 'bg-brand-terracotta text-white' : 'text-brand-maroon hover:bg-brand-gold-soft'
               }`}
             >
-              {isEnglish ? 'Register cohort code' : 'ลงทะเบียนด้วยรหัสเชิญ'}
+              {isEnglish ? 'Register student' : 'สมัครสมาชิก'}
             </button>
           </div>
+
+          {noticeMsg && (
+            <div role="status" className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+              <p className="font-semibold">{isEnglish ? 'Notice' : 'แจ้งเตือนสถานะ'}</p>
+              <p className="mt-1 leading-relaxed">{noticeMsg}</p>
+            </div>
+          )}
 
           {errorMsg && (
             <div role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">
@@ -365,22 +443,28 @@ export function NisitLoginPage() {
             </form>
           ) : (
             <form onSubmit={handleRegister} className="mt-5 space-y-4">
-              <label htmlFor="nisit-reg-invite" className="block text-sm font-medium text-brand-maroon">
-                <span>{isEnglish ? 'Cohort Invite Code' : 'รหัสเชิญประจำรุ่น (Invite Code)'}</span>
-                <input
-                  id="nisit-reg-invite"
-                  type="text"
-                  name="invite_code"
-                  autoComplete="off"
-                  spellCheck={false}
-                  required
-                  maxLength={40}
-                  value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value)}
-                  placeholder="AYT66-XXXX-YYYY"
-                  className="mt-1 min-h-11 w-full rounded-xl border border-brand-border bg-white px-3 py-2 text-base uppercase text-brand-text tabular-nums"
-                />
-              </label>
+              <div
+                className={`rounded-xl border p-3.5 text-xs leading-5 ${
+                  admissionMode === 'auto_approve'
+                    ? 'border-emerald-300 bg-emerald-50/80 text-emerald-900'
+                    : 'border-amber-300 bg-amber-50/80 text-amber-900'
+                }`}
+              >
+                <p className="font-semibold">
+                  {admissionMode === 'auto_approve'
+                    ? (isEnglish ? '🟢 Open Admission (Auto-approve)' : '🟢 เปิดรับสมัครเข้าใช้งานทันที')
+                    : (isEnglish ? '🟡 Approval Required (Admin Review)' : '🟡 นโยบาย: ต้องรอแอดมินยืนยัน')}
+                </p>
+                <p className="mt-0.5">
+                  {admissionMode === 'auto_approve'
+                    ? (isEnglish
+                        ? 'Open period: Register and start learning immediately without waiting for admin approval.'
+                        : 'เปิดให้เข้าฝึกได้เลยช่วงนี้ — เมื่อลงทะเบียนเสร็จสิ้นสามารถเข้าสู่ระบบฝึก /nisit ได้ทันที')
+                    : (isEnglish
+                        ? 'New student accounts remain pending until approved by the coordinator or admin.'
+                        : 'เมื่อลงทะเบียนแล้ว บัญชีจะอยู่ในสถานะรอยืนยัน กรุณารออาจารย์หรือแอดมินกดยืนยันสิทธิ์')}
+                </p>
+              </div>
 
               <label htmlFor="nisit-reg-code" className="block text-sm font-medium text-brand-maroon">
                 <span>{isEnglish ? '7-digit Student ID (4011001–6911060)' : 'รหัสนิสิต 7 หลัก (4011001–6911060)'}</span>
@@ -479,7 +563,7 @@ export function NisitLoginPage() {
               >
                 {busy
                   ? (isEnglish ? 'Creating account...' : 'กำลังลงทะเบียน...')
-                  : (isEnglish ? 'Register & start learning' : 'ยืนยันลงทะเบียนและเข้าฝึก')}
+                  : (isEnglish ? 'Register & start learning' : 'สมัครสมาชิกและเข้าฝึก')}
               </button>
             </form>
           )}

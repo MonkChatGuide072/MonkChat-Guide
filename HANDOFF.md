@@ -1,5 +1,42 @@
 # MonkChat Guide — Current Handoff
 
+## ปรับระบบสมัครพระนิสิต: สมัครตรงได้ทันที พร้อมระบบสลับนโยบายรับสมัคร (Auto-Approve vs รอแอดมินยืนยัน) และปุ่มอนุมัติ 1-Click (16 พฤศจิกายน 2569)
+
+- **ความต้องการของเจ้าของโครงการ:**
+  1. ฝั่งนิสิต เริ่มตั้งแต่การสมัคร: ถอดระบบเดิมออก (ไม่ต้องกรอกรหัสเชิญประจำรุ่น `AYT66-XXXX-YYYY`) ปรับให้หน้าสมัครกดสมัครเองได้ตามปกติ
+  2. เพิ่มระบบจัดการนโยบายการรับสมัคร (Admission Mode) 2 โหมด:
+     - **โหมด A: เปิดให้เข้าได้ทันที / อนุมัติอัตโนมัติ (`auto_approve`):** สำหรับช่วงเปิดรับสมัครทั่วไป พระนิสิตสมัครแล้วระบบอนุมัติสิทธิ์ทันที (`is_active: true`) สามารถล็อกอินเข้ามุมฝึก `/nisit` ได้เลยโดยไม่ต้องรอแอดมินยืนยัน
+     - **โหมด B: ปิดรับตรง / ต้องรอแอดมินยืนยัน (`admin_approval`):** พระนิสิตสมัครแล้ว บัญชีจะอยู่ในสถานะ "รอยืนยัน" (`is_active: false`) แอดมินต้องเป็นผู้กดยืนยันก่อนเข้าใช้งาน
+  3. เพิ่มระบบควบคุมในฝั่ง CMS หลังบ้าน (`/admin/students`): มีสวิตช์สลับโหมดนโยบายชัดเจน และมีปุ่ม 1-Click **"✓ อนุมัติสิทธิ์"** ให้แอดมินกดยืนยันพระนิสิตที่รอยืนยันได้ทันที
+  4. หน้าจอสำหรับพระนิสิตที่รอยืนยัน: แสดงหน้าแจ้งเตือนที่สงบ สง่างาม เหมาะสมกับสมณสารูป (โทนอำพันทอง ไม่ใช่ข้อความสีแดงเตือนบัญชีถูกระงับ) พร้อมปุ่มเข้าทดลองฝึกในโหมดบุคคลทั่วไปก่อน
+
+- **การเปลี่ยนแปลงที่ได้ดำเนินการจริง ([monkchat-guide-wt-nisit](https://github.com/)):**
+  1. **หน้าสมัคร/เข้าสู่ระบบพระนิสิต ([src/pages/NisitLoginPage.tsx](src/pages/NisitLoginPage.tsx)):**
+     - ตัดช่องกรอกรหัสเชิญประจำรุ่น (Cohort Invite Code) ออกอย่างสมบูรณ์ พระนิสิตใช้เพียงรหัสนิสิต 7 หลัก (4011001–6911060), ชื่อ–นามสกุล, ฉายา, และรหัสผ่าน
+     - เปลี่ยนป้ายแท็บเป็น **"สมัครสมาชิก"** / **"Register student"**
+     - แสดงแถบนโยบายรับสมัครแบบ Dynamic (🟢 เปิดรับสมัครเข้าใช้งานทันที vs 🟡 นโยบาย: ต้องรอแอดมินยืนยัน)
+     - สร้างหน้า **"อยู่ระหว่างรอการอนุมัติสิทธิ์" (Pending Approval View):** แสดงรหัสนิสิต, ชื่อ–ฉายา, คำแนะนำที่สงบเป็นมิตร, ปุ่ม *เข้าฝึกโหมดบุคคลทั่วไปก่อน (/nisit)*, ปุ่ม *ตรวจสอบสถานะอีกครั้ง (รีเฟรช)*, และปุ่ม *ออกจากระบบ*
+  2. **ระบบจัดการหลังบ้านพระนิสิต ([src/pages/admin/AdminStudentsPage.tsx](src/pages/admin/AdminStudentsPage.tsx)):**
+     - เพิ่มการ์ด **นโยบายการรับสมัครพระนิสิต (Admission Policy Card)** ด้านบนสุด พร้อมปุ่มสลับโหมด 1-Click ระหว่าง Auto-Approve และ Admin Approval
+     - เพิ่มส่วน **รายชื่อพระนิสิตและการอนุมัติสิทธิ์** พร้อมแท็บกรองสถานะ (`ทั้งหมด`, `รอยืนยัน`, `อนุมัติแล้ว`), ตัวนับจำนวนรอยืนยัน, และช่องค้นหา
+     - เพิ่มปุ่มเด่นสีมรกต **"✓ อนุมัติสิทธิ์"** สำหรับพระนิสิตที่สถานะเป็นรอยืนยัน เมื่อกดแล้วจะเปิดสิทธิ์ (`is_active: true`) ทันที
+     - ยุบระบบรหัสเชิญประจำรุ่นแบบเดิมไว้ใน `<details>` accordion ด้านล่างสำหรับใช้อ้างอิงย้อนหลัง
+  3. **Backend & Supabase Functions ([supabase/functions/student-register](supabase/functions/student-register/), [student-cohorts](supabase/functions/student-cohorts/)):**
+     - ทำให้ `invite_code` เป็น optional ใน `student-register`
+     - เพิ่มการประมวลผล `admission_mode` (`auto_approve` -> `is_active: true`, `admin_approval` -> `is_active: false`)
+     - เพิ่ม action `get_admission_mode` และ `set_admission_mode` ใน `student-cohorts`
+  4. **Client Services & Practice Logic ([src/lib/studentPractice.ts](src/lib/studentPractice.ts), [src/lib/auth.tsx](src/lib/auth.tsx)):**
+     - เพิ่มฟังก์ชัน `getNisitAdmissionMode()` และ `setNisitAdmissionMode()` (Default: `auto_approve` ตามคำขอเปิดให้เข้าได้เลยช่วงนี้)
+     - ปรับ `invokeStudentRegister` ให้ส่ง `admission_mode` และคืนค่า `is_active`
+     - ปรับ `AuthProvider` ให้รองรับ mock student pending และ mock owner auth อย่างถูกต้องในการทดสอบ
+  5. **การทดสอบความถูกต้อง (Test Suite & Linting):**
+     - `src/lib/studentAuth.test.ts`: เพิ่มเคสทดสอบการสมัครโดยตรงทั้ง 2 โหมด และการสลับนโยบาย (15 tests passed)
+     - `src/pages/NisitPhase2Pages.test.tsx`: อัปเดตทดสอบฟอร์มสมัครสมาชิกตรงและการกดปุ่มอนุมัติสิทธิ์ (5 tests passed)
+     - **รันครบทั้งระบบ:** 15 test files / 98 tests passed 100%
+     - `oxlint`: 0 warnings, 0 errors บน 182 ไฟล์
+     - `npm run build`: ผ่านฉลุย PWA bundle สำเร็จ
+     - บันทึกภาพ Screenshot ตรวจสอบจริง: `nisit_reg_auto_th_1280.png`, `nisit_reg_auto_th_390.png`, `nisit_pending_th_1280.png`, `nisit_pending_th_390.png`, `admin_students_auto_th_1280.png`, `admin_students_gated_th_1280.png`, `admin_students_gated_th_390.png`
+
 ## ปรับปรุงปุ่มแชทบอทบนหน้า Q&A เป็นแบบ Floating Edge Widget สไตล์มินิมอล (16 พฤศจิกายน 2569)
 
 - **ปัญหาเดิม:** มีแบนเนอร์แชทบอทกล่องใหญ่คั่นอยู่ระหว่างช่องค้นหากับหมวดหมู่คำถาม ทำให้สายตาขาดตอน และคำบรรยาย *"หากไม่พบคำถามที่ต้องการด้านบน..."* ขัดแย้งกับความเป็นจริงที่คำถามอยู่ด้านล่าง

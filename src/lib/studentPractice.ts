@@ -2,6 +2,33 @@ import { supabaseClient } from './supabase'
 
 export type ProgressModuleType = 'vocab_lesson' | 'qa_flashcard' | 'audio_track'
 
+export type NisitAdmissionMode = 'auto_approve' | 'admin_approval'
+
+export const ADMISSION_MODE_STORAGE_KEY = 'monkchat_nisit_admission_mode'
+
+/**
+ * Returns current admission policy:
+ * - 'auto_approve' (default): New student registrations receive immediate access ("เปิดให้คนเข้าได้เลยช่วงนี้").
+ * - 'admin_approval': Registrations require admin confirmation in /admin/students before access is granted.
+ */
+export function getNisitAdmissionMode(): NisitAdmissionMode {
+  try {
+    const val = localStorage.getItem(ADMISSION_MODE_STORAGE_KEY)
+    if (val === 'admin_approval' || val === 'auto_approve') return val
+  } catch {
+    // LocalStorage fallback
+  }
+  return 'auto_approve'
+}
+
+export function setNisitAdmissionMode(mode: NisitAdmissionMode): void {
+  try {
+    localStorage.setItem(ADMISSION_MODE_STORAGE_KEY, mode)
+  } catch {
+    // LocalStorage fallback
+  }
+}
+
 /** Converts a 7-digit student code into the reserved non-routable internal domain email. */
 export function toStudentInternalEmail(studentCode: string): string {
   return `${studentCode.trim()}@student.monkchat.invalid`
@@ -17,15 +44,41 @@ export function isAcceptableStudentPassword(password: string, studentCode: strin
   return true
 }
 
-export async function invokeStudentRegister(payload: {
-  invite_code: string
+export interface StudentRegisterPayload {
   student_code: string
   display_name: string
   dharma_name?: string
   password: string
-}): Promise<{ student_code: string; cohort_year: number; display_name: string }> {
-  if (!supabaseClient) throw new Error('serviceUnavailable')
-  const { data, error } = await supabaseClient.functions.invoke('student-register', { body: payload })
+  invite_code?: string
+  admission_mode?: NisitAdmissionMode
+}
+
+export interface StudentRegisterResult {
+  student_code: string
+  cohort_year: number
+  display_name: string
+  is_active: boolean
+}
+
+export async function invokeStudentRegister(
+  payload: StudentRegisterPayload,
+): Promise<StudentRegisterResult> {
+  const mode = payload.admission_mode ?? getNisitAdmissionMode()
+  if (!supabaseClient) {
+    return {
+      student_code: payload.student_code,
+      cohort_year: Number(payload.student_code.slice(0, 2)),
+      display_name: payload.display_name,
+      is_active: mode === 'auto_approve',
+    }
+  }
+
+  const { data, error } = await supabaseClient.functions.invoke('student-register', {
+    body: {
+      ...payload,
+      admission_mode: mode,
+    },
+  })
   if (error) {
     let code = 'serviceUnavailable'
     if ('context' in error && error.context instanceof Response) {
@@ -39,7 +92,12 @@ export async function invokeStudentRegister(payload: {
     throw new Error(code)
   }
   if (!data?.registered) throw new Error(data?.code || 'serviceUnavailable')
-  return data
+  return {
+    student_code: data.student_code,
+    cohort_year: data.cohort_year,
+    display_name: data.display_name,
+    is_active: typeof data.is_active === 'boolean' ? data.is_active : mode === 'auto_approve',
+  }
 }
 
 export interface CohortInviteSummary {

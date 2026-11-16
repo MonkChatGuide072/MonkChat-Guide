@@ -32,7 +32,11 @@ export interface StudentRecord {
 export interface StudentCohortContext {
   actor: { id: string; display_name: string; role: 'owner' | 'team_member' | 'student'; is_active: boolean }
   studentSecurityVersion(): Promise<number | null>
-  listData(): Promise<{ invites: CohortInviteRecord[]; students: StudentRecord[] }>
+  listData(): Promise<{
+    invites: CohortInviteRecord[]
+    students: StudentRecord[]
+    admission_mode?: 'auto_approve' | 'admin_approval'
+  }>
   createInvite(payload: {
     cohort_year: number
     label: string
@@ -46,6 +50,8 @@ export interface StudentCohortContext {
   updateStudent(id: string, display_name: string, dharma_name: string | null, is_active: boolean): Promise<StudentRecord>
   hasStudent(id: string): Promise<boolean>
   resetStudentPassword(id: string, password: string): Promise<void>
+  getAdmissionMode?(): Promise<'auto_approve' | 'admin_approval'>
+  setAdmissionMode?(mode: 'auto_approve' | 'admin_approval'): Promise<'auto_approve' | 'admin_approval'>
 }
 
 export interface StudentCohortDependencies {
@@ -186,6 +192,17 @@ export async function handleStudentCohortRequest(
       const temporaryPassword = generateRandomPassword(14)
       await context.resetStudentPassword(input.id, temporaryPassword)
       return reply(200, { reset: true, temporary_password: temporaryPassword })
+    }
+
+    if (input.action === 'get_admission_mode') {
+      const mode = (await context.getAdmissionMode?.()) ?? 'auto_approve'
+      return reply(200, { admission_mode: mode })
+    }
+
+    if (input.action === 'set_admission_mode') {
+      const mode = input.mode === 'admin_approval' ? 'admin_approval' : 'auto_approve'
+      const updated = context.setAdmissionMode ? await context.setAdmissionMode(mode) : mode
+      return reply(200, { admission_mode: updated })
     }
 
     return reply(400, { code: 'invalid' })
