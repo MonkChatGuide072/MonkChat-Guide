@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import { HomeHeroIntro } from '../components/HomeHeroIntro'
 import { LanguageGate } from '../components/LanguageGate'
 import { GuideIcon } from '../components/GuideIcon'
 import { OfficialContactBanner } from '../components/OfficialContactBanner'
+import { AnimatedCounter } from '../components/AnimatedCounter'
 import {
   normalizeLanguage,
   VISITOR_LANGUAGE_SELECTED_EVENT,
@@ -13,12 +15,40 @@ import {
 
 export function VisitPage() {
   const { i18n } = useTranslation()
-  const [hasSelectedLanguage, setHasSelectedLanguage] = useState(
-    () => sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY) != null,
-  )
-  const [currentLang, setCurrentLang] = useState<AppLanguage>(() =>
-    normalizeLanguage(i18n.resolvedLanguage || i18n.language),
-  )
+  const [hasSelectedLanguage, setHasSelectedLanguage] = useState(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get('lang')
+      if (param === 'en' || param === 'th') {
+        sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, param)
+        return true
+      }
+    } catch {
+      // Ignore
+    }
+    return sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY) != null
+  })
+  const [currentLang, setCurrentLang] = useState<AppLanguage>(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get('lang')
+      if (param === 'en' || param === 'th') {
+        return param
+      }
+    } catch {
+      // Ignore
+    }
+    return normalizeLanguage(i18n.resolvedLanguage || i18n.language)
+  })
+
+  useEffect(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get('lang')
+      if (param === 'en' || param === 'th') {
+        void i18n.changeLanguage(param)
+      }
+    } catch {
+      // Ignore
+    }
+  }, [i18n])
 
   useEffect(() => {
     const handleLanguageChanged = (language: string) => {
@@ -47,6 +77,29 @@ export function VisitPage() {
 function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
   const { i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
+
+  // Live 5-minute meditation player state
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(326) // 5:26
+  const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null)
+
+  const togglePlayMeditation = () => {
+    if (!audioRef.current) return
+    if (isPlaying) {
+      audioRef.current.pause()
+      setIsPlaying(false)
+    } else {
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false))
+    }
+  }
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+  }
 
   const whatToExpect = [
     {
@@ -118,18 +171,153 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     },
   ]
 
+  const topQuestions = [
+    {
+      q: isEnglish ? 'Why do Buddhist monks wear orange or saffron robes?' : 'ทำไมพระสงฆ์จึงครองจีวรสีส้มหรือสีกรัก?',
+      a: isEnglish
+        ? 'Traditionally, robes were dyed using natural forest materials like roots, tree bark, and turmeric. The earth tone symbolizes simplicity, detachment from luxury, and a life dedicated to inner purification.'
+        : 'ในอดีต จีวรของพระสงฆ์ย้อมด้วยสีธรรมชาติจากเปลือกไม้และขมิ้น สีส้มจึงสะท้อนถึงการสละความฟุ้งเฟ้อทางโลก และมุ่งสู่ชีวิตที่เรียบง่ายบริสุทธิ์',
+    },
+    {
+      q: isEnglish ? 'Why do monks keep physical distance from women?' : 'ทำไมพระสงฆ์จึงต้องรักษาระยะห่างกับสตรี?',
+      a: isEnglish
+        ? 'As part of our ancient monastic vows (Vinaya), monks refrain from physical contact with women to maintain clear purity and mutual respect. Monks are always delighted to converse and answer questions with kindness!'
+        : 'เป็นข้อปฏิบัติทางพระวินัยเพื่อรักษาความบริสุทธิ์และความเคารพซึ่งกันและกัน พระสงฆ์ยินดีอย่างยิ่งที่จะสนทนาและตอบคำถามด้วยเมตตาจิตเสมอครับ',
+    },
+    {
+      q: isEnglish ? 'Can I practice meditation if I belong to another religion?' : 'ถ้าไม่ได้นับถือศาสนาพุทธ สามารถฝึกสมาธิได้ไหม?',
+      a: isEnglish
+        ? 'Yes, absolutely! Meditation is universal peace and mindful observation of breath. It belongs to all human beings regardless of belief, nationality, or cultural background.'
+        : 'สามารถฝึกได้แน่นอน 100% ครับ สมาธิคือการพักผ่อนของจิตใจและการรู้ลมหายใจ ซึ่งเป็นธรรมชาติสากลของมนุษย์ทุกคนโดยไม่มีการแบ่งแยกความเชื่อ',
+    },
+    {
+      q: isEnglish ? 'How do I join Ayutthaya Monk Chat?' : 'ต้องการเข้าร่วมกิจกรรมต้องทำอย่างไร?',
+      a: isEnglish
+        ? 'Just walk in! Sessions take place every Monday and Friday from 13:15 onwards under the shaded trees near the central prang at Wat Mahathat. 100% free with no booking required.'
+        : 'เดินเข้ามาได้เลยครับ! จัดทุกวันจันทร์และศุกร์ ตั้งแต่เวลา 13:15 น. ใต้ร่มไม้ใหญ่ใกล้พระปรางค์ประธานวัดมหาธาตุ ฟรีโดยไม่ต้องจองล่วงหน้า',
+    },
+  ]
+
   const mapUrl = 'https://www.google.com/maps/search/?api=1&query=14.3570,100.5675'
   const mapEmbedUrl = 'https://maps.google.com/maps?q=14.3570,100.5675&z=17&output=embed'
 
   return (
-    <div className="bg-brand-cream text-brand-text break-words [overflow-wrap:anywhere]">
+    <div className="bg-[#FAF7F2] text-[#292524] break-words [overflow-wrap:anywhere] min-h-screen">
       <HomeHeroIntro language={currentLang} activePath="/" />
 
-      <div className="mx-auto w-full max-w-[76rem] space-y-12 px-4 pb-12 pt-6 sm:space-y-16 sm:px-6 sm:pb-16 sm:pt-8 lg:px-8">
-        {/* Schedule & Location Summary */}
+      {/* Hidden real audio element for live meditation playback */}
+      <audio
+        ref={audioRef}
+        src="/audio/meditation-5min-en.mp3"
+        preload="metadata"
+        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 326)}
+        onEnded={() => {
+          setIsPlaying(false)
+          setCurrentTime(0)
+        }}
+      />
+
+      <div className="mx-auto w-full max-w-[76rem] space-y-12 px-4 pb-16 pt-6 sm:space-y-16 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8">
+
+        {/* 1. OFFICIAL AYUTTHAYA MONK CHAT FIELD MILESTONE STRIP */}
+        <section
+          aria-label="Impact statistics and milestones"
+          className="rounded-3xl border border-[#D5B77E]/80 bg-gradient-to-r from-[#FFFDF9] via-[#FAF6EE] to-[#FFFDF9] p-5 sm:p-7 shadow-xs space-y-6"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7DFD3] pb-4">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#8A5816] bg-[#EBD8B0]/70 px-3 py-1 rounded-full">
+                <span>✦</span>
+                <span>{isEnglish ? 'Ayutthaya Monk Chat Milestone · Session #122' : 'สถิติประวัติศาสตร์ Ayutthaya Monk Chat · ครั้งที่ 122'}</span>
+              </span>
+              <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#451A03] mt-2">
+                {isEnglish
+                  ? 'Official Historic Field Record at Wat Mahathat'
+                  : 'สถิติประวัติศาสตร์กิจกรรมจริง ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
+              </h2>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-[#78716C]">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="font-medium">
+                {isEnglish ? 'Updated: Session #122 (Nov 13, 2026)' : 'บันทึกทางการล่าสุด: ครั้งที่ 122 (13 พ.ย. 2569)'}
+              </span>
+            </div>
+          </div>
+
+          {/* 5 Real Counter Metrics */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 divide-y md:divide-y-0 md:divide-x divide-[#E7DFD3]">
+            {/* 1. 122 ครั้ง */}
+            <div className="text-center p-2">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
+                <AnimatedCounter end={122} />
+              </div>
+              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+                {isEnglish ? 'Historic Sessions' : 'ครั้งจัดกิจกรรม'}
+              </div>
+              <div className="text-[10px] text-[#A8A29E] mt-0.5">
+                {isEnglish ? 'Ayutthaya heritage' : 'ประวัติศาสตร์อยุธยา'}
+              </div>
+            </div>
+
+            {/* 2. 15,317 ท่าน */}
+            <div className="text-center p-2">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
+                <AnimatedCounter end={15317} />
+              </div>
+              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+                {isEnglish ? 'Total Participants' : 'ผู้เข้าร่วมทั้งสิ้น (ท่าน)'}
+              </div>
+              <div className="text-[10px] text-[#A8A29E] mt-0.5">
+                {isEnglish ? 'Welcomed warmly' : 'สนทนาธรรมและสมาธิ'}
+              </div>
+            </div>
+
+            {/* 3. 94 ชนชาติ */}
+            <div className="text-center p-2">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
+                <AnimatedCounter end={94} />
+              </div>
+              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+                {isEnglish ? 'Nations Reached' : 'ชนชาติ / ประเทศ'}
+              </div>
+              <div className="text-[10px] text-[#A8A29E] mt-0.5">
+                {isEnglish ? 'Global friendship' : 'มิตรภาพไร้พรมแดน'}
+              </div>
+            </div>
+
+            {/* 4. 1,276+ ชม. (76,585 นาที) */}
+            <div className="text-center p-2">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
+                <AnimatedCounter end={1276} suffix="+" />
+              </div>
+              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+                {isEnglish ? 'Meditation Hours' : 'เวลานั่งสมาธิสะสม (ชม.)'}
+              </div>
+              <div className="text-[10px] text-[#8A5816] font-mono mt-0.5 font-medium">
+                {isEnglish ? '76,585 total mins' : '76,585 นาทีรวม'}
+              </div>
+            </div>
+
+            {/* 5. 0 ฿ 100% ฟรี */}
+            <div className="text-center p-2 col-span-2 md:col-span-1">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#15803D]">
+                0 ฿
+              </div>
+              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+                {isEnglish ? '100% Free' : 'ฟรี 100% ทุกกิจกรรม'}
+              </div>
+              <div className="text-[10px] text-[#15803D] mt-0.5 font-medium">
+                {isEnglish ? 'Universal gift of calm' : 'บริการด้วยกุศลจิต'}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2. SCHEDULE & LOCATION PILL */}
         <section
           aria-label="Activity schedule and location summary"
-          className="rounded-2xl border border-brand-border bg-brand-surface p-4 sm:p-6"
+          className="rounded-2xl border border-brand-border bg-[#FFFDF9] p-4 sm:p-6 shadow-xs"
         >
           <dl className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4 sm:gap-6">
             {([
@@ -154,11 +342,11 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 label: isEnglish ? 'Wat Mahathat' : 'วัดมหาธาตุ',
               },
             ] as const).map((item) => (
-              <div key={item.icon} className="flex min-w-0 items-start gap-2 sm:gap-3">
-                <GuideIcon name={item.icon} className="mt-1 h-[18px] w-[18px] text-brand-muted" />
+              <div key={item.icon} className="flex min-w-0 items-start gap-2.5 sm:gap-3">
+                <GuideIcon name={item.icon} className="mt-1 h-[20px] w-[20px] text-brand-terracotta" />
                 <div className="min-w-0">
                   <dt className="text-xs leading-5 text-brand-muted">{item.label}</dt>
-                  <dd className="mt-1 text-sm font-medium leading-6 text-brand-text tabular-nums">
+                  <dd className="mt-1 text-sm font-semibold leading-6 text-brand-text tabular-nums">
                     {item.icon === 'clock' ? (
                       <>
                         <span className="whitespace-nowrap">{isEnglish ? '13:15' : '13:15 น.'}</span>{' '}
@@ -174,10 +362,158 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           </dl>
         </section>
 
-        {/* Location & Map */}
+        {/* 3. INTERACTIVE 5-MINUTE MEDITATION SANCTUARY (เล่นเสียงจริงได้ทันที!) */}
+        <section
+          aria-labelledby="live-meditation-heading"
+          className="rounded-3xl border-2 border-[#D5B77E] bg-gradient-to-b from-[#FFFDF9] to-[#FDF8EE] p-6 sm:p-8 shadow-sm overflow-hidden relative"
+        >
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div className="space-y-3 max-w-xl text-center lg:text-left">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBD8B0] text-[#78350F] text-xs font-bold font-mono">
+                🎧 ONE-TAP MEDITATION STATION
+              </span>
+              <h2 id="live-meditation-heading" className="text-2xl sm:text-3xl font-serif font-bold text-[#451A03] tracking-tight">
+                {isEnglish ? 'A 5-Minute Mental Coffee Break' : 'สมาธิสั้น 5 นาที: พักใจ พักความคิด'}
+              </h2>
+              <p className="text-sm text-[#57534E] leading-relaxed">
+                {isEnglish
+                  ? 'Listen to our peaceful guided meditation audio by Lp Pasura (Dhammakaya Foundation). Sit back comfortably, close your eyes softly, and let your mind settle into gentle stillness.'
+                  : 'ร่วมฝึกสมาธิเบื้องต้นผ่านเสียงนำสมาธิสากลของพระอาจารย์พสุธา (มูลนิธิธรรมกาย) นั่งเก้าอี้สบายๆ ค่อยๆ หลับตาลงเบาๆ และรวมใจหยุดนิ่ง ณ ศูนย์กลางกาย'}
+              </p>
+            </div>
+
+            {/* Audio Master Disc & Playback Controls */}
+            <div className="flex flex-col items-center gap-3 bg-[#FFF] p-5 rounded-3xl border border-[#E7DFD3] shadow-xs shrink-0 w-full sm:w-auto">
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={togglePlayMeditation}
+                  aria-label={isPlaying ? 'Pause meditation audio' : 'Play 5-minute guided meditation audio'}
+                  className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#A16207] to-[#D97706] text-white flex items-center justify-center font-bold text-xl shadow-md transition-all active:scale-[0.96] hover:brightness-110 cursor-pointer"
+                >
+                  {isPlaying ? '⏸' : '▶'}
+                </button>
+                <div>
+                  <div className="text-sm font-bold text-[#451A03]">
+                    {isPlaying ? (isEnglish ? 'Playing Guided Audio' : 'กำลังเล่นเสียงนำสมาธิ') : (isEnglish ? 'Tap to Start Audio' : 'แตะเพื่อเริ่มสมาธิ')}
+                  </div>
+                  <div className="text-xs font-mono text-[#8A5816] mt-0.5 font-bold">
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Dynamic Equalizer Bar when playing */}
+              {isPlaying && (
+                <div className="flex items-center gap-1.5 pt-2">
+                  <span className="w-1.5 h-3 bg-[#D97706] rounded-full animate-bounce"></span>
+                  <span className="w-1.5 h-5 bg-[#D97706] rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                  <span className="w-1.5 h-4 bg-[#D97706] rounded-full animate-bounce [animation-delay:0.1s]"></span>
+                  <span className="w-1.5 h-6 bg-[#D97706] rounded-full animate-bounce [animation-delay:0.3s]"></span>
+                  <span className="text-[11px] text-[#78350F] font-serif italic ml-2">
+                    "Relax your body and mind..."
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. WHAT TO EXPECT SECTION WITH AUTHENTIC PHOTOGRAPHY */}
+        <section className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+            <div>
+              <h2 className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl">
+                {isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม'}
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-brand-muted max-w-md">
+              {isEnglish
+                ? 'Sit under the historic trees with MCU student monks. Friendly, open, and peaceful.'
+                : 'ล้อมวงคุยสบายๆ ใต้ร่มเงาไม้โบราณสถาน กับพระนิสิต มจร อย่างเป็นมิตรและเป็นกันเอง'}
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {whatToExpect.map((item) => (
+              <div
+                key={item.title}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] shadow-2xs hover:shadow-md transition-all duration-300"
+              >
+                <div className="relative h-44 w-full overflow-hidden bg-brand-gold-soft">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    width={item.width}
+                    height={item.height}
+                    loading="lazy"
+                    className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${item.imageClassName}`}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
+                </div>
+                <div className="flex flex-1 flex-col p-4 justify-between">
+                  <div>
+                    <h3 className="font-serif text-base font-bold text-brand-maroon">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-xs leading-5 text-[#5A4B40]">{item.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 5. TOP CURATED DHAMMA QUESTIONS PREVIEW */}
+        <section aria-labelledby="curated-qa-heading" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
+                {isEnglish ? 'Top Curiosities' : 'คำถามยอดนิยม'}
+              </span>
+              <h2 id="curated-qa-heading" className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl mt-1">
+                {isEnglish ? 'Questions Visitors Wonder Most' : 'ข้อสงสัยที่นักท่องเที่ยวมักถามบ่อย'}
+              </h2>
+            </div>
+            <Link
+              to="/qa"
+              className="text-xs font-bold text-brand-terracotta hover:text-brand-terracotta-dark flex items-center gap-1 shrink-0"
+            >
+              <span>{isEnglish ? 'View all 200 Q&As' : 'ดูคลังคำถาม 200 ข้อ'}</span>
+              <span>→</span>
+            </Link>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {topQuestions.map((item, idx) => (
+              <div
+                key={item.q}
+                className="rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] p-4 shadow-2xs space-y-2 hover:border-[#D5B77E] transition"
+              >
+                <div
+                  className="flex items-start justify-between gap-3 cursor-pointer"
+                  onClick={() => setExpandedFaqIndex(expandedFaqIndex === idx ? null : idx)}
+                >
+                  <h3 className="text-sm font-bold text-[#451A03] flex items-start gap-2">
+                    <span className="text-[#8A5816] font-mono text-xs">#{String(idx + 1).padStart(2, '0')}</span>
+                    <span>{item.q}</span>
+                  </h3>
+                  <span className="text-[#8A5816] text-xs font-bold shrink-0">
+                    {expandedFaqIndex === idx ? '▲' : '▼'}
+                  </span>
+                </div>
+                <p className={`text-xs text-[#57534E] leading-relaxed pt-1 border-t border-[#F5EFE6] ${expandedFaqIndex === idx ? 'block' : 'line-clamp-2'}`}>
+                  {item.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 6. LOCATION & MAP SECTION WITH REAL SPOT PHOTO */}
         <section id="location-details" className="scroll-mt-8 space-y-4">
           <div>
-            <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
+            <h2 className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl">
               {isEnglish ? 'Location & map' : 'สถานที่และแผนที่'}
             </h2>
             <p className="text-sm leading-6 text-brand-muted [text-wrap:pretty]">
@@ -187,8 +523,8 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:grid sm:grid-cols-2">
-            <div className="relative h-56 w-full sm:h-full">
+          <div className="overflow-hidden rounded-3xl border border-[#E7DFD3] bg-[#FFFDF9] shadow-xs sm:grid sm:grid-cols-2">
+            <div className="relative h-64 w-full sm:h-full">
               <img
                 src="/images/home/monkchat-spot-wat-mahathat.jpg"
                 alt={
@@ -201,28 +537,28 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 loading="lazy"
                 className="h-full w-full object-cover object-[center_45%]"
               />
-              <span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-brand-maroon shadow-xs">
+              <span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-brand-maroon shadow-xs border border-[#E7DFD3]">
                 {isEnglish ? 'Real meeting spot · Under shade trees' : 'ภาพจุดกิจกรรมจริง · ใต้ร่มไม้ใหญ่ วัดมหาธาตุ'}
               </span>
             </div>
 
-            <div className="flex flex-col justify-between space-y-4 p-5 sm:p-6">
+            <div className="flex flex-col justify-between space-y-4 p-5 sm:p-7">
               <div>
-                <span className="text-xs font-medium text-brand-terracotta">
-                  {isEnglish ? 'Meeting point' : 'จุดนัดพบ'}
+                <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
+                  {isEnglish ? 'Historic Site' : 'จุดนัดพบโบราณสถาน'}
                 </span>
-                <h3 className="mt-1 font-sans text-xl font-medium text-brand-maroon">
+                <h3 className="mt-1 font-serif text-xl font-bold text-brand-maroon">
                   {isEnglish ? 'Wat Mahathat, Ayutthaya' : 'วัดมหาธาตุ พระนครศรีอยุธยา'}
                 </h3>
-                <p className="mt-2 text-sm leading-6 text-brand-muted sm:text-sm">
+                <p className="mt-2 text-sm leading-6 text-brand-muted">
                   {isEnglish
                     ? 'Shaded courtyard inside Wat Mahathat, near the central prang. Feel free to walk in and take a chair under the trees. Monks are warmly waiting to welcome you.'
                     : 'บริเวณลานร่มไม้ใหญ่ภายในวัดมหาธาตุ ใกล้พระปรางค์ประธาน เดินเข้ามานั่งเก้าอี้ใต้ร่มไม้ได้เลย มีพระนิสิตคอยต้อนรับอย่างอบอุ่นและเป็นกันเอง'}
                 </p>
               </div>
 
-              <div className="space-y-2 rounded-xl border border-brand-border bg-brand-gold-soft/60 p-4">
-                <div className="flex items-start gap-2 text-sm text-brand-maroon">
+              <div className="space-y-2 rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] p-4 shadow-2xs">
+                <div className="flex items-start gap-2.5 text-sm font-semibold text-brand-maroon">
                   <GuideIcon name="pin" />
                   <span>
                     {isEnglish
@@ -230,7 +566,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                       : 'จุดนัดพบ: ลานร่มไม้ภายในวัดมหาธาตุ พระนครศรีอยุธยา'}
                   </span>
                 </div>
-                <div className="flex items-start gap-2 text-sm leading-6 text-brand-muted">
+                <div className="flex items-start gap-2.5 text-sm leading-6 text-brand-muted">
                   <GuideIcon name="clock" />
                   <span>
                     {isEnglish
@@ -238,10 +574,10 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                       : 'ทุกวันจันทร์และวันศุกร์ เวลา 13:15 น. เป็นต้นไป'}
                   </span>
                 </div>
-                <p className="text-sm leading-6 text-brand-muted">
+                <p className="text-xs text-[#78716C] italic pt-1">
                   {isEnglish
-                    ? 'Free walk-in, no booking required. Check the real spot photo above and map below to find your way.'
-                    : 'เข้าร่วมฟรี ไม่มีค่าใช้จ่าย เดินเข้ามานั่งเก้าอี้พูดคุยได้ทันที ดูภาพสถานที่จริงด้านซ้ายและแผนที่ด้านล่างเพื่อนำทาง'}
+                    ? 'Free walk-in, no booking required. Welcoming all cultures and backgrounds.'
+                    : 'เข้าร่วมฟรี ไม่มีค่าใช้จ่าย เดินเข้ามานั่งเก้าอี้พูดคุยได้ทันที'}
                 </p>
               </div>
 
@@ -250,7 +586,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                   href={mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-bold text-white transition-all duration-150 hover:bg-brand-terracotta-dark active:scale-[0.96] shadow-xs"
                 >
                   <GuideIcon name="pin" />
                   <span>{isEnglish ? 'View map' : 'ดูแผนที่'}</span>
@@ -259,7 +595,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                   href={mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-terracotta bg-brand-surface px-5 text-sm font-medium text-brand-terracotta transition-colors duration-150 hover:bg-brand-gold-soft"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-terracotta bg-white px-5 text-sm font-bold text-brand-terracotta transition-all duration-150 hover:bg-[#FDF6ED] active:scale-[0.96]"
                 >
                   <GuideIcon name="directions" />
                   <span>{isEnglish ? 'Get directions' : 'ขอเส้นทาง'}</span>
@@ -268,9 +604,9 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-border/70 px-5 py-2">
-              <div className="flex items-center gap-2 text-sm font-medium text-brand-maroon">
+          <div className="overflow-hidden rounded-3xl border border-[#E7DFD3] bg-[#FFFDF9] shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E7DFD3] px-5 py-2.5">
+              <div className="flex items-center gap-2 text-sm font-semibold text-brand-maroon">
                 <GuideIcon name="pin" className="h-4 w-4 shrink-0 text-brand-terracotta" />
                 <span>
                   {isEnglish
@@ -282,13 +618,13 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 href={mapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-terracotta hover:underline"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-brand-terracotta hover:underline"
               >
                 <span>{isEnglish ? 'Open full Google Maps' : 'เปิดแผนที่เต็มบน Google Maps'}</span>
                 <GuideIcon name="external" className="h-3.5 w-3.5 shrink-0" />
               </a>
             </div>
-            <div className="h-64 w-full bg-brand-gold-soft/40 sm:h-72">
+            <div className="h-64 w-full bg-[#FAF7F2] sm:h-72">
               <iframe
                 title={
                   isEnglish
@@ -303,52 +639,15 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           </div>
         </section>
 
-        {/* What to Expect */}
-        <section className="space-y-4">
-          <div>
-            <h2 className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl">
-              {isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม'}
-            </h2>
-            <p className="text-sm leading-6 text-brand-muted [text-wrap:pretty]">
-              {isEnglish
-                ? 'What you will experience when you take a seat under the trees with student monks.'
-                : 'สิ่งที่คุณจะได้สัมผัสเมื่อมาร่วมวงสนทนากับพระสงฆ์ใต้ร่มไม้ใหญ่'}
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {whatToExpect.map((item) => (
-              <div
-                key={item.title}
-                className="flex overflow-hidden rounded-2xl border border-brand-border bg-brand-surface sm:flex-col"
-              >
-                <div className="relative w-24 shrink-0 overflow-hidden bg-brand-gold-soft sm:h-36 sm:w-full">
-                  <img
-                    src={item.img}
-                    alt={item.title}
-                    width={item.width}
-                    height={item.height}
-                    loading="lazy"
-                    className={`h-full w-full object-cover ${item.imageClassName}`}
-                  />
-                </div>
-                <div className="flex flex-1 flex-col p-4">
-                  <h3 className="font-sans text-base font-medium text-brand-maroon">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-brand-muted">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Atmosphere Showcase */}
+        {/* 7. ATMOSPHERE & SURROUNDINGS PHOTO ESSAY */}
         <section aria-labelledby="visit-atmosphere-heading" className="space-y-4">
           <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
+              {isEnglish ? 'Real Surroundings' : 'บรรยากาศสถานที่จริง'}
+            </span>
             <h2
               id="visit-atmosphere-heading"
-              className="font-serif text-2xl font-semibold text-brand-maroon sm:text-3xl"
+              className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl mt-1"
             >
               {isEnglish ? 'Atmosphere & surroundings' : 'บรรยากาศกิจกรรมและสถานที่'}
             </h2>
@@ -363,30 +662,30 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             {atmosphereMoments.map((moment) => (
               <figure
                 key={moment.title}
-                className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface"
+                className="overflow-hidden rounded-3xl border border-[#E7DFD3] bg-[#FFFDF9] shadow-2xs group"
               >
-                <div className="h-56 w-full overflow-hidden bg-brand-gold-soft">
+                <div className="h-60 w-full overflow-hidden bg-brand-gold-soft">
                   <img
                     src={moment.img}
                     alt={moment.title}
                     width={moment.width}
                     height={moment.height}
                     loading="lazy"
-                    className={`h-full w-full object-cover ${moment.imageClassName}`}
+                    className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${moment.imageClassName}`}
                   />
                 </div>
                 <figcaption className="p-5">
-                  <h3 className="font-sans text-base font-medium text-brand-maroon">
+                  <h3 className="font-serif text-base font-bold text-brand-maroon">
                     {moment.title}
                   </h3>
-                  <p className="mt-1 text-sm leading-6 text-brand-muted">{moment.caption}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-brand-muted">{moment.caption}</p>
                 </figcaption>
               </figure>
             ))}
           </div>
         </section>
 
-        {/* Official Contact & Social Banner */}
+        {/* 8. OFFICIAL CONTACT & SOCIAL BANNER */}
         <OfficialContactBanner language={currentLang} />
       </div>
     </div>

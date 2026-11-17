@@ -28,6 +28,7 @@ export function NisitFlashcards({
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [cardIndex, setCardIndex] = useState(0)
   const [revealed, setRevealed] = useState(false)
+  const [speakingKey, setSpeakingKey] = useState<string | null>(null)
   const [masteredIds, setMasteredIds] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem(MASTERED_STORAGE_KEY) || '[]') as string[]
@@ -35,6 +36,22 @@ export function NisitFlashcards({
       return []
     }
   })
+
+  const playSpeech = (key: string, text: string) => {
+    try {
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+      window.speechSynthesis.cancel()
+      setSpeakingKey(key)
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = 'en-US'
+      utterance.rate = 0.9
+      utterance.onend = () => setSpeakingKey(null)
+      utterance.onerror = () => setSpeakingKey(null)
+      window.speechSynthesis.speak(utterance)
+    } catch {
+      setSpeakingKey(null)
+    }
+  }
 
   const fetchVerifiedQA = useCallback(async () => {
     if (!supabaseClient) {
@@ -190,13 +207,24 @@ export function NisitFlashcards({
           </div>
 
           <div className="mt-5 space-y-3">
-            <p className="text-xs font-medium text-brand-muted">
+            <p className="text-xs font-semibold text-brand-muted uppercase tracking-wider">
               {isEnglish ? 'Visitor question (try answering aloud first)' : 'คำถามจากผู้มาเยือน (ลองนึกหรือฝึกพูดตอบเป็นภาษาอังกฤษก่อนเปิดเฉลย)'}
             </p>
             {enRow && (
-              <h2 className="font-serif text-xl font-semibold leading-snug text-brand-maroon sm:text-2xl">
-                {enRow.question}
-              </h2>
+              <div className="flex items-start justify-between gap-3">
+                <h2 className="font-serif text-xl font-bold leading-snug text-brand-maroon sm:text-2xl">
+                  {enRow.question}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => playSpeech(`q-${current.id}`, enRow.question)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-gold-soft hover:bg-brand-gold/30 text-brand-maroon border border-brand-gold/40 transition-all active:scale-95 cursor-pointer shrink-0 shadow-2xs"
+                  title="ฟังเสียงอ่านคำถาม"
+                >
+                  <GuideIcon name="play" className="h-3 w-3 text-brand-maroon" />
+                  <span>{speakingKey === `q-${current.id}` ? (isEnglish ? 'Reading...' : 'กำลังอ่าน...') : (isEnglish ? 'Listen' : 'ฟังคำถาม')}</span>
+                </button>
+              </div>
             )}
             {thRow && (
               <p className="text-sm leading-6 text-brand-muted">
@@ -210,7 +238,7 @@ export function NisitFlashcards({
               type="button"
               onClick={() => setRevealed((v) => !v)}
               aria-expanded={revealed}
-              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white transition-all active:scale-95 hover:bg-brand-terracotta-dark shadow-2xs"
             >
               <GuideIcon name="question" />
               <span>{revealed ? (isEnglish ? 'Hide answer' : 'ซ่อนคำตอบ') : (isEnglish ? 'Reveal verified answer' : 'ดูแนวคำตอบที่รับรองแล้ว')}</span>
@@ -220,9 +248,9 @@ export function NisitFlashcards({
               type="button"
               aria-pressed={isMastered}
               onClick={() => toggleMastered(current.id)}
-              className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-colors duration-150 ${
+              className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-all active:scale-95 ${
                 isMastered
-                  ? 'border-emerald-700 bg-emerald-50 text-emerald-900'
+                  ? 'border-emerald-700 bg-emerald-50 text-emerald-900 shadow-2xs'
                   : 'border-brand-border bg-brand-cream text-brand-maroon hover:bg-brand-gold-soft'
               }`}
             >
@@ -232,11 +260,22 @@ export function NisitFlashcards({
           </div>
 
           {revealed && (
-            <div className="mt-6 space-y-4 rounded-xl border border-brand-border bg-brand-gold-soft/70 p-5">
+            <div className="mt-6 space-y-4 rounded-2xl border border-brand-border bg-brand-gold-soft/70 p-5 shadow-2xs">
               {enRow && (
                 <div>
-                  <p className="text-xs font-medium text-brand-terracotta">English Response</p>
-                  <p className="mt-1 text-base leading-7 text-brand-text">{enRow.short_answer}</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs font-semibold text-brand-terracotta uppercase tracking-wider">English Response</p>
+                    <button
+                      type="button"
+                      onClick={() => playSpeech(`a-${current.id}`, enRow.short_answer)}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/80 hover:bg-white text-brand-maroon border border-brand-gold/40 transition-all active:scale-95 cursor-pointer shadow-2xs"
+                      title="ฟังเสียงอ่านคำตอบ"
+                    >
+                      <GuideIcon name="play" className="h-2.5 w-2.5 text-brand-maroon" />
+                      <span>{speakingKey === `a-${current.id}` ? (isEnglish ? 'Reading...' : 'กำลังอ่าน...') : (isEnglish ? 'Listen' : 'ฟังคำตอบ')}</span>
+                    </button>
+                  </div>
+                  <p className="mt-1 text-base leading-7 text-brand-text font-serif">{enRow.short_answer}</p>
                   {enRow.detailed_answer && (
                     <p className="mt-2 border-l-2 border-brand-border-dark pl-3 text-sm leading-6 text-brand-muted">
                       {enRow.detailed_answer}

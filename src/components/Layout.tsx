@@ -6,6 +6,7 @@ import { MeditationMark } from './MeditationMark'
 import { ChatbotServiceCard } from './ChatbotServiceCard'
 import { GuideIcon, type GuideIconName } from './GuideIcon'
 import { PUBLIC_SHORTCUTS } from '../content/publicShortcuts'
+import { useAuth } from '../lib/auth'
 import {
   VISITOR_LANGUAGE_SELECTED_EVENT,
   VISITOR_LANGUAGE_SESSION_KEY,
@@ -15,6 +16,12 @@ export function Layout() {
   const { t, i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
   const location = useLocation()
+  const { session, profile: authProfile, signOut } = useAuth()
+  const isSignedStudent = Boolean(session && authProfile?.is_active && authProfile.role === 'student')
+  const isSignedStaff = Boolean(
+    session && authProfile?.is_active && (authProfile.role === 'owner' || authProfile.role === 'team_member'),
+  )
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [hasSessionLang, setHasSessionLang] = useState(
     () => !!sessionStorage.getItem(VISITOR_LANGUAGE_SESSION_KEY),
   )
@@ -173,6 +180,80 @@ export function Layout() {
             {!location.pathname.startsWith('/admin')
               && !location.pathname.startsWith('/nisit') && <ChatbotServiceCard placement="header" />}
             <LanguageSwitcher tone="terracotta" />
+
+            {/* Logged-in User Profile Dropdown */}
+            {(isSignedStudent || isSignedStaff) && (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsUserMenuOpen((v) => !v)}
+                  className="inline-flex h-9 sm:h-10 items-center gap-1.5 rounded-full border border-brand-gold/60 bg-gradient-to-r from-white to-[#FDF8EE] px-2.5 sm:px-3 text-xs font-semibold text-brand-maroon shadow-2xs hover:border-brand-gold transition-all cursor-pointer active:scale-95"
+                  aria-expanded={isUserMenuOpen}
+                  aria-label={authProfile?.display_name || 'User profile'}
+                >
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                    {isSignedStudent ? '🪷' : '👤'}
+                  </span>
+                  <span className="max-w-[100px] sm:max-w-[130px] truncate hidden min-[380px]:inline">
+                    {authProfile?.display_name?.split(' ')[0] || 'บัญชีผู้ใช้'}
+                  </span>
+                  <svg
+                    className={`h-3 w-3 text-brand-gold transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 top-full mt-1.5 w-64 rounded-2xl border border-brand-gold/40 bg-white p-3.5 shadow-xl z-50 space-y-2 text-xs">
+                    <div className="border-b border-stone-100 pb-2">
+                      <p className="font-serif font-bold text-brand-maroon text-sm">
+                        {authProfile?.display_name}
+                        {authProfile?.dharma_name ? ` · ${authProfile.dharma_name}` : ''}
+                      </p>
+                      <p className="text-[11px] text-brand-muted mt-0.5">
+                        {isSignedStudent
+                          ? `รุ่น ${authProfile?.cohort_year ?? '66'} · รหัส ${authProfile?.student_code || '-'}`
+                          : 'ผู้ดูแลระบบ (CMS Staff)'}
+                      </p>
+                    </div>
+
+                    <div className="pt-1 flex items-center justify-between">
+                      {isSignedStudent ? (
+                        <NavLink
+                          to="/nisit"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="font-semibold text-brand-maroon underline"
+                        >
+                          ห้องฝึกซ้อม (/nisit)
+                        </NavLink>
+                      ) : (
+                        <NavLink
+                          to="/admin"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="font-semibold text-brand-maroon underline"
+                        >
+                          ระบบจัดการ CMS
+                        </NavLink>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void signOut()
+                          setIsUserMenuOpen(false)
+                        }}
+                        className="font-medium text-stone-500 hover:text-red-700 cursor-pointer"
+                      >
+                        {isEnglish ? 'Sign out' : 'ออกจากระบบ'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Mobile Hamburger Button */}
             <button

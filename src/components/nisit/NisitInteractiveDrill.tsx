@@ -642,11 +642,11 @@ export function NisitInteractiveDrill({
           return (
             <div
               key={cat.id}
-              className="rounded-2xl border border-brand-border bg-white p-5 hover:border-brand-gold/80 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between space-y-4"
+              className="rounded-3xl border border-[#E7DFD3] bg-[#FFFDF9] p-5 sm:p-6 hover:border-brand-gold/80 shadow-2xs hover:shadow-xs transition-all duration-150 flex flex-col justify-between space-y-4"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="h-10 w-10 rounded-xl bg-brand-gold-soft flex items-center justify-center text-brand-gold border border-brand-border/60">
+                  <div className="h-11 w-11 rounded-2xl bg-brand-gold-soft flex items-center justify-center text-brand-gold border border-brand-gold/40 shadow-2xs">
                     <GuideIcon
                       name={
                         cat.id === 'meditation'
@@ -660,7 +660,7 @@ export function NisitInteractiveDrill({
                       className="h-5 w-5"
                     />
                   </div>
-                  <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-200">
+                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-200">
                     {catQuestions.length} {isEnglish ? 'Scenarios' : 'สถานการณ์จำลอง'}
                   </span>
                 </div>
@@ -685,7 +685,7 @@ export function NisitInteractiveDrill({
                 <button
                   type="button"
                   onClick={() => startCategoryDrill(cat.id)}
-                  className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-brand-maroon hover:bg-brand-maroon/90 text-white px-4 py-2 text-xs font-semibold cursor-pointer transition-colors"
+                  className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-brand-maroon hover:bg-brand-maroon/90 text-white px-4 py-2 text-xs font-semibold cursor-pointer transition-all active:scale-95 shadow-2xs"
                 >
                   <span>{isEnglish ? 'Start Drill' : 'เริ่มฝึกซ้อม'}</span>
                   <GuideIcon name="arrow" className="h-3.5 w-3.5" />

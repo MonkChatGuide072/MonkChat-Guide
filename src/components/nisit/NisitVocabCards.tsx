@@ -14,6 +14,7 @@ export function NisitVocabCards({
   isEnglish: boolean
   studentProfileId?: string
 }) {
+  const [speakingId, setSpeakingId] = useState<string | null>(null)
   const [practicedIds, setPracticedIds] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem(VOCAB_PROGRESS_KEY) || '[]') as string[]
@@ -21,6 +22,22 @@ export function NisitVocabCards({
       return []
     }
   })
+
+  const playSpeech = (id: string, text: string) => {
+    try {
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+      window.speechSynthesis.cancel()
+      setSpeakingId(id)
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = 'en-US'
+      utterance.rate = 0.9
+      utterance.onend = () => setSpeakingId(null)
+      utterance.onerror = () => setSpeakingId(null)
+      window.speechSynthesis.speak(utterance)
+    } catch {
+      setSpeakingId(null)
+    }
+  }
 
   useEffect(() => {
     if (!studentProfileId) return
@@ -90,23 +107,37 @@ export function NisitVocabCards({
 
                 <div className="space-y-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-medium text-brand-terracotta">
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-brand-terracotta uppercase tracking-wider">
                         {isEnglish ? lesson.stageEn : lesson.stageTh}
                       </p>
-                      <p className="mt-2 border-l-3 border-brand-terracotta pl-3 font-serif text-lg font-medium leading-7 text-brand-maroon">
-                        &ldquo;{lesson.spokenPromptEn}&rdquo;
-                      </p>
-                      <p className="mt-2 text-sm leading-6 text-brand-muted">{lesson.meaningTh}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <p className="border-l-3 border-brand-terracotta pl-3 font-serif text-lg font-medium leading-7 text-brand-maroon">
+                          &ldquo;{lesson.spokenPromptEn}&rdquo;
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => playSpeech(lesson.id, lesson.spokenPromptEn)}
+                          className={`inline-flex items-center justify-center w-8 h-8 rounded-full border transition-all active:scale-95 cursor-pointer shrink-0 ${
+                            speakingId === lesson.id
+                              ? 'bg-brand-gold text-stone-900 border-brand-gold ring-2 ring-brand-gold/40'
+                              : 'bg-brand-gold-soft hover:bg-brand-gold/30 text-brand-maroon border-brand-gold/40'
+                          }`}
+                          title={isEnglish ? 'Listen to English pronunciation' : 'ฟังเสียงอ่านภาษาอังกฤษ'}
+                        >
+                          <GuideIcon name="play" className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <p className="mt-1.5 text-sm leading-6 text-brand-muted">{lesson.meaningTh}</p>
                     </div>
 
                     <button
                       type="button"
                       aria-pressed={done}
                       onClick={() => togglePracticed(lesson.id)}
-                      className={`inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors duration-150 ${
+                      className={`inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-all active:scale-95 ${
                         done
-                          ? 'border-emerald-700 bg-emerald-50 text-emerald-900'
+                          ? 'border-emerald-700 bg-emerald-50 text-emerald-900 shadow-2xs'
                           : 'border-brand-border bg-brand-cream text-brand-maroon hover:bg-brand-gold-soft'
                       }`}
                     >
@@ -118,11 +149,24 @@ export function NisitVocabCards({
                   {/* Key Vocabulary Grid */}
                   <div className="grid gap-2 sm:grid-cols-3">
                     {lesson.terms.map((term) => (
-                      <div key={term.word} className="rounded-xl border border-brand-border bg-brand-cream/60 p-3">
-                        <p className="font-sans text-sm font-semibold text-brand-maroon">{term.word}</p>
+                      <button
+                        key={term.word}
+                        type="button"
+                        onClick={() => playSpeech(`${lesson.id}-${term.word}`, term.word)}
+                        className={`text-left w-full rounded-xl border p-3 transition-all cursor-pointer active:scale-[0.98] shadow-2xs ${
+                          speakingId === `${lesson.id}-${term.word}`
+                            ? 'bg-brand-gold-soft/80 border-brand-gold ring-1 ring-brand-gold'
+                            : 'border-brand-border bg-brand-cream/60 hover:border-brand-gold/60 hover:bg-brand-gold-soft/30'
+                        }`}
+                        title={isEnglish ? 'Tap to listen' : 'แตะเพื่อฟังเสียงอ่าน'}
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="font-sans text-sm font-semibold text-brand-maroon">{term.word}</p>
+                          <span className="text-xs text-brand-gold" aria-hidden="true">🔊</span>
+                        </div>
                         <p className="mt-0.5 text-xs text-brand-terracotta">{term.readingTh}</p>
                         <p className="mt-1 text-xs leading-5 text-brand-muted">{term.meaningTh}</p>
-                      </div>
+                      </button>
                     ))}
                   </div>
 

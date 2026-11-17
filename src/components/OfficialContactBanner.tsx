@@ -79,4 +79,3 @@ export function OfficialContactBanner({ language }: { language: AppLanguage }) {
     </section>
   )
 }
-

@@ -610,17 +610,17 @@ export function NisitFieldCockpit({
       </div>
 
       {/* SECTION 1: Master One-Tap Guided Meditation Station (High-Impact Operational Console) */}
-      <div className="rounded-2xl border border-brand-border bg-[#0B1528] p-5 sm:p-7 text-white shadow-md space-y-5">
+      <div className="rounded-3xl border border-[#D5B77E]/40 bg-gradient-to-br from-[#0B1528] via-[#11223C] to-[#1A2F50] p-6 sm:p-8 text-white shadow-lg space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-medium text-brand-gold uppercase tracking-wider">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+            <div className="flex items-center gap-2 text-xs font-semibold text-brand-gold uppercase tracking-wider">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>{isEnglish ? 'Instant Audio Broadcaster' : 'ระบบเปิดเสียงนำสมาธิสากลประจำโต๊ะ · 5 นาที'}</span>
             </div>
-            <h3 className="mt-1 font-serif text-xl sm:text-2xl font-bold text-white">
+            <h3 className="mt-1 font-serif text-xl sm:text-2xl lg:text-[1.7rem] font-bold text-white">
               {isEnglish ? 'One-Tap 5-Min Guided Meditation' : 'เปิดเสียงนำสมาธิสากล 5 นาทีทันใจ (ONE-TAP AUDIO)'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed mt-1">
               {isEnglish
                 ? 'English guided meditation audio with calm pacing in Luang Por Dattajeevo style. Tap large button to broadcast through device speaker.'
                 : 'เสียงนำสมาธิภาษาอังกฤษสำเนียงสากลสไตล์หลวงพ่อทัตตชีโว กดเปิดให้โยมฟังจากมือถือได้ทันที'}
@@ -914,7 +914,7 @@ export function NisitFieldCockpit({
           {filteredPhrases.map((phrase) => (
             <div
               key={phrase.id}
-              className="rounded-2xl border border-brand-border bg-white p-5 shadow-xs hover:border-brand-gold/60 transition-colors flex flex-col justify-between space-y-3"
+              className="rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] p-5 sm:p-6 shadow-2xs hover:border-brand-gold/80 hover:shadow-xs transition-all duration-150 flex flex-col justify-between space-y-3"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2 border-b border-brand-border/60 pb-2.5">
@@ -926,7 +926,7 @@ export function NisitFieldCockpit({
                     <button
                       type="button"
                       onClick={() => setExpandedPhrase(phrase)}
-                      className="px-2.5 py-1 rounded-lg bg-brand-gold-soft hover:bg-brand-gold/20 text-brand-maroon border border-brand-gold/30 text-xs font-semibold cursor-pointer transition-colors"
+                      className="px-2.5 py-1 rounded-lg bg-brand-gold-soft hover:bg-brand-gold/30 text-brand-maroon border border-brand-gold/40 text-xs font-semibold cursor-pointer transition-all active:scale-95 shadow-2xs"
                       title="ขยายตัวหนังสือเต็มจอเพื่อยื่นให้โยมดู"
                     >
                       📱 ยื่นให้อ่าน
@@ -934,7 +934,7 @@ export function NisitFieldCockpit({
                     <button
                       type="button"
                       onClick={() => playSpeech(phrase.id, phrase.textEn)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer transition-colors ${
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer transition-all active:scale-95 ${
                         speakingPhraseId === phrase.id
                           ? 'bg-brand-gold text-stone-900 border border-brand-gold font-semibold'
                           : 'bg-stone-100 hover:bg-stone-200 text-brand-maroon border border-brand-border'
@@ -946,7 +946,7 @@ export function NisitFieldCockpit({
                     <button
                       type="button"
                       onClick={() => copyToClipboard(phrase)}
-                      className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-brand-muted border border-brand-border text-xs font-medium cursor-pointer transition-colors"
+                      className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-brand-muted border border-brand-border text-xs font-medium cursor-pointer transition-all active:scale-95"
                       title="คัดลอกข้อความ"
                     >
                       {copiedId === phrase.id ? '✓ คัดลอกแล้ว' : 'คัดลอก'}

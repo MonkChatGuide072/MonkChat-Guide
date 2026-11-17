@@ -29,9 +29,10 @@ const DEFAULT_PRACTICE_TRACK: TrackRow = {
   meditation_track_translations: [
     {
       language_code: 'en',
-      title: '5-Minute Guided Meditation in English',
+      title: '5-Minute Guided Meditation',
       description: 'Standard English meditation guiding script for Ayutthaya Monk Chat sessions at Wat Mahathat.',
       transcript: `Please sit comfortably with your back straight, and place your right hand gently over your left.
+Let us adjust sitting posture.
 Gently close your eyes as if you are going to sleep. Relax every muscle in your body, from head to toe, leaving no tension anywhere.
 Gently bring your mind to rest at the center of your body, at the seventh base, two finger breadths above the navel.
 Imagine a clear bright crystal sphere, or a pure drop of morning dew, resting softly and gently at the center of your body.
@@ -54,10 +55,10 @@ Silently and gently repeat the soothing phrase 'Samma Arahang' in your mind, lik
 
 /** Synchronized guided-meditation audio + clickable cue script runner for student monks. */
 export function NisitAudioTeleprompter({ isEnglish }: { isEnglish: boolean }) {
-  const [tracks, setTracks] = useState<TrackRow[]>([DEFAULT_PRACTICE_TRACK])
-  const [selectedTrackId, setSelectedTrackId] = useState<string>(DEFAULT_PRACTICE_TRACK.id)
+  const [tracks, setTracks] = useState<TrackRow[]>([])
+  const [selectedTrackId, setSelectedTrackId] = useState<string>('')
   const [scriptLang, setScriptLang] = useState<'en' | 'th'>('en')
-  const [loadingTracks, setLoadingTracks] = useState(false)
+  const [loadingTracks, setLoadingTracks] = useState(true)
   const [tracksError, setTracksError] = useState(false)
 
   const fetchTracks = useCallback(async () => {
@@ -84,7 +85,7 @@ export function NisitAudioTeleprompter({ isEnglish }: { isEnglish: boolean }) {
         setTracks(loaded)
         const preferred =
           loaded.find((item) => item.meditation_track_translations.some((tr) => tr.language_code === 'en')) ?? loaded[0]
-        setSelectedTrackId((prev) => prev || preferred.id)
+        setSelectedTrackId(preferred.id)
       } else {
         setTracks([DEFAULT_PRACTICE_TRACK])
         setSelectedTrackId(DEFAULT_PRACTICE_TRACK.id)
