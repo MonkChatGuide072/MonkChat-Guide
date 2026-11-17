@@ -40,7 +40,10 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
           setAudioState('ready')
         }
       } catch {
-        if (active) setAudioState('error')
+        if (active) {
+          setAudioUrl('/audio/meditation-5min-en.mp3')
+          setAudioState('ready')
+        }
       }
     }
     void load()
