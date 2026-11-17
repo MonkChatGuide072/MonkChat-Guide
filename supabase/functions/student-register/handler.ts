@@ -27,7 +27,9 @@ export interface StudentRegisterDependencies {
     dharma_name: string | null
     student_code: string
     cohort_year: number
+    is_active?: boolean
   }): Promise<void>
+  getAdmissionPolicy?(): Promise<'auto_approve' | 'admin_approval'>
 }
 
 /** Handles cohort invite registration for role='student' without manual admin keying. */
@@ -67,38 +69,60 @@ export async function handleStudentRegister(
     }
 
     const parsedId = parseStudentCode(input.student_code)
-    const inviteCode = normalizeInviteCode(input.invite_code)
+    const rawInvite = typeof input.invite_code === 'string' ? input.invite_code : ''
+    const inviteCode = normalizeInviteCode(rawInvite)
     const displayName = typeof input.display_name === 'string' ? input.display_name.trim() : ''
     const rawDharma = typeof input.dharma_name === 'string' ? input.dharma_name.trim() : ''
     const dharmaName = rawDharma ? rawDharma.slice(0, 80) : null
 
-    if (!parsedId || inviteCode.length < 6 || inviteCode.length > 40 || !displayName || displayName.length > 80) {
+    if (!parsedId || !displayName || displayName.length > 80) {
       return reply(400, { code: 'invalid' })
     }
     if (!isAcceptableStudentPassword(input.password, parsedId.code)) {
       return reply(400, { code: 'weakPassword' })
     }
 
-    const codeHash = await sha256Hex(inviteCode)
-    const invite = await dependencies.findInviteByHash(codeHash)
-    const isExpired = invite?.expires_at ? new Date(invite.expires_at).getTime() <= Date.now() : false
-    if (
-      !invite
-      || !invite.is_active
-      || isExpired
-      || invite.cohort_year !== parsedId.thaiYear
-      || invite.used_count >= invite.max_uses
-    ) {
-      return reply(403, { code: 'invalidInvite' })
-    }
+    // Determine admission status: auto_approve (active) vs admin_approval (pending)
+    const requestedMode =
+      input.admission_mode === 'admin_approval'
+        ? 'admin_approval'
+        : input.admission_mode === 'auto_approve'
+          ? 'auto_approve'
+          : null
+    const systemPolicy = dependencies.getAdmissionPolicy ? await dependencies.getAdmissionPolicy() : 'auto_approve'
+    const finalPolicy = requestedMode ?? systemPolicy
+    const isActive = finalPolicy === 'auto_approve'
 
-    if (await dependencies.hasExistingStudentCode(parsedId.code)) {
-      return reply(409, { code: 'duplicateStudent' })
-    }
+    if (inviteCode.length > 0) {
+      if (inviteCode.length < 6 || inviteCode.length > 40) {
+        return reply(400, { code: 'invalid' })
+      }
+      const codeHash = await sha256Hex(inviteCode)
+      const invite = await dependencies.findInviteByHash(codeHash)
+      const isExpired = invite?.expires_at ? new Date(invite.expires_at).getTime() <= Date.now() : false
+      if (
+        !invite
+        || !invite.is_active
+        || isExpired
+        || invite.cohort_year !== parsedId.thaiYear
+        || invite.used_count >= invite.max_uses
+      ) {
+        return reply(403, { code: 'invalidInvite' })
+      }
 
-    const claimedId = await dependencies.claimInviteSlot(codeHash, parsedId.thaiYear)
-    if (!claimedId) {
-      return reply(409, { code: 'invalidInvite' })
+      if (await dependencies.hasExistingStudentCode(parsedId.code)) {
+        return reply(409, { code: 'duplicateStudent' })
+      }
+
+      const claimedId = await dependencies.claimInviteSlot(codeHash, parsedId.thaiYear)
+      if (!claimedId) {
+        return reply(409, { code: 'invalidInvite' })
+      }
+    } else {
+      // Direct self-registration without invite code
+      if (await dependencies.hasExistingStudentCode(parsedId.code)) {
+        return reply(409, { code: 'duplicateStudent' })
+      }
     }
 
     const internalEmail = toStudentInternalEmail(parsedId.code)
@@ -116,6 +140,7 @@ export async function handleStudentRegister(
         dharma_name: dharmaName,
         student_code: parsedId.code,
         cohort_year: parsedId.thaiYear,
+        is_active: isActive,
       })
     } catch {
       // Preserve auth account unprivileged without a profile; never delete in error recovery.
@@ -127,6 +152,7 @@ export async function handleStudentRegister(
       student_code: parsedId.code,
       cohort_year: parsedId.thaiYear,
       display_name: displayName,
+      is_active: isActive,
     })
   } catch {
     return reply(503, { code: 'serviceUnavailable' })

@@ -228,6 +228,7 @@ describe('student-register edge handler', () => {
       student_code: '6611018',
       cohort_year: 66,
       display_name: 'Phra Somchai',
+      is_active: true,
     })
     expect(depsOk.createAuthUser).toHaveBeenCalledWith('6611018@student.monkchat.invalid', 'DhammaPractice66!')
     expect(depsOk.insertStudentProfile).toHaveBeenCalledWith({
@@ -236,6 +237,67 @@ describe('student-register edge handler', () => {
       dharma_name: 'Sutthipanyo',
       student_code: '6611018',
       cohort_year: 66,
+      is_active: true,
+    })
+  })
+
+  it('supports direct registration without invite code in auto_approve mode', async () => {
+    const depsDirect = await makeDeps()
+    const res = await handleStudentRegister(
+      postRegister({
+        student_code: '6611018',
+        display_name: 'Phra Direct',
+        password: 'DhammaPractice66!',
+        admission_mode: 'auto_approve',
+      }),
+      depsDirect,
+    )
+    expect(res.status).toBe(201)
+    expect(await res.json()).toEqual({
+      registered: true,
+      student_code: '6611018',
+      cohort_year: 66,
+      display_name: 'Phra Direct',
+      is_active: true,
+    })
+    expect(depsDirect.claimInviteSlot).not.toHaveBeenCalled()
+    expect(depsDirect.insertStudentProfile).toHaveBeenCalledWith({
+      id: VALID_UUID,
+      display_name: 'Phra Direct',
+      dharma_name: null,
+      student_code: '6611018',
+      cohort_year: 66,
+      is_active: true,
+    })
+  })
+
+  it('supports direct registration in admin_approval mode resulting in inactive/pending status', async () => {
+    const depsGated = await makeDeps({
+      getAdmissionPolicy: vi.fn(async () => 'admin_approval' as const),
+    })
+    const res = await handleStudentRegister(
+      postRegister({
+        student_code: '6611018',
+        display_name: 'Phra Gated',
+        password: 'DhammaPractice66!',
+      }),
+      depsGated,
+    )
+    expect(res.status).toBe(201)
+    expect(await res.json()).toEqual({
+      registered: true,
+      student_code: '6611018',
+      cohort_year: 66,
+      display_name: 'Phra Gated',
+      is_active: false,
+    })
+    expect(depsGated.insertStudentProfile).toHaveBeenCalledWith({
+      id: VALID_UUID,
+      display_name: 'Phra Gated',
+      dharma_name: null,
+      student_code: '6611018',
+      cohort_year: 66,
+      is_active: false,
     })
   })
 })
@@ -401,5 +463,30 @@ describe('student-cohorts owner edge handler', () => {
     expect(typeof body.temporary_password).toBe('string')
     expect(body.temporary_password.length).toBeGreaterThanOrEqual(12)
     expect(ctx.resetStudentPassword).toHaveBeenCalledWith(VALID_UUID, body.temporary_password)
+  })
+
+  it('allows owner to get and set student admission policy mode', async () => {
+    let currentMode: 'auto_approve' | 'admin_approval' = 'auto_approve'
+    const ctx = makeContext()
+    ctx.getAdmissionMode = vi.fn(async () => currentMode)
+    ctx.setAdmissionMode = vi.fn(async (m) => {
+      currentMode = m
+      return currentMode
+    })
+
+    const getRes = await handleStudentCohortRequest(
+      postCohorts({ action: 'get_admission_mode' }),
+      makeDeps(ctx),
+    )
+    expect(getRes.status).toBe(200)
+    expect(await getRes.json()).toEqual({ admission_mode: 'auto_approve' })
+
+    const setRes = await handleStudentCohortRequest(
+      postCohorts({ action: 'set_admission_mode', mode: 'admin_approval' }),
+      makeDeps(ctx),
+    )
+    expect(setRes.status).toBe(200)
+    expect(await setRes.json()).toEqual({ admission_mode: 'admin_approval' })
+    expect(currentMode).toBe('admin_approval')
   })
 })

@@ -43,6 +43,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function getInitialSession() {
       if (!supabaseClient) {
+        if (typeof window !== 'undefined') {
+          if (sessionStorage.getItem('mock_owner_auth') === 'true') {
+            const mockUser = { id: 'mock-owner-001', email: 'owner@monkchat.invalid' } as User
+            setSession({ user: mockUser } as Session)
+            setUser(mockUser)
+            setProfile({
+              id: 'mock-owner-001',
+              display_name: 'อาจารย์ผู้ดูแลระบบ (Owner)',
+              role: 'owner',
+              is_active: true,
+            })
+            setProfileFor('mock-owner-001')
+            setSessionReady(true)
+            return
+          }
+          if (sessionStorage.getItem('mock_student_pending') === 'true') {
+            const mockUser = { id: 'mock-student-001', email: '6611018@student.monkchat.invalid' } as User
+            setSession({ user: mockUser } as Session)
+            setUser(mockUser)
+            setProfile({
+              id: 'mock-student-001',
+              display_name: 'พระสมชาย สุทฺธิปญฺโญ',
+              dharma_name: 'สุทฺธิปญฺโญ',
+              student_code: '6611018',
+              cohort_year: 66,
+              role: 'student',
+              is_active: false,
+            })
+            setProfileFor('mock-student-001')
+            setSessionReady(true)
+            return
+          }
+        }
         setSessionReady(true)
         return
       }
@@ -92,7 +125,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let mounted = true
 
     async function fetchProfile(userId: string) {
-      if (!supabaseClient) return
+      if (!supabaseClient) {
+        if (typeof window !== 'undefined') {
+          if (sessionStorage.getItem('mock_owner_auth') === 'true') {
+            setProfile({
+              id: 'mock-owner-001',
+              display_name: 'อาจารย์ผู้ดูแลระบบ (Owner)',
+              role: 'owner',
+              is_active: true,
+            })
+          } else if (sessionStorage.getItem('mock_student_pending') === 'true') {
+            setProfile({
+              id: 'mock-student-001',
+              display_name: 'พระสมชาย สุทฺธิปญฺโญ',
+              dharma_name: 'สุทฺธิปญฺโญ',
+              student_code: '6611018',
+              cohort_year: 66,
+              role: 'student',
+              is_active: false,
+            })
+          }
+        }
+        if (mounted) setProfileFor(userId)
+        return
+      }
       
       setProfileFor(null)
       try {

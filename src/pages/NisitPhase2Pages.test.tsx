@@ -178,9 +178,8 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
       }),
     )
 
-    // Switch to Cohort Invite Registration tab
-    fireEvent.click(screen.getByRole('tab', { name: 'Register cohort code' }))
-    fireEvent.change(screen.getByLabelText('Cohort Invite Code'), { target: { value: 'AYT66-ABCD-EFGH' } })
+    // Switch to Direct Registration tab
+    fireEvent.click(screen.getByRole('tab', { name: 'Register student' }))
     fireEvent.change(screen.getByLabelText(/7-digit Student ID/), { target: { value: '6611018' } })
     fireEvent.change(screen.getByLabelText('Full name'), { target: { value: 'Phra Somchai' } })
     fireEvent.change(screen.getByLabelText('Dharma name (optional)'), { target: { value: 'Sutthipanyo' } })
@@ -200,11 +199,11 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
     await waitFor(() =>
       expect(mocks.functionsInvoke).toHaveBeenCalledWith('student-register', {
         body: {
-          invite_code: 'AYT66-ABCD-EFGH',
           student_code: '6611018',
           display_name: 'Phra Somchai',
           dharma_name: 'Sutthipanyo',
           password: 'DhammaPractice2026!',
+          admission_mode: 'auto_approve',
         },
       }),
     )
@@ -412,6 +411,34 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
       }),
     )
     expect(screen.getByText('Suspended')).toBeInTheDocument()
+
+    // 1-Click Approve student back to active
+    fireEvent.click(screen.getByRole('button', { name: 'Approve student 6611018' }))
+    await waitFor(() =>
+      expect(mocks.functionsInvoke).toHaveBeenCalledWith('student-cohorts', {
+        body: {
+          action: 'update_student',
+          id: 'stu-6611018',
+          display_name: 'Phra Somchai',
+          dharma_name: 'Sutthipanyo',
+          is_active: true,
+        },
+      }),
+    )
+    expect(screen.getByRole('button', { name: 'Suspend 6611018' })).toBeInTheDocument()
+
+    // Toggle admission policy mode between Auto-Approve and Approval Required
+    expect(screen.getByText(/Auto-Approve/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to Approval Required' }))
+    await waitFor(() =>
+      expect(mocks.functionsInvoke).toHaveBeenCalledWith('student-cohorts', {
+        body: {
+          action: 'set_admission_mode',
+          mode: 'admin_approval',
+        },
+      }),
+    )
+    expect(screen.getByText('🟡 Approval Required (Gated)')).toBeInTheDocument()
   })
 
   it('NisitProtectedRoute allows active student/staff and guest local practice, while blocking suspended accounts', async () => {
@@ -433,7 +460,7 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
     expect(screen.getByText('Protected Practice Hub')).toBeInTheDocument()
     r1.unmount()
 
-    // Suspended student -> blocked from /nisit and redirected to /nisit/login suspended view
+    // Suspended/pending student -> blocked from /nisit and redirected to /nisit/login pending view
     mocks.authState.session = { user: { id: 'stu-suspended' } }
     mocks.authState.profile = {
       id: 'stu-suspended',
@@ -443,8 +470,21 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
     }
     const r2 = renderProtectedNisit()
     expect(screen.queryByText('Protected Practice Hub')).not.toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Account suspended or missing' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Registration Received' })).toBeInTheDocument()
+    expect(screen.getByText('Pending Approval')).toBeInTheDocument()
     r2.unmount()
+
+    // Inactive staff -> blocked and shows account suspended view
+    mocks.authState.session = { user: { id: 'team-inactive' } }
+    mocks.authState.profile = {
+      id: 'team-inactive',
+      display_name: 'Inactive Staff',
+      role: 'team_member',
+      is_active: false,
+    }
+    const r2b = renderProtectedNisit()
+    expect(screen.getByRole('heading', { name: 'Account suspended or missing' })).toBeInTheDocument()
+    r2b.unmount()
 
     // Active student -> allowed
     mocks.authState.session = { user: { id: 'stu-active' } }

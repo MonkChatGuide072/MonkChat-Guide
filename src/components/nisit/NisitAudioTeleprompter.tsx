@@ -227,7 +227,11 @@ function SyncedScriptPlayer({
 
   useEffect(() => {
     let active = true
-    if (!track.audio_storage_path) return
+    if (!track.audio_storage_path) {
+      setAudioUrl('/audio/meditation-5min-en.mp3')
+      setAudioStatus('ready')
+      return
+    }
     const loadAudio = async () => {
       try {
         if (!supabaseClient) throw new Error('No client')
@@ -240,7 +244,10 @@ function SyncedScriptPlayer({
           setAudioStatus('ready')
         }
       } catch {
-        if (active) setAudioStatus('error')
+        if (active) {
+          setAudioUrl('/audio/meditation-5min-en.mp3')
+          setAudioStatus('ready')
+        }
       }
     }
     void loadAudio()

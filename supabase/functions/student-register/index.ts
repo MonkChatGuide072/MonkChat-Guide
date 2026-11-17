@@ -56,7 +56,7 @@ Deno.serve((request) => {
         display_name: profile.display_name,
         dharma_name: profile.dharma_name,
         role: 'student',
-        is_active: true,
+        is_active: profile.is_active ?? true,
         student_code: profile.student_code,
         cohort_year: profile.cohort_year,
       })
