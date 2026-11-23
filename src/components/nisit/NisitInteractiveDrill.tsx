@@ -1,3 +1,4 @@
+import { NisitModuleArt } from './NisitModuleArt'
 import { useState, useMemo, useEffect } from 'react'
 import {
   DRILL_CATEGORIES,
@@ -9,6 +10,7 @@ import {
   saveDrillRecord,
   getDrillRecords,
   computeAggregatedStats,
+  drillRecordsToCsv,
   type DrillRecord,
 } from '../../lib/nisitDrillAnalytics'
 import { GuideIcon } from '../GuideIcon'
@@ -39,12 +41,13 @@ export function NisitInteractiveDrill({
 
   // Completion & Analytics view
   const [isSessionComplete, setIsSessionComplete] = useState(false)
+  const [recordSaved, setRecordSaved] = useState(false)
   const [showResearchModal, setShowResearchModal] = useState(false)
   const [drillRecords, setDrillRecords] = useState<DrillRecord[]>([])
 
   useEffect(() => {
-    setDrillRecords(getDrillRecords())
-  }, [isSessionComplete])
+    setDrillRecords(getDrillRecords(studentCode))
+  }, [isSessionComplete, studentCode])
 
   const categoryQuestions = useMemo(() => {
     if (!selectedCategory) return []
@@ -151,7 +154,7 @@ export function NisitInteractiveDrill({
 
       const categoryInfo = DRILL_CATEGORIES.find((c) => c.id === selectedCategory)
 
-      saveDrillRecord({
+      const saved = saveDrillRecord({
         studentCode,
         studentName,
         category: selectedCategory,
@@ -163,6 +166,7 @@ export function NisitInteractiveDrill({
         wrongQuestionIds,
       })
 
+      setRecordSaved(saved !== null)
       setIsSessionComplete(true)
     }
   }
@@ -177,15 +181,15 @@ export function NisitInteractiveDrill({
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-brand-gold">
               <GuideIcon name="book" className="h-4 w-4" />
-              <span>{isEnglish ? 'Senior Project Research Data' : 'ข้อมูลสถิติสำหรับรายงานภาคนิพนธ์ (บทที่ 4)'}</span>
+              <span>{isEnglish ? 'Practice history on this device' : 'ประวัติการฝึกในเครื่องนี้'}</span>
             </div>
             <h2 className="mt-1 font-serif text-xl sm:text-2xl font-bold text-brand-maroon">
-              {isEnglish ? 'Monk Chat Practice Empirical Evidence' : 'สถิติการฝึกฝนทักษะการสนทนาธรรมของพระนิสิต'}
+              {isEnglish ? 'Your practice sessions' : 'สถิติการฝึกฝนทักษะการสนทนาธรรมของพระนิสิต'}
             </h2>
             <p className="text-xs text-brand-muted mt-0.5">
               {isEnglish
-                ? 'Empirical trial metrics recorded from interactive drill sessions. Ready to cite in Chapter 4.'
-                : 'บันทึกข้อมูลเชิงประจักษ์จากการทดลองฝึกทักษะจริง เพื่อนำไปจัดทำตารางและกราฟวิเคราะห์ในบทที่ 4'}
+                ? 'Practice attempts for this participant on this device. Export them before changing devices or clearing browser data.'
+                : 'แสดงรอบฝึกของผู้ฝึกคนนี้ในเครื่องนี้ ควรส่งออกก่อนเปลี่ยนเครื่องหรือล้างข้อมูลเบราว์เซอร์'}
             </p>
           </div>
           <button
@@ -197,6 +201,17 @@ export function NisitInteractiveDrill({
           </button>
         </div>
 
+        <button type="button" disabled={drillRecords.length === 0}
+          onClick={() => {
+            const url = URL.createObjectURL(new Blob([drillRecordsToCsv(drillRecords)], { type: 'text/csv;charset=utf-8;' }))
+            const link = document.createElement('a')
+            link.href = url
+            link.download = 'monkchat-practice.csv'
+            link.click()
+            setTimeout(() => URL.revokeObjectURL(url), 1000)
+          }} className="min-h-11 rounded-xl border border-brand-border px-4 text-sm text-brand-maroon disabled:opacity-50 cursor-pointer">
+          {isEnglish ? 'Export practice history (CSV)' : 'ส่งออกประวัติการฝึก (CSV)'}
+        </button>
         {/* Aggregated Research Summary Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-xl border border-brand-border bg-stone-50/60 p-3 text-center">
@@ -212,8 +227,8 @@ export function NisitInteractiveDrill({
             <p className="text-xl sm:text-2xl font-bold text-brand-maroon tabular-nums mt-1">{stats.totalQuestionsAttempted}</p>
           </div>
           <div className="rounded-xl border border-brand-border bg-stone-50/60 p-3 text-center">
-            <span className="text-xs text-brand-muted">{isEnglish ? 'Readiness Status' : 'ความพร้อมหน้างาน'}</span>
-            <p className="text-xs sm:text-sm font-semibold text-brand-maroon mt-1 leading-snug">{stats.readinessLabelTh}</p>
+            <span className="text-xs text-brand-muted">{isEnglish ? 'Practice summary' : 'สรุปการฝึก'}</span>
+            <p className="text-xs sm:text-sm font-semibold text-brand-maroon mt-1 leading-snug">{isEnglish ? stats.readinessLabelEn : stats.readinessLabelTh}</p>
           </div>
         </div>
 
@@ -235,7 +250,7 @@ export function NisitInteractiveDrill({
               {drillRecords.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="p-6 text-center text-brand-muted">
-                    {isEnglish ? 'No practice sessions recorded yet. Complete a drill to generate thesis data!' : 'ยังไม่มีประวัติการฝึกซ้อม ลองฝึกตอบคำถามอย่างน้อย 1 หมวดเพื่อบันทึกข้อมูลวิจัย'}
+                    {isEnglish ? 'No practice sessions recorded yet.' : 'ยังไม่มีประวัติการฝึกซ้อม ลองฝึกตอบคำถามอย่างน้อย 1 หมวด'}
                   </td>
                 </tr>
               ) : (
@@ -282,7 +297,7 @@ export function NisitInteractiveDrill({
             isHighPassing ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 'bg-stone-100 border-stone-300 text-stone-800'
           }`}>
             {isHighPassing
-              ? (isEnglish ? 'Monk Chat Ready' : 'ผ่านการทดสอบ: พร้อมปฏิบัติหน้าที่จริง')
+              ? (isEnglish ? 'Practice completed' : 'ทำแบบฝึกสำเร็จ')
               : (isEnglish ? 'Review Recommended' : 'ควรฝึกซ้อมทบทวนเพิ่มเติม')}
           </span>
           <h2 className="mt-3 font-serif text-2xl sm:text-3xl font-bold text-brand-maroon">
@@ -308,8 +323,8 @@ export function NisitInteractiveDrill({
           </div>
           <div className="h-8 w-px bg-brand-border"></div>
           <div>
-            <span className="text-xs text-brand-muted block">บันทึกข้อมูลวิจัย</span>
-            <span className="text-xs font-semibold text-emerald-800 mt-1 block">✓ บันทึกแล้ว</span>
+            <span className="text-xs text-brand-muted block">ประวัติในเครื่อง</span>
+            <span className="text-xs font-semibold text-emerald-800 mt-1 block">{recordSaved ? (isEnglish ? 'Saved' : 'บันทึกแล้ว') : (isEnglish ? 'Not saved — storage unavailable' : 'ยังไม่บันทึก — พื้นที่จัดเก็บไม่พร้อม')}</span>
           </div>
         </div>
 
@@ -335,7 +350,7 @@ export function NisitInteractiveDrill({
             className="w-full sm:w-auto min-h-11 rounded-xl border border-brand-border bg-white px-4 py-2 text-sm font-medium text-brand-muted hover:text-brand-maroon hover:border-brand-maroon transition-colors cursor-pointer flex items-center justify-center gap-1.5"
           >
             <GuideIcon name="book" className="h-4 w-4 text-brand-gold" />
-            <span>{isEnglish ? 'View Thesis Logs' : 'ดูตารางวิจัย (บทที่ 4)'}</span>
+            <span>{isEnglish ? 'View practice history' : 'ดูประวัติการฝึก'}</span>
           </button>
         </div>
       </div>
@@ -352,7 +367,7 @@ export function NisitInteractiveDrill({
       : Boolean(selectedOptionId)
 
     return (
-      <div className="space-y-6 max-w-xl mx-auto">
+      <div className="training-drill-active space-y-6 max-w-xl mx-auto">
         {/* Top Progress & Mindfulness Lotus Header */}
         <div className="flex items-center justify-between gap-3 text-xs font-medium text-brand-maroon">
           <button
@@ -607,11 +622,11 @@ export function NisitInteractiveDrill({
   return (
     <div className="space-y-6">
       {/* Lobby Banner */}
-      <div className="rounded-2xl border border-brand-border bg-white p-5 sm:p-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
+      <div className="training-module-intro rounded-2xl border border-brand-border bg-white p-5 sm:p-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-brand-gold">
             <GuideIcon name="lotus" className="h-4 w-4" />
-            <span>{isEnglish ? 'Duolingo-style Monk Chat Simulation' : 'ระบบจำลองสถานการณ์การสนทนาจริง (Interactive Drills)'}</span>
+            <span>{isEnglish ? 'Practice a conversation' : 'ฝึกสนทนาจากสถานการณ์'}</span>
           </div>
           <h2 className="mt-1 font-serif text-xl sm:text-2xl font-bold text-brand-maroon">
             {isEnglish ? 'Scenario-Based Training Hub' : 'ห้องซ้อมรับมือนักท่องเที่ยวจำลอง'}
@@ -629,7 +644,7 @@ export function NisitInteractiveDrill({
           className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-brand-border bg-stone-50 hover:bg-stone-100 px-4 text-xs sm:text-sm font-medium text-brand-maroon cursor-pointer transition-colors"
         >
           <GuideIcon name="book" className="h-4 w-4 text-brand-gold" />
-          <span>{isEnglish ? 'Thesis Empirical Stats' : 'สถิติสำหรับเล่มภาคนิพนธ์ (บทที่ 4)'}</span>
+          <span>{isEnglish ? 'Practice history' : 'ประวัติการฝึกในเครื่อง'}</span>
         </button>
       </div>
 
@@ -642,23 +657,12 @@ export function NisitInteractiveDrill({
           return (
             <div
               key={cat.id}
-              className="rounded-3xl border border-[#E7DFD3] bg-[#FFFDF9] p-5 sm:p-6 hover:border-brand-gold/80 shadow-2xs hover:shadow-xs transition-all duration-150 flex flex-col justify-between space-y-4"
+              className="training-drill-category rounded-3xl border border-[#E7DFD3] bg-[#FFFDF9] p-5 sm:p-6 hover:border-brand-gold/80 shadow-2xs hover:shadow-xs transition-all duration-150 flex flex-col justify-between space-y-4"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="h-11 w-11 rounded-2xl bg-brand-gold-soft flex items-center justify-center text-brand-gold border border-brand-gold/40 shadow-2xs">
-                    <GuideIcon
-                      name={
-                        cat.id === 'meditation'
-                          ? 'lotus'
-                          : cat.id === 'vinaya-life'
-                            ? 'book'
-                            : cat.id === 'dhamma-wisdom'
-                              ? 'compass'
-                              : 'chat'
-                      }
-                      className="h-5 w-5"
-                    />
+                  <div className="training-drill-art">
+                    <NisitModuleArt module={cat.id === 'meditation' ? 'audio' : cat.id === 'vinaya-life' ? 'vocab' : cat.id === 'dhamma-wisdom' ? 'qa' : 'drills'} />
                   </div>
                   <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-200">
                     {catQuestions.length} {isEnglish ? 'Scenarios' : 'สถานการณ์จำลอง'}

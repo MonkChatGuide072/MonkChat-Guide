@@ -298,7 +298,7 @@ function SyncedScriptPlayer({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+      <section className="training-audio-player rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="font-serif text-lg font-semibold text-brand-maroon">{translation.title}</h2>
@@ -347,7 +347,7 @@ function SyncedScriptPlayer({
         <div
           aria-live="polite"
           aria-label={isEnglish ? 'Active spoken script cue' : 'บทพูดนำสมาธิท่อนปัจจุบัน'}
-          className="mt-5 rounded-xl border-l-3 border-brand-terracotta bg-brand-gold-soft p-5"
+          className="training-audio-cue mt-5 rounded-xl border-l-3 border-brand-terracotta bg-brand-gold-soft p-5"
         >
           <div className="flex items-center justify-between text-xs font-medium text-brand-terracotta tabular-nums">
             <span>{isEnglish ? 'Active spoken line' : 'ข้อความที่กำลังพูดอยู่ในคลิป'}</span>
@@ -368,7 +368,7 @@ function SyncedScriptPlayer({
       </section>
 
       {/* Clickable Cue-by-Cue Practice List or Numbered Script Stages */}
-      <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+      <section className="training-audio-script rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 className="font-sans text-base font-medium text-brand-maroon">

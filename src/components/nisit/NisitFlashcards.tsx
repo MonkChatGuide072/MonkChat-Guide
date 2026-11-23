@@ -18,10 +18,13 @@ const CATEGORY_LABELS: Record<string, { th: string; en: string }> = {
 export function NisitFlashcards({
   isEnglish,
   studentProfileId,
+  progressScope,
 }: {
   isEnglish: boolean
   studentProfileId?: string
+  progressScope?: string
 }) {
+  const storageKey = MASTERED_STORAGE_KEY + ':' + (studentProfileId ?? progressScope ?? 'guest')
   const [items, setItems] = useState<QAItemRow[]>(NISIT_MASTER_QA_ITEMS)
   const [isLoading, setIsLoading] = useState(false)
   const [isUsingFallback, setIsUsingFallback] = useState(false)
@@ -31,7 +34,7 @@ export function NisitFlashcards({
   const [speakingKey, setSpeakingKey] = useState<string | null>(null)
   const [masteredIds, setMasteredIds] = useState<string[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem(MASTERED_STORAGE_KEY) || '[]') as string[]
+      return JSON.parse(localStorage.getItem(storageKey) || '[]') as string[]
     } catch {
       return []
     }
@@ -116,7 +119,7 @@ export function NisitFlashcards({
     const next = wasMastered ? masteredIds.filter((item) => item !== id) : [...masteredIds, id]
     setMasteredIds(next)
     try {
-      localStorage.setItem(MASTERED_STORAGE_KEY, JSON.stringify(next))
+      localStorage.setItem(storageKey, JSON.stringify(next))
     } catch {
       // Ignore storage quota issues.
     }
@@ -151,7 +154,7 @@ export function NisitFlashcards({
   return (
     <div className="space-y-5">
       {/* Category & Progress Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4">
+      <div className="training-qa-filter flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4">
         <div className="flex flex-wrap gap-2" role="group" aria-label={isEnglish ? 'Question categories' : 'หมวดหมู่คำถาม'}>
           {categories.map((cat) => {
             const label = CATEGORY_LABELS[cat]
@@ -196,7 +199,7 @@ export function NisitFlashcards({
 
       {/* Flashcard Stage */}
       {current && (
-        <article className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-8">
+        <article className="training-qa-card rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-border pb-4">
             <span className="text-xs font-medium text-brand-terracotta">
               {current.category || (isEnglish ? 'General question' : 'คำถามทั่วไป')}
@@ -211,8 +214,8 @@ export function NisitFlashcards({
               {isEnglish ? 'Visitor question (try answering aloud first)' : 'คำถามจากผู้มาเยือน (ลองนึกหรือฝึกพูดตอบเป็นภาษาอังกฤษก่อนเปิดเฉลย)'}
             </p>
             {enRow && (
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="font-serif text-xl font-bold leading-snug text-brand-maroon sm:text-2xl">
+              <div className="training-qa-question-row flex items-start justify-between gap-3">
+                <h2 className="training-qa-question font-serif text-xl font-bold leading-snug text-brand-maroon sm:text-2xl">
                   {enRow.question}
                 </h2>
                 <button
@@ -260,7 +263,7 @@ export function NisitFlashcards({
           </div>
 
           {revealed && (
-            <div className="mt-6 space-y-4 rounded-2xl border border-brand-border bg-brand-gold-soft/70 p-5 shadow-2xs">
+            <div className="training-qa-answer mt-6 space-y-4 rounded-2xl border border-brand-border bg-brand-gold-soft/70 p-5 shadow-2xs">
               {enRow && (
                 <div>
                   <div className="flex items-center justify-between gap-2">

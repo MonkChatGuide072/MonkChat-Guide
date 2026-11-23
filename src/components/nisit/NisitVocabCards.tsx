@@ -10,14 +10,17 @@ const VOCAB_PROGRESS_KEY = 'monkchat_nisit_vocab_done_v1'
 export function NisitVocabCards({
   isEnglish,
   studentProfileId,
+  progressScope,
 }: {
   isEnglish: boolean
   studentProfileId?: string
+  progressScope?: string
 }) {
+  const storageKey = VOCAB_PROGRESS_KEY + ':' + (studentProfileId ?? progressScope ?? 'guest')
   const [speakingId, setSpeakingId] = useState<string | null>(null)
   const [practicedIds, setPracticedIds] = useState<string[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem(VOCAB_PROGRESS_KEY) || '[]') as string[]
+      return JSON.parse(localStorage.getItem(storageKey) || '[]') as string[]
     } catch {
       return []
     }
@@ -57,7 +60,7 @@ export function NisitVocabCards({
     const next = wasDone ? practicedIds.filter((item) => item !== id) : [...practicedIds, id]
     setPracticedIds(next)
     try {
-      localStorage.setItem(VOCAB_PROGRESS_KEY, JSON.stringify(next))
+      localStorage.setItem(storageKey, JSON.stringify(next))
     } catch {
       // Ignore storage errors.
     }
@@ -68,7 +71,7 @@ export function NisitVocabCards({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4 sm:p-5">
+      <div className="training-module-intro flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4 sm:p-5">
         <div>
           <h2 className="font-serif text-lg font-semibold text-brand-maroon">
             {isEnglish ? 'Meditation Guiding Cards & Essential Vocabulary' : 'การ์ดนำนั่งสมาธิและคำศัพท์ภาษาอังกฤษที่จำเป็น'}
@@ -93,10 +96,10 @@ export function NisitVocabCards({
           return (
             <article
               key={lesson.id}
-              className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6"
+              className="training-vocab-card overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6"
             >
-              <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
-                <div className="aspect-[16/11] w-full overflow-hidden rounded-xl border border-brand-border bg-brand-gold-soft lg:aspect-auto lg:h-full">
+              <div className="training-vocab-layout grid gap-5 lg:grid-cols-[240px_1fr]">
+                <div className="training-vocab-visual aspect-[16/11] w-full overflow-hidden rounded-xl border border-brand-border bg-brand-gold-soft lg:aspect-auto lg:h-full">
                   <MeditationGuideVisual
                     scene={lesson.scene}
                     still
@@ -112,7 +115,7 @@ export function NisitVocabCards({
                         {isEnglish ? lesson.stageEn : lesson.stageTh}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <p className="border-l-3 border-brand-terracotta pl-3 font-serif text-lg font-medium leading-7 text-brand-maroon">
+                        <p className="training-vocab-prompt border-l-3 border-brand-terracotta pl-3 font-serif text-lg font-medium leading-7 text-brand-maroon">
                           &ldquo;{lesson.spokenPromptEn}&rdquo;
                         </p>
                         <button
@@ -147,7 +150,7 @@ export function NisitVocabCards({
                   </div>
 
                   {/* Key Vocabulary Grid */}
-                  <div className="grid gap-2 sm:grid-cols-3">
+                  <div className="training-vocab-terms grid gap-2 sm:grid-cols-3">
                     {lesson.terms.map((term) => (
                       <button
                         key={term.word}

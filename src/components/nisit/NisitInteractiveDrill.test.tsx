@@ -43,7 +43,7 @@ describe('NisitInteractiveDrill Component', () => {
   it('renders all 4 drill categories in the lobby', () => {
     render(<NisitInteractiveDrill isEnglish={false} studentCode="6611018" studentName="พระมหาอมรเทพ" />)
 
-    expect(screen.getByText(/ระบบจำลองสถานการณ์การสนทนาจริง/i)).toBeInTheDocument()
+    expect(screen.getByText(/ฝึกสนทนาจากสถานการณ์/i)).toBeInTheDocument()
     expect(screen.getByText('วิถีสงฆ์และพระวินัย')).toBeInTheDocument()
     expect(screen.getByText('การนำนั่งสมาธิและวางใจ')).toBeInTheDocument()
     expect(screen.getByText('ธรรมะสากลเพื่อการดับทุกข์')).toBeInTheDocument()
@@ -110,11 +110,11 @@ describe('NisitInteractiveDrill Component', () => {
   it('opens and closes the research analytics modal for Chapter 4 data', () => {
     render(<NisitInteractiveDrill isEnglish={false} studentCode="6611018" studentName="พระมหาอมรเทพ" />)
 
-    const researchBtn = screen.getByRole('button', { name: /สถิติสำหรับเล่มภาคนิพนธ์/i })
+    const researchBtn = screen.getByRole('button', { name: /ประวัติการฝึกในเครื่อง/i })
     fireEvent.click(researchBtn)
 
     // Modal opens
-    expect(screen.getByText(/ข้อมูลสถิติสำหรับรายงานภาคนิพนธ์ \(บทที่ 4\)/i)).toBeInTheDocument()
+    expect(screen.getByText(/ประวัติการฝึกในเครื่องนี้/i)).toBeInTheDocument()
     expect(screen.getByText(/สถิติการฝึกฝนทักษะการสนทนาธรรมของพระนิสิต/i)).toBeInTheDocument()
 
     // Close modal

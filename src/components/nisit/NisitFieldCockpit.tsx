@@ -529,17 +529,18 @@ export function NisitFieldCockpit({
     }
 
     const updated = [newEntry, ...loggedQuestions]
-    setLoggedQuestions(updated)
     try {
       localStorage.setItem(STORAGE_UNHANDLED_QUESTIONS, JSON.stringify(updated))
     } catch {
-      // Ignore
+      setLogSuccessMessage(isEnglish ? 'Could not save. Please copy your question before leaving.' : 'ยังบันทึกไม่ได้ กรุณาคัดลอกคำถามไว้ก่อนออกจากหน้านี้')
+      return
     }
+    setLoggedQuestions(updated)
 
     setLogSuccessMessage(
       isEnglish
-        ? 'Question saved! Added to pending review queue for CMS staff.'
-        : 'บันทึกคำถามสดสำเร็จแล้ว! ส่งเข้าคิวระบบ CMS รอพระผู้ดูแลตรวจสอบ',
+        ? 'Question saved on this device. Share it with your coordinator when ready.'
+        : 'บันทึกคำถามในเครื่องแล้ว สามารถนำไปแจ้งผู้ดูแลเพื่อตรวจสอบต่อได้',
     )
     setVisitorCountry('')
     setVisitorName('')
@@ -583,7 +584,7 @@ export function NisitFieldCockpit({
       />
 
       {/* Cockpit Operation Banner */}
-      <div className="rounded-2xl border border-brand-border bg-white p-5 sm:p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="training-module-intro rounded-2xl border border-brand-border bg-white p-5 sm:p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-amber-800">
             <span className="inline-block w-2 h-2 rounded-full bg-amber-600"></span>
@@ -595,7 +596,7 @@ export function NisitFieldCockpit({
           <p className="mt-1 text-xs sm:text-sm text-brand-muted">
             {isEnglish
               ? 'Instant tools while stationed: One-tap 5-min meditation audio, quick Vinaya spoken phrases, and unhandled Q&A logger.'
-              : 'เครื่องมือสนับสนุนพระนิสิตขณะปฏิบัติหน้าที่: เปิดเสียงนำสมาธิ 5 นาทีทันใจ, ประโยคชี้แจงพระวินัยพร้อมฟังเสียงอ่าน, และจดคำถามสดส่งเข้า CMS'}
+              : 'เครื่องมือสนับสนุนพระนิสิตขณะปฏิบัติหน้าที่: เปิดเสียงนำสมาธิ 5 นาทีทันใจ, ประโยคชี้แจงพระวินัยพร้อมฟังเสียงอ่าน, และจดคำถามสดไว้ในเครื่อง'}
           </p>
         </div>
 
@@ -605,12 +606,12 @@ export function NisitFieldCockpit({
           className="min-h-11 rounded-xl bg-brand-maroon hover:bg-brand-maroon/90 text-white px-4 text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-xs transition-colors shrink-0"
         >
           <GuideIcon name="clipboard" className="h-4 w-4" />
-          <span>{showLogForm ? (isEnglish ? 'Close Logger' : 'ปิดกล่องจด') : (isEnglish ? '+ Log CMS Question' : '+ จดคำถามส่งเข้า CMS')}</span>
+          <span>{showLogForm ? (isEnglish ? 'Close Logger' : 'ปิดกล่องจด') : (isEnglish ? '+ Save a Question' : '+ จดคำถามในเครื่อง')}</span>
         </button>
       </div>
 
       {/* SECTION 1: Master One-Tap Guided Meditation Station (High-Impact Operational Console) */}
-      <div className="rounded-3xl border border-[#D5B77E]/40 bg-gradient-to-br from-[#0B1528] via-[#11223C] to-[#1A2F50] p-6 sm:p-8 text-white shadow-lg space-y-6">
+      <div className="training-cockpit-player rounded-3xl border border-[#D5B77E]/40 bg-gradient-to-br from-[#0B1528] via-[#11223C] to-[#1A2F50] p-6 sm:p-8 text-white shadow-lg space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-brand-gold uppercase tracking-wider">
@@ -780,7 +781,7 @@ export function NisitFieldCockpit({
             <div className="flex items-center gap-2">
               <GuideIcon name="clipboard" className="h-4 w-4 text-brand-maroon" />
               <h3 className="font-serif text-base font-bold text-brand-maroon">
-                {isEnglish ? 'Log Unhandled Visitor Question to CMS' : 'จดบันทึกคำถามสดหน้างานที่ตอบไม่ได้ (ส่งเข้า CMS หลังบ้าน)'}
+                {isEnglish ? 'Save an Unanswered Visitor Question' : 'จดบันทึกคำถามหน้างานไว้ในเครื่อง'}
               </h3>
             </div>
             <span className="text-xs text-brand-muted tabular-nums">{studentName} ({studentCode})</span>
@@ -842,13 +843,13 @@ export function NisitFieldCockpit({
 
           <div className="flex items-center justify-between pt-2">
             <span className="text-xs text-brand-muted">
-              {isEnglish ? 'Will be tagged as Pending CMS Review.' : 'ข้อมูลจะถูกส่งเข้าคิวรอการกลั่นกรองโดยพระผู้ดูแลใน CMS'}
+              {isEnglish ? 'Saved on this device only. Share with your coordinator for review.' : 'เก็บเฉพาะเครื่องนี้ กรุณานำคำถามให้ผู้ดูแลตรวจสอบต่อ'}
             </span>
             <button
               type="submit"
               className="min-h-11 rounded-xl bg-brand-maroon hover:bg-brand-maroon/90 text-white px-5 text-sm font-semibold cursor-pointer transition-colors"
             >
-              {isEnglish ? 'Save & Send to CMS' : 'บันทึกคำถามส่งเข้า CMS'}
+              {isEnglish ? 'Save on this device' : 'บันทึกคำถามในเครื่อง'}
             </button>
           </div>
         </form>
@@ -980,7 +981,7 @@ export function NisitFieldCockpit({
         <div className="rounded-2xl border border-brand-border bg-white p-6 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-serif text-base font-bold text-brand-maroon">
-              {isEnglish ? 'Recently Logged Questions (Pending CMS)' : 'ประวัติคำถามที่จดบันทึกไว้หน้างาน (รอ CMS ตรวจสอบ)'}
+              {isEnglish ? 'Questions saved on this device' : 'ประวัติคำถามที่จดบันทึกไว้ในเครื่อง'}
             </h3>
             <span className="text-xs text-brand-muted tabular-nums">{loggedQuestions.length} คำถาม</span>
           </div>
@@ -1005,7 +1006,7 @@ export function NisitFieldCockpit({
                     <td className="py-2.5 px-3 max-w-xs truncate text-brand-text">{q.questionText}</td>
                     <td className="py-2.5 px-3 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-800 border border-amber-200">
-                        รอตรวจใน CMS
+                        เก็บในเครื่อง
                       </span>
                     </td>
                   </tr>

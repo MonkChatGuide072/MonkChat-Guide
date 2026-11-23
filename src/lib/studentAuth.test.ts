@@ -78,6 +78,7 @@ describe('student-register edge handler', () => {
             }
           : null,
       ),
+      getAdmissionPolicy: vi.fn(async () => 'auto_approve' as const),
       hasExistingStudentCode: vi.fn(async () => false),
       createAuthUser: vi.fn(async () => VALID_UUID),
       claimInviteSlot: vi.fn(async () => 'inv-66'),
@@ -269,6 +270,23 @@ describe('student-register edge handler', () => {
       cohort_year: 66,
       is_active: true,
     })
+  })
+
+  it('ignores a registrant trying to override admin approval', async () => {
+    const deps = await makeDeps({ getAdmissionPolicy: vi.fn(async () => 'admin_approval' as const) })
+    const response = await handleStudentRegister(postRegister({ student_code: '6611018',
+      display_name: 'Student', password: 'DhammaPractice66!', admission_mode: 'auto_approve' }), deps)
+    expect(response.status).toBe(201)
+    expect((await response.json()).is_active).toBe(false)
+    expect(deps.insertStudentProfile).toHaveBeenCalledWith(expect.objectContaining({ is_active: false }))
+  })
+
+  it('does not create an account when server policy is unavailable', async () => {
+    const deps = await makeDeps({ getAdmissionPolicy: undefined })
+    const response = await handleStudentRegister(postRegister({ student_code: '6611018',
+      display_name: 'Student', password: 'DhammaPractice66!' }), deps)
+    expect(response.status).toBe(503)
+    expect(deps.createAuthUser).not.toHaveBeenCalled()
   })
 
   it('supports direct registration in admin_approval mode resulting in inactive/pending status', async () => {

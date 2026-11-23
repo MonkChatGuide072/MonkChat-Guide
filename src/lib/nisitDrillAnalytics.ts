@@ -28,7 +28,7 @@ export interface DrillAggregatedStats {
 
 export const DRILL_STORAGE_KEY = 'monkchat_nisit_drill_records_v1'
 
-export function saveDrillRecord(record: Omit<DrillRecord, 'id' | 'timestamp' | 'dateFormatted'>): DrillRecord {
+export function saveDrillRecord(record: Omit<DrillRecord, 'id' | 'timestamp' | 'dateFormatted'>): DrillRecord | null {
   const now = new Date()
   const fullRecord: DrillRecord = {
     ...record,
@@ -45,21 +45,22 @@ export function saveDrillRecord(record: Omit<DrillRecord, 'id' | 'timestamp' | '
 
   try {
     const existing = getDrillRecords()
-    const updated = [fullRecord, ...existing].slice(0, 50) // keep last 50 sessions
+    const updated = [fullRecord, ...existing] // Preserve trial records until explicitly cleared.
     localStorage.setItem(DRILL_STORAGE_KEY, JSON.stringify(updated))
   } catch {
-    // Ignore storage errors in test or private environments
+    return null // Report quota/private-mode failures to the caller.
   }
 
   return fullRecord
 }
 
-export function getDrillRecords(): DrillRecord[] {
+export function getDrillRecords(studentCode?: string): DrillRecord[] {
   try {
     const raw = localStorage.getItem(DRILL_STORAGE_KEY)
     if (!raw) return []
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
+    const records = Array.isArray(parsed) ? parsed.filter(isDrillRecord) : []
+    return studentCode ? records.filter(record => record.studentCode === studentCode) : records
   } catch {
     return []
   }
@@ -117,17 +118,17 @@ export function computeAggregatedStats(records: DrillRecord[]): DrillAggregatedS
   const avg = Math.round(sumScore / records.length)
 
   let readinessRating: 'mastered' | 'ready' | 'needs_practice' = 'needs_practice'
-  let readinessLabelTh = 'ควรฝึกซ้อมทบทวนเพิ่มเติมก่อนลงสนามจริง'
-  let readinessLabelEn = 'More practice recommended before field deployment'
+  let readinessLabelTh = 'ทบทวนคำตอบและลองฝึกซ้ำได้'
+  let readinessLabelEn = 'Review the answers and try another practice session'
 
   if (avg >= 85 && records.length >= 3) {
     readinessRating = 'mastered'
-    readinessLabelTh = 'มีความพร้อมระดับดีเยี่ยม (พร้อมปฏิบัติหน้าที่และแนะนำสมาธิ)'
-    readinessLabelEn = 'Mastered readiness: fully prepared for on-site Monk Chat duty'
+    readinessLabelTh = 'ทำแบบฝึกได้ดีต่อเนื่องอย่างน้อย 3 รอบ'
+    readinessLabelEn = 'Consistently high practice scores across at least 3 sessions'
   } else if (avg >= 70) {
     readinessRating = 'ready'
-    readinessLabelTh = 'มีความพร้อมระดับพื้นฐาน (พร้อมสนทนากับชาวต่างชาติ)'
-    readinessLabelEn = 'Basic readiness: ready for conversational encounters'
+    readinessLabelTh = 'คะแนนแบบฝึกเฉลี่ยตั้งแต่ 70% ขึ้นไป'
+    readinessLabelEn = 'Average practice score of at least 70%'
   }
 
   return {
@@ -161,4 +162,32 @@ export function computeAggregatedStats(records: DrillRecord[]): DrillAggregatedS
     readinessLabelTh,
     readinessLabelEn,
   }
+}
+
+function isDrillRecord(value: unknown): value is DrillRecord {
+  if (!value || typeof value !== 'object') return false
+  const r = value as Partial<DrillRecord>
+  return typeof r.id === 'string' && typeof r.timestamp === 'string'
+    && typeof r.studentCode === 'string' && typeof r.studentName === 'string'
+    && typeof r.categoryTitle === 'string'
+    && ['vinaya-life', 'meditation', 'dhamma-wisdom', 'culture-greeting'].includes(String(r.category))
+    && Number.isInteger(r.totalQuestions) && Number(r.totalQuestions) > 0
+    && Number.isInteger(r.correctCount) && Number(r.correctCount) >= 0 && Number(r.correctCount) <= Number(r.totalQuestions)
+    && Number.isFinite(r.scorePercent) && Number(r.scorePercent) >= 0 && Number(r.scorePercent) <= 100
+    && Number.isFinite(r.timeSpentSeconds) && Number(r.timeSpentSeconds) >= 0
+    && Array.isArray(r.wrongQuestionIds)
+}
+
+/** Export raw practice attempts. Scores are practice results, not field competency ratings. */
+export function drillRecordsToCsv(records: DrillRecord[]): string {
+  const cell = (value: string | number) => {
+    let text = String(value)
+    if (typeof value === 'string' && /^[\s]*[=+@-]/.test(text)) text = "'" + text
+    return '"' + text.replaceAll('"', '""') + '"'
+  }
+  const rows = records.map(r => [r.id, r.timestamp, r.studentCode, r.category, r.totalQuestions,
+    r.correctCount, r.scorePercent, r.timeSpentSeconds, r.wrongQuestionIds.join('|')])
+  return '\ufeff' + [['attempt_id', 'timestamp_utc', 'participant_code', 'category', 'total_questions',
+    'correct_count', 'score_percent', 'time_seconds', 'wrong_question_ids'], ...rows]
+    .map(row => row.map(cell).join(',')).join('\r\n')
 }

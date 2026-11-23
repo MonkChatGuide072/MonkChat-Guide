@@ -26,10 +26,10 @@ export function NisitVideoStudy({ isEnglish }: { isEnglish: boolean }) {
   return (
     <div className="space-y-6">
       {/* Safe YouTube Study Launcher */}
-      <section className="rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
+      <section className="training-video-launcher rounded-2xl border border-brand-border bg-brand-surface p-5 sm:p-6">
         <div className="flex items-start gap-2 text-xs font-medium text-brand-terracotta">
           <GuideIcon name="play" />
-          <span>{isEnglish ? 'External video practice (0 THB bandwidth)' : 'ฝึกฟังและออกเสียงผ่านวิดีโอภายนอก (ไม่เปลืองพื้นที่ระบบ)'}</span>
+          <span>{isEnglish ? 'LISTEN & SPEAK' : 'ฟังและลองพูดตาม'}</span>
         </div>
         <h2 className="mt-2 font-serif text-lg font-semibold text-brand-maroon">
           {isEnglish ? 'Open a class listening or pronunciation video' : 'เปิดคลิปวิดีโอฝึกฟังและพูดตามสำหรับห้องเรียน'}
@@ -96,7 +96,7 @@ export function NisitVideoStudy({ isEnglish }: { isEnglish: boolean }) {
 
         <div className="grid gap-4 md:grid-cols-2">
           {nisitStudyResources.map((res) => (
-            <article key={res.id} className="flex flex-col justify-between rounded-2xl border border-brand-border bg-brand-surface p-5">
+            <article key={res.id} className="training-video-resource flex flex-col justify-between rounded-2xl border border-brand-border bg-brand-surface p-5">
               <div>
                 <p className="text-xs font-medium text-brand-terracotta">
                   {isEnglish ? res.categoryEn : res.categoryTh}

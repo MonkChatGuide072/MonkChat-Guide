@@ -87,7 +87,7 @@ describe('NisitFieldCockpit Component', () => {
     render(<NisitFieldCockpit isEnglish={false} studentCode="6611018" studentName="พระมหาอมรเทพ" />)
 
     // Open log form
-    const logBtn = screen.getByRole('button', { name: /\+ จดคำถามส่งเข้า CMS/i })
+    const logBtn = screen.getByRole('button', { name: /\+ จดคำถามในเครื่อง/i })
     fireEvent.click(logBtn)
 
     // Fill form
@@ -97,11 +97,11 @@ describe('NisitFieldCockpit Component', () => {
     })
 
     // Submit
-    const submitBtn = screen.getByRole('button', { name: /บันทึกคำถามส่งเข้า CMS/i })
+    const submitBtn = screen.getByRole('button', { name: /บันทึกคำถามในเครื่อง/i })
     fireEvent.click(submitBtn)
 
     // Success message
-    expect(screen.getByText(/ส่งเข้าคิวระบบ CMS/i)).toBeInTheDocument()
+    expect(screen.getByText(/บันทึกคำถามในเครื่องแล้ว/i)).toBeInTheDocument()
     // Appears in table
     expect(screen.getByText(/เยอรมนี/i)).toBeInTheDocument()
     expect(screen.getByText(/What is the Buddhist perspective on artificial intelligence\?/i)).toBeInTheDocument()

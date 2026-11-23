@@ -1,6 +1,9 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { thankYouMessages } from '../../content/nisitPractice'
 import { GuideIcon } from '../GuideIcon'
+import { ThankYouPostcard } from './ThankYouPostcard'
+import { postcardPalettes, type PostcardPaletteId } from '../../content/thankYouPostcard'
+import './ThankYouPostcard.css'
 
 interface LocalVisitorNote {
   id: string
@@ -10,31 +13,6 @@ interface LocalVisitorNote {
 }
 
 const VISITORS_STORAGE_KEY = 'monkchat_nisit_visitors_v1'
-
-function wrapCanvasText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number,
-) {
-  const words = text.split(/\s+/)
-  let line = ''
-  let currentY = y
-  for (const word of words) {
-    const testLine = line ? `${line} ${word}` : word
-    if (ctx.measureText(testLine).width > maxWidth && line) {
-      ctx.fillText(line, x, currentY)
-      line = word
-      currentY += lineHeight
-    } else {
-      line = testLine
-    }
-  }
-  if (line) ctx.fillText(line, x, currentY)
-  return currentY
-}
 
 /** Local-only visitor quick-note log & Thank-You Card PNG generator (never uploads personal data). */
 export function NisitThankYouCard({
@@ -59,6 +37,12 @@ export function NisitThankYouCard({
   const [cardDate, setCardDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [messageId, setMessageId] = useState<string>(thankYouMessages[0].id)
   const [cardFeedback, setCardFeedback] = useState<string | null>(null)
+  const [palette, setPalette] = useState<PostcardPaletteId>('garden')
+  const [isDownloading, setIsDownloading] = useState(false)
+  const postcardRef = useRef<SVGSVGElement>(null)
+  const [generatedPng, setGeneratedPng] = useState<{ url: string; signature: string } | null>(null)
+  const cardSignature = JSON.stringify([cardVisitorName, cardMonkName, cardDate, messageId, palette, isEnglish])
+  useEffect(() => () => { if (generatedPng) URL.revokeObjectURL(generatedPng.url) }, [generatedPng])
 
   const selectedTemplate = thankYouMessages.find((m) => m.id === messageId) ?? thankYouMessages[0]
   const effectiveVisitor = cardVisitorName.trim() || (isEnglish ? 'Dear Guest' : 'Dear Guest')
@@ -97,86 +81,53 @@ export function NisitThankYouCard({
     )
   }
 
-  const handleDownloadPng = () => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 1200
-    canvas.height = 800
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const drawCard = (logo?: HTMLImageElement) => {
-      // Clean white card with deep navy and soft gold framing
-      ctx.fillStyle = '#F7F7F4'
-      ctx.fillRect(0, 0, 1200, 800)
-
-      // Inner card surface & hairline borders
-      ctx.fillStyle = '#FFFFFF'
-      ctx.fillRect(48, 48, 1104, 704)
-      ctx.strokeStyle = '#C8A252'
-      ctx.lineWidth = 3
-      ctx.strokeRect(48, 48, 1104, 704)
-      ctx.strokeStyle = '#E2E6EB'
-      ctx.lineWidth = 1.5
-      ctx.strokeRect(64, 64, 1072, 672)
-
-      if (logo) {
-        ctx.drawImage(logo, 550, 92, 100, 100)
-      }
-
-      ctx.textAlign = 'center'
-      ctx.fillStyle = '#8F6419'
-      ctx.font = '600 22px Georgia, serif'
-      ctx.fillText('AYUTTHAYA MONK CHAT · WAT MAHATHAT', 600, 224)
-
-      ctx.fillStyle = '#11223C'
-      ctx.font = '600 44px Georgia, serif'
-      ctx.fillText('With Gratitude & Inner Peace', 600, 286)
-
-      ctx.fillStyle = '#526071'
-      ctx.font = '500 24px sans-serif'
-      ctx.fillText('Thank you for joining us today,', 600, 350)
-
-      ctx.fillStyle = '#11223C'
-      ctx.font = '600 48px Georgia, serif'
-      ctx.fillText(effectiveVisitor.slice(0, 42), 600, 412)
-
-      ctx.strokeStyle = '#C8A252'
-      ctx.beginPath()
-      ctx.moveTo(360, 434)
-      ctx.lineTo(840, 434)
-      ctx.stroke()
-
-      ctx.fillStyle = '#1E293B'
-      ctx.font = '400 25px sans-serif'
-      wrapCanvasText(ctx, selectedTemplate.en, 600, 492, 860, 38)
-
-      ctx.fillStyle = '#526071'
-      ctx.font = '500 20px sans-serif'
-      const footerParts = [`Wat Mahathat, Phra Nakhon Si Ayutthaya`, cardDate]
-      if (cardMonkName.trim()) {
-        footerParts.push(`Guided by ${cardMonkName.trim().slice(0, 60)}`)
-      }
-      ctx.fillText(footerParts.join(' · '), 600, 668)
-
+  const handleDownloadPng = async () => {
+    if (!postcardRef.current || isDownloading) return
+    setIsDownloading(true)
+    setCardFeedback(null)
+    let sourceUrl: string | undefined
+    let downloadUrl: string | undefined
+    try {
+      await document.fonts?.ready
+      const svg = new XMLSerializer().serializeToString(postcardRef.current)
+      sourceUrl = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }))
+      const image = new Image()
+      await new Promise<void>((resolve, reject) => {
+        image.onload = () => resolve()
+        image.onerror = () => reject(new Error('Postcard image unavailable'))
+        image.src = sourceUrl!
+      })
+      const canvas = document.createElement('canvas')
+      canvas.width = 1200
+      canvas.height = 1500
+      const ctx = canvas.getContext('2d')
+      if (!ctx) throw new Error('Canvas unavailable')
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((result) => result ? resolve(result) : reject(new Error('PNG unavailable')), 'image/png')
+      })
+      downloadUrl = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.download = `monkchat-thank-you-${effectiveVisitor.toLowerCase().replace(/[^a-z0-9]+/gi, '-') || 'guest'}.png`
-      link.href = canvas.toDataURL('image/png')
+      link.href = downloadUrl
+      document.body.append(link)
       link.click()
-      setCardFeedback(
-        isEnglish ? 'Saved Thank-You Card PNG on this device.' : 'ดาวน์โหลดไฟล์ภาพการ์ดขอบคุณ PNG ลงเครื่องแล้ว',
-      )
-    }
+      link.remove()
+      setGeneratedPng({ url: downloadUrl, signature: cardSignature })
+      setCardFeedback(isEnglish ? 'Your postcard PNG is ready to save.' : 'สร้างโปสการ์ดพร้อมบันทึกแล้ว')
+    } catch {
+      setCardFeedback(isEnglish ? 'Could not create the postcard. Please try again.' : 'ยังสร้างไฟล์การ์ดไม่สำเร็จ กรุณาลองอีกครั้ง')
+    } finally {
+      if (sourceUrl) URL.revokeObjectURL(sourceUrl)
 
-    const img = new Image()
-    img.onload = () => drawCard(img)
-    img.onerror = () => drawCard(undefined)
-    img.src = '/images/logo/ayutthaya-monk-chat-logo.png'
+      setIsDownloading(false)
+    }
   }
 
   return (
     <div className="space-y-6">
       {/* Privacy Reminder Banner */}
-      <div className="rounded-xl border border-brand-border bg-brand-gold-soft/70 p-4 text-sm leading-6 text-brand-muted">
+      <div className="training-notes-privacy rounded-xl border border-brand-border bg-brand-gold-soft/70 p-4 text-sm leading-6 text-brand-muted">
         <strong className="font-medium text-brand-maroon">
           {isEnglish ? 'Device-only storage (Zero DB): ' : 'เก็บเฉพาะในเครื่องนี้เท่านั้น (ไม่ส่งชื่อขึ้นฐานข้อมูล): '}
         </strong>
@@ -185,7 +136,7 @@ export function NisitThankYouCard({
           : 'รายชื่อผู้มาเยือนที่จดไว้และการ์ดขอบคุณทำงานบนเครื่องของคุณ 100% เพื่อรักษาความเป็นส่วนตัวของนักท่องเที่ยว และกดล้างข้อมูลท้ายวันได้ทันที'}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr]">
+      <div className="training-card-columns grid gap-6 lg:grid-cols-[1fr_1.15fr]">
         {/* Left Column: Quick Visitor Notes */}
         <section className="space-y-4 rounded-2xl border border-brand-border bg-brand-surface p-5">
           <div>
@@ -340,48 +291,43 @@ export function NisitThankYouCard({
             </label>
           </div>
 
-          {/* Live Preview Card */}
-          <div
-            aria-label={isEnglish ? 'Thank-You Card preview' : 'ตัวอย่างการ์ดขอบคุณ'}
-            className="rounded-xl border-2 border-brand-border-dark bg-brand-cream p-4"
-          >
-            <div className="rounded-lg border border-brand-border bg-brand-surface p-5 text-center">
-              <img
-                src="/images/logo/ayutthaya-monk-chat-logo.png"
-                alt="Ayutthaya Monk Chat"
-                width={1001}
-                height={1024}
-                className="mx-auto h-14 w-14 object-contain"
-              />
-              <p className="mt-2 text-xs font-medium tracking-normal text-brand-terracotta">
-                Ayutthaya Monk Chat · Wat Mahathat
-              </p>
-              <h3 className="mt-1 font-serif text-xl font-semibold text-brand-maroon">
-                With Gratitude &amp; Inner Peace
-              </h3>
-              <p className="mt-3 text-xs text-brand-muted">Thank you for joining us today,</p>
-              <p className="mt-1 border-b border-brand-border pb-2 font-serif text-2xl font-semibold text-brand-maroon">
-                {effectiveVisitor}
-              </p>
-              <p className="mt-3 text-sm leading-6 text-brand-text">{selectedTemplate.en}</p>
-              {!isEnglish && (
-                <p className="mt-1 text-xs leading-5 text-brand-muted">{selectedTemplate.th}</p>
-              )}
-              <p className="mt-4 text-xs text-brand-muted tabular-nums">
-                Wat Mahathat, Ayutthaya · {cardDate}
-                {cardMonkName.trim() ? ` · Guided by ${cardMonkName.trim()}` : ''}
-              </p>
+          <fieldset className="postcard-palette-picker">
+            <legend>{isEnglish ? 'Choose a postcard mood' : 'เลือกบรรยากาศของโปสการ์ด'}</legend>
+            <div className="postcard-palettes">
+              {postcardPalettes.map((item) => (
+                <label key={item.id}>
+                  <input type="radio" name="postcard-palette" value={item.id} checked={palette === item.id}
+                    onChange={() => setPalette(item.id)} />
+                  <span className="postcard-palette-dot" style={{ background: item.paper }} aria-hidden="true" />
+                  <span>{isEnglish ? item.en : item.th}</span>
+                </label>
+              ))}
             </div>
+          </fieldset>
+
+          <div aria-label={isEnglish ? 'Thank-You Card preview' : 'ตัวอย่างการ์ดขอบคุณ'} className="postcard-preview-frame">
+            <ThankYouPostcard ref={postcardRef} visitor={effectiveVisitor} monk={cardMonkName} date={cardDate}
+              message={selectedTemplate.en} translation={isEnglish ? undefined : selectedTemplate.th} palette={palette} />
           </div>
+          <p className="postcard-download-note">{isEnglish ? 'A little memory from Ayutthaya · PNG 1200 × 1500' : 'ความทรงจำเล็ก ๆ จากอยุธยา · PNG 1200 × 1500'}</p>
 
           <button
             type="button"
-            onClick={handleDownloadPng}
-            className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
+            onClick={() => void handleDownloadPng()}
+            disabled={isDownloading}
+            className="postcard-download-button inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-terracotta-dark"
           >
             <GuideIcon name="share" />
-            <span>{isEnglish ? 'Download Thank-You Card PNG' : 'ดาวน์โหลดการ์ดขอบคุณ (PNG)'}</span>
+            <span>{isDownloading ? (isEnglish ? 'Creating postcard…' : 'กำลังสร้างโปสการ์ด…') : (isEnglish ? 'Download Thank-You Card PNG' : 'ดาวน์โหลดการ์ดขอบคุณ (PNG)')}</span>
           </button>
+
+          {generatedPng?.signature === cardSignature && (
+            <a href={generatedPng.url} target="_blank" rel="noopener noreferrer"
+              className="flex min-h-11 items-center justify-center gap-2 text-sm font-medium text-brand-maroon underline underline-offset-4">
+              {isEnglish ? 'Open postcard image' : 'เปิดภาพการ์ดเพื่อดูหรือบันทึก'}
+              <GuideIcon name="external" className="h-4 w-4" />
+            </a>
+          )}
 
           {cardFeedback && (
             <p role="status" className="text-center text-sm font-medium text-brand-terracotta">
