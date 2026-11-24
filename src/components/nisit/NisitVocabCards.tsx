@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { nisitMeditationLessons } from '../../content/nisitPractice'
-import { fetchStudentCompletedKeys, setStudentItemCompleted } from '../../lib/studentPractice'
+import { usePracticeCompletion } from '../../lib/usePracticeCompletion'
 import { MeditationGuideVisual } from '../MeditationGuideVisual'
 import { GuideIcon } from '../GuideIcon'
 
@@ -18,13 +18,8 @@ export function NisitVocabCards({
 }) {
   const storageKey = VOCAB_PROGRESS_KEY + ':' + (studentProfileId ?? progressScope ?? 'guest')
   const [speakingId, setSpeakingId] = useState<string | null>(null)
-  const [practicedIds, setPracticedIds] = useState<string[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem(storageKey) || '[]') as string[]
-    } catch {
-      return []
-    }
-  })
+  const completion = usePracticeCompletion({ storageKey, studentId: studentProfileId, moduleType: 'vocab_lesson', english: isEnglish })
+  const practicedIds = completion.completedIds
 
   const playSpeech = (id: string, text: string) => {
     try {
@@ -42,35 +37,16 @@ export function NisitVocabCards({
     }
   }
 
-  useEffect(() => {
-    if (!studentProfileId) return
-    let active = true
-    fetchStudentCompletedKeys(studentProfileId, 'vocab_lesson').then((keys) => {
-      if (active && keys !== null) {
-        setPracticedIds(keys)
-      }
-    })
-    return () => {
-      active = false
-    }
-  }, [studentProfileId])
 
-  const togglePracticed = (id: string) => {
-    const wasDone = practicedIds.includes(id)
-    const next = wasDone ? practicedIds.filter((item) => item !== id) : [...practicedIds, id]
-    setPracticedIds(next)
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(next))
-    } catch {
-      // Ignore storage errors.
-    }
-    if (studentProfileId) {
-      void setStudentItemCompleted(studentProfileId, 'vocab_lesson', id, !wasDone)
-    }
-  }
+
+
 
   return (
     <div className="space-y-5">
+      {completion.error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><p>{completion.error}</p>{!completion.isReady && <button type="button" onClick={completion.reload} className="mt-2 min-h-11 rounded-lg border border-red-300 px-4">{isEnglish ? 'Reload progress' : 'โหลดผลฝึกอีกครั้ง'}</button>}</div>}
+      {completion.notice && <p role="status" className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">{completion.notice}</p>}
+      {completion.busy && <p role="status" className="text-sm text-brand-muted">{isEnglish ? 'Saving progress…' : 'กำลังบันทึกผลฝึก…'}</p>}
+
       <div className="training-module-intro flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4 sm:p-5">
         <div>
           <h2 className="font-serif text-lg font-semibold text-brand-maroon">
@@ -137,7 +113,7 @@ export function NisitVocabCards({
                     <button
                       type="button"
                       aria-pressed={done}
-                      onClick={() => togglePracticed(lesson.id)}
+                      disabled={!completion.isReady || completion.busy} onClick={() => void completion.toggle(lesson.id)}
                       className={`inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-all active:scale-95 ${
                         done
                           ? 'border-emerald-700 bg-emerald-50 text-emerald-900 shadow-2xs'

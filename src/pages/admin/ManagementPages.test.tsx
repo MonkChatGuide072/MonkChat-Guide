@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({
   profile: { id: 'owner-id', role: 'owner', is_active: true },
   list: vi.fn(), insert: vi.fn(), update: vi.fn(), single: vi.fn(), invoke: vi.fn(),
 }))
-vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'th' } }) }))
 vi.mock('../../lib/auth', () => ({ useAuth: () => ({ profile: mocks.profile }) }))
 vi.mock('../../lib/supabase', () => ({ supabaseClient: {
   from: () => ({ select: () => ({ order: mocks.list }), insert: mocks.insert, update: mocks.update }),
@@ -60,6 +60,26 @@ describe('CMS management pages', () => {
     render(<AdminTeamPage />)
     await screen.findByText('management.serviceUnavailable')
     expect(screen.getByRole('button', { name: 'management.addMember' })).toBeDisabled()
+  })
+
+  it('keeps the owner protected and requires explicit confirmation before creating a content-team account', async () => {
+    mocks.invoke.mockImplementation(async (_name, { body }) => body.action === 'list'
+      ? { data: { profiles: [{ id: 'owner-id', display_name: 'Protected Owner', role: 'owner', is_active: true }] }, error: null }
+      : { data: { profile: { id: 'new-team', display_name: body.display_name, role: 'team_member', is_active: true } }, error: null })
+    render(<AdminTeamPage />)
+    await screen.findByRole('heading', { name: 'Protected Owner' })
+    expect(screen.queryByRole('button', { name: 'management.edit Protected Owner' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'management.addMember' }))
+    fireEvent.change(screen.getByLabelText('management.name'), { target: { value: 'New Content Team' } })
+    fireEvent.change(screen.getByLabelText('management.email'), { target: { value: 'fixture@example.invalid' } })
+    fireEvent.change(screen.getByLabelText('management.password'), { target: { value: 'FixturePasswordOnly!' } })
+    const form = screen.getByRole('button', { name: 'management.save' }).closest('form')!
+    fireEvent.submit(form)
+    expect(mocks.invoke).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByRole('checkbox', { name: /ตรวจสอบข้อมูลและสิทธิ์ทีมงานแล้ว/ }))
+    fireEvent.submit(form)
+    expect(await screen.findByRole('heading', { name: 'New Content Team' })).toBeInTheDocument()
+    expect(mocks.invoke).toHaveBeenLastCalledWith('team-management', { body: { action: 'create', display_name: 'New Content Team', email: 'fixture@example.invalid', password: 'FixturePasswordOnly!' } })
   })
 
   it('does not contact account management for a team member or inactive owner', async () => {

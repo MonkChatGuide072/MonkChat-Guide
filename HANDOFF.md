@@ -1,11 +1,35 @@
-#
+# MonkChat Guide — Current Handoff
+
+## กำลังซ่อมระบบให้ใช้งานจริง — 24 พฤศจิกายน 2569
+
+- เจ้าของสั่ง “จัดการทำให้ใช้ได้จริง” และ “ทำต่อ” ครอบคลุมแอดมิน/ผู้มาเยือน จึงกำลังต่อจากงานบัญชีเดิม ยังไม่ประกาศเสร็จครบหรือเผยแพร่ frontend ใหม่
+- ใช้ worktree Desktop `monkchat-guide-wt-nisit` เท่านั้น สำรอง source ก่อนแต่ละชุดใน Documents `.tmp/admin-access/before` และ `.tmp/reliability-20261123/before` ไม่ทับ source เก่า Documents
+- ชุดบัญชี: แยก pending/active/suspended/needs_review, Owner ยืนยันตัวตนก่อนให้สิทธิ์, ระงับพร้อมเหตุผล, CAS กันสถานะเก่า, ประวัติใน DB, รีเซ็ตรหัสชั่วคราว, ทีมงานมีการยืนยันสิทธิ์และคุ้มครอง Owner ตรวจพรีวิว Chrome ไทย/อังกฤษ 5 widths แล้วในรอบก่อน
+- เพิ่ม CMS `/admin/website` สำหรับหัวข้อ/คำโปรย/ภาพแบนเนอร์/คำอธิบายหน้าแรก กิจกรรม และติดต่อ TH/EN แบบ draft/publish พร้อม CAS; ต่อ PublishedLinks เข้าหน้าผู้มาเยือน; แก้ public FAQ ไม่ให้เผยแพร่ชุดสำรองแทนรายการที่ถูกถอน และแยก master 200 ข้อของนิสิตจาก FAQ ผู้มาเยือน
+- แก้ vocab/Q&A ให้รอ server acknowledgement แสดง failure จริงและไม่ทำผลข้ามบัญชี (`usePracticeCompletion`); เพิ่ม tests pending/failure/retry/guest quota/account switch ชุดฐานก่อน CMS ผ่าน 139/139; ชุดเพิ่มล่าสุด 150/150 ผ่านแล้ว รวม publication flow และ failure handling ผลฝึก
+- Supabase จริง: apply `student_access_lifecycle` version **20261124013211** และ `site_page_content` version **20261124013217** แล้ว จัดชื่อไฟล์ local migration ให้ตรง versions เหล่านี้แล้ว; สองบัญชีทดลองเก่ายังคง inactive และจัด needs_review ไม่ได้อนุมัติอัตโนมัติ ไม่มีการลงข้อมูลวิจัย
+- Deploy student-register / student-cohorts **v3 ACTIVE** สำเร็จ verify_jwt false/true ตามเดิม ต้องส่งไฟล์ deno.json `{ "imports": {} }` และระบุ import_map_path ชัดเจน มิฉะนั้น backend ใช้ path import map เก่าที่ไม่มีแล้ว; ตรวจ SQL CMS จริงแบบ transaction+rollback ผ่าน 10 กรณี ไม่มีเนื้อหาทดสอบค้าง ยังต้องตรวจ network/UI กับ v3
+- ก่อนนำขึ้นจริง lifecycle migration ผ่าน PostgreSQL จำลอง 27 checks และ page-content 18 checks, Edge entrypoints Deno check ผ่าน; site-content RLS ให้ public อ่าน published เท่านั้น Owner/Team เขียนได้ student/guest เขียนไม่ได้ ไม่มีการเปิด role จาก user_metadata
+- เสียงเดิมต้นฉบับ **https://www.youtube.com/watch?v=oFkUt5kqVIk** ตรงชื่อ MP3 ในระบบ 326.147s; ดาวน์โหลดเฉพาะ original ASR captions ไว้ Documents `.tmp/reliability-20261123/audio-source/` เทียบคำใน English VTT เดิมตรง 98.63% ได้ anchors 22 cues และสร้าง aligned TH/EN โดยคงข้อความเดิมครบ ยังไม่ได้อัปโหลด/เปลี่ยน metadata จริง ต้องตรวจและส่งขึ้นก่อนอ้างว่าซับหายคลาดแล้ว ตัวอย่างต้นฉบับ VTT เป็น inline/no blank separators ต้องใช้ parser ที่รองรับ
+- Cloudflare plugin อ่านโปรเจกต์จริงได้ account 2568b6919cb2502af6f8ac72f7e81468 / monkchat-guide production main, deployment ยัง ac10d0c5. ยังไม่มี AI binding. การอ่าน billing subscriptions ถูก scope ปฏิเสธเป็น endpoint เฉพาะ ไม่ได้แปลว่า plugin ทั้งตัวเสีย ห้ามขอ reconnect ซ้ำโดยไม่จำเป็น ใช้ Workers AI Free เท่านั้นและห้ามเปลี่ยน billing
+- งานต่อ: อ่านผลและแก้ tests ล่าสุด, ทดสอบ CMS/public draft/publish จริงแบบ rollback, ติดตั้ง src/deno.json ให้ตรง backend และ align migration names, ตรวจ media/partial writes, นำซับที่จัดเวลาแล้วขึ้น, แก้ Cockpit ไม่ชวนเปิดเสียงในกิจกรรม (เสียงใช้เตรียมตัว), ผูก AI ผ่านวิธีที่เอกสารรองรับ, lint/type/tests/build/mobile QA แล้วเผยแพร่ชุดที่ตรวจครบ กำลังจัด Git checkpoint ตามคำอนุมัติ commit/push เดิม ยังไม่อ้างว่า frontend production เปลี่ยนจนกว่า deployment จะผ่าน
+
+## ตรวจการใช้งาน production และข้อเสนอแก้ — 23 พฤศจิกายน 2569
+
+- ยืนยัน Cloudflare production deployment `ac10d0c5-5fa3-42bc-a990-122c000ab4ab` สำเร็จ ใช้ commit `5b09ad3c6c29a374328c6464b183534aaa585352` ซึ่ง push เข้า branch พัฒนาและ `main` ตามอนุมัติแล้ว Chrome แสดงหน้าฝึกใหม่จริง สถานะรอเผยแพร่ในบันทึกก่อนหน้านี้เป็นประวัติก่อนยืนยัน
+- ตรวจผ่าน Chrome บนเครื่องด้วย Owner session เดิม และ HTTP/API สาธารณะ เสียงเล่นได้จริงและหยุดได้; PNG ดาวน์โหลดลงเครื่องและเปิดตรวจ 1200×1500 ได้; FAQ ค้นหาได้; บอทตอบจากคลังและแจ้งไม่พบคำตอบเมื่อนอกคลัง; ค้นศูนย์/สลับ TH–EN ได้; Owner โหลดหน้ารายชื่อนิสิตได้ ไม่ถือ HTTP 200 ของ SPA เป็นหลักฐานว่า flow ทุกหน้าผ่าน
+- พบประเด็นต้องแก้: (F1) คำศัพท์/Q&A ไม่แจ้งผล remote save ล้มเหลว ยืนยันด้วย mock failure 2 กรณีที่ไม่ผ่าน, (F2) MP3 จริง 326.147483s แต่ metadata/VTT ไทยอังกฤษ 300s, (F3) ผู้ช่วยร่าง Owner ใช้งานไม่ได้และ production ไม่มี AI binding, (F4) คลังฝึกเพิ่มจาก 200 เป็น 204 และหมวดไม่ตรงป้าย, (F5) บัญชีระงับถูกนับเป็นรออนุมัติ
+- ข้อจำกัดเตรียมทดลอง: ผลด่านยังอยู่เฉพาะเครื่อง/CSV และไม่มีการบันทึกผลเสียงขึ้นแดชบอร์ด; วิดีโอประจำชุดยังรอลิงก์ที่อนุมัติ; Cockpit ยังชวนเปิดเสียงหน้างาน ซึ่งต้องปรับให้ตรงคำย้ำเจ้าของว่าเสียงใช้เตรียมตัว
+- ไม่สมัคร/แก้ผู้ใช้ ไม่เปลี่ยนสิทธิ์/นโยบาย ไม่จบรอบเพื่อสร้างคะแนน และไม่แก้ source แอป/ฐานข้อมูล/Cloudflare settings รอบตรวจนี้ การเปิดหน้าอาจเพิ่ม usage ปกติและต้องไม่นับเป็นผู้ทดลองจริง ยังไม่ได้ทดสอบ fresh student/team login, ข้ามเครื่อง หรือโทรศัพท์จริงครบวงจร
+- รายงานพร้อมหลักฐานอยู่ `C:/Users/VICTUS GAMING 16/Documents/ChatGPT/MonkChat Guide/outputs/live-audit-2026-11-23/MonkChat-Production-Audit-2026-11-23.html` พร้อม `audit.json`, `network-results.json`, PNG จริง, ภาพข้อผิดพลาด และ log จำลองการบันทึกล้มเหลว ชุดเดิม 120 tests ผ่านก่อน deploy แต่ไม่ครอบคลุม failure handling ใหม่ ไม่อ้างว่าใหม่ 2 กรณีผ่าน
+- การตรวจแบบ bulk HEAD ถูกตอบ 403 จึงไม่ใช้สรุปว่า asset เสีย ตรวจ GET ปกติของ JS/ภาพ/manifest ได้ 200 มีบันทึกข้อจำกัดชัดเจน ไม่ติดตั้ง dependency และไม่ commit/push/deploy เพิ่มในรอบ audit
+
 ## อนุมัติเผยแพร่หน้าฝึกและโปสการ์ด — 23 พฤศจิกายน 2569
 
 - เจ้าของอนุมัติ commit และ push ในแชต หลังอนุมัติขึ้นเว็บจริง ชุด checkpoint นี้รวม frontend หน้าฝึก 7 หมวด โปสการ์ด 3 โทน การแยกประวัติผู้ฝึกและส่งออก CSV ที่ตรวจไว้ พร้อมเอกสาร UI รอบนี้
 - ตรวจซ้ำ lint, TypeScript/production build, 120 tests ใน 20 ไฟล์ และ git diff --check ผ่านก่อนเผยแพร่ ใช้ Cloudflare Pages เดิม monkchat-guide production branch main ไม่แก้ค่าลับหรือเปิดบริการเสียเงิน
 - ไฟล์ backend/migration/CURRENT_SCOPE และเอกสารทดลองเดิมที่ยังแก้อยู่แยกไว้นอก commit รอบ frontend นี้ ไม่สั่ง migration หรือ deploy Supabase เพิ่ม
 - สถานะขณะบันทึก: เตรียม push แล้วติดตาม deployment; ยังไม่อ้างว่า production เปลี่ยนจนกว่าจะยืนยัน deployment และตรวจหน้าเว็บจริง
- MonkChat Guide — Current Handoff
 
 ## การ์ดขอบคุณแบบโปสการ์ดอยุธยา — 23 พฤศจิกายน 2569
 

@@ -12,6 +12,7 @@ export function AdminDashboardPage() {
   const isOwner = profile?.role === 'owner'
 
   const modules = [
+    { key:'website', title:isEnglish?'Website content':'หน้าแรกและกิจกรรม',description:isEnglish?'Edit and publish home, activity and contact information.':'แก้ข้อความ แบนเนอร์ และช่องทางติดต่อ บันทึกร่างและเผยแพร่',path:'/admin/website' },
     { key: 'assistant', title: assistant.nav, description: assistant.intro, path: '/admin/assistant' },
     {
       key: 'meditation',

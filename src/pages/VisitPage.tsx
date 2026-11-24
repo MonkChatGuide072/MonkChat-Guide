@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { HomeHeroIntro } from '../components/HomeHeroIntro'
 import { LanguageGate } from '../components/LanguageGate'
 import { GuideIcon } from '../components/GuideIcon'
+import { PublishedLinks } from '../components/PublishedLinks'
 import { OfficialContactBanner } from '../components/OfficialContactBanner'
 import { AnimatedCounter } from '../components/AnimatedCounter'
 import {
@@ -686,6 +687,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </section>
 
         {/* 8. OFFICIAL CONTACT & SOCIAL BANNER */}
+        <PublishedLinks language={isEnglish ? 'en' : 'th'} />
         <OfficialContactBanner language={currentLang} />
       </div>
     </div>

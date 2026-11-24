@@ -27,7 +27,7 @@ const mocks = vi.hoisted(() => ({
   fromDelete: vi.fn(),
   qaRows: [
     {
-      id: 'qa-1',
+      id: 'qa-med-01',
       category: 'Meditation',
       qa_translations: [
         {
@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
     },
   ],
   completedVocabKeys: ['posture'] as string[],
-  completedQaKeys: ['qa-1'] as string[],
+  completedQaKeys: ['qa-med-01'] as string[],
 }))
 
 vi.mock('../lib/auth', () => ({
@@ -75,16 +75,16 @@ vi.mock('../lib/supabase', () => ({
               },
             }),
           }),
-          upsert: async (payload: unknown) => {
+          upsert: (payload: { item_key: string }) => {
             mocks.fromUpsert(payload)
-            return { error: null }
+            return { select: () => ({ maybeSingle: async () => ({ data: { item_key: payload.item_key }, error: null }) }) }
           },
           delete: () => ({
             eq: (_c1: string, _v1: string) => ({
               eq: (_c2: string, _v2: string) => ({
-                eq: async (_c3: string, key: string) => {
+                eq: (_c3: string, key: string) => {
                   mocks.fromDelete(key)
-                  return { error: null }
+                  return { select: async () => ({ data: [{ item_key: key }], error: null }) }
                 },
               }),
             }),
@@ -142,7 +142,7 @@ beforeEach(() => {
   mocks.signInWithPassword.mockResolvedValue({ error: null })
   mocks.updateUser.mockResolvedValue({ error: null })
   mocks.completedVocabKeys = ['posture']
-  mocks.completedQaKeys = ['qa-1']
+  mocks.completedQaKeys = ['qa-med-01']
 })
 
 afterEach(() => {
@@ -152,7 +152,7 @@ afterEach(() => {
 describe('Phase 2 Student Accounts & Role Isolation', () => {
   it('NisitLoginPage signs in via 7-digit ID mapped to .invalid internal email and validates cohort registration passwords', async () => {
     mocks.functionsInvoke.mockResolvedValue({
-      data: { registered: true, student_code: '6611018', cohort_year: 66, display_name: 'Phra Somchai' },
+      data: { registered: true, student_code: '6611018', cohort_year: 66, display_name: 'Phra Somchai', is_active: false },
       error: null,
     })
 
@@ -185,16 +185,17 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
     fireEvent.change(screen.getByLabelText('Dharma name (optional)'), { target: { value: 'Sutthipanyo' } })
     fireEvent.change(screen.getByLabelText('Choose password (12+ chars)'), { target: { value: 'monkchat6611018' } })
     fireEvent.change(screen.getByLabelText('Confirm password'), { target: { value: 'monkchat6611018' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Register & start learning' }))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I checked my student ID/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create student account' }))
 
     expect(screen.getByRole('alert')).toHaveTextContent(/12–128 characters/i)
-    expect(mocks.functionsInvoke).not.toHaveBeenCalled()
+    expect(mocks.functionsInvoke).not.toHaveBeenCalledWith('student-register', expect.objectContaining({ body: expect.anything() }))
 
     fireEvent.change(screen.getByLabelText('Choose password (12+ chars)'), {
       target: { value: 'DhammaPractice2026!' },
     })
     fireEvent.change(screen.getByLabelText('Confirm password'), { target: { value: 'DhammaPractice2026!' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Register & start learning' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create student account' }))
 
     await waitFor(() =>
       expect(mocks.functionsInvoke).toHaveBeenCalledWith('student-register', {
@@ -203,7 +204,7 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
           display_name: 'Phra Somchai',
           dharma_name: 'Sutthipanyo',
           password: 'DhammaPractice2026!',
-          admission_mode: 'auto_approve',
+          invite_code: undefined,
         },
       }),
     )
@@ -279,166 +280,14 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
     expect(await screen.findByRole('status')).toHaveTextContent('Password updated.')
   })
 
-  it('AdminStudentsPage denies team_member and lets owner create invites, suspend, and reset student passwords', async () => {
-    mocks.authState.session = { user: { id: 'staff-1' } }
-    mocks.authState.profile = {
-      id: 'staff-1',
-      display_name: 'Staff Member',
-      role: 'team_member',
-      is_active: true,
+  it('AdminStudentsPage only contacts the account API for an active owner', () => {
+    for (const profile of [null, { id: 'member', display_name: 'Team', role: 'team_member', is_active: true }, { id: 'student', display_name: 'Student', role: 'student', is_active: true }, { id: 'owner', display_name: 'Owner', role: 'owner', is_active: false }]) {
+      mocks.authState.profile = profile as typeof mocks.authState.profile
+      const view = renderRoute(<AdminStudentsPage />, ['/admin/students'])
+      expect(screen.getByRole('alert')).toHaveTextContent(en.admin.accessDeniedTitle)
+      expect(mocks.functionsInvoke).not.toHaveBeenCalled()
+      view.unmount()
     }
-
-    const { unmount } = renderRoute(<AdminStudentsPage />, ['/admin/students'])
-    expect(screen.getByRole('alert')).toHaveTextContent(en.admin.accessDeniedTitle)
-    expect(mocks.functionsInvoke).not.toHaveBeenCalled()
-    unmount()
-
-    mocks.authState.session = { user: { id: 'owner-1' } }
-    mocks.authState.profile = {
-      id: 'owner-1',
-      display_name: 'Owner Monk',
-      role: 'owner',
-      is_active: true,
-    }
-
-    mocks.functionsInvoke.mockImplementation(async (_fn, { body }) => {
-      if (body.action === 'list') {
-        return {
-          data: {
-            invites: [
-              {
-                id: 'inv-66',
-                cohort_year: 66,
-                label: 'Cohort 66 (Term 1)',
-                code_hint: 'AYT66-***',
-                is_active: true,
-                max_uses: 60,
-                used_count: 1,
-                expires_at: null,
-                created_at: '2026-11-10T00:00:00Z',
-              },
-            ],
-            students: [
-              {
-                id: 'stu-6611018',
-                display_name: 'Phra Somchai',
-                dharma_name: 'Sutthipanyo',
-                student_code: '6611018',
-                cohort_year: 66,
-                role: 'student',
-                is_active: true,
-                vocab_count: 4,
-                qa_count: 9,
-              },
-            ],
-          },
-          error: null,
-        }
-      }
-      if (body.action === 'create_invite') {
-        return {
-          data: {
-            invite: {
-              id: 'inv-67',
-              cohort_year: 67,
-              label: body.label,
-              code_hint: 'AYT67-***',
-              is_active: true,
-              max_uses: body.max_uses,
-              used_count: 0,
-              expires_at: null,
-              created_at: '2026-11-10T00:00:00Z',
-            },
-            invite_code: 'AYT67-K9M2-P4Q7',
-          },
-          error: null,
-        }
-      }
-      if (body.action === 'update_student') {
-        return {
-          data: {
-            student: {
-              id: body.id,
-              display_name: body.display_name,
-              dharma_name: body.dharma_name,
-              student_code: '6611018',
-              cohort_year: 66,
-              role: 'student',
-              is_active: body.is_active,
-            },
-          },
-          error: null,
-        }
-      }
-      if (body.action === 'reset_student_password') {
-        return {
-          data: { reset: true, temporary_password: 'TempPass!202678' },
-          error: null,
-        }
-      }
-      return { data: null, error: null }
-    })
-
-    renderRoute(<AdminStudentsPage />, ['/admin/students'])
-
-    expect(await screen.findByText('Cohort 66 (Term 1)')).toBeInTheDocument()
-    expect(screen.getByText('Phra Somchai')).toBeInTheDocument()
-    expect(screen.getByText(/Vocab practiced: 4 · Q&A mastered: 9/)).toBeInTheDocument()
-
-    // Create invite
-    fireEvent.click(screen.getByRole('button', { name: 'New Cohort Invite' }))
-    fireEvent.change(screen.getByLabelText('Cohort year (40–69)'), { target: { value: '67' } })
-    fireEvent.change(screen.getByLabelText('Cohort label'), { target: { value: 'Cohort 67' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Generate Invite Code' }))
-
-    expect(await screen.findByText('AYT67-K9M2-P4Q7')).toBeInTheDocument()
-
-    // Reset student password
-    fireEvent.click(screen.getByRole('button', { name: 'Reset password 6611018' }))
-    expect(await screen.findByText('TempPass!202678')).toBeInTheDocument()
-
-    // Suspend student
-    fireEvent.click(screen.getByRole('button', { name: 'Suspend 6611018' }))
-    await waitFor(() =>
-      expect(mocks.functionsInvoke).toHaveBeenCalledWith('student-cohorts', {
-        body: {
-          action: 'update_student',
-          id: 'stu-6611018',
-          display_name: 'Phra Somchai',
-          dharma_name: 'Sutthipanyo',
-          is_active: false,
-        },
-      }),
-    )
-    expect(screen.getByText('Suspended')).toBeInTheDocument()
-
-    // 1-Click Approve student back to active
-    fireEvent.click(screen.getByRole('button', { name: 'Approve student 6611018' }))
-    await waitFor(() =>
-      expect(mocks.functionsInvoke).toHaveBeenCalledWith('student-cohorts', {
-        body: {
-          action: 'update_student',
-          id: 'stu-6611018',
-          display_name: 'Phra Somchai',
-          dharma_name: 'Sutthipanyo',
-          is_active: true,
-        },
-      }),
-    )
-    expect(screen.getByRole('button', { name: 'Suspend 6611018' })).toBeInTheDocument()
-
-    // Toggle admission policy mode between Auto-Approve and Approval Required
-    expect(screen.getByText(/Auto-Approve/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Switch to Approval Required' }))
-    await waitFor(() =>
-      expect(mocks.functionsInvoke).toHaveBeenCalledWith('student-cohorts', {
-        body: {
-          action: 'set_admission_mode',
-          mode: 'admin_approval',
-        },
-      }),
-    )
-    expect(screen.getByText('🟡 Approval Required (Gated)')).toBeInTheDocument()
   })
 
   it('NisitProtectedRoute allows active student/staff and guest local practice, while blocking suspended accounts', async () => {
@@ -470,8 +319,8 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
     }
     const r2 = renderProtectedNisit()
     expect(screen.queryByText('Protected Practice Hub')).not.toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Registration Received' })).toBeInTheDocument()
-    expect(screen.getByText('Pending Approval')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Your student account' })).toBeInTheDocument()
+    expect(screen.getByText('Legacy status review')).toBeInTheDocument()
     r2.unmount()
 
     // Inactive staff -> blocked and shows account suspended view

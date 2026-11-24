@@ -42,7 +42,7 @@ export async function handleStudentRegister(
     'Content-Type': 'application/json',
     'Cache-Control': 'no-store',
     'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     Vary: 'Origin',
   }
   const reply = (status: number, body: unknown) =>
@@ -53,6 +53,14 @@ export async function handleStudentRegister(
   }
   if (origin) headers['Access-Control-Allow-Origin'] = origin
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers })
+  if (request.method === 'GET') {
+    try {
+      if (!dependencies.getAdmissionPolicy) return reply(503, { code: 'serviceUnavailable' })
+      const mode = await dependencies.getAdmissionPolicy()
+      if (!['auto_approve', 'admin_approval'].includes(mode)) return reply(503, { code: 'serviceUnavailable' })
+      return reply(200, { admission_mode: mode })
+    } catch { return reply(503, { code: 'serviceUnavailable' }) }
+  }
   if (request.method !== 'POST') return reply(405, { code: 'method' })
 
   try {
@@ -82,16 +90,10 @@ export async function handleStudentRegister(
       return reply(400, { code: 'weakPassword' })
     }
 
-    // Determine admission status: auto_approve (active) vs admin_approval (pending)
-    const requestedMode =
-      input.admission_mode === 'admin_approval'
-        ? 'admin_approval'
-        : input.admission_mode === 'auto_approve'
-          ? 'auto_approve'
-          : null
-    const systemPolicy = dependencies.getAdmissionPolicy ? await dependencies.getAdmissionPolicy() : 'auto_approve'
-    const finalPolicy = requestedMode ?? systemPolicy
-    const isActive = finalPolicy === 'auto_approve'
+    // A registrant cannot override the owner's policy through a request body.
+    if (!dependencies.getAdmissionPolicy) return reply(503, { code: 'serviceUnavailable' })
+    const systemPolicy = await dependencies.getAdmissionPolicy()
+    const isActive = systemPolicy === 'auto_approve'
 
     if (inviteCode.length > 0) {
       if (inviteCode.length < 6 || inviteCode.length > 40) {

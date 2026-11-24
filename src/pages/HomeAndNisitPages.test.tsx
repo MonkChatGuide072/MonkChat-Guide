@@ -139,7 +139,7 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
       bio_links: [],
       qa_items: [
         {
-          id: 'qa-1',
+          id: 'qa-med-01',
           category: 'Meditation',
           qa_translations: [
             {

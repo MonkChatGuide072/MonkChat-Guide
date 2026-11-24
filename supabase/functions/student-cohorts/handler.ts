@@ -17,7 +17,12 @@ export interface CohortInviteRecord {
   created_at: string
 }
 
+export type AccessStatus = 'pending' | 'active' | 'suspended' | 'needs_review'
+
 export interface StudentRecord {
+  student_access_status?: AccessStatus
+  student_access_note?: string | null
+  student_access_updated_at?: string | null
   id: string
   display_name: string
   dharma_name: string | null
@@ -31,10 +36,15 @@ export interface StudentRecord {
 
 export interface StudentCohortContext {
   actor: { id: string; display_name: string; role: 'owner' | 'team_member' | 'student'; is_active: boolean }
+  accessManagementReady?(): Promise<boolean>
+  setStudentAccess?(id: string, expected: AccessStatus, status: 'active' | 'suspended', reason: string | null): Promise<StudentRecord | null>
+  editStudent?(id: string, display_name: string, dharma_name: string | null): Promise<StudentRecord>
+  studentAccessHistory?(id: string): Promise<unknown[]>
   studentSecurityVersion(): Promise<number | null>
   listData(): Promise<{
     invites: CohortInviteRecord[]
     students: StudentRecord[]
+    access_management_ready?: boolean
     admission_mode?: 'auto_approve' | 'admin_approval'
   }>
   createInvite(payload: {
@@ -104,6 +114,34 @@ export async function handleStudentCohortRequest(
     if (input.action === 'list') {
       const data = await context.listData()
       return reply(200, data)
+    }
+
+    if (input.action === 'set_student_access' || input.action === 'student_access_history' || input.action === 'edit_student') {
+      if (!context.accessManagementReady || !(await context.accessManagementReady())) return reply(503, { code: 'serviceUnavailable' })
+      if (typeof input.id !== 'string' || !UUID_PATTERN.test(input.id) || input.id === context.actor.id || 'role' in input || 'student_code' in input) return reply(400, { code: 'invalid' })
+      if (!(await context.hasStudent(input.id))) return reply(404, { code: 'notFound' })
+      if (input.action === 'student_access_history') {
+        if (!context.studentAccessHistory) return reply(503, { code: 'serviceUnavailable' })
+        return reply(200, { events: await context.studentAccessHistory(input.id) })
+      }
+      if (input.action === 'edit_student') {
+        const name = typeof input.display_name === 'string' ? input.display_name.trim() : ''
+        const dharma = typeof input.dharma_name === 'string' ? input.dharma_name.trim() : ''
+        if (!name || name.length > 80 || dharma.length > 80 || 'is_active' in input || 'student_access_status' in input) return reply(400, { code: 'invalid' })
+        if (!context.editStudent) return reply(503, { code: 'serviceUnavailable' })
+        return reply(200, { student: await context.editStudent(input.id, name, dharma || null) })
+      }
+      const expected = input.expected_status
+      const target = input.status
+      const reason = typeof input.reason === 'string' ? input.reason.trim() : ''
+      const states = ['pending', 'active', 'suspended', 'needs_review']
+      if (typeof expected !== 'string' || !states.includes(expected) || expected === target
+        || (target !== 'active' && target !== 'suspended') || reason.length > 500
+        || (target === 'active' && input.verified_identity !== true)
+        || (target === 'suspended' && reason.length < 3)) return reply(400, { code: 'invalid' })
+      if (!context.setStudentAccess) return reply(503, { code: 'serviceUnavailable' })
+      const student = await context.setStudentAccess(input.id, expected as AccessStatus, target, reason || null)
+      return student ? reply(200, { student }) : reply(409, { code: 'staleState' })
     }
 
     if (input.action === 'create_invite') {
@@ -195,13 +233,15 @@ export async function handleStudentCohortRequest(
     }
 
     if (input.action === 'get_admission_mode') {
-      const mode = (await context.getAdmissionMode?.()) ?? 'auto_approve'
+      if (!context.getAdmissionMode) return reply(503, { code: 'serviceUnavailable' })
+      const mode = await context.getAdmissionMode()
       return reply(200, { admission_mode: mode })
     }
 
     if (input.action === 'set_admission_mode') {
-      const mode = input.mode === 'admin_approval' ? 'admin_approval' : 'auto_approve'
-      const updated = context.setAdmissionMode ? await context.setAdmissionMode(mode) : mode
+      if (input.mode !== 'admin_approval' && input.mode !== 'auto_approve') return reply(400, { code: 'invalid' })
+      if (!context.setAdmissionMode) return reply(503, { code: 'serviceUnavailable' })
+      const updated = await context.setAdmissionMode(input.mode)
       return reply(200, { admission_mode: updated })
     }
 

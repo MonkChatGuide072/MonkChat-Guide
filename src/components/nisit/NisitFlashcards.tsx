@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabaseClient } from '../../lib/supabase'
-import { fetchStudentCompletedKeys, setStudentItemCompleted } from '../../lib/studentPractice'
+import { usePracticeCompletion } from '../../lib/usePracticeCompletion'
 import { NISIT_MASTER_QA_ITEMS, type QAItemRow } from '../../content/nisitQAData'
 import { GuideIcon } from '../GuideIcon'
 
@@ -32,13 +32,8 @@ export function NisitFlashcards({
   const [cardIndex, setCardIndex] = useState(0)
   const [revealed, setRevealed] = useState(false)
   const [speakingKey, setSpeakingKey] = useState<string | null>(null)
-  const [masteredIds, setMasteredIds] = useState<string[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem(storageKey) || '[]') as string[]
-    } catch {
-      return []
-    }
-  })
+  const completion = usePracticeCompletion({ storageKey, studentId: studentProfileId, moduleType: 'qa_flashcard', english: isEnglish })
+  const masteredIds = completion.completedIds
 
   const playSpeech = (key: string, text: string) => {
     try {
@@ -75,11 +70,9 @@ export function NisitFlashcards({
       if (dbError) throw dbError
       const loaded = (data as QAItemRow[]) ?? []
       if (loaded.length > 0) {
-        // Keep DB items while guaranteeing all 200 master questions are present
-        const loadedIds = new Set(loaded.map((item) => item.id))
-        const masterRemaining = NISIT_MASTER_QA_ITEMS.filter((item) => !loadedIds.has(item.id))
-        setItems([...loaded, ...masterRemaining])
-        setIsUsingFallback(false)
+        const overrides = new Map(loaded.filter(item => NISIT_MASTER_QA_ITEMS.some(master => master.id === item.id)).map(item => [item.id,item]))
+        setItems(NISIT_MASTER_QA_ITEMS.map(master => overrides.get(master.id) ?? master))
+        setIsUsingFallback(overrides.size === 0)
       } else {
         setItems(NISIT_MASTER_QA_ITEMS)
         setIsUsingFallback(true)
@@ -96,37 +89,14 @@ export function NisitFlashcards({
     void fetchVerifiedQA()
   }, [fetchVerifiedQA])
 
-  useEffect(() => {
-    if (!studentProfileId) return
-    let active = true
-    fetchStudentCompletedKeys(studentProfileId, 'qa_flashcard').then((keys) => {
-      if (active && keys !== null) {
-        setMasteredIds(keys)
-      }
-    })
-    return () => {
-      active = false
-    }
-  }, [studentProfileId])
+
 
   const categories = ['All', ...Array.from(new Set(items.map((i) => i.category).filter(Boolean)))]
   const filtered = selectedCategory === 'All' ? items : items.filter((i) => i.category === selectedCategory)
   const boundedIndex = filtered.length > 0 ? Math.min(cardIndex, filtered.length - 1) : 0
   const current = filtered[boundedIndex]
 
-  const toggleMastered = (id: string) => {
-    const wasMastered = masteredIds.includes(id)
-    const next = wasMastered ? masteredIds.filter((item) => item !== id) : [...masteredIds, id]
-    setMasteredIds(next)
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(next))
-    } catch {
-      // Ignore storage quota issues.
-    }
-    if (studentProfileId) {
-      void setStudentItemCompleted(studentProfileId, 'qa_flashcard', id, !wasMastered)
-    }
-  }
+
 
   if (isLoading) {
     return (
@@ -153,6 +123,10 @@ export function NisitFlashcards({
 
   return (
     <div className="space-y-5">
+      {completion.error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><p>{completion.error}</p>{!completion.isReady && <button type="button" onClick={completion.reload} className="mt-2 min-h-11 rounded-lg border border-red-300 px-4">{isEnglish ? 'Reload progress' : 'โหลดผลฝึกอีกครั้ง'}</button>}</div>}
+      {completion.notice && <p role="status" className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">{completion.notice}</p>}
+      {completion.busy && <p role="status" className="text-sm text-brand-muted">{isEnglish ? 'Saving progress…' : 'กำลังบันทึกผลฝึก…'}</p>}
+
       {/* Category & Progress Bar */}
       <div className="training-qa-filter flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4">
         <div className="flex flex-wrap gap-2" role="group" aria-label={isEnglish ? 'Question categories' : 'หมวดหมู่คำถาม'}>
@@ -250,7 +224,7 @@ export function NisitFlashcards({
             <button
               type="button"
               aria-pressed={isMastered}
-              onClick={() => toggleMastered(current.id)}
+              disabled={!completion.isReady || completion.busy} onClick={() => void completion.toggle(current.id)}
               className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-all active:scale-95 ${
                 isMastered
                   ? 'border-emerald-700 bg-emerald-50 text-emerald-900 shadow-2xs'

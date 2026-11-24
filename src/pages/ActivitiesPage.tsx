@@ -1,3 +1,4 @@
+import { usePublicPageCopy } from '../lib/siteContent'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { GuideIcon } from '../components/GuideIcon'
@@ -7,7 +8,9 @@ import { normalizeLanguage } from '../lib/language'
 export function ActivitiesPage() {
   const { i18n } = useTranslation()
   const language = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
-  const content = getActivitiesPageContent(language)
+  const original = getActivitiesPageContent(language)
+  const copy = usePublicPageCopy('activities', language)
+  const content = {...original, hero: {...original.hero, title: copy.title || original.hero.title, description: copy.description || original.hero.description}}
 
   return (
     <div className="space-y-10 bg-brand-cream pb-8 text-brand-text sm:space-y-12">

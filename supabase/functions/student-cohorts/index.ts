@@ -30,13 +30,56 @@ Deno.serve((request) =>
         auth: { persistSession: false, autoRefreshToken: false },
       })
 
+      const getAdmissionMode = async (): Promise<'auto_approve' | 'admin_approval'> => {
+        const { data, error } = await client.from('student_admission_policy')
+          .select('mode').eq('id', true).single()
+        if (error || !data || !['auto_approve', 'admin_approval'].includes(data.mode)) {
+          throw error ?? new Error('Admission policy unavailable')
+        }
+        return data.mode
+      }
+      const accessManagementReady = async () => {
+        const { data, error } = await client.rpc('student_access_version')
+        return !error && data === 1
+      }
+      const accessFields = 'id, display_name, dharma_name, student_code, cohort_year, role, is_active, student_access_status, student_access_note, student_access_updated_at'
       return {
         actor,
+        accessManagementReady,
+        studentAccessHistory: async (id) => {
+          const { data, error } = await client.from('student_access_events')
+            .select('id, from_status, to_status, reason, actor_name, created_at')
+            .eq('student_id', id).order('created_at', { ascending: false }).limit(50)
+          if (error) throw error
+          return data ?? []
+        },
+        setStudentAccess: async (id, expected, status, reason) => {
+          const { data, error } = await client.from('profiles')
+            .update({ student_access_status: status, student_access_note: reason })
+            .eq('id', id).eq('role', 'student').eq('student_access_status', expected)
+            .select(accessFields).maybeSingle()
+          if (error) throw error
+          return data as StudentRecord | null
+        },
+        editStudent: async (id, display_name, dharma_name) => {
+          const { data, error } = await client.from('profiles').update({ display_name, dharma_name })
+            .eq('id', id).eq('role', 'student').select(accessFields).single()
+          if (error || !data) throw error ?? new Error('Profile update failed')
+          return data as StudentRecord
+        },
+        getAdmissionMode,
+        setAdmissionMode: async (mode) => {
+          const { data, error } = await client.from('student_admission_policy')
+            .update({ mode, updated_at: new Date().toISOString() }).eq('id', true).select('mode').single()
+          if (error || !data) throw error ?? new Error('Policy update failed')
+          return data.mode
+        },
         studentSecurityVersion: async () => {
           const { data, error } = await client.rpc('student_security_version')
           return error ? null : data
         },
         listData: async () => {
+          const ready = await accessManagementReady()
           const [invitesRes, studentsRes, progressRes] = await Promise.all([
             client
               .from('student_cohort_invites')
@@ -44,10 +87,10 @@ Deno.serve((request) =>
               .order('created_at', { ascending: false }),
             client
               .from('profiles')
-              .select('id, display_name, dharma_name, student_code, cohort_year, role, is_active')
+              .select(ready ? accessFields : 'id, display_name, dharma_name, student_code, cohort_year, role, is_active')
               .eq('role', 'student')
               .order('cohort_year', { ascending: false })
-              .order('student_code', { ascending: true }),
+              .order('student_code', { ascending: true }).returns<StudentRecord[]>(),
             client
               .from('student_practice_progress')
               .select('student_id, module_type'),
@@ -74,6 +117,8 @@ Deno.serve((request) =>
           })
 
           return {
+            admission_mode: await getAdmissionMode(),
+            access_management_ready: ready,
             invites: invitesRes.data ?? [],
             students,
           }

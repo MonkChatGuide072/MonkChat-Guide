@@ -39,6 +39,7 @@ export function AdminLayout() {
 
   const navItems = [
     { path: '/admin', label: t('admin.nav.dashboard'), end: true },
+    { path: '/admin/website', label: isEnglish ? 'Website content' : 'หน้าแรกและกิจกรรม' },
     { path: '/admin/meditation', label: t('admin.nav.meditation') },
     { path: '/admin/qa', label: t('admin.nav.qa') },
     { path: '/admin/assistant', label: assistantLabel },

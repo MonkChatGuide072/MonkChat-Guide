@@ -1,3 +1,4 @@
+import type { StudentAccessStatus } from './studentAccess'
 import { supabaseClient } from './supabase'
 
 export type ProgressModuleType = 'vocab_lesson' | 'qa_flashcard' | 'audio_track'
@@ -27,6 +28,16 @@ export function setNisitAdmissionMode(mode: NisitAdmissionMode): void {
   } catch {
     // LocalStorage fallback
   }
+}
+
+/** Public display only; registration always enforces the policy on the server. */
+export async function fetchStudentAdmissionPolicy(): Promise<NisitAdmissionMode | null> {
+  if (!supabaseClient) return null
+  try {
+    const { data, error } = await supabaseClient.functions.invoke('student-register', { method: 'GET' })
+    if (error || !['auto_approve', 'admin_approval'].includes(data?.admission_mode)) return null
+    return data.admission_mode
+  } catch { return null }
 }
 
 /** Converts a 7-digit student code into the reserved non-routable internal domain email. */
@@ -63,20 +74,14 @@ export interface StudentRegisterResult {
 export async function invokeStudentRegister(
   payload: StudentRegisterPayload,
 ): Promise<StudentRegisterResult> {
-  const mode = payload.admission_mode ?? getNisitAdmissionMode()
-  if (!supabaseClient) {
-    return {
-      student_code: payload.student_code,
-      cohort_year: Number(payload.student_code.slice(0, 2)),
-      display_name: payload.display_name,
-      is_active: mode === 'auto_approve',
-    }
-  }
-
+  if (!supabaseClient) throw new Error('serviceUnavailable')
   const { data, error } = await supabaseClient.functions.invoke('student-register', {
     body: {
-      ...payload,
-      admission_mode: mode,
+      student_code: payload.student_code,
+      display_name: payload.display_name,
+      dharma_name: payload.dharma_name,
+      password: payload.password,
+      invite_code: payload.invite_code,
     },
   })
   if (error) {
@@ -91,12 +96,12 @@ export async function invokeStudentRegister(
     }
     throw new Error(code)
   }
-  if (!data?.registered) throw new Error(data?.code || 'serviceUnavailable')
+  if (!data?.registered || typeof data.is_active !== 'boolean') throw new Error(data?.code || 'serviceUnavailable')
   return {
     student_code: data.student_code,
     cohort_year: data.cohort_year,
     display_name: data.display_name,
-    is_active: typeof data.is_active === 'boolean' ? data.is_active : mode === 'auto_approve',
+    is_active: data.is_active,
   }
 }
 
@@ -113,6 +118,9 @@ export interface CohortInviteSummary {
 }
 
 export interface StudentRosterItem {
+  student_access_status?: StudentAccessStatus | null
+  student_access_note?: string | null
+  student_access_updated_at?: string | null
   id: string
   display_name: string
   dharma_name: string | null
@@ -172,21 +180,22 @@ export async function setStudentItemCompleted(
   if (!supabaseClient) return false
   try {
     if (completed) {
-      const { error } = await supabaseClient
+      const { data, error } = await supabaseClient
         .from('student_practice_progress')
         .upsert(
           { student_id: studentId, module_type: moduleType, item_key: itemKey },
           { onConflict: 'student_id,module_type,item_key' },
         )
-      return !error
+        .select('item_key').maybeSingle()
+      return !error && data?.item_key === itemKey
     }
-    const { error } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from('student_practice_progress')
       .delete()
       .eq('student_id', studentId)
       .eq('module_type', moduleType)
-      .eq('item_key', itemKey)
-    return !error
+      .eq('item_key', itemKey).select('item_key')
+    return !error && Array.isArray(data) && data.some(row => row.item_key === itemKey)
   } catch {
     return false
   }

@@ -1,3 +1,4 @@
+import { usePublicPageCopy } from '../lib/siteContent'
 import { Link } from 'react-router'
 import { PUBLIC_SHORTCUTS } from '../content/publicShortcuts'
 import type { AppLanguage } from '../lib/language'
@@ -11,6 +12,7 @@ export function HomeHeroIntro({
   language: AppLanguage
   activePath?: '/' | '/home' | '/visit'
 }) {
+  const copy = usePublicPageCopy('home', language)
   const isEnglish = language === 'en'
   const normalizedActive = activePath === '/home' || activePath === '/visit' ? '/' : activePath
 
@@ -18,10 +20,10 @@ export function HomeHeroIntro({
     <section aria-labelledby="home-intro-title" className="bg-[#FAF7F2] border-b border-[#EADCC6]/60">
       <div className="relative overflow-hidden group">
         <picture className="block">
-          <source media="(min-width: 80rem)" srcSet="/images/home/monkchat-banner-desktop.webp" />
-          <source media="(min-width: 40rem)" srcSet="/images/home/monkchat-banner-tablet.webp" />
+          <source media="(min-width: 80rem)" srcSet={copy.image_url || "/images/home/monkchat-banner-desktop.webp"} />
+          <source media="(min-width: 40rem)" srcSet={copy.image_url || "/images/home/monkchat-banner-tablet.webp"} />
           <img
-            src="/images/home/monkchat-banner-mobile.webp"
+            src={copy.image_url || "/images/home/monkchat-banner-mobile.webp"}
             alt={isEnglish ? 'Ayutthaya Monk Chat, a monk and visitors sit together among the Ayutthaya ruins' : 'Ayutthaya Monk Chat พระสงฆ์และผู้มาเยือนนั่งด้วยกันท่ามกลางโบราณสถานอยุธยา'}
             aria-describedby="home-banner-quote"
             width={1170}
@@ -52,15 +54,15 @@ export function HomeHeroIntro({
         </div>
 
         <h1 id="home-intro-title" className="font-serif text-[2.1rem] font-bold leading-tight text-brand-maroon sm:text-4xl lg:text-[2.85rem] tracking-tight">
-          MonkChat Guide
+          {copy.title || 'MonkChat Guide'}
         </h1>
         <p className="mt-2 text-sm font-semibold text-brand-terracotta sm:text-base [text-wrap:balance]">
-          {isEnglish
+          {copy.tagline || (isEnglish
             ? 'Take a seat in the shade · Open conversation with monks'
-            : 'พักกายใต้ร่มไม้ใหญ่ · เปิดใจคุยกับพระสงฆ์'}
+            : 'พักกายใต้ร่มไม้ใหญ่ · เปิดใจคุยกับพระสงฆ์')}
         </p>
         <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-brand-muted sm:text-base [text-wrap:pretty]">
-          {isEnglish ? (
+          {copy.description || (isEnglish ? (
             <>
               Sit comfortably under the shade trees at Wat Mahathat. Ask anything you wonder about monk life,
               and enjoy 5 minutes of quiet meditation.<br className="hidden sm:inline" /> Friendly, welcoming, no formalities, and 100% free walk-in.
@@ -70,7 +72,7 @@ export function HomeHeroIntro({
               นั่งเก้าอี้สบายๆ ใต้ร่มไม้วัดมหาธาตุ อยุธยา พูดคุยอย่างเป็นกันเอง ถามได้ทุกเรื่องที่สงสัย
               และพักใจให้สงบ 5&nbsp;นาที<br className="hidden sm:inline" /> เปิดกว้างทุกศาสนา ร่วมได้ทันทีโดยไม่มีค่าใช้จ่าย
             </>
-          )}
+          ))}
         </p>
 
         {/* 5 Tactile Handcrafted Shortcuts with scale-on-press */}

@@ -52,20 +52,15 @@ export function QAPage() {
         .order('created_at', { ascending: false })
       if (dbError) throw dbError
       const loadedItems = (data as QAItemRow[]) ?? []
-      if (loadedItems.length > 0) {
-        setItems(loadedItems)
-        setOpenIds(new Set(loadedItems[0] ? [loadedItems[0].id] : []))
-      } else {
-        setItems(CURATED_VISITOR_QA_ITEMS as QAItemRow[])
-        setOpenIds(new Set([CURATED_VISITOR_QA_ITEMS[0].id]))
-      }
+      setItems(loadedItems)
+      setOpenIds(new Set(loadedItems[0] ? [loadedItems[0].id] : []))
     } catch {
-      setItems(CURATED_VISITOR_QA_ITEMS as QAItemRow[])
-      setOpenIds(new Set([CURATED_VISITOR_QA_ITEMS[0].id]))
+      setItems([]);setOpenIds(new Set())
+      setError(i18n.language.startsWith('en') ? 'Could not load published answers. Please try again.' : 'โหลดคำตอบที่เผยแพร่ไม่สำเร็จ กรุณาลองใหม่')
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [i18n.language])
 
   useEffect(() => {
     void fetchQAItems()

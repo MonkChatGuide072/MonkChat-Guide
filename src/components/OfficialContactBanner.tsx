@@ -1,3 +1,4 @@
+import { usePublicPageCopy } from '../lib/siteContent'
 import { useNavigate } from 'react-router'
 import { getOfficialContactContent } from '../content/officialContactContent'
 import type { AppLanguage } from '../lib/language'
@@ -8,7 +9,9 @@ import { GuideIcon } from './GuideIcon'
  */
 export function OfficialContactBanner({ language }: { language: AppLanguage }) {
   const navigate = useNavigate()
-  const contact = getOfficialContactContent(language)
+  const original = getOfficialContactContent(language)
+  const copy = usePublicPageCopy('contact', language)
+  const contact = {...original, title:copy.title || original.title, description:copy.description || original.description, facebookUrl:copy.link_url || original.facebookUrl, facebookLabel:copy.link_label || original.facebookLabel}
 
   function handleOpenChatbot() {
     const event = new CustomEvent('monkchat:open-chatbot', { cancelable: true })

@@ -10,6 +10,7 @@ export interface Profile {
   student_code?: string | null
   cohort_year?: number | null
   dharma_name?: string | null
+  student_access_status?: 'pending' | 'active' | 'suspended' | 'needs_review' | null
 }
 
 interface AuthContextType {
@@ -170,6 +171,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .eq('id', userId)
               .single()
             if (extra) resolved = { ...resolved, ...(extra as Partial<Profile>) }
+            // A separate optional query keeps the preceding deployment compatible.
+            const { data: access } = await supabaseClient.from('profiles')
+              .select('student_access_status').eq('id', userId).single()
+            if (access) resolved = { ...resolved, ...(access as Partial<Profile>) }
           }
           if (mounted) setProfile(resolved)
         }

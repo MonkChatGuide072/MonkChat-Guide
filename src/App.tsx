@@ -19,6 +19,8 @@ const CentersPage = lazy(() => import('./pages/CentersPage').then(m => ({ defaul
 const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })))
 
+const AdminSiteContentPage = lazy(() => import('./pages/admin/AdminSiteContentPage').then(m => ({ default: m.AdminSiteContentPage })))
+
 // Protected CMS Routes (Lazy)
 const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })))
 const AdminMeditationPage = lazy(() => import('./pages/admin/AdminMeditationPage').then(m => ({ default: m.AdminMeditationPage })))
@@ -70,6 +72,7 @@ function App() {
             <Route path="admin" element={<ProtectedRoute />}>
               <Route element={<AdminLayout />}>
                 <Route index element={<AdminDashboardPage />} />
+                <Route path="website" element={<AdminSiteContentPage />} />
                 <Route path="meditation" element={<AdminMeditationPage />} />
                 <Route path="meditation/new" element={<AdminMeditationNewPage />} />
                 <Route path="meditation/:trackId/edit" element={<AdminMeditationEditPage />} />

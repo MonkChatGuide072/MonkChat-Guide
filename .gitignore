@@ -47,3 +47,6 @@ docs/review-evidence/**/*.png
 docs/review-evidence/**/*.webp
 docs/chatbot-service-card-preview.png
 
+
+# Local audits, disposable fixtures and verification output
+.tmp/

@@ -41,8 +41,8 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
         }
       } catch {
         if (active) {
-          setAudioUrl('/audio/meditation-5min-en.mp3')
-          setAudioState('ready')
+          setAudioUrl(null)
+          setAudioState('error')
         }
       }
     }

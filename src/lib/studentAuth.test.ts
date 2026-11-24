@@ -103,7 +103,7 @@ describe('student-register edge handler', () => {
     expect(badOrigin.status).toBe(403)
 
     const badMethod = await handleStudentRegister(
-      new Request('https://example.supabase.co/functions/v1/student-register', { method: 'GET' }),
+      new Request('https://example.supabase.co/functions/v1/student-register', { method: 'DELETE' }),
       deps,
     )
     expect(badMethod.status).toBe(405)

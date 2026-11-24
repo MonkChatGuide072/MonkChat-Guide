@@ -15,6 +15,14 @@ Deno.serve((request) => {
 
   return handleStudentRegister(request, {
     allowedOrigins,
+    getAdmissionPolicy: async () => {
+      const { data, error } = await admin.from('student_admission_policy')
+        .select('mode').eq('id', true).single()
+      if (error || !data || !['auto_approve', 'admin_approval'].includes(data.mode)) {
+        throw error ?? new Error('Admission policy unavailable')
+      }
+      return data.mode as 'auto_approve' | 'admin_approval'
+    },
     findInviteByHash: async (codeHash) => {
       const { data, error } = await admin
         .from('student_cohort_invites')
