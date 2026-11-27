@@ -36,28 +36,108 @@ export const preparationCards: Record<'th' | 'en', MeditationPictureCard[]> = {
   ],
 }
 
-/** Owner-requested conversation prompts, not promised outcomes or attainment labels. */
+/** Owner-requested practical follow-up tips. Source mapping is retained in private project documentation. */
 export const reflectionCards: Record<'th' | 'en', MeditationPictureCard[]> = {
-  th: [
-    { scene: 'wandering', title: 'ใจคิดเรื่องอื่น', body: 'ระหว่างนั่ง ฉันนึกถึงหลายเรื่อง ใจลอยไปบ้าง', note: 'เล่าให้พระฟังได้ว่าใจไปคิดเรื่องอะไร' },
-    { scene: 'straining', title: 'พยายามมากจนเกร็ง', body: 'ฉันอยากนั่งให้ได้ จนเผลอเพ่งหรือเค้นตัวเอง', note: 'บอกพระได้ตรง ๆ เพื่อช่วยปรับให้สบายขึ้น' },
-    { scene: 'lightness', title: 'โปร่ง โล่ง เบาสบาย', body: 'ฉันรู้สึกผ่อนคลาย ตัวเบา หรือใจสบาย', note: 'เล่าความรู้สึกด้วยคำของเราเองได้เลย' },
-    { scene: 'crystal', title: 'เห็นดวงกลมใส', body: 'ฉันเห็นหรือนึกถึงดวงกลมใส คล้ายลูกแก้วคริสตัล', note: 'ชัดหรือไม่ชัด ก็เล่าตามที่รู้สึกได้' },
-    { scene: 'small-self', title: 'รู้สึกเหมือนตัวเล็ก', body: 'ฉันรู้สึกหรือเห็นภาพเหมือนตัวเองมีขนาดเล็กลง', note: 'อธิบายได้ว่าเป็นความรู้สึกหรือภาพในใจ' },
-    { scene: 'buddha', title: 'เห็นภาพองค์พระภายใน', body: 'ฉันเห็นหรือนึกถึงภาพองค์พระอยู่ภายใน', note: 'เล่าตามที่พบ โดยไม่ต้องตีความว่าเป็นระดับใด' },
-    { scene: 'brightness', title: 'เห็นแสงสว่าง', body: 'ฉันเห็นหรือรู้สึกถึงแสงสว่างระหว่างนั่ง', note: 'เล่าให้พระฟังได้ว่าเป็นอย่างไร' },
-    { scene: 'other', title: 'อย่างอื่น หรือยังไม่แน่ใจ', body: 'ฉันไม่เห็นภาพอะไร รู้สึกหลายอย่าง หรือยังอธิบายไม่ถูก', note: 'ไม่จำเป็นต้องเลือกให้เหมือนภาพใดภาพหนึ่ง' },
+  "th": [
+    {
+      "scene": "wandering",
+      "title": "ใจคิดเรื่องอื่น",
+      "body": "ปล่อยความคิดผ่านไปเบา ๆ แล้วกลับมาพักใจอย่างสบาย",
+      "note": "ไม่ต้องไล่ตาม และไม่ต้องผลักไส"
+    },
+    {
+      "scene": "straining",
+      "title": "พยายามมากจนเกร็ง",
+      "body": "คลายความตั้งใจ ผ่อนใบหน้าและไหล่ แล้วเริ่มใหม่เบา ๆ",
+      "note": "ถ้ายังตึง ลืมตาพักสักครู่"
+    },
+    {
+      "scene": "lightness",
+      "title": "โปร่ง โล่ง เบาสบาย",
+      "body": "พักอยู่กับความสบายอย่างรู้ตัว ไม่ต้องพยายามเพิ่มอะไร",
+      "note": "ให้ความผ่อนคลายค่อย ๆ ต่อเนื่อง"
+    },
+    {
+      "scene": "crystal",
+      "title": "เห็นดวงกลมใส",
+      "body": "มองอย่างสบาย ๆ ชัดแค่ไหนก็พอ ไม่ต้องเพ่งให้ชัดขึ้น",
+      "note": "หากภาพเลือน ปล่อยให้เป็นไปตามธรรมชาติ"
+    },
+    {
+      "scene": "small-self",
+      "title": "รู้สึกเหมือนตัวเล็ก",
+      "body": "รับรู้อย่างผ่อนคลาย ไม่ต้องปรับภาพหรือฝืนความรู้สึก",
+      "note": "ไม่ต้องเร่งหรือควบคุมสิ่งที่เกิดขึ้น"
+    },
+    {
+      "scene": "buddha",
+      "title": "เห็นภาพองค์พระภายใน",
+      "body": "รับรู้ภาพอย่างเบาสบาย โดยไม่ต้องบังคับให้คงอยู่",
+      "note": "ไม่จำเป็นต้องตีความสิ่งที่เห็น"
+    },
+    {
+      "scene": "brightness",
+      "title": "เห็นแสงสว่าง",
+      "body": "วางใจสบาย ๆ ไม่ต้องจ้องแสงหรือพยายามให้สว่างขึ้น",
+      "note": "รักษาความผ่อนคลายไว้"
+    },
+    {
+      "scene": "other",
+      "title": "อย่างอื่น หรือยังไม่แน่ใจ",
+      "body": "ไม่ต้องรีบให้เกิดภาพ กลับมาดูแลความสบายของกายและใจ",
+      "note": "ฝึกต่อได้ในจังหวะของตัวเอง"
+    }
   ],
-  en: [
-    { scene: 'wandering', title: 'My mind wandered', body: 'I thought about different things while sitting.', note: 'You can tell the monk what was on your mind.' },
-    { scene: 'straining', title: 'I tried too hard', body: 'I wanted to do it well, and I felt tense or forced it.', note: 'Tell the monk so you can find a more relaxed approach.' },
-    { scene: 'lightness', title: 'I felt light and relaxed', body: 'My body felt light, or my mind felt calm and at ease.', note: 'Use your own words to describe the feeling.' },
-    { scene: 'crystal', title: 'I pictured a clear ball', body: 'I saw or imagined a round, clear ball, like crystal.', note: 'You can describe it whether it felt clear or faint.' },
-    { scene: 'small-self', title: 'I felt small', body: 'I felt or pictured myself becoming smaller.', note: 'You can say whether it was a feeling or a mental image.' },
-    { scene: 'buddha', title: 'I pictured a Buddha within', body: 'I saw or imagined a Buddha image within me.', note: 'Describe what you experienced without assigning it a level.' },
-    { scene: 'brightness', title: 'I noticed light', body: 'I saw or sensed brightness during meditation.', note: 'You can tell the monk what it was like.' },
-    { scene: 'other', title: 'Something else, or not sure', body: 'I saw no image, felt several things, or cannot describe it yet.', note: 'Your experience does not need to match any picture.' },
-  ],
+  "en": [
+    {
+      "scene": "wandering",
+      "title": "My mind wandered",
+      "body": "Let thoughts pass gently, then return to a comfortable resting point.",
+      "note": "No need to follow them or push them away."
+    },
+    {
+      "scene": "straining",
+      "title": "I tried too hard",
+      "body": "Ease your effort. Soften your face and shoulders, then begin again gently.",
+      "note": "If tension remains, open your eyes and take a short break."
+    },
+    {
+      "scene": "lightness",
+      "title": "I felt light and relaxed",
+      "body": "Rest with that ease while staying aware. There is no need to add anything.",
+      "note": "Let the relaxation continue gently."
+    },
+    {
+      "scene": "crystal",
+      "title": "I pictured a clear ball",
+      "body": "Observe it gently, however clear or faint it is. There is no need to sharpen it.",
+      "note": "If it fades, let it change naturally."
+    },
+    {
+      "scene": "small-self",
+      "title": "I felt small",
+      "body": "Notice the feeling gently, without trying to change the image or resist it.",
+      "note": "There is no need to rush or control the experience."
+    },
+    {
+      "scene": "buddha",
+      "title": "I pictured a Buddha within",
+      "body": "Let the image be there gently, without trying to hold it in place.",
+      "note": "There is no need to interpret what you see."
+    },
+    {
+      "scene": "brightness",
+      "title": "I noticed light",
+      "body": "Stay at ease, without staring at the light or trying to make it brighter.",
+      "note": "Keep your attention soft and relaxed."
+    },
+    {
+      "scene": "other",
+      "title": "Something else, or not sure",
+      "body": "There is no need to create an image. Return to comfort in your body and mind.",
+      "note": "Continue at your own pace."
+    }
+  ]
 }
 
 export const meditationJourneyCopy = {
@@ -66,7 +146,7 @@ export const meditationJourneyCopy = {
     phases: ['ก่อนนั่ง', 'ช่วงนั่ง', 'หลังนั่ง'], phaseLabel: 'ช่วงของการนั่งสมาธิ',
     beforeTitle: 'เตรียมตัวง่าย ๆ 6 ขั้น', beforeIntro: 'ดูภาพเตรียมตัวก่อนเริ่มนั่งสมาธิ', breathIn: 'หายใจเข้า', breathOut: 'หายใจออก',
     duringTitle: 'ถึงเวลาพักใจ', duringBody: 'นั่งสบาย ๆ หลับตา แล้วฟังพระนำ ไม่ต้องปัดการ์ดต่อ', duringNote: 'ถ้าฝึกด้วยตัวเอง เปิดเสียงนำสมาธิด้านล่างได้', duringImage: 'ภาพพระนั่งสมาธิอย่างสงบใต้ต้นไม้',
-    afterTitle: 'เมื่อกี้รู้สึกอย่างไรบ้าง?', afterIntro: 'ภาพช่วยเล่าให้พระฟัง ไม่ใช่เป้าหมายที่ต้องทำให้ได้',
+    afterTitle: 'ฝึกต่ออย่างไรให้สบาย?', afterIntro: 'เลือกสิ่งที่ใกล้กับประสบการณ์ของคุณ แล้วลองปรับอย่างอ่อนโยน',
     afterNote: 'ภาพเป็นเพียงตัวอย่างประสบการณ์ ไม่ใช่สิ่งที่ต้องเห็นหรือคะแนนความสำเร็จ ไม่เห็นภาพอะไรก็เล่าได้',
     previous: 'การ์ดก่อนหน้า', next: 'การ์ดถัดไป', card: 'การ์ด', count: 'จาก', swipe: 'ปัดการ์ดหรือใช้ปุ่มลูกศร',
     basesToggle: 'รู้จักฐานทั้ง 7 เพิ่มเติม', basesHide: 'ซ่อนรายละเอียดฐานทั้ง 7', basesTitle: 'ฐานที่ตั้งของใจทั้ง 7', base7: 'ไปฐานที่ 7', base: 'ฐานที่',
@@ -78,7 +158,7 @@ export const meditationJourneyCopy = {
     phases: ['Before', 'Meditation time', 'After'], phaseLabel: 'Meditation stages',
     beforeTitle: 'Get ready in six steps', beforeIntro: 'A few simple steps before you begin.', breathIn: 'Breathe in', breathOut: 'Breathe out',
     duringTitle: 'Time to rest your mind', duringBody: 'Sit comfortably, close your eyes, and listen to the monk. No more swiping needed.', duringNote: 'Practising on your own? You can play the audio below.', duringImage: 'A monk sitting peacefully beneath a tree',
-    afterTitle: 'How did it feel?', afterIntro: 'Pictures to talk about, not goals to achieve.',
+    afterTitle: 'A gentle way to continue', afterIntro: 'Find what feels familiar, and explore a gentle adjustment.',
     afterNote: 'These are examples, not things you must see or a score of success. You can also describe seeing no image.',
     previous: 'Previous card', next: 'Next card', card: 'Card', count: 'of', swipe: 'Swipe cards or use arrow keys',
     basesToggle: 'Explore the seven bases', basesHide: 'Hide the seven bases', basesTitle: 'The seven bases of the mind', base7: 'Go to base 7', base: 'Base',

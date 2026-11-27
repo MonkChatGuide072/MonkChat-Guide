@@ -16,6 +16,7 @@ import { NisitVideoStudy } from '../components/nisit/NisitVideoStudy'
 import { NisitFlashcards } from '../components/nisit/NisitFlashcards'
 import { NisitThankYouCard } from '../components/nisit/NisitThankYouCard'
 import { NisitInteractiveDrill } from '../components/nisit/NisitInteractiveDrill'
+import { MonkChatStoryPlayer } from '../components/nisit/MonkChatStoryPlayer'
 import { NisitFieldCockpit } from '../components/nisit/NisitFieldCockpit'
 
 
@@ -57,6 +58,17 @@ export function NisitPracticePage() {
     }
     return 'vocab'
   })
+  const [drillSubMode, setDrillSubMode] = useState<'story' | 'drills'>('story')
+  const [storyInProgress, setStoryInProgress] = useState(false)
+  const selectPracticeTab = (next: NisitTab) => {
+    if (next === activeTab) return true
+    if (activeTab === 'drills' && storyInProgress && !window.confirm(isEnglish
+      ? 'Leave this chapter? This practice round will be cleared.'
+      : 'ออกจากบทฝึกนี้หรือไม่? การตัดสินใจในรอบนี้จะถูกล้าง')) return false
+    setActiveTab(next)
+    return true
+  }
+
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [localProfile, setLocalProfile] = useState<LocalNisitProfile | null>(() => {
     try {
@@ -181,7 +193,7 @@ export function NisitPracticePage() {
   const panelRef = useRef<HTMLDivElement>(null)
 
   const openPractice = (tab: NisitTab) => {
-    setActiveTab(tab)
+    if (!selectPracticeTab(tab)) return
     requestAnimationFrame(() => {
       panelRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' })
       panelRef.current?.focus({ preventScroll: true })
@@ -474,14 +486,14 @@ export function NisitPracticePage() {
                 id={`tab-${tab.id}`} data-module={tab.id} aria-selected={activeTab === tab.id} aria-controls={`panel-${tab.id}`}
                 tabIndex={activeTab === tab.id ? 0 : -1}
                 className={`training-tab ${tab.id === 'cockpit' ? 'training-tab-tools-start' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => selectPracticeTab(tab.id)}
                 onKeyDown={(e) => {
                   if (e.altKey || e.ctrlKey || e.metaKey) return
                   const key = e.key === 'ArrowDown' ? 'ArrowRight' : e.key === 'ArrowUp' ? 'ArrowLeft' : e.key
                   const nextIndex = getNextRovingTabIndex(key, index, tabs.length)
                   if (nextIndex == null) return
                   e.preventDefault()
-                  setActiveTab(tabs[nextIndex].id)
+                  if (!selectPracticeTab(tabs[nextIndex].id)) return
                   tabRefs.current[nextIndex]?.focus()
                 }}>
                 <span className="training-tab-icon"><NisitModuleArt module={tab.id} compact /></span>
@@ -507,22 +519,83 @@ export function NisitPracticePage() {
                 ? (isEnglish ? 'LEARN & REHEARSE' : 'เรียนรู้และฝึกซ้อม')
                 : (isEnglish ? 'ACTIVITY TOOLS' : 'เครื่องมือเสริมกิจกรรม')}</p>
               <h2>{isEnglish ? selectedModule.en : selectedModule.th}</h2>
-              <p>{isEnglish ? selectedModule.descriptionEn : selectedModule.descriptionTh}</p>
+              <p>{activeTab === 'drills' && drillSubMode === 'story'
+                ? (isEnglish ? 'Step into a Monk Chat encounter. Choose your words and see how the conversation unfolds.' : 'เข้าสู่เหตุการณ์ Monk Chat เลือกคำพูด แล้วดูว่าบทสนทนาจะดำเนินต่ออย่างไร')
+                : (isEnglish ? selectedModule.descriptionEn : selectedModule.descriptionTh)}</p>
             </div>
             <div className="training-panel-illustration"><NisitModuleArt module={activeTab} /></div>
             <span className="training-panel-number" aria-hidden="true">{String(tabs.indexOf(selectedModule) + 1).padStart(2, '0')}</span>
           </div>
           <div className={`training-module ${selectedModule.group === 'tools' ? 'training-tools' : ''}`} data-module={activeTab}>
           {activeTab === 'drills' && (
-            <NisitInteractiveDrill
-              isEnglish={isEnglish}
-              studentCode={authProfile?.student_code ?? localProfile?.studentId ?? 'AYT-MONK'}
-              studentName={
-                authProfile?.display_name ??
-                localProfile?.fullName ??
-                (isEnglish ? 'Student Monk' : 'พระนิสิตผู้ปฏิบัติหน้าที่')
-              }
-            />
+            <div className="space-y-5">
+              {/* Mode Switcher: Story Simulation vs 14 Scenario Drills */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 bg-gradient-to-r from-[#FAF6EE] to-[#F5ECE0] rounded-2xl border border-brand-gold/30">
+                <div className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-stone-200 shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setDrillSubMode('story')}
+                    aria-pressed={drillSubMode === 'story'}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      drillSubMode === 'story'
+                        ? 'bg-brand-maroon text-white shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
+                    }`}
+                  >
+                    <span>{isEnglish ? 'Story Simulation' : 'เรื่องราวต่อเนื่อง'}</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                      drillSubMode === 'story' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
+                    }`}>
+                      {isEnglish ? 'Chapter 1' : 'บทที่ 1'}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setDrillSubMode('drills')}
+                    aria-pressed={drillSubMode === 'drills'}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      drillSubMode === 'drills'
+                        ? 'bg-brand-maroon text-white shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
+                    }`}
+                  >
+                    <span>🎯 {isEnglish ? '14 Question Drills' : 'ข้อสอบ 14 สถานการณ์'}</span>
+                  </button>
+                </div>
+
+                <div className="text-xs text-brand-muted hidden sm:block">
+                  {drillSubMode === 'story'
+                    ? (isEnglish ? 'Interactive branching dialogue with visitors' : 'บทสนทนาแตกแขนงตามการตัดสินใจจริง')
+                    : (isEnglish ? 'Multiple choice & sentence arrangement' : 'โจทย์เลือกตอบและเรียงประโยค')}
+                </div>
+              </div>
+
+              <div hidden={drillSubMode !== 'story'}>
+                <MonkChatStoryPlayer
+                  isEnglish={isEnglish}
+                  studentCode={authProfile?.student_code ?? localProfile?.studentId ?? 'AYT-MONK'}
+                  studentName={
+                    authProfile?.display_name ??
+                    localProfile?.fullName ??
+                    (isEnglish ? 'Student Monk' : 'พระนิสิตผู้ปฏิบัติหน้าที่')
+                  }
+                  onExit={() => setDrillSubMode('drills')}
+                  onProgressChange={setStoryInProgress}
+                />
+              </div>
+              {drillSubMode === 'drills' && (
+                <NisitInteractiveDrill
+                  isEnglish={isEnglish}
+                  studentCode={authProfile?.student_code ?? localProfile?.studentId ?? 'AYT-MONK'}
+                  studentName={
+                    authProfile?.display_name ??
+                    localProfile?.fullName ??
+                    (isEnglish ? 'Student Monk' : 'พระนิสิตผู้ปฏิบัติหน้าที่')
+                  }
+                />
+              )}
+            </div>
           )}
           {activeTab === 'cockpit' && (
             <NisitFieldCockpit

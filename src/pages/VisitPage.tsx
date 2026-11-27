@@ -1,3 +1,4 @@
+import { usePublicPageCopy, pageValue } from '../lib/siteContent'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
@@ -75,9 +76,10 @@ export function VisitPage() {
   return <VisitorHome currentLang={currentLang} />
 }
 
-function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
-  const { i18n } = useTranslation()
-  const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
+export function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
+  const isEnglish = currentLang === 'en'
+  const copy = usePublicPageCopy('home', currentLang)
+  const text = (key: string, fallback: string) => pageValue(copy, key, currentLang, fallback)
 
   // Live 5-minute meditation player state
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -104,41 +106,41 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
 
   const whatToExpect = [
     {
-      title: isEnglish ? 'Meet the monks' : 'พบและสนทนากับพระสงฆ์',
-      desc: isEnglish
+      title: text('home_text_005', isEnglish ? 'Meet the monks' : 'พบและสนทนากับพระสงฆ์'),
+      desc: text('home_text_006', isEnglish
         ? 'Have an open, friendly conversation. Ask anything about monastic life, Thai culture, and finding calm.'
-        : 'พูดคุยอย่างเปิดใจ เหมือนมีเพื่อนรับฟัง ถามได้ทุกเรื่องที่สงสัยเกี่ยวกับชีวิตพระ วัฒนธรรม หรือการปล่อยวางความเครียด',
-      img: '/images/home/monkchat-meet-monks.jpg',
+        : 'พูดคุยอย่างเปิดใจ เหมือนมีเพื่อนรับฟัง ถามได้ทุกเรื่องที่สงสัยเกี่ยวกับชีวิตพระ วัฒนธรรม หรือการปล่อยวางความเครียด'),
+      img: text('home_image_007', '/images/home/monkchat-meet-monks.jpg'),
       width: 452,
       height: 678,
       imageClassName: 'object-[center_62%]',
     },
     {
-      title: isEnglish ? 'Short meditation' : 'ฝึกสมาธิเบื้องต้น',
-      desc: isEnglish
+      title: text('home_text_008', isEnglish ? 'Short meditation' : 'ฝึกสมาธิเบื้องต้น'),
+      desc: text('home_text_009', isEnglish
         ? 'A gentle 5–10 minute breathing pause. Seated comfortably on chairs under shade trees—no experience needed.'
-        : 'สมาธิสั้น 5–10 นาที นั่งเก้าอี้สบายๆ ใต้ร่มไม้ใหญ่ หลับตาเบาๆ ผ่อนคลายร่างกาย และสร้างสติรู้ตัว',
-      img: '/images/home/monkchat-real-meditation.jpg',
+        : 'สมาธิสั้น 5–10 นาที นั่งเก้าอี้สบายๆ ใต้ร่มไม้ใหญ่ หลับตาเบาๆ ผ่อนคลายร่างกาย และสร้างสติรู้ตัว'),
+      img: text('home_image_010', '/images/home/monkchat-real-meditation.jpg'),
       width: 1024,
       height: 682,
       imageClassName: 'object-[center_28%]',
     },
     {
-      title: isEnglish ? 'Q&A' : 'ถาม-ตอบข้อสงสัย',
-      desc: isEnglish
+      title: text('home_text_011', isEnglish ? 'Q&A' : 'ถาม-ตอบข้อสงสัย'),
+      desc: text('home_text_012', isEnglish
         ? 'Every question is welcome. Ask freely about monk rules, temple etiquette, or everyday peace of mind.'
-        : 'ถามได้ทุกข้อสงสัยอย่างสบายใจ ทั้งเรื่องธรรมเนียม ข้อห้ามในวัด หรือหลักคิดในการใช้ชีวิต',
-      img: '/images/home/monkchat-qa-dialogue.jpg',
+        : 'ถามได้ทุกข้อสงสัยอย่างสบายใจ ทั้งเรื่องธรรมเนียม ข้อห้ามในวัด หรือหลักคิดในการใช้ชีวิต'),
+      img: text('home_image_013', '/images/home/monkchat-qa-dialogue.jpg'),
       width: 1024,
       height: 682,
       imageClassName: 'object-[center_32%]',
     },
     {
-      title: isEnglish ? 'Photo souvenir' : 'ภาพความทรงจำ',
-      desc: isEnglish
+      title: text('home_text_014', isEnglish ? 'Photo souvenir' : 'ภาพความทรงจำ'),
+      desc: text('home_text_015', isEnglish
         ? 'Capture a memorable moment of cross-cultural friendship and kindness in ancient Ayutthaya.'
-        : 'เก็บภาพความประทับใจและมิตรภาพอันอบอุ่นร่วมกับพระสงฆ์ ณ เมืองประวัติศาสตร์อยุธยา',
-      img: '/images/home/monkchat-souvenir.jpg',
+        : 'เก็บภาพความประทับใจและมิตรภาพอันอบอุ่นร่วมกับพระสงฆ์ ณ เมืองประวัติศาสตร์อยุธยา'),
+      img: text('home_image_016', '/images/home/monkchat-souvenir.jpg'),
       width: 828,
       height: 370,
       imageClassName: 'object-[center_35%]',
@@ -147,25 +149,25 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
 
   const atmosphereMoments = [
     {
-      title: isEnglish
+      title: text('home_text_017', isEnglish
         ? 'Warm cultural exchange under the trees'
-        : 'ล้อมวงคุยสบายๆ ใต้ร่มไม้ใหญ่ วัดมหาธาตุ',
-      caption: isEnglish
+        : 'ล้อมวงคุยสบายๆ ใต้ร่มไม้ใหญ่ วัดมหาธาตุ'),
+      caption: text('home_text_018', isEnglish
         ? 'Real open-air conversations with MCU student monks where you can sit comfortably and ask about Thai monastic life, mindfulness, and everyday happiness.'
-        : 'บรรยากาศสนทนาจริงใต้ร่มเงาไม้ร่มรื่น พูดคุยซักถามวิถีชีวิตพระ วัฒนธรรมไทย และการดูแลใจอย่างเป็นมิตร ไร้พิธีรีตอง',
-      img: '/images/home/monkchat-real-atmosphere.jpg',
+        : 'บรรยากาศสนทนาจริงใต้ร่มเงาไม้ร่มรื่น พูดคุยซักถามวิถีชีวิตพระ วัฒนธรรมไทย และการดูแลใจอย่างเป็นมิตร ไร้พิธีรีตอง'),
+      img: text('home_image_019', '/images/home/monkchat-real-atmosphere.jpg'),
       width: 1024,
       height: 569,
       imageClassName: 'object-[center_45%]',
     },
     {
-      title: isEnglish
+      title: text('home_text_020', isEnglish
         ? 'Rest & gentle stillness for everyone'
-        : 'พักกาย พักใจ เริ่มต้นได้ทุกคน',
-      caption: isEnglish
+        : 'พักกาย พักใจ เริ่มต้นได้ทุกคน'),
+      caption: text('home_text_021', isEnglish
         ? 'Escape the midday heat and enjoy five to ten minutes of calm breathing—welcoming all backgrounds, seated comfortably on chairs.'
-        : 'หลบไอร้อนมาสัมผัสความสงบเบื้องต้น 5–10 นาที นั่งเก้าอี้สบายๆ ผ่อนคลายทั้งร่างกายและจิตใจ เหมาะสำหรับทุกคน',
-      img: '/images/home/monkchat-real-stillness.jpg',
+        : 'หลบไอร้อนมาสัมผัสความสงบเบื้องต้น 5–10 นาที นั่งเก้าอี้สบายๆ ผ่อนคลายทั้งร่างกายและจิตใจ เหมาะสำหรับทุกคน'),
+      img: text('home_image_022', '/images/home/monkchat-real-stillness.jpg'),
       width: 1024,
       height: 682,
       imageClassName: 'object-[center_32%]',
@@ -174,33 +176,33 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
 
   const topQuestions = [
     {
-      q: isEnglish ? 'Why do Buddhist monks wear orange or saffron robes?' : 'ทำไมพระสงฆ์จึงครองจีวรสีส้มหรือสีกรัก?',
-      a: isEnglish
+      q: text('home_text_023', isEnglish ? 'Why do Buddhist monks wear orange or saffron robes?' : 'ทำไมพระสงฆ์จึงครองจีวรสีส้มหรือสีกรัก?'),
+      a: text('home_text_024', isEnglish
         ? 'Traditionally, robes were dyed using natural forest materials like roots, tree bark, and turmeric. The earth tone symbolizes simplicity, detachment from luxury, and a life dedicated to inner purification.'
-        : 'ในอดีต จีวรของพระสงฆ์ย้อมด้วยสีธรรมชาติจากเปลือกไม้และขมิ้น สีส้มจึงสะท้อนถึงการสละความฟุ้งเฟ้อทางโลก และมุ่งสู่ชีวิตที่เรียบง่ายบริสุทธิ์',
+        : 'ในอดีต จีวรของพระสงฆ์ย้อมด้วยสีธรรมชาติจากเปลือกไม้และขมิ้น สีส้มจึงสะท้อนถึงการสละความฟุ้งเฟ้อทางโลก และมุ่งสู่ชีวิตที่เรียบง่ายบริสุทธิ์'),
     },
     {
-      q: isEnglish ? 'Why do monks keep physical distance from women?' : 'ทำไมพระสงฆ์จึงต้องรักษาระยะห่างกับสตรี?',
-      a: isEnglish
+      q: text('home_text_025', isEnglish ? 'Why do monks keep physical distance from women?' : 'ทำไมพระสงฆ์จึงต้องรักษาระยะห่างกับสตรี?'),
+      a: text('home_text_026', isEnglish
         ? 'As part of our ancient monastic vows (Vinaya), monks refrain from physical contact with women to maintain clear purity and mutual respect. Monks are always delighted to converse and answer questions with kindness!'
-        : 'เป็นข้อปฏิบัติทางพระวินัยเพื่อรักษาความบริสุทธิ์และความเคารพซึ่งกันและกัน พระสงฆ์ยินดีอย่างยิ่งที่จะสนทนาและตอบคำถามด้วยเมตตาจิตเสมอครับ',
+        : 'เป็นข้อปฏิบัติทางพระวินัยเพื่อรักษาความบริสุทธิ์และความเคารพซึ่งกันและกัน พระสงฆ์ยินดีอย่างยิ่งที่จะสนทนาและตอบคำถามด้วยเมตตาจิตเสมอครับ'),
     },
     {
-      q: isEnglish ? 'Can I practice meditation if I belong to another religion?' : 'ถ้าไม่ได้นับถือศาสนาพุทธ สามารถฝึกสมาธิได้ไหม?',
-      a: isEnglish
+      q: text('home_text_027', isEnglish ? 'Can I practice meditation if I belong to another religion?' : 'ถ้าไม่ได้นับถือศาสนาพุทธ สามารถฝึกสมาธิได้ไหม?'),
+      a: text('home_text_028', isEnglish
         ? 'Yes, absolutely! Meditation is universal peace and mindful observation of breath. It belongs to all human beings regardless of belief, nationality, or cultural background.'
-        : 'สามารถฝึกได้แน่นอน 100% ครับ สมาธิคือการพักผ่อนของจิตใจและการรู้ลมหายใจ ซึ่งเป็นธรรมชาติสากลของมนุษย์ทุกคนโดยไม่มีการแบ่งแยกความเชื่อ',
+        : 'สามารถฝึกได้แน่นอน 100% ครับ สมาธิคือการพักผ่อนของจิตใจและการรู้ลมหายใจ ซึ่งเป็นธรรมชาติสากลของมนุษย์ทุกคนโดยไม่มีการแบ่งแยกความเชื่อ'),
     },
     {
-      q: isEnglish ? 'How do I join Ayutthaya Monk Chat?' : 'ต้องการเข้าร่วมกิจกรรมต้องทำอย่างไร?',
-      a: isEnglish
+      q: text('home_text_029', isEnglish ? 'How do I join Ayutthaya Monk Chat?' : 'ต้องการเข้าร่วมกิจกรรมต้องทำอย่างไร?'),
+      a: text('home_text_030', isEnglish
         ? 'Just walk in! Sessions take place every Monday and Friday from 13:15 onwards under the shaded trees near the central prang at Wat Mahathat. 100% free with no booking required.'
-        : 'เดินเข้ามาได้เลยครับ! จัดทุกวันจันทร์และศุกร์ ตั้งแต่เวลา 13:15 น. ใต้ร่มไม้ใหญ่ใกล้พระปรางค์ประธานวัดมหาธาตุ ฟรีโดยไม่ต้องจองล่วงหน้า',
+        : 'เดินเข้ามาได้เลยครับ! จัดทุกวันจันทร์และศุกร์ ตั้งแต่เวลา 13:15 น. ใต้ร่มไม้ใหญ่ใกล้พระปรางค์ประธานวัดมหาธาตุ ฟรีโดยไม่ต้องจองล่วงหน้า'),
     },
   ]
 
-  const mapUrl = 'https://www.google.com/maps/search/?api=1&query=14.3570,100.5675'
-  const mapEmbedUrl = 'https://maps.google.com/maps?q=14.3570,100.5675&z=17&output=embed'
+  const mapUrl = text('home_map_url', 'https://www.google.com/maps/search/?api=1&query=14.3570,100.5675')
+  const mapEmbedUrl = text('home_map_embed', 'https://maps.google.com/maps?q=14.3570,100.5675&z=17&output=embed')
 
   return (
     <div className="bg-[#FAF7F2] text-[#292524] break-words [overflow-wrap:anywhere] min-h-screen">
@@ -230,18 +232,18 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             <div>
               <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#8A5816] bg-[#EBD8B0]/70 px-3 py-1 rounded-full">
                 <span>✦</span>
-                <span>{isEnglish ? 'Ayutthaya Monk Chat Milestone · Session #122' : 'สถิติประวัติศาสตร์ Ayutthaya Monk Chat · ครั้งที่ 122'}</span>
+                <span>{`${text('home_text_031', '')} ${text('home_stat_sessions', '122')}`}</span>
               </span>
               <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#451A03] mt-2">
-                {isEnglish
+                {text('home_text_032', isEnglish
                   ? 'Official Historic Field Record at Wat Mahathat'
-                  : 'สถิติประวัติศาสตร์กิจกรรมจริง ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
+                  : 'สถิติประวัติศาสตร์กิจกรรมจริง ณ วัดมหาธาตุ พระนครศรีอยุธยา')}
               </h2>
             </div>
             <div className="flex items-center gap-2 text-xs text-[#78716C]">
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span className="font-medium">
-                {isEnglish ? 'Updated: Session #122 (Nov 13, 2026)' : 'บันทึกทางการล่าสุด: ครั้งที่ 122 (13 พ.ย. 2569)'}
+                {`${text('home_text_033', '')}: ${text('home_stat_sessions', '122')} (${text('home_stat_date', '')})`}
               </span>
             </div>
           </div>
@@ -251,52 +253,52 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             {/* 1. 122 ครั้ง */}
             <div className="text-center p-2">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
-                <AnimatedCounter end={122} />
+                <AnimatedCounter end={Number(text('home_stat_sessions', '122'))} />
               </div>
               <div className="text-xs text-[#57534E] mt-1 font-semibold">
-                {isEnglish ? 'Historic Sessions' : 'ครั้งจัดกิจกรรม'}
+                {text('home_text_034', isEnglish ? 'Historic Sessions' : 'ครั้งจัดกิจกรรม')}
               </div>
               <div className="text-[10px] text-[#A8A29E] mt-0.5">
-                {isEnglish ? 'Ayutthaya heritage' : 'ประวัติศาสตร์อยุธยา'}
+                {text('home_text_035', isEnglish ? 'Ayutthaya heritage' : 'ประวัติศาสตร์อยุธยา')}
               </div>
             </div>
 
             {/* 2. 15,317 ท่าน */}
             <div className="text-center p-2">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
-                <AnimatedCounter end={15317} />
+                <AnimatedCounter end={Number(text('home_stat_participants', '15317'))} />
               </div>
               <div className="text-xs text-[#57534E] mt-1 font-semibold">
-                {isEnglish ? 'Total Participants' : 'ผู้เข้าร่วมทั้งสิ้น (ท่าน)'}
+                {text('home_text_036', isEnglish ? 'Total Participants' : 'ผู้เข้าร่วมทั้งสิ้น (ท่าน)')}
               </div>
               <div className="text-[10px] text-[#A8A29E] mt-0.5">
-                {isEnglish ? 'Welcomed warmly' : 'สนทนาธรรมและสมาธิ'}
+                {text('home_text_037', isEnglish ? 'Welcomed warmly' : 'สนทนาธรรมและสมาธิ')}
               </div>
             </div>
 
             {/* 3. 94 ชนชาติ */}
             <div className="text-center p-2">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
-                <AnimatedCounter end={94} />
+                <AnimatedCounter end={Number(text('home_stat_nations', '94'))} />
               </div>
               <div className="text-xs text-[#57534E] mt-1 font-semibold">
-                {isEnglish ? 'Nations Reached' : 'ชนชาติ / ประเทศ'}
+                {text('home_text_038', isEnglish ? 'Nations Reached' : 'ชนชาติ / ประเทศ')}
               </div>
               <div className="text-[10px] text-[#A8A29E] mt-0.5">
-                {isEnglish ? 'Global friendship' : 'มิตรภาพไร้พรมแดน'}
+                {text('home_text_039', isEnglish ? 'Global friendship' : 'มิตรภาพไร้พรมแดน')}
               </div>
             </div>
 
             {/* 4. 1,276+ ชม. (76,585 นาที) */}
             <div className="text-center p-2">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
-                <AnimatedCounter end={1276} suffix="+" />
+                <AnimatedCounter end={Number(text('home_stat_hours', '1276'))} suffix="+" />
               </div>
               <div className="text-xs text-[#57534E] mt-1 font-semibold">
-                {isEnglish ? 'Meditation Hours' : 'เวลานั่งสมาธิสะสม (ชม.)'}
+                {text('home_text_040', isEnglish ? 'Meditation Hours' : 'เวลานั่งสมาธิสะสม (ชม.)')}
               </div>
               <div className="text-[10px] text-[#8A5816] font-mono mt-0.5 font-medium">
-                {isEnglish ? '76,585 total mins' : '76,585 นาทีรวม'}
+                {`${Number(text('home_stat_minutes', '76585')).toLocaleString()} ${isEnglish ? 'total mins' : 'นาทีรวม'}`}
               </div>
             </div>
 
@@ -306,10 +308,10 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 0 ฿
               </div>
               <div className="text-xs text-[#57534E] mt-1 font-semibold">
-                {isEnglish ? '100% Free' : 'ฟรี 100% ทุกกิจกรรม'}
+                {text('home_text_042', isEnglish ? '100% Free' : 'ฟรี 100% ทุกกิจกรรม')}
               </div>
               <div className="text-[10px] text-[#15803D] mt-0.5 font-medium">
-                {isEnglish ? 'Universal gift of calm' : 'บริการด้วยกุศลจิต'}
+                {text('home_text_043', isEnglish ? 'Universal gift of calm' : 'บริการด้วยกุศลจิต')}
               </div>
             </div>
           </div>
@@ -324,23 +326,23 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
             {([
               {
                 icon: 'calendar',
-                value: isEnglish ? 'Mon & Fri' : 'จันทร์ และ ศุกร์',
-                label: isEnglish ? 'Meditation sessions' : 'กิจกรรมนำสมาธิ',
+                value: text('home_text_044', isEnglish ? 'Mon & Fri' : 'จันทร์ และ ศุกร์'),
+                label: text('home_text_045', isEnglish ? 'Meditation sessions' : 'กิจกรรมนำสมาธิ'),
               },
               {
                 icon: 'clock',
-                value: isEnglish ? '13:15 onwards' : '13:15 น. เป็นต้นไป',
-                label: isEnglish ? 'Starting time' : 'เวลาเริ่มกิจกรรม',
+                value: text('home_text_046', isEnglish ? '13:15 onwards' : '13:15 น. เป็นต้นไป'),
+                label: text('home_text_047', isEnglish ? 'Starting time' : 'เวลาเริ่มกิจกรรม'),
               },
               {
                 icon: 'hourglass',
-                value: isEnglish ? '5–10 min' : '5–10 นาที',
-                label: isEnglish ? 'Guided session' : 'ระยะเวลานำสมาธิ',
+                value: text('home_text_048', isEnglish ? '5–10 min' : '5–10 นาที'),
+                label: text('home_text_049', isEnglish ? 'Guided session' : 'ระยะเวลานำสมาธิ'),
               },
               {
                 icon: 'pin',
-                value: isEnglish ? 'Ayutthaya' : 'พระนครศรีอยุธยา',
-                label: isEnglish ? 'Wat Mahathat' : 'วัดมหาธาตุ',
+                value: text('home_text_050', isEnglish ? 'Ayutthaya' : 'พระนครศรีอยุธยา'),
+                label: text('home_text_051', isEnglish ? 'Wat Mahathat' : 'วัดมหาธาตุ'),
               },
             ] as const).map((item) => (
               <div key={item.icon} className="flex min-w-0 items-start gap-2.5 sm:gap-3">
@@ -348,14 +350,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 <div className="min-w-0">
                   <dt className="text-xs leading-5 text-brand-muted">{item.label}</dt>
                   <dd className="mt-1 text-sm font-semibold leading-6 text-brand-text tabular-nums">
-                    {item.icon === 'clock' ? (
-                      <>
-                        <span className="whitespace-nowrap">{isEnglish ? '13:15' : '13:15 น.'}</span>{' '}
-                        <span className="whitespace-nowrap">{isEnglish ? 'onwards' : 'เป็นต้นไป'}</span>
-                      </>
-                    ) : (
-                      item.value
-                    )}
+                    {item.value}
                   </dd>
                 </div>
               </div>
@@ -371,15 +366,15 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="space-y-3 max-w-xl text-center lg:text-left">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBD8B0] text-[#78350F] text-xs font-bold font-mono">
-                🎧 ONE-TAP MEDITATION STATION
+                {text('home_station_label', '🎧 ONE-TAP MEDITATION STATION')}
               </span>
               <h2 id="live-meditation-heading" className="text-2xl sm:text-3xl font-serif font-bold text-[#451A03] tracking-tight">
-                {isEnglish ? 'A 5-Minute Mental Coffee Break' : 'สมาธิสั้น 5 นาที: พักใจ พักความคิด'}
+                {text('home_text_054', isEnglish ? 'A 5-Minute Mental Coffee Break' : 'สมาธิสั้น 5 นาที: พักใจ พักความคิด')}
               </h2>
               <p className="text-sm text-[#57534E] leading-relaxed">
-                {isEnglish
+                {text('home_text_055', isEnglish
                   ? 'Listen to our peaceful guided meditation audio by Lp Pasura (Dhammakaya Foundation). Sit back comfortably, close your eyes softly, and let your mind settle into gentle stillness.'
-                  : 'ร่วมฝึกสมาธิเบื้องต้นผ่านเสียงนำสมาธิสากลของพระอาจารย์พสุธา (มูลนิธิธรรมกาย) นั่งเก้าอี้สบายๆ ค่อยๆ หลับตาลงเบาๆ และรวมใจหยุดนิ่ง ณ ศูนย์กลางกาย'}
+                  : 'ร่วมฝึกสมาธิเบื้องต้นผ่านเสียงนำสมาธิสากลของพระอาจารย์พสุธา (มูลนิธิธรรมกาย) นั่งเก้าอี้สบายๆ ค่อยๆ หลับตาลงเบาๆ และรวมใจหยุดนิ่ง ณ ศูนย์กลางกาย')}
               </p>
             </div>
 
@@ -396,7 +391,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 </button>
                 <div>
                   <div className="text-sm font-bold text-[#451A03]">
-                    {isPlaying ? (isEnglish ? 'Playing Guided Audio' : 'กำลังเล่นเสียงนำสมาธิ') : (isEnglish ? 'Tap to Start Audio' : 'แตะเพื่อเริ่มสมาธิ')}
+                    {isPlaying ? (text('home_text_056', isEnglish ? 'Playing Guided Audio' : 'กำลังเล่นเสียงนำสมาธิ')) : (text('home_text_057', isEnglish ? 'Tap to Start Audio' : 'แตะเพื่อเริ่มสมาธิ'))}
                   </div>
                   <div className="text-xs font-mono text-[#8A5816] mt-0.5 font-bold">
                     {formatTime(currentTime)} / {formatTime(duration)}
@@ -412,7 +407,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                   <span className="w-1.5 h-4 bg-[#D97706] rounded-full animate-bounce [animation-delay:0.1s]"></span>
                   <span className="w-1.5 h-6 bg-[#D97706] rounded-full animate-bounce [animation-delay:0.3s]"></span>
                   <span className="text-[11px] text-[#78350F] font-serif italic ml-2">
-                    "Relax your body and mind..."
+                    "{text('home_relax_quote', 'Relax your body and mind...')}"
                   </span>
                 </div>
               )}
@@ -425,13 +420,13 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
             <div>
               <h2 className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl">
-                {isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม'}
+                {text('home_text_058', isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม')}
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-brand-muted max-w-md">
-              {isEnglish
+              {text('home_text_059', isEnglish
                 ? 'Sit under the historic trees with MCU student monks. Friendly, open, and peaceful.'
-                : 'ล้อมวงคุยสบายๆ ใต้ร่มเงาไม้โบราณสถาน กับพระนิสิต มจร อย่างเป็นมิตรและเป็นกันเอง'}
+                : 'ล้อมวงคุยสบายๆ ใต้ร่มเงาไม้โบราณสถาน กับพระนิสิต มจร อย่างเป็นมิตรและเป็นกันเอง')}
             </p>
           </div>
 
@@ -470,17 +465,17 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           <div className="flex items-center justify-between">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
-                {isEnglish ? 'Top Curiosities' : 'คำถามยอดนิยม'}
+                {text('home_text_060', isEnglish ? 'Top Curiosities' : 'คำถามยอดนิยม')}
               </span>
               <h2 id="curated-qa-heading" className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl mt-1">
-                {isEnglish ? 'Questions Visitors Wonder Most' : 'ข้อสงสัยที่นักท่องเที่ยวมักถามบ่อย'}
+                {text('home_text_061', isEnglish ? 'Questions Visitors Wonder Most' : 'ข้อสงสัยที่นักท่องเที่ยวมักถามบ่อย')}
               </h2>
             </div>
             <Link
               to="/qa"
               className="text-xs font-bold text-brand-terracotta hover:text-brand-terracotta-dark flex items-center gap-1 shrink-0"
             >
-              <span>{isEnglish ? 'View all 200 Q&As' : 'ดูคลังคำถาม 200 ข้อ'}</span>
+              <span>{text('home_text_062', isEnglish ? 'View all 200 Q&As' : 'ดูคลังคำถาม 200 ข้อ')}</span>
               <span>→</span>
             </Link>
           </div>
@@ -515,23 +510,23 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         <section id="location-details" className="scroll-mt-8 space-y-4">
           <div>
             <h2 className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl">
-              {isEnglish ? 'Location & map' : 'สถานที่และแผนที่'}
+              {text('home_text_063', isEnglish ? 'Location & map' : 'สถานที่และแผนที่')}
             </h2>
             <p className="text-sm leading-6 text-brand-muted [text-wrap:pretty]">
-              {isEnglish
+              {text('home_text_064', isEnglish
                 ? 'How to find our shaded outdoor meeting spot inside Wat Mahathat, Ayutthaya.'
-                : 'จุดนัดพบกิจกรรม Monk Chat ใต้ร่มไม้ใหญ่ ณ วัดมหาธาตุ พระนครศรีอยุธยา'}
+                : 'จุดนัดพบกิจกรรม Monk Chat ใต้ร่มไม้ใหญ่ ณ วัดมหาธาตุ พระนครศรีอยุธยา')}
             </p>
           </div>
 
           <div className="overflow-hidden rounded-3xl border border-[#E7DFD3] bg-[#FFFDF9] shadow-xs sm:grid sm:grid-cols-2">
             <div className="relative h-64 w-full sm:h-full">
               <img
-                src="/images/home/monkchat-spot-wat-mahathat.jpg"
+                src={text('home_image_065', '/images/home/monkchat-spot-wat-mahathat.jpg')}
                 alt={
-                  isEnglish
+                  text('home_text_066', isEnglish
                     ? 'Real Monk Chat outdoor meeting spot under the shade trees at Wat Mahathat, Ayutthaya'
-                    : 'ภาพจุดจัดกิจกรรม Monk Chat จริงใต้ร่มไม้ใหญ่ วัดมหาธาตุ พระนครศรีอยุธยา'
+                    : 'ภาพจุดจัดกิจกรรม Monk Chat จริงใต้ร่มไม้ใหญ่ วัดมหาธาตุ พระนครศรีอยุธยา')
                 }
                 width={1024}
                 height={576}
@@ -539,22 +534,22 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 className="h-full w-full object-cover object-[center_45%]"
               />
               <span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-brand-maroon shadow-xs border border-[#E7DFD3]">
-                {isEnglish ? 'Real meeting spot · Under shade trees' : 'ภาพจุดกิจกรรมจริง · ใต้ร่มไม้ใหญ่ วัดมหาธาตุ'}
+                {text('home_text_067', isEnglish ? 'Real meeting spot · Under shade trees' : 'ภาพจุดกิจกรรมจริง · ใต้ร่มไม้ใหญ่ วัดมหาธาตุ')}
               </span>
             </div>
 
             <div className="flex flex-col justify-between space-y-4 p-5 sm:p-7">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
-                  {isEnglish ? 'Historic Site' : 'จุดนัดพบโบราณสถาน'}
+                  {text('home_text_068', isEnglish ? 'Historic Site' : 'จุดนัดพบโบราณสถาน')}
                 </span>
                 <h3 className="mt-1 font-serif text-xl font-bold text-brand-maroon">
-                  {isEnglish ? 'Wat Mahathat, Ayutthaya' : 'วัดมหาธาตุ พระนครศรีอยุธยา'}
+                  {text('home_text_069', isEnglish ? 'Wat Mahathat, Ayutthaya' : 'วัดมหาธาตุ พระนครศรีอยุธยา')}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-brand-muted">
-                  {isEnglish
+                  {text('home_text_070', isEnglish
                     ? 'Shaded courtyard inside Wat Mahathat, near the central prang. Feel free to walk in and take a chair under the trees. Monks are warmly waiting to welcome you.'
-                    : 'บริเวณลานร่มไม้ใหญ่ภายในวัดมหาธาตุ ใกล้พระปรางค์ประธาน เดินเข้ามานั่งเก้าอี้ใต้ร่มไม้ได้เลย มีพระนิสิตคอยต้อนรับอย่างอบอุ่นและเป็นกันเอง'}
+                    : 'บริเวณลานร่มไม้ใหญ่ภายในวัดมหาธาตุ ใกล้พระปรางค์ประธาน เดินเข้ามานั่งเก้าอี้ใต้ร่มไม้ได้เลย มีพระนิสิตคอยต้อนรับอย่างอบอุ่นและเป็นกันเอง')}
                 </p>
               </div>
 
@@ -562,23 +557,23 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 <div className="flex items-start gap-2.5 text-sm font-semibold text-brand-maroon">
                   <GuideIcon name="pin" />
                   <span>
-                    {isEnglish
+                    {text('home_text_071', isEnglish
                       ? 'Wat Mahathat (near central prang), Ayutthaya'
-                      : 'จุดนัดพบ: ลานร่มไม้ภายในวัดมหาธาตุ พระนครศรีอยุธยา'}
+                      : 'จุดนัดพบ: ลานร่มไม้ภายในวัดมหาธาตุ พระนครศรีอยุธยา')}
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5 text-sm leading-6 text-brand-muted">
                   <GuideIcon name="clock" />
                   <span>
-                    {isEnglish
+                    {text('home_text_072', isEnglish
                       ? 'Every Monday & Friday from 13:15 onwards'
-                      : 'ทุกวันจันทร์และวันศุกร์ เวลา 13:15 น. เป็นต้นไป'}
+                      : 'ทุกวันจันทร์และวันศุกร์ เวลา 13:15 น. เป็นต้นไป')}
                   </span>
                 </div>
                 <p className="text-xs text-[#78716C] italic pt-1">
-                  {isEnglish
+                  {text('home_text_073', isEnglish
                     ? 'Free walk-in, no booking required. Welcoming all cultures and backgrounds.'
-                    : 'เข้าร่วมฟรี ไม่มีค่าใช้จ่าย เดินเข้ามานั่งเก้าอี้พูดคุยได้ทันที'}
+                    : 'เข้าร่วมฟรี ไม่มีค่าใช้จ่าย เดินเข้ามานั่งเก้าอี้พูดคุยได้ทันที')}
                 </p>
               </div>
 
@@ -590,7 +585,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-terracotta px-5 text-sm font-bold text-white transition-all duration-150 hover:bg-brand-terracotta-dark active:scale-[0.96] shadow-xs"
                 >
                   <GuideIcon name="pin" />
-                  <span>{isEnglish ? 'View map' : 'ดูแผนที่'}</span>
+                  <span>{text('home_text_074', isEnglish ? 'View map' : 'ดูแผนที่')}</span>
                 </a>
                 <a
                   href={mapUrl}
@@ -599,7 +594,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-terracotta bg-white px-5 text-sm font-bold text-brand-terracotta transition-all duration-150 hover:bg-[#FDF6ED] active:scale-[0.96]"
                 >
                   <GuideIcon name="directions" />
-                  <span>{isEnglish ? 'Get directions' : 'ขอเส้นทาง'}</span>
+                  <span>{text('home_text_075', isEnglish ? 'Get directions' : 'ขอเส้นทาง')}</span>
                 </a>
               </div>
             </div>
@@ -610,9 +605,9 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
               <div className="flex items-center gap-2 text-sm font-semibold text-brand-maroon">
                 <GuideIcon name="pin" className="h-4 w-4 shrink-0 text-brand-terracotta" />
                 <span>
-                  {isEnglish
+                  {text('home_text_076', isEnglish
                     ? 'Real Map · Wat Mahathat, Phra Nakhon Si Ayutthaya'
-                    : 'แผนที่จริง · วัดมหาธาตุ พระนครศรีอยุธยา'}
+                    : 'แผนที่จริง · วัดมหาธาตุ พระนครศรีอยุธยา')}
                 </span>
               </div>
               <a
@@ -621,16 +616,16 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-brand-terracotta hover:underline"
               >
-                <span>{isEnglish ? 'Open full Google Maps' : 'เปิดแผนที่เต็มบน Google Maps'}</span>
+                <span>{text('home_text_077', isEnglish ? 'Open full Google Maps' : 'เปิดแผนที่เต็มบน Google Maps')}</span>
                 <GuideIcon name="external" className="h-3.5 w-3.5 shrink-0" />
               </a>
             </div>
             <div className="h-64 w-full bg-[#FAF7F2] sm:h-72">
               <iframe
                 title={
-                  isEnglish
+                  text('home_text_078', isEnglish
                     ? 'Google Map of Wat Mahathat, Ayutthaya'
-                    : 'แผนที่จริง วัดมหาธาตุ พระนครศรีอยุธยา'
+                    : 'แผนที่จริง วัดมหาธาตุ พระนครศรีอยุธยา')
                 }
                 src={mapEmbedUrl}
                 referrerPolicy="no-referrer-when-downgrade"
@@ -644,18 +639,18 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         <section aria-labelledby="visit-atmosphere-heading" className="space-y-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
-              {isEnglish ? 'Real Surroundings' : 'บรรยากาศสถานที่จริง'}
+              {text('home_text_079', isEnglish ? 'Real Surroundings' : 'บรรยากาศสถานที่จริง')}
             </span>
             <h2
               id="visit-atmosphere-heading"
               className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl mt-1"
             >
-              {isEnglish ? 'Atmosphere & surroundings' : 'บรรยากาศกิจกรรมและสถานที่'}
+              {text('home_text_080', isEnglish ? 'Atmosphere & surroundings' : 'บรรยากาศกิจกรรมและสถานที่')}
             </h2>
             <p className="mt-1 text-sm leading-6 text-brand-muted">
-              {isEnglish
+              {text('home_text_081', isEnglish
                 ? 'Calm open-air dialogue and beginner meditation surrounded by Ayutthaya heritage.'
-                : 'สัมผัสความเรียบง่าย สงบเย็น และเป็นกันเองท่ามกลางเมืองประวัติศาสตร์พระนครศรีอยุธยา'}
+                : 'สัมผัสความเรียบง่าย สงบเย็น และเป็นกันเองท่ามกลางเมืองประวัติศาสตร์พระนครศรีอยุธยา')}
             </p>
           </div>
 
@@ -687,7 +682,7 @@ function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
         </section>
 
         {/* 8. OFFICIAL CONTACT & SOCIAL BANNER */}
-        <PublishedLinks language={isEnglish ? 'en' : 'th'} />
+        <PublishedLinks language={currentLang} />
         <OfficialContactBanner language={currentLang} />
       </div>
     </div>

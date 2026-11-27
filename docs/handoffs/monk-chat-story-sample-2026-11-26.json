@@ -1,0 +1,633 @@
+{
+  "title": "หนึ่งครั้งใน Monk Chat / A Visit to Monk Chat",
+  "status": "design_draft_not_in_application",
+  "start": "arrival",
+  "uiLanguage": "th",
+  "dialogueLanguage": "en_with_th_translation",
+  "contentReviewRequired": true,
+  "source": "Owner-described activity context, 26 November 2026; dialogue is fictional draft.",
+  "nodes": [
+    {
+      "id": "arrival",
+      "chapter": 1,
+      "sceneTh": "ผู้มาเยือนหยุดมองบริเวณที่พระนิสิตนั่งทำกิจกรรม Monk Chat",
+      "visitor": {
+        "en": "Hello. What is happening here?",
+        "th": "สวัสดีครับ ที่นี่มีกิจกรรมอะไรหรือครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนหยุดมองบริเวณที่พระนิสิตนั่งทำกิจกรรม Monk Chat",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Hello! This is Monk Chat. Would you like to sit and talk with us?",
+            "th": "สวัสดีครับ ที่นี่เป็นกิจกรรม Monk Chat สนใจนั่งพูดคุยกับพวกเราไหมครับ"
+          },
+          "next": "welcome",
+          "feedbackTh": "บอกกิจกรรมสั้น ๆ และเปิดโอกาสให้อีกฝ่ายเลือก"
+        },
+        {
+          "label": {
+            "en": "Hello! Do you have a moment to hear about Monk Chat?",
+            "th": "สวัสดีครับ พอมีเวลาฟังเรื่องกิจกรรม Monk Chat สักครู่ไหมครับ"
+          },
+          "next": "short_time",
+          "feedbackTh": "เริ่มจากถามความสะดวกก่อนชวน"
+        },
+        {
+          "label": {
+            "en": "Sit here. You need to join us.",
+            "th": "นั่งตรงนี้ คุณต้องเข้าร่วมกับเรา"
+          },
+          "next": "repair_invite",
+          "feedbackTh": "คำสั่งทำให้อีกฝ่ายรู้สึกถูกกดดัน ลองเปลี่ยนเป็นคำเชิญ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "repair_invite",
+      "chapter": 1,
+      "sceneTh": "ผู้มาเยือนลังเลและถอยออกเล็กน้อย",
+      "visitor": {
+        "en": "Do I have to?",
+        "th": "จำเป็นต้องเข้าร่วมด้วยหรือครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนลังเลและถอยออกเล็กน้อย",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Not at all. You are welcome to join if you would like.",
+            "th": "ไม่จำเป็นเลยครับ ยินดีต้อนรับหากคุณสนใจ"
+          },
+          "next": "welcome",
+          "feedbackTh": "เปิดทางเลือกใหม่และแก้ความเข้าใจผิด"
+        },
+        {
+          "label": {
+            "en": "No problem if you prefer to continue your visit.",
+            "th": "ถ้าอยากเดินชมต่อก็ไม่เป็นไรครับ"
+          },
+          "next": "declined",
+          "feedbackTh": "เคารพการตัดสินใจ การไม่เข้าร่วมไม่ใช่ความล้มเหลวของผู้เรียน"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "short_time",
+      "chapter": 1,
+      "sceneTh": "ผู้มาเยือนดูเวลาของตัวเอง",
+      "visitor": {
+        "en": "I only have a few minutes.",
+        "th": "ผมมีเวลาแค่ไม่กี่นาทีครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนดูเวลาของตัวเอง",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "That is fine. We can have a short chat.",
+            "th": "ได้เลยครับ เราพูดคุยกันสั้น ๆ ได้"
+          },
+          "next": "welcome",
+          "feedbackTh": "ปรับกิจกรรมให้เข้ากับเวลาที่ผู้มาเยือนมี"
+        },
+        {
+          "label": {
+            "en": "Of course. Enjoy your visit, and feel free to come back.",
+            "th": "ได้เลยครับ ขอให้เที่ยวอย่างมีความสุข แวะกลับมาได้หากสะดวก"
+          },
+          "next": "declined",
+          "feedbackTh": "จบบทสนทนาด้วยความสุภาพโดยไม่คาดคั้น"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "welcome",
+      "chapter": 2,
+      "sceneTh": "ผู้มาเยือนนั่งลงในพื้นที่สนทนา",
+      "visitor": {
+        "en": "Thank you. This is my first Monk Chat.",
+        "th": "ขอบคุณครับ นี่เป็นครั้งแรกที่ร่วม Monk Chat"
+      },
+      "imageBriefTh": "ผู้มาเยือนนั่งลงในพื้นที่สนทนา",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Welcome! What would you like to know about today?",
+            "th": "ยินดีต้อนรับครับ วันนี้สนใจอยากทราบเรื่องอะไรครับ"
+          },
+          "next": "intro",
+          "feedbackTh": "ให้ผู้มาเยือนเริ่มจากสิ่งที่สนใจ"
+        },
+        {
+          "label": {
+            "en": "Welcome! Where are you visiting from?",
+            "th": "ยินดีต้อนรับครับ คุณเดินทางมาจากที่ไหนครับ"
+          },
+          "next": "intro",
+          "feedbackTh": "เริ่มทำความรู้จักด้วยคำถามที่เข้ากับบริบทการเดินทาง"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "intro",
+      "chapter": 3,
+      "sceneTh": "บทสนทนาเริ่มเป็นกันเอง ผู้มาเยือนมองจีวรด้วยความสงสัย",
+      "visitor": {
+        "en": "I am visiting from overseas. May I ask about your robes?",
+        "th": "ผมเดินทางมาจากต่างประเทศ ขอถามเรื่องจีวรได้ไหมครับ"
+      },
+      "imageBriefTh": "บทสนทนาเริ่มเป็นกันเอง ผู้มาเยือนมองจีวรด้วยความสงสัย",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Of course. What would you like to know?",
+            "th": "ได้เลยครับ อยากทราบเรื่องไหนครับ"
+          },
+          "next": "robes",
+          "feedbackTh": "รับฟังคำถามให้ชัดก่อนอธิบาย"
+        },
+        {
+          "label": {
+            "en": "Please speak a little more slowly so I can understand you clearly.",
+            "th": "รบกวนพูดช้าลงสักนิดนะครับ จะได้เข้าใจคุณชัดเจน"
+          },
+          "next": "robes",
+          "feedbackTh": "การขอให้พูดช้าลงเป็นทักษะสื่อสาร ไม่ใช่ความผิด"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "robes",
+      "chapter": 3,
+      "sceneTh": "ผู้มาเยือนถามเรื่องชีวิตพระ",
+      "visitor": {
+        "en": "Why do monks wear these robes and shave their heads?",
+        "th": "ทำไมพระจึงห่มจีวรแบบนี้และโกนผมหรือครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนถามเรื่องชีวิตพระ",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "These are part of our monastic way of life. May I explain one part at a time?",
+            "th": "สิ่งเหล่านี้เป็นส่วนหนึ่งของวิถีชีวิตพระ ขออธิบายทีละประเด็นนะครับ"
+          },
+          "next": "meditation_invite",
+          "feedbackTh": "เป็นประโยคเปิดคำอธิบายเท่านั้น คำอธิบายเนื้อหาจริงต้องใช้ข้อความที่พระผู้รับผิดชอบตรวจ ไม่ถือว่าต้นแบบนี้อธิบายครบแล้ว"
+        },
+        {
+          "label": {
+            "en": "I would like to check the details with a teaching monk so I can answer accurately.",
+            "th": "ขอสอบถามพระอาจารย์เรื่องรายละเอียดก่อนนะครับ จะได้ตอบได้ถูกต้อง"
+          },
+          "next": "refer",
+          "feedbackTh": "ไม่เดาคำตอบเมื่อไม่แน่ใจ และบอกขั้นตอนช่วยหาคำตอบ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "refer",
+      "chapter": 3,
+      "sceneTh": "พระนิสิตรับเรื่องไว้เพื่อสอบถามผู้รับผิดชอบ ไม่แสดงคำตอบที่แต่งขึ้น",
+      "visitor": {
+        "en": "Thank you for checking.",
+        "th": "ขอบคุณที่ช่วยตรวจสอบครับ"
+      },
+      "imageBriefTh": "พระนิสิตรับเรื่องไว้เพื่อสอบถามผู้รับผิดชอบ ไม่แสดงคำตอบที่แต่งขึ้น",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "You are welcome. Would you like to hear about our meditation activity?",
+            "th": "ยินดีครับ สนใจฟังเรื่องกิจกรรมสมาธิของเราไหมครับ"
+          },
+          "next": "meditation_invite",
+          "feedbackTh": "เชื่อมกิจกรรมใหม่ด้วยการขอความสนใจ ไม่อ้างว่าหาคำตอบเดิมแล้ว"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "meditation_invite",
+      "chapter": 4,
+      "sceneTh": "หลังพูดคุย พระนิสิตชวนผู้มาเยือนลองฝึก",
+      "visitor": {
+        "en": "What else can I try here?",
+        "th": "ที่นี่มีอะไรให้ลองอีกบ้างครับ"
+      },
+      "imageBriefTh": "หลังพูดคุย พระนิสิตชวนผู้มาเยือนลองฝึก",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Would you like to try a short meditation together? You can choose whether to join.",
+            "th": "สนใจลองนั่งสมาธิสั้น ๆ ด้วยกันไหมครับ คุณเลือกได้ว่าจะร่วมไหม"
+          },
+          "next": "preparation",
+          "feedbackTh": "ชวนอย่างชัดเจนและให้สิทธิ์เลือก"
+        },
+        {
+          "label": {
+            "en": "Would you prefer to keep chatting, or try meditation?",
+            "th": "อยากพูดคุยต่อ หรือลองนั่งสมาธิดีครับ"
+          },
+          "next": "chat_only",
+          "feedbackTh": "เปิดทางเลือก ในเส้นทางตัวอย่างนี้ผู้มาเยือนขอสนทนาต่อ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "chat_only",
+      "chapter": 4,
+      "sceneTh": "ผู้มาเยือนสนใจสนทนาแต่ยังไม่พร้อมฝึกสมาธิ",
+      "visitor": {
+        "en": "I would rather just talk today.",
+        "th": "วันนี้ผมขอพูดคุยอย่างเดียวก่อนครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนสนใจสนทนาแต่ยังไม่พร้อมฝึกสมาธิ",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Of course. What would you like to ask?",
+            "th": "ได้เลยครับ อยากถามเรื่องอะไรครับ"
+          },
+          "next": "photo",
+          "feedbackTh": "เคารพความต้องการ ตัวอย่างตัดเวลาการสนทนาไปยังช่วงปิดกิจกรรม ไม่บังคับให้กลับมานั่ง"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "preparation",
+      "chapter": 5,
+      "sceneTh": "ผู้มาเยือนอยากลองแต่ไม่ถนัดนั่งพื้น",
+      "visitor": {
+        "en": "I would like to try, but sitting on the floor is difficult for me.",
+        "th": "อยากลองครับ แต่ผมนั่งพื้นไม่ค่อยสะดวก"
+      },
+      "imageBriefTh": "ผู้มาเยือนอยากลองแต่ไม่ถนัดนั่งพื้น",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Let us find a comfortable seat before we begin.",
+            "th": "เราหาที่นั่งที่สบายก่อนเริ่มกันนะครับ"
+          },
+          "next": "sitting",
+          "feedbackTh": "ปรับการเตรียมตัวตามความสะดวก ไม่บังคับท่า"
+        },
+        {
+          "label": {
+            "en": "You must sit on the floor.",
+            "th": "คุณต้องนั่งพื้นเท่านั้นครับ"
+          },
+          "next": "repair_posture",
+          "feedbackTh": "เป็นคำตอบกดดัน ให้มีทางแก้และทบทวนคำแนะนำที่ตรวจแล้ว"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "repair_posture",
+      "chapter": 5,
+      "sceneTh": "ผู้มาเยือนกังวลว่าจะเข้าร่วมไม่ได้",
+      "visitor": {
+        "en": "Then perhaps I cannot join.",
+        "th": "ถ้าอย่างนั้นผมคงร่วมไม่ได้ครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนกังวลว่าจะเข้าร่วมไม่ได้",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "I am sorry. We can adjust the seating so you feel comfortable.",
+            "th": "ขอโทษครับ เราปรับที่นั่งให้คุณรู้สึกสบายได้"
+          },
+          "next": "sitting",
+          "feedbackTh": "รับรู้ปัญหาและเสนอทางเลือก โดยรายละเอียดท่านั่งใช้คู่มือที่ตรวจแล้ว"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "sitting",
+      "chapter": 5,
+      "sceneTh": "จัดที่นั่งแล้ว เตรียมใช้บทนำนั่งที่โครงการตรวจแล้ว ภาพนิ่งแทนช่วงฝึกจริง",
+      "visitor": {
+        "en": "I am ready.",
+        "th": "พร้อมแล้วครับ"
+      },
+      "imageBriefTh": "จัดที่นั่งแล้ว เตรียมใช้บทนำนั่งที่โครงการตรวจแล้ว ภาพนิ่งแทนช่วงฝึกจริง",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "We will begin gently. I will guide you step by step.",
+            "th": "เราจะค่อย ๆ เริ่มนะครับ ผมจะนำทีละขั้น"
+          },
+          "next": "after",
+          "feedbackTh": "รุ่นแรกเปลี่ยนฉากไปหลังฝึก บทนำนั่งฉบับจริงใช้สื่อเดิมที่ตรวจแล้ว ไม่แต่งคำสอนเพิ่มจากต้นแบบ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "after",
+      "chapter": 6,
+      "sceneTh": "หลังสมาธิ ผู้มาเยือนค่อย ๆ ลืมตา พระนิสิตเปิดบทสนทนา",
+      "visitor": {
+        "en": "We have finished the meditation.",
+        "th": "จบช่วงฝึกสมาธิแล้ว"
+      },
+      "imageBriefTh": "หลังสมาธิ ผู้มาเยือนค่อย ๆ ลืมตา พระนิสิตเปิดบทสนทนา",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "How was that for you? Would you like to share anything?",
+            "th": "เมื่อกี้เป็นอย่างไรบ้างครับ มีอะไรอยากเล่าไหม"
+          },
+          "next": "after_wandering",
+          "feedbackTh": "ถามเปิดกว้าง ในเส้นทางนี้ผู้มาเยือนเล่าว่ามีความคิดแทรก"
+        },
+        {
+          "label": {
+            "en": "How do you feel now?",
+            "th": "ตอนนี้รู้สึกอย่างไรบ้างครับ"
+          },
+          "next": "after_calm",
+          "feedbackTh": "ถามความรู้สึกโดยไม่กำหนดว่าต้องเห็นหรือรู้สึกแบบใด"
+        },
+        {
+          "label": {
+            "en": "You saw a crystal ball, right?",
+            "th": "คุณเห็นดวงแก้วแล้วใช่ไหมครับ"
+          },
+          "next": "after_neutral",
+          "feedbackTh": "คำถามชี้นำประสบการณ์ ควรเปิดโอกาสให้เขาเล่าด้วยคำของตัวเอง"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "after_wandering",
+      "chapter": 6,
+      "sceneTh": "ผู้มาเยือนเล่าประสบการณ์ตรงโดยยังไม่แน่ใจ",
+      "visitor": {
+        "en": "My mind kept wandering. Did I do it wrong?",
+        "th": "ใจผมคิดไปเรื่อย ๆ ผมทำผิดหรือเปล่าครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนเล่าประสบการณ์ตรงโดยยังไม่แน่ใจ",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Thank you for sharing. Which part would you like to ask about?",
+            "th": "ขอบคุณที่เล่านะครับ มีช่วงไหนที่อยากถามเพิ่มเติมไหม"
+          },
+          "next": "photo",
+          "feedbackTh": "รับฟังก่อนตัดสิน คำแนะนำสมาธิต่อไปต้องอ้างคู่มือที่ตรวจแล้ว"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "after_calm",
+      "chapter": 6,
+      "sceneTh": "ผู้มาเยือนรู้สึกผ่อนคลาย",
+      "visitor": {
+        "en": "I feel a little more relaxed.",
+        "th": "ผมรู้สึกผ่อนคลายขึ้นเล็กน้อยครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนรู้สึกผ่อนคลาย",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Thank you for sharing. Is there anything you would like to ask?",
+            "th": "ขอบคุณที่เล่าครับ มีอะไรอยากถามเพิ่มเติมไหม"
+          },
+          "next": "photo",
+          "feedbackTh": "รับฟังโดยไม่แปลประสบการณ์เป็นระดับความสำเร็จทางธรรม"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "after_neutral",
+      "chapter": 6,
+      "sceneTh": "ผู้มาเยือนไม่มีประสบการณ์ตามที่ถูกถาม",
+      "visitor": {
+        "en": "No. I did not see anything like that.",
+        "th": "ไม่ครับ ผมไม่ได้เห็นอะไรแบบนั้น"
+      },
+      "imageBriefTh": "ผู้มาเยือนไม่มีประสบการณ์ตามที่ถูกถาม",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Thank you for telling me. Please describe it in your own words, if you would like.",
+            "th": "ขอบคุณที่บอกนะครับ ถ้าสะดวก ลองเล่าด้วยคำของคุณเองได้เลย"
+          },
+          "next": "photo",
+          "feedbackTh": "แก้คำถามชี้นำด้วยการเปิดพื้นที่ให้เล่าตามจริง ไม่ตัดสินว่าฝึกไม่สำเร็จ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "photo",
+      "chapter": 7,
+      "sceneTh": "การสนทนาจบลง กลุ่มกำลังจะถ่ายภาพร่วมกัน",
+      "visitor": {
+        "en": "Thank you for the conversation.",
+        "th": "ขอบคุณสำหรับการพูดคุยครับ"
+      },
+      "imageBriefTh": "การสนทนาจบลง กลุ่มกำลังจะถ่ายภาพร่วมกัน",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Would you like to join our group photo? It is completely optional.",
+            "th": "สนใจร่วมถ่ายภาพหมู่ไหมครับ ถ้าไม่สะดวกก็ไม่เป็นไร"
+          },
+          "next": "lineup",
+          "feedbackTh": "ขอความยินยอมก่อนถ่ายและเปิดทางปฏิเสธ"
+        },
+        {
+          "label": {
+            "en": "Would you prefer to skip the photo?",
+            "th": "อยากข้ามการถ่ายภาพไหมครับ"
+          },
+          "next": "no_photo",
+          "feedbackTh": "ในเส้นทางนี้ผู้มาเยือนเลือกไม่ถ่ายภาพ ให้เคารพความต้องการ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "lineup",
+      "chapter": 7,
+      "sceneTh": "ขณะจัดภาพหมู่ ผู้ร่วมกิจกรรมอีกคนเดินเข้ามาใกล้และกำลังจะจับแขนพระนิสิต",
+      "visitor": {
+        "en": "Can I stand right beside you?",
+        "th": "ขอยืนข้าง ๆ ตรงนี้ได้ไหมคะ"
+      },
+      "imageBriefTh": "ขณะจัดภาพหมู่ ผู้ร่วมกิจกรรมอีกคนเดินเข้ามาใกล้และกำลังจะจับแขนพระนิสิต",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Please stand here and leave a little space between us. Thank you.",
+            "th": "ยืนตรงนี้ได้ครับ ขอเว้นระยะระหว่างเราสักนิด ขอบคุณครับ"
+          },
+          "next": "goodbye",
+          "feedbackTh": "บอกตำแหน่งและขอเว้นระยะอย่างสุภาพ ข้อปฏิบัติเฉพาะให้พระผู้รับผิดชอบตรวจ"
+        },
+        {
+          "label": {
+            "en": "Stand somewhere else!",
+            "th": "ไปยืนที่อื่นเลย"
+          },
+          "next": "repair_space",
+          "feedbackTh": "คำสั่งแข็งอาจทำให้อีกฝ่ายเสียหน้า ให้ฝึกปรับเป็นคำขอสุภาพ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "repair_space",
+      "chapter": 7,
+      "sceneTh": "ผู้มาเยือนชะงักและไม่แน่ใจว่าทำอะไรผิด",
+      "visitor": {
+        "en": "Oh, I am sorry. Where should I stand?",
+        "th": "ขอโทษค่ะ ควรยืนตรงไหนคะ"
+      },
+      "imageBriefTh": "ผู้มาเยือนชะงักและไม่แน่ใจว่าทำอะไรผิด",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Thank you. This spot is fine; just leave a little space, please.",
+            "th": "ขอบคุณครับ ตรงนี้ได้เลย ขอเว้นระยะสักนิดนะครับ"
+          },
+          "next": "goodbye",
+          "feedbackTh": "ช่วยให้เขารู้ว่าต้องทำอย่างไรโดยไม่ตำหนิ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "no_photo",
+      "chapter": 7,
+      "sceneTh": "ผู้มาเยือนเลือกไม่อยู่ในภาพ",
+      "visitor": {
+        "en": "I would prefer not to be in the photo.",
+        "th": "ขอไม่อยู่ในภาพนะครับ"
+      },
+      "imageBriefTh": "ผู้มาเยือนเลือกไม่อยู่ในภาพ",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Of course. Thank you for letting us know.",
+            "th": "ได้เลยครับ ขอบคุณที่บอกนะครับ"
+          },
+          "next": "goodbye",
+          "feedbackTh": "เคารพการไม่ยินยอม ไม่ถ่ายหรือเผยแพร่ภาพเขาโดยข้ามความต้องการ"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "goodbye",
+      "chapter": 8,
+      "sceneTh": "จบกิจกรรม ผู้มาเยือนเตรียมเดินทางต่อ",
+      "visitor": {
+        "en": "Thank you. I enjoyed meeting you.",
+        "th": "ขอบคุณครับ ยินดีที่ได้รู้จัก"
+      },
+      "imageBriefTh": "จบกิจกรรม ผู้มาเยือนเตรียมเดินทางต่อ",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "Thank you for joining us. Enjoy the rest of your visit.",
+            "th": "ขอบคุณที่มาร่วมกิจกรรมครับ ขอให้เที่ยวอย่างมีความสุข"
+          },
+          "next": "completed",
+          "feedbackTh": "กล่าวลาสุภาพโดยไม่ยืดบทสนทนาหรือบังคับรับข้อมูลเพิ่ม"
+        },
+        {
+          "label": {
+            "en": "You are welcome. Would you like information about continuing your practice?",
+            "th": "ยินดีครับ สนใจข้อมูลสำหรับฝึกต่อไหมครับ"
+          },
+          "next": "continue_info",
+          "feedbackTh": "เสนอข้อมูลต่อเมื่อเขาสนใจ ใช้ช่องทางที่โครงการตรวจแล้ว"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "continue_info",
+      "chapter": 8,
+      "sceneTh": "ผู้มาเยือนสนใจฝึกต่อ",
+      "visitor": {
+        "en": "Yes, where can I learn more?",
+        "th": "สนใจครับ หาข้อมูลเพิ่มเติมได้ที่ไหน"
+      },
+      "imageBriefTh": "ผู้มาเยือนสนใจฝึกต่อ",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [
+        {
+          "label": {
+            "en": "You can explore the verified practice information on our website.",
+            "th": "ดูข้อมูลแหล่งฝึกต่อที่โครงการตรวจไว้บนเว็บไซต์ได้ครับ"
+          },
+          "next": "completed",
+          "feedbackTh": "ใช้ข้อมูลจริงในหน้าศูนย์ฝึกต่อ ไม่แต่งที่อยู่หรือกำหนดการใหม่"
+        }
+      ],
+      "ending": false
+    },
+    {
+      "id": "completed",
+      "chapter": 8,
+      "sceneTh": "จบเรื่อง: แสดงประโยคที่เลือก feedback และทางกลับไปลองฉากอื่น",
+      "visitor": {
+        "en": "Thank you. Goodbye!",
+        "th": "ขอบคุณครับ สวัสดีครับ"
+      },
+      "imageBriefTh": "จบเรื่อง: แสดงประโยคที่เลือก feedback และทางกลับไปลองฉากอื่น",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [],
+      "ending": true
+    },
+    {
+      "id": "declined",
+      "chapter": 1,
+      "sceneTh": "จบเส้นทาง: ผู้มาเยือนเดินชมต่อหลังได้รับคำเชิญอย่างสุภาพ",
+      "visitor": {
+        "en": "Thank you. Maybe another time.",
+        "th": "ขอบคุณครับ ไว้โอกาสหน้านะครับ"
+      },
+      "imageBriefTh": "จบเส้นทาง: ผู้มาเยือนเดินชมต่อหลังได้รับคำเชิญอย่างสุภาพ",
+      "reviewStatus": "draft_requires_content_and_language_review",
+      "choices": [],
+      "ending": true
+    }
+  ]
+}

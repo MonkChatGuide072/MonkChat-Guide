@@ -191,7 +191,7 @@ describe('Meditation flow', () => {
     expect(within(during).queryByRole('button', { name: 'Next card' })).not.toBeInTheDocument()
     expect(within(during).getByRole('link', { name: 'Play guided meditation' })).toHaveAttribute('href', '#meditation-audio')
     fireEvent.click(screen.getByRole('tab', { name: /After/ }))
-    expect(screen.getByRole('heading', { name: 'How did it feel?' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'A gentle way to continue' })).toBeInTheDocument()
     expect(screen.getByText(/These are examples, not things you must see or a score of success/)).toBeInTheDocument()
     const titles = ['My mind wandered', 'I tried too hard', 'I felt light and relaxed', 'I pictured a clear ball', 'I felt small', 'I pictured a Buddha within', 'I noticed light', 'Something else, or not sure']
     for (let index = 0; index < titles.length; index++) {

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router'
 import { supabaseClient } from '../lib/supabase'
-import { MeditationPlayer } from '../components/MeditationPlayer'
+import { MeditationPlayer, type MeditationPlaybackControl } from '../components/MeditationPlayer'
 import { MeditationBeginnerGuide } from '../components/MeditationBeginnerGuide'
 import { BreathingPacer } from '../components/BreathingPacer'
 import { MeditationPostureTips } from '../components/MeditationPostureTips'
@@ -31,7 +31,7 @@ interface TrackRow {
 const DEMO_MEDITATION_TRACKS: TrackRow[] = [
   {
     id: 'demo-med-01',
-    audio_storage_path: 'https://example.org/guided-meditation-5min.mp3',
+    audio_storage_path: null,
     speaker_name: 'Teaching Monk (Wat Mahathat)',
     duration_seconds: 300,
     content_status: 'published',
@@ -57,7 +57,7 @@ const DEMO_MEDITATION_TRACKS: TrackRow[] = [
   },
 ]
 
-export function MeditationPage() {
+export function MeditationPage({ audioOnly = false, playbackControl }: { audioOnly?: boolean; playbackControl?: MeditationPlaybackControl }) {
   const { t, i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
   const currentLang = isEnglish ? 'en' : 'th'
@@ -106,11 +106,7 @@ export function MeditationPage() {
         .order('created_at', { ascending: false })
       if (dbError) throw dbError
       const loaded = (data as TrackRow[]) ?? []
-      if (loaded.length > 0) {
-        setTracks(loaded)
-      } else {
-        setTracks(DEMO_MEDITATION_TRACKS)
-      }
+      setTracks(loaded)
     } catch {
       setError(t('meditation.errorLoadTracks'))
     } finally {
@@ -187,7 +183,7 @@ export function MeditationPage() {
   return (
     <div className="space-y-10 bg-brand-cream pb-16 text-brand-text break-words [overflow-wrap:anywhere]">
       {/* 1. HEADER */}
-      <header className="rounded-3xl border border-brand-border/80 bg-white p-6 sm:p-8 shadow-[0_4px_20px_rgba(43,24,16,0.03)]">
+      <header hidden={audioOnly} className="rounded-3xl border border-brand-border/80 bg-white p-6 sm:p-8 shadow-[0_4px_20px_rgba(43,24,16,0.03)]">
         <div className="inline-flex items-center gap-2 rounded-full border border-amber-800/20 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900 shadow-2xs">
           <GuideIcon name="lotus" className="h-3.5 w-3.5 text-amber-700" />
           <span>{isEnglish ? 'Beginner-Friendly · 5-Minute Meditation' : 'สมาธิเบื้องต้นสำหรับทุกคน · ผ่อนคลาย 5 นาที'}</span>
@@ -201,10 +197,10 @@ export function MeditationPage() {
       </header>
 
       {/* 2. CALMING BREATH PACER */}
-      <BreathingPacer language={currentLang} />
+      {!audioOnly && <BreathingPacer language={currentLang} />}
 
       {/* 3. STEP 1: PREPARATION & BASES CAROUSEL */}
-      <MeditationBeginnerGuide />
+      {!audioOnly && <MeditationBeginnerGuide />}
 
       {/* 4. STEP 2: AUDIO PLAYER SECTION */}
       <div id="meditation-audio" className="scroll-mt-24 space-y-5">
@@ -330,6 +326,7 @@ export function MeditationPage() {
                   audioPath={currentTrack.audio_storage_path}
                   subtitlePath={trackTranslation.subtitle_vtt_storage_path}
                   tone="light"
+                  playbackControl={playbackControl}
                 />
               </div>
             </section>
@@ -353,6 +350,7 @@ export function MeditationPage() {
                       key={track.id}
                       type="button"
                       aria-pressed={isSelected}
+                      disabled={playbackControl?.locked}
                       onClick={() => setSearchParams({ trackId: track.id })}
                       className={`grid w-full grid-cols-[2rem_1fr_auto] items-center gap-3 py-3 text-left transition-colors duration-150 cursor-pointer ${
                         isSelected ? 'text-brand-terracotta' : 'text-brand-text hover:text-brand-terracotta'
@@ -382,7 +380,7 @@ export function MeditationPage() {
       </div>
 
       {/* 5. POSTURE TIPS, SEATING OPTIONS & VIDEO DEMO GUIDE */}
-      <MeditationPostureTips language={currentLang} />
+      {!audioOnly && <MeditationPostureTips language={currentLang} />}
     </div>
   )
 }

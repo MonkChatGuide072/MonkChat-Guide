@@ -1,0 +1,10 @@
+{
+  "nodes": 24,
+  "choices": 36,
+  "uniqueIds": true,
+  "allTargetsExist": true,
+  "allReachable": true,
+  "allHavePathToEnding": true,
+  "contentReview": "pending",
+  "implementedInApp": false
+}

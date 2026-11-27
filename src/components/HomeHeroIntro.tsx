@@ -1,4 +1,4 @@
-import { usePublicPageCopy } from '../lib/siteContent'
+import { usePublicPageCopy, pageValue } from '../lib/siteContent'
 import { Link } from 'react-router'
 import { PUBLIC_SHORTCUTS } from '../content/publicShortcuts'
 import type { AppLanguage } from '../lib/language'
@@ -14,6 +14,7 @@ export function HomeHeroIntro({
 }) {
   const copy = usePublicPageCopy('home', language)
   const isEnglish = language === 'en'
+  const text = (key: string, fallback: string) => pageValue(copy, key, language, fallback)
   const normalizedActive = activePath === '/home' || activePath === '/visit' ? '/' : activePath
 
   return (
@@ -24,7 +25,7 @@ export function HomeHeroIntro({
           <source media="(min-width: 40rem)" srcSet={copy.image_url || "/images/home/monkchat-banner-tablet.webp"} />
           <img
             src={copy.image_url || "/images/home/monkchat-banner-mobile.webp"}
-            alt={isEnglish ? 'Ayutthaya Monk Chat, a monk and visitors sit together among the Ayutthaya ruins' : 'Ayutthaya Monk Chat พระสงฆ์และผู้มาเยือนนั่งด้วยกันท่ามกลางโบราณสถานอยุธยา'}
+            alt={text('home_hero_001', isEnglish ? 'Ayutthaya Monk Chat, a monk and visitors sit together among the Ayutthaya ruins' : 'Ayutthaya Monk Chat พระสงฆ์และผู้มาเยือนนั่งด้วยกันท่ามกลางโบราณสถานอยุธยา')}
             aria-describedby="home-banner-quote"
             width={1170}
             height={570}
@@ -36,21 +37,21 @@ export function HomeHeroIntro({
         <div className="absolute bottom-3 left-4 right-4 sm:left-8 sm:bottom-5 flex items-center justify-between text-white text-xs pointer-events-none">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-[#FEF3C7] text-[11px] font-medium">
             <span>☸️</span>
-            <span>Wat Mahathat, Historic Ayutthaya</span>
+            <span>{text('home_hero_location', 'Wat Mahathat, Historic Ayutthaya')}</span>
           </span>
           <span className="hidden sm:inline-block text-white/80 italic text-xs font-serif drop-shadow-sm">
-            "In the calm of the temple, I heard the loudest truth."
+            "{text('home_hero_quote', 'In the calm of the temple, I heard the loudest truth.')}"
           </span>
         </div>
       </div>
       <p id="home-banner-quote" lang="en" className="sr-only">
-        In the calm of the temple, I heard the loudest truth.
+        {text('home_hero_quote', 'In the calm of the temple, I heard the loudest truth.')}
       </p>
 
       <div className="mx-auto max-w-[76rem] px-4 pb-4 pt-6 text-center sm:px-6 lg:px-8">
         <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-[#EBD8B0]/60 border border-[#D5B77E]/80 text-[#78350F] text-xs font-semibold mb-2">
           <span>🌿</span>
-          <span>{isEnglish ? 'Buddhist Dissemination Technology · DCI' : 'เทคโนโลยีการเผยแผ่พุทธธรรม · ศูนย์พุทธศาสตร์ศึกษา DCI'}</span>
+          <span>{text('home_hero_002', isEnglish ? 'Buddhist Dissemination Technology · DCI' : 'เทคโนโลยีการเผยแผ่พุทธธรรม · ศูนย์พุทธศาสตร์ศึกษา DCI')}</span>
         </div>
 
         <h1 id="home-intro-title" className="font-serif text-[2.1rem] font-bold leading-tight text-brand-maroon sm:text-4xl lg:text-[2.85rem] tracking-tight">
@@ -76,7 +77,7 @@ export function HomeHeroIntro({
         </p>
 
         {/* 5 Tactile Handcrafted Shortcuts with scale-on-press */}
-        <nav aria-label={isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก'} className="mx-auto mt-6 grid max-w-2xl grid-cols-5 gap-1.5 min-[390px]:gap-2 sm:gap-3">
+        <nav aria-label={text('home_hero_004', isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก')} className="mx-auto mt-6 grid max-w-2xl grid-cols-5 gap-1.5 min-[390px]:gap-2 sm:gap-3">
           {PUBLIC_SHORTCUTS.map((item) => (
             <Link
               key={item.to}

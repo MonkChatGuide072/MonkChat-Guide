@@ -1,5 +1,134 @@
 # MonkChat Guide — Current Handoff
 
+## 🎮 พัฒนาเกมสถานการณ์บทที่ 1 สไตล์ Coming Out Simulator (Visual Dialogue Storytelling) — 26 พฤศจิกายน 2569
+
+- **งานที่ดำเนินการตามบรีฟเจ้าของโครงการล่าสุด (`ANTIGRAVITY-STORY-REVISION-BRIEF-2026-11-26.md` และ `tests/bb.md`)**:
+  - **ถอดรหัสรูปแบบ Visual Narrative จาก Coming Out Simulator (ncase.me/cos)**:
+    - ออกแบบเป็น **Center Stage Hero Card** จัดวางฉากภาพหลักและตัวละครวัดมหาธาตุตรงกลางจอ (ความกว้าง 640–720px บน Desktop และ Responsive บนมือถือ 390px)
+    - **Instant Reaction Transition**: ตัดขั้นตอน Popup Feedback และปุ่มกด Next คั่นกลางออกทั้งหมด เมื่อแตะเลือกคำพูด ฉากภาพ ป้ายสถานะตัวละคร และบทสนทนาจะเปลี่ยนทันทีโดยไม่มีรอยต่อ
+    - ผู้เรียนรับบทบาทมุมมองบุคคลที่หนึ่ง (First-Person Perspective) เป็นพระนิสิตประจำโต๊ะกิจกรรมใต้ร่มไม้วัดมหาธาตุ สังเกตเห็นนักท่องเที่ยวเดินผ่านแล้วเป็นฝ่ายเริ่มเชิญชวนอย่างสมจริง
+  - **ปรับปรุงโครงสร้างเนื้อหากราฟบทที่ 1: "การเชิญชวนผู้มาเยือน" (`src/content/monkChatStories.ts`)**:
+    - ครอบคลุม 4 เส้นทางหลัก (Branches) อย่างสมบูรณ์:
+      1. *Warm Invitation*: ชวนสนทนา Monk Chat $\rightarrow$ อธิบายกิจกรรม $\rightarrow$ ตอบรับเข้าร่วมและเดินมานั่งที่โต๊ะ (`ch1_accept_join`)
+      2. *Time-Tailored Dialogue*: ชวนฝึกสมาธิ $\rightarrow$ สอบถามเวลา 5 นาที $\rightarrow$ ชี้แจงและรับฟังกำหนดการ $\rightarrow$ ตกลงคุยสั้น 10 นาทีอย่างลงตัว (`ch1_short_chat_agreed`)
+      3. *Dialogue Repair*: เผลอใช้คำพูดเร่งรัด $\rightarrow$ ผู้มาเยือนชะงักถอยหลังลังเล $\rightarrow$ ขอโทษและคลายความกดดัน $\rightarrow$ ผ่อนคลายกลับมาเป็นมิตรและตอบรับนั่งคุย (`ch1_relieved` $\rightarrow$ `ch1_accept_join`)
+      4. *Mindful Polite Farewell*: ผู้มาเยือนมีรถทัวร์มารับใน 5 นาทีหรือไม่สะดวก $\rightarrow$ ให้พร/กล่าวลาอย่างสุภาพ เคารพการตัดสินใจ นับเป็นความสำเร็จในการสื่อสารตามสมณสารูป (`ch1_polite_farewell`)
+  - **ปรับปรุงคอมโพเนนต์เครื่องเล่น (`src/components/nisit/MonkChatStoryPlayer.tsx`)**:
+    - เลย์เอาต์ Center Stage พร้อมภาพวัดมหาธาตุ ป้ายพิกัด (`📍 วัดมหาธาตุ อยุธยา`) และป้ายแสดงสถานะอารมณ์ตัวละคร (`🚶‍♂️ เดินผ่าน`, `💬 หยุดฟัง`, `⌚ เช็คเวลา`, `✋ ลังเล/ชะงัก`, `🪷 ตอบรับ`, `🍃 กล่าวลา`)
+    - รองรับระบบสองภาษา: ภาษาอังกฤษเป็นหลัก พร้อมคำแปลไทยที่เลือกเปิด/ปิดได้ (`[ 🇹🇭 คำแปลไทย: เปิด/ปิด ]`)
+    - ปุ่มตัวเลือกสนทนาขนาดใหญ่สัมผัสง่าย รองรับคีย์บอร์ดลัด `1`, `2`, `3`
+    - หน้าสรุปเมื่อจบบท (Ending & Path Review Timeline): สรุปจำนวนช่วงการตัดสินใจ แสดงบทสนทนาที่เลือกพร้อมคำแนะนำเชิงทักษะ (Pedagogical Takeaway) ย้อนลองฉากเดิมได้ และมีปุ่ม "ไปต่อบทที่ 2: ต้อนรับเมื่อมานั่ง"
+  - **ชุดทดสอบอัตโนมัติ (`src/components/nisit/MonkChatStoryPlayer.test.tsx`)**:
+    - เพิ่มชุดทดสอบครอบคลุม 11 ข้อ (100% Green): ตรวจความถูกต้องของโครงสร้างกราฟ, 8 บทเรียน, การแสดงผลเริ่มต้น, การสลับภาษา, การเปลี่ยนฉากทันทีโดยไม่มี Popup, คีย์บอร์ด 1-2-3, และทดสอบการเดินเรื่องครบทั้ง 4 เส้นทาง
+- **ผลการตรวจสอบคุณภาพระบบ (Verification Status)**:
+  - Automated Tests (`vitest run --run`): **ผ่านครบ 100% (32 test files, 189/189 tests)**
+  - Code Linter (`oxlint`): **0 errors** (174 files)
+  - Production Build (`tsc -b && vite build`): **ผ่านฉลุยใน 368ms** พร้อมสร้าง Service Worker สำหรับ PWA เรียบร้อย
+  - ตรวจสอบภาพจริงผ่าน Headless Chrome CDP:
+    - 🖥️ `story_cos_initial_desktop.png` (ฉากเปิดบทที่ 1 พระนิสิตมองเห็นคนเดินผ่าน)
+    - 💬 `story_cos_instant_reaction.png` (การตอบสนองทันทีหลังเลือกคำตอบ ตัวละครหยุดฟังและถามต่อ)
+    - 🪷 `story_cos_ending_review.png` (หน้าจอจบบทที่ 1 สำเร็จ พร้อม Path Review Timeline)
+    - 📱 `story_cos_mobile.png` (มุมมองมือถือ 390px จัดวางลงตัว ไม่ล้นขอบจอ)
+- **ข้อกำหนดการส่งมอบ**: ยังไม่ commit/push หรือ deploy ขึ้นสาธารณะตามระเบียบ จนกว่าเจ้าของโครงการจะตรวจรับและสั่งการ
+
+
+## เผยแพร่สองหน้าสมาธิและการ์ดหลังนั่งแล้ว — 26 พฤศจิกายน 2569
+
+- เจ้าของยืนยันให้ขึ้นเว็บทันทีหลังปรับการ์ดแล้ว จึงเผยแพร่ production สำเร็จ: https://monkchat-guide.pages.dev/meditation (คู่มือ) และ /meditation/now (หน้าดวงแก้ว) พร้อมการ์ดหลังนั่งฉบับคำแนะนำทั้งไทย/อังกฤษ
+- Cloudflare canonical deployment: 184539a1-1501-4002-9391-179672c418f0; unique URL https://184539a1.monkchat-guide.pages.dev; รุ่นก่อนคือ fbb5b2c9-0f16-4c74-ac74-a3421723edea
+- สร้าง isolated approved snapshot ที่ Documents/.tmp/meditation-release-2026-11-26/source-approved; ชุดเผยแพร่คง CMS เดิมและ NisitPracticePage ก่อนเชื่อมเกม ไม่รวมเกม Antigravity ที่ยังไม่ผ่านตรวจ และไม่ทับไฟล์แอปใน Desktop checkout
+- ชุดเผยแพร่ผ่าน types/lint/163 tests จาก 30 files/production build; HTTP ตรวจ 18 รายการ เทียบ canonical HTML และไฟล์สำคัญตรงกับ artifact, API เดิมตอบ401เมื่อไม่มีสิทธิ์, PWA manifest/SWตรงรุ่น
+- ตรวจ UI บน canonical จริง: quiet เริ่ม/พัก/จบ, native result dialog กลางviewportที่360/390/768/1024/1440ไม่ล้น, คู่มือและการ์ดหลังนั่ง5ขนาดไม่ล้น, ข้อความอังกฤษถูกต้อง; เสียงนำจริงเล่น6.743วินาทีและพัก6.767วินาทีตามดวงแก้ว error=null พร้อมคำบรรยาย
+- เบราว์เซอร์ที่มี PWA แคชเก่าอาจเห็น404ชั่วคราวที่routeใหม่ พบจริงและอัปเดตSW/โหลดใหม่แล้ว canonicalแสดงหน้าปัจจุบันได้ ถ้าผู้ใช้ยังเห็นรุ่นเดิมให้รีเฟรชหลังอัปเดต
+- เสียงหยดน้ำ/ranking/ประวัติเวลาสะสมยังไม่ทำ ไม่มีการกล่าวอ้างว่าเก็บประวัติแล้ว ไม่เปลี่ยนDB/RLS/สิทธิ์หรือฟังก์ชันAPI ไม่เพิ่มแพ็กเกจ ไม่แก้ภาคนิพนธ์ ไม่commit/push
+- หลักฐาน: .tmp/meditation-release-2026-11-26/approved-checks.json, production-http-checks.json, production-ui-checks.json, approved-source-manifest.json, deployment.json; tokenอัปโหลดชั่วคราวถูกลบแล้ว
+
+## 📖 พัฒนาเกมจำลองสถานการณ์บทสนทนา Monk Chat (Story Simulation Mode) — 26 พฤศจิกายน 2569
+
+- **งานที่ดำเนินการตามแผน ANTIGRAVITY-MONK-CHAT-STORY-GAME-2026-11-26.md**:
+  - **สร้างโครงสร้างกราฟบทสนทนา (`src/content/monkChatStories.ts`)**:
+    - รองรับ 8 บทเรียนย่อย (Chapters 1–8) รวม 24 ฉาก (Nodes) และ 36 ทางเลือก (Choices)
+    - กราฟสมบูรณ์ 100%: ไม่มี Dead Links, ทุก Choice ชี้ไป Node ที่มีจริง, มีเส้นทางไปสู่ฉากจบทั้งสองแบบ (Completed & Declined)
+    - มีฟังก์ชันตรวจสอบความสมบูรณ์อัตโนมัติ `validateStoryGraph()`
+  - **สร้างคอมโพเนนต์เครื่องเล่นบทสนทนา (`src/components/nisit/MonkChatStoryPlayer.tsx`)**:
+    - แสดงฉากภาพบรรยากาศวัดมหาธาตุ พร้อมบริบทสถานการณ์และเป้าหมายของแต่ละบท
+    - กล่องคำพูดผู้มาเยือนชาวต่างชาติภาษาอังกฤษ พร้อมปุ่มเปิด/ปิดคำแปลภาษาไทย (`[ 🇹🇭 คำแปลไทย: เปิด/ปิด ]`)
+    - ตัวเลือกประโยคสนทนาของพระนิสิต พร้อมปุ่มลัดคีย์บอร์ด `1`, `2`, `3`
+    - แสดงคำแนะนำเชิงทักษะ (Feedback) ทันทีหลังเลือก เพื่ออธิบายผลของการเลือกใช้คำพูดโดยไม่ตัดสินถูก/ผิด
+    - เส้นทางปฏิเสธอย่างสุภาพ (Declined) จบอย่างสมเกียรติและเคารพการตัดสินใจของผู้มาเยือน ไม่หักคะแนน
+    - หน้าสรุปบทเรียนและประวัติการตัดสินใจ (Timeline Path Review) พร้อมปุ่มย้อนลองฉากเดิมและเริ่มเล่นใหม่
+  - **ผสานรวมเข้าสู่ศูนย์ฝึกพระนิสิต (`src/pages/NisitPracticePage.tsx`)**:
+    - เพิ่มแถบเลือกโหมดในหมวดสถานการณ์ (`activeTab === 'drills'`): เลือกระหว่าง `📖 เรื่องราวต่อเนื่อง (Story Simulation 8 บท)` และ `🎯 ข้อสอบ 14 สถานการณ์ (Scenario Drills)`
+    - ไม่รื้อหรือทำลาย 7 โมดูลเดิม และไม่กระทบต่อชุดทดสอบเดิม
+  - **ชุดทดสอบอัตโนมัติ (`src/components/nisit/MonkChatStoryPlayer.test.tsx`)**:
+    - ครอบคลุมการตรวจความสมบูรณ์ของกราฟ, การแสดงผลเริ่มต้น, การสลับคำแปล, การเลือกตอบและรับ Feedback, การใช้ปุ่มลัดคีย์บอร์ด, เส้นทางปฏิเสธอย่างสุภาพ, และการเดินเรื่องจนจบสมบูรณ์ (9 tests ผ่านครบ 100%)
+- **ผลการทดสอบเชิงเทคนิค**:
+  - Code Linter (`oxlint`): **0 errors** (174 files)
+  - Automated Tests (`vitest run --run`): **ผ่านครบ 100% (32 test files, 187/187 tests)**
+  - Production Build (`tsc -b && vite build`): **ผ่านฉลุยใน 341ms** พร้อม PWA Service Worker สมบูรณ์
+- **ภาพหลักฐานหน้าจอที่บันทึกแล้ว**:
+  - `story_player_in_action_desktop.png` (หน้าจอเล่นเกมบทสนทนาบนเดสก์ท็อป)
+  - `story_player_feedback_desktop.png` (หน้าจอแสดง Feedback คำแนะนำเชิงทักษะและปุ่มไปต่อ)
+  - `story_player_mobile.png` (มุมมองมือถือ 390px จัดวางคมชัด ไม่ล้นจอ)
+
+## การ์ดหลังนั่งปรับคำแล้ว รอเจ้าของดูก่อนเผยแพร่ — 26 พฤศจิกายน 2569
+
+- ปรับ body/note ของการ์ดหลังนั่งครบ 8 ใบทั้งไทยและอังกฤษให้เป็นคำแนะนำสั้น อ่อนโยน และเข้าใจง่าย คงภาพ ชื่อการ์ด และรูปแบบเดิม ไม่ใส่ชื่อหนังสือหรือเลขหน้าในการ์ด
+- เทียบกุญแจสมาธิและเก็บที่มาใน docs/content/meditation-reflection-source-map-2026-11-26.md เป็นเอกสารตรวจทาน ไม่ใช่ฟังก์ชัน CMS ใหม่
+- ลง source จริงแล้ว: src/content/meditationGuide.ts; ปรับ expected heading ใน src/pages/PublicPages.test.tsx ตรวจ lint/types/178 tests จาก 31 files/build/diff ผ่าน ตรวจข้อความจริงบนคู่มือแท็บหลังนั่งทั้งไทยและอังกฤษแล้ว
+- เจ้าของเปลี่ยนลำดับให้ปรับและเปิดดูก่อน แล้วค่อยเผยแพร่รวมกับสองหน้าสมาธิ จึงยังไม่ deploy ชุดใหม่; production ปัจจุบันยังเป็น CMS release เดิม
+- build ที่ .tmp/meditation-release-2026-11-26/deploy สร้างก่อนแก้ข้อความนี้ ห้ามนำไป deploy โดยตรง ต้องสร้าง configured release ใหม่หลังเจ้าของตรวจข้อความ
+- ไม่เพิ่มแพ็กเกจ ไม่แก้ DB/auth/RLS ไม่แก้ภาคนิพนธ์ ไม่ commit/push
+
+## สองหน้าสมาธิลงsourceและตรวจแล้ว ยังไม่deploy — 26 พฤศจิกายน 2569
+
+- เจ้าของสั่งทำM1ให้เสร็จก่อนเกม ลงsourceจริงที่Desktop/web/monkchat-guide-wt-nisitแล้ว เปิดVite4192: /meditationคู่มือ, /meditation/nowฝึก คงการ์ด/ภาพ/ธีมเดิม
+- คำยืนยันล่าสุดย้ายBreathingPacerไว้คู่มือแบบเลือกเปิด หน้าฝึกเปิดดวงแก้ว/เลือกเสียงทันที ไม่มีwizardปรับใจก่อนเริ่ม
+- แตะดวงแก้วเริ่มพักทำต่อ ระลอกกลางดวงแก้ว Timerจากmonotonic clock จบแล้วfreezeเวลาก่อนanimationและnative modalกลางviewportทั้งหน้า เล่น/พักเสียงจริงตามsessionได้
+- lint/types/178tests31files/build/diffผ่าน ตรวจไทยอังกฤษและpublicguestในbrowserจริง คู่มือ/ฝึก/modal5ขนาดไม่ล้น และคู่มือหลังย้ายตัวปรับลมหายใจ5ขนาดไม่ล้น ไม่มีDB/auth/RLS changes ไม่เพิ่มpackages ไม่commit/push ไม่deploy
+- รายละเอียดไฟล์และงานค้าง: docs/handoffs/MEDITATION-IMPLEMENTED-2026-11-26.md; หลักฐานDocuments/.tmp/meditation-implementation/ อย่าเอาbuildตรวจที่ไม่ได้ยืนยันproductionenvไปdeployทันที
+- งานเกมยังเป็นโครง24ฉาก36ทางเลือก ไม่ลงsourceเกม เสียงหยดน้ำและrankingพักไว้ ไม่แก้ภาคนิพนธ์/ฟอร์ม
+
+## แผนงานกลางและโครงเกมพร้อมส่งต่อ — 26 พฤศจิกายน 2569
+
+- เจ้าของยืนยันให้เอกสารเป็นความทรงจำโครงการร่วมของCodex/Antigravity ไม่ใช่ส่งต่อครั้งเดียว และให้แบ่งงานหลัก1ระบบสมาธิ(M1.1–M1.9) งานหลัก2เกมสถานการณ์(M2.1–M2.9) พร้อมสถานะและงานระยะยาว
+- จุดเริ่มอ่าน: `docs/handoffs/PROJECT-WORKPLAN-2026-11-26.md`; รายละเอียดเกม: `ANTIGRAVITY-MONK-CHAT-STORY-GAME-2026-11-26.md`; sampleกราฟ24ฉาก36choicesในJSONข้างกัน ตรวจunique IDs/targets/reachability/path-to-endingผ่าน เนื้อหาร่างยังรอตรวจ ไม่ได้ลงsourceเกม
+- เพิ่ม `CHATGPT-CONTEXT-MONK-CHAT-2026-11-26.md` สำหรับเปิดแชตChatGPTคุยต่อ ประกอบด้วยบริบทและข้อจำกัดโดยไม่ใส่secret แชตใหม่ไม่ควรถูกอ้างว่ารับประวัติเดิมครบอัตโนมัติ
+- ตัวอย่างดวงแก้วที่เจ้าของลองใช้ได้เป็นmockup: แตะเริ่ม/พัก/ทำต่อ จบแล้วการ์ดสรุป; ของจริงต้องoverlayเต็มviewportและคงธีม/การ์ดเดิม เสียงติ๊งถอดแล้ว เสียงหยดน้ำพักไว้ Rankingยังไม่ทำ
+- สถานะsourceแอปยังไม่เปลี่ยนในงานสมาธิหรือเกม; รอบนี้ทำเอกสารตามคำสั่งให้ส่งต่อก่อน ไม่commit/push ไม่แก้ภาคนิพนธ์ ไม่ทดสอบแอปซ้ำเพราะไม่มีโค้ดแอปเปลี่ยน
+
+## ส่งต่องานสมาธิให้ Antigravity ก่อนลง source — 26 พฤศจิกายน 2569
+
+- เจ้าของให้จัดเอกสารส่งต่อก่อน เพราะต้องการให้ผู้รับช่วงต่อได้และรักษาความสอดคล้องเว็บกับภาคนิพนธ์ ไม่รื้อธีม การ์ดเดิม วัตถุประสงค์หรือระเบียบวิธี และไม่แก้เล่มในรอบนี้
+- เอกสารเต็ม: `docs/handoffs/ANTIGRAVITY-MEDITATION-HANDOFF-2026-11-26.md` ระบุ checkoutจริงบนDesktop, งานCMSที่ยังไม่commit, mockupล่าสุด, สเปกสองหน้าสมาธิ/ดวงแก้วแตะเริ่มพัก/การ์ดสรุปเต็มviewport, จุดต่อaudio/VTT, verificationและงานที่ยังไม่ทำ
+- **งานสมาธิยังไม่ได้แก้sourceแอปจริง** มีเฉพาะmockupที่เจ้าของลองและยืนยัน ยังไม่ทำranking ไม่ทำบัญชีสะสมเวลาและไม่ใช้เสียงติ๊งสังเคราะห์ เสียงหยดน้ำพักไว้ก่อน
+- แก้ความเข้าใจจากบันทึกเก่า: frontendCMSเผยแพร่productionสำเร็จแล้ว26พ.ย.หลังเจ้าของยืนยัน การทดสอบภาพบนpublicผ่านและคืนbannerเดิมแล้ว อ้าง production-http-checks.jsonและcanonical-version-check.jsonใน.tmp/cms-live-2026-11-26 ข้อความblockedก่อนหน้านี้เป็นประวัติ ไม่ใช่สถานะปัจจุบัน
+- เอกสารนี้ยังไม่ได้ส่งผ่านแอปหรือช่องทางภายนอกให้บุคคลอื่น เป็นไฟล์พร้อมให้เจ้าของเปิด/คัดลอกส่งต่อ ไม่มีcommit/pushรอบนี้
+
+## คืนค่าหน้า CMS และยืนยันการบันทึก — 26 พฤศจิกายน 2569
+
+- ตามคำยืนยันเจ้าของ เพิ่มปุ่มคืนค่าทั้งหน้าข้างโหลดล่าสุด ดึงpublished copyหรือproject defaultsเมื่อยังไม่มีpublished เปลี่ยนเฉพาะeditor ต้องSave draftเอง ไม่autosave ไม่publish ไม่เก็บประวัติหลายรุ่น เพิ่มปุ่มคืนรูปเดิมรายช่องด้วย
+- เพิ่มกำลังบันทึกบนปุ่มและข้อความสำเร็จ/ล้มเหลวใกล้ปุ่ม ไม่แจ้งsuccessก่อนRPCตอบ แสดงpreview loadingและคงภาพระหว่างโหลด
+- พบการตรวจprofileตอนfocus/token refreshทำให้ProtectedRouteถอดeditorและรีเซ็ตค่าที่ยังไม่บันทึก ปรับAuthProviderให้คงsame-user profileระหว่างrevalidate เพิ่มisRefreshingให้CMSล็อกการเขียนระหว่างตรวจ ยังถอนสิทธิ์เมื่อinactive/errorและล้างeditorเมื่อเปลี่ยนidentity มี3regression tests
+- lint/types/171 tests28files/configured production build/git diff --checkผ่าน ไม่เพิ่มแพ็กเกจ ตรวจUIบนpreview4190กับSupabaseจริง Save draftมีข้อความใกล้ปุ่มตามจริง Home/Activitiesที่360/390/768/1024/1440 DOMไม่ล้น และภาพมือถือActivities390แสดงlayoutถูกต้อง resetviewportแล้ว ผู้ใช้ยืนยันคืนรูปและคืนทั้งหน้าใช้งานได้
+- backend editable_home_activities version20261126074834ขึ้นจริงแล้ว (private site-images≤3MBและfield validation64KB) ผลhosted transaction/RLSผ่านโดยrollbacktestwrites แต่frontend Cloudflareยังไม่เผยแพร่: auto-reviewปฏิเสธการupload115assetsเพราะยังต้องยืนยันการเผยแพร่ชุดproductionโดยเฉพาะ ห้ามอ้อมการปฏิเสธ ไม่มีcommit/push/deployfrontendสำเร็จ
+- ผู้ใช้ให้จบรอบนี้เพื่อไปส่วนอื่น ไม่ขยายทดสอบข้อความยาว/รูปหลายขนาดต่อ ประวัติหลายรุ่นไม่ทำตามเจ้าของ ภาพทดสอบยังรอเก็บกวาดเฉพาะรายการที่ยืนยันอ้างอิงแล้ว ไม่ลบรูปที่ผู้ใช้ทดลองทั้งหมดอัตโนมัติ
+- หลักฐานและsource checkpointไม่ใช่commitอยู่Documents/ChatGPT/MonkChat Guide/.tmp/cms-live-2026-11-26/ tabทดสอบล่าสุดอยู่IABหน้าHome4190 พร้อมใช้ บนเว็บproductionยังคงรุ่น24พ.ย.
+
+## ปรับ CMS หน้าโฮมและกิจกรรม พร้อมร่างเกม — 25 พฤศจิกายน 2569
+
+- เจ้าของอนุมัติให้ทำหลังบ้านหน้าโฮม/กิจกรรม จัดการรูปจริง แยกเมนู และทดสอบ ส่วนเกมให้ร่างแนวคิดก่อน มีงานรองเป็นร่างภาคนิพนธ์อิงเว็บใหม่ ใช้ skill monkchat-safe-feature และ Supabase ไม่มี subagents ไม่มีแพ็กเกจใหม่
+- แก้เฉพาะ source ล่าสุด Desktop/web/monkchat-guide-wt-nisit ฐาน HEAD 89b478a ไม่คัด source เก่า Documents ทับ สำรองต้นฉบับ Documents .tmp/cms-upgrade/before และ stage อยู่ .tmp/cms-upgrade/stage
+- แยก /admin/website/home, /activities, /contact ในเมนู จัดช่องเนื้อหาเป็นกลุ่ม รองรับ TH/EN รูป ข้อความ ไฮไลต์ สถิติ ตาราง สถานที่ แผนที่และการ์ดเดิม 6 ใบ แสดง/ซ่อนและลำดับ ยังไม่มีเพิ่มการ์ดใหม่ไม่จำกัด Home ทั้งสามทางเข้าใช้ข้อมูลชุดเดียวกัน
+- เพิ่ม SiteImageField ตรวจ JPG/PNG/WebP 3MB ชื่อไฟล์ใหม่ upsert:false มีสถานะ upload และรักษารูปเดิมเมื่อผิดพลาด เพิ่ม preview ด้วยคอมโพเนนต์จริง แยก draft/publish พร้อมยืนยันและ CAS หน้า public อ่าน published เท่านั้น resolve signed URLs ชั่วคราวไม่บันทึกลิงก์ลง DB
+- Lint/tsc/161 tests 27 files/Vite build/git diff --check ผ่าน ตรวจไม่มี mock สาธิตใน production bundle ฐานข้อมูลจำลอง PGlite 31 checks ผ่าน ครอบคลุม Public Team Owner inactive และ private/public referenced images แต่ไม่ใช่ hosted integration
+- เบราว์เซอร์สาธิต 4188 ยืนยัน edit/save/reload/preview/publish ในหน่วยความจำ แยกเมนูแล้ว ตรวจ DOM width Home/Activities 360/390/768/1024/1440 ไม่ล้น และ Home preview ที่ 360 dialog348px ภาพ screenshot mobile มีข้อจำกัดสเกลจึงต้องตรวจภาพจริงซ้ำ การเลือกไฟล์ผ่าน UI ขาดการเชื่อมต่อ ยังไม่ยืนยัน end-to-end upload
+- BLOCKER: apply migration ผ่าน Supabase plugin ถูก auto-review ปฏิเสธ เพราะเปลี่ยน constraint/bucket/storage RLS บนฐานข้อมูลจริงโดยไม่มีอนุมัติขอบเขตเฉพาะ ห้ามหลบไป CLI/SQL รอเจ้าของอนุมัติ 20261125113219_editable_home_activities.sql บน MonkChatGuide072 (jxrllzpqatoauxjuoqmo) เนื้อหา64KB/field whitelist + private site-images JPG PNG WebP3MB active owner/team upload own folder/public read only published referenced images ไม่มี DELETE/UPDATE policies
+- หลังอนุมัติต้องทดสอบด้วยบัญชีจริง upload/save/reopen/preview/publish/unpublish และ role denial ก่อน deploy ไม่มี hosted migration apply สำเร็จ ไม่มี commit/push/deploy รอบนี้ ลิงก์เซ็นที่ออกไปแล้วมีอายุ1ชม. การถอนเผยแพร่ไม่ลบไฟล์/ยกเลิกลิงก์เดิมทันที
+- outputs/admin-and-game-2026-11-25 มีผลตรวจ/รายการงานต่อ แนวคิดเกม HTML+TXT (ยังไม่แก้เกมจริง) และ Word ร่างเฉพาะส่วนปรับบท3–5 ไม่ใช่เล่มเต็ม คงเล่มเดิม แนวคิดเกมเน้นสถานการณ์ แผนที่เลือกหมวด แฟลชการ์ดแยกสุ่ม/ทีละใบ และทบทวน ไม่อ้างผลข้ามเครื่องทั้งหมวด
+- HTML ตัวอย่างเกมตรวจโครงสร้างและ script ในเครื่อง เบราว์เซอร์ปฏิเสธ file:// จึงไม่ได้ตรวจภาพจริงและไม่เลี่ยง policy ไปเสิร์ฟ URL อื่น ร่าง Word ใช้ Word export หลัง render_docx หา LibreOffice ไม่พบ ตรวจภาพก่อนส่ง
+- งานเดิมที่ยังต้องตาม: คำบรรยายเสียง326sเทียบ22cuesเดิม เกมlocalStorage/CSV ผลส่วนกลางรายหมวดต้องตรวจจริง ล็อกอินผู้มาเยือนเมื่อขอบันทึก/เวลาสมาธิ CMSหมวดอื่นยังไม่รับรองครบ flow แบบประเมินให้อาจารย์ตรวจก่อนใช้27/30พ.ย.และ4ธ.ค. ห้ามสร้างผลประเมินหรือข้อมูลวิจัยทดแทน
+
 ## กำลังซ่อมระบบให้ใช้งานจริง — 24 พฤศจิกายน 2569
 
 - เจ้าของสั่ง “จัดการทำให้ใช้ได้จริง” และ “ทำต่อ” ครอบคลุมแอดมิน/ผู้มาเยือน จึงกำลังต่อจากงานบัญชีเดิม ยังไม่ประกาศเสร็จครบหรือเผยแพร่ frontend ใหม่

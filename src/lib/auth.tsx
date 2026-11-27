@@ -18,6 +18,7 @@ interface AuthContextType {
   user: User | null
   profile: Profile | null
   isLoading: boolean
+  isRefreshing: boolean
   signOut: () => Promise<void>
 }
 
@@ -26,6 +27,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   isLoading: true,
+  isRefreshing: false,
   signOut: async () => {},
 })
 
@@ -36,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [sessionReady, setSessionReady] = useState(false)
   const [profileFor, setProfileFor] = useState<string | null>(null)
   const [profileRevision, setProfileRevision] = useState(0)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const isLoading = !sessionReady || (!!user && profileFor !== user.id)
 
   useEffect(() => {
@@ -108,7 +111,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         receivedAuthEvent = true
         setSession(newSession)
         setUser(newSession?.user ?? null)
-        setProfileFor(null)
+        // Keep same-user editors mounted during token refresh; identity changes still clear access.
+        setProfileFor(known => known === newSession?.user?.id ? known : null)
         setSessionReady(true)
         setProfileRevision(value => value + 1)
       })
@@ -151,7 +155,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
       
-      setProfileFor(null)
+      // A background recheck must not unmount forms and discard unsaved edits.
+      setProfileFor(known => known === userId ? known : null)
+      setIsRefreshing(true)
       try {
         const { data, error } = await supabaseClient
           .from('profiles')
@@ -182,7 +188,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('Unexpected error fetching profile:', err)
         if (mounted) setProfile(null)
       } finally {
-        if (mounted) setProfileFor(userId)
+        if (mounted) {setProfileFor(userId);setIsRefreshing(false)}
       }
     }
 
@@ -214,7 +220,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ session, user, profile: profileFor === user?.id ? profile : null, isLoading, signOut }}>
+    <AuthContext.Provider value={{ session, user, profile: profileFor === user?.id ? profile : null, isLoading, isRefreshing, signOut }}>
       {children}
     </AuthContext.Provider>
   )

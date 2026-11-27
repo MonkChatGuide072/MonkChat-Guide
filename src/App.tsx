@@ -13,7 +13,8 @@ const VisitPage = lazy(() => import('./pages/VisitPage').then(m => ({ default: m
 const NisitPracticePage = lazy(() => import('./pages/NisitPracticePage').then(m => ({ default: m.NisitPracticePage })))
 const NisitLoginPage = lazy(() => import('./pages/NisitLoginPage').then(m => ({ default: m.NisitLoginPage })))
 const ActivitiesPage = lazy(() => import('./pages/ActivitiesPage').then(m => ({ default: m.ActivitiesPage })))
-const MeditationPage = lazy(() => import('./pages/MeditationPage').then(m => ({ default: m.MeditationPage })))
+const MeditationGuidePage = lazy(() => import('./pages/MeditationGuidePage').then(m => ({ default: m.MeditationGuidePage })))
+const MeditationPracticePage = lazy(() => import('./pages/MeditationPracticePage').then(m => ({ default: m.MeditationPracticePage })))
 const QAPage = lazy(() => import('./pages/QAPage').then(m => ({ default: m.QAPage })))
 const CentersPage = lazy(() => import('./pages/CentersPage').then(m => ({ default: m.CentersPage })))
 const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })))
@@ -62,7 +63,9 @@ function App() {
               </Route>
               <Route path="nisit/login" element={<NisitLoginPage />} />
               <Route path="activities" element={<ActivitiesPage />} />
-              <Route path="meditation" element={<MeditationPage />} />
+              <Route path="meditation" element={<MeditationGuidePage />} />
+              <Route path="meditation/guide" element={<MeditationGuidePage />} />
+              <Route path="meditation/now" element={<MeditationPracticePage />} />
               <Route path="qa" element={<QAPage />} />
               <Route path="centers" element={<CentersPage />} />
               <Route path="admin/login" element={<LoginPage />} />
@@ -73,6 +76,9 @@ function App() {
               <Route element={<AdminLayout />}>
                 <Route index element={<AdminDashboardPage />} />
                 <Route path="website" element={<AdminSiteContentPage />} />
+                <Route path="website/home" element={<AdminSiteContentPage key="home" fixedSection="home" />} />
+                <Route path="website/activities" element={<AdminSiteContentPage key="activities" fixedSection="activities" />} />
+                <Route path="website/contact" element={<AdminSiteContentPage key="contact" fixedSection="contact" />} />
                 <Route path="meditation" element={<AdminMeditationPage />} />
                 <Route path="meditation/new" element={<AdminMeditationNewPage />} />
                 <Route path="meditation/:trackId/edit" element={<AdminMeditationEditPage />} />

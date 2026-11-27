@@ -20,8 +20,8 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        background_color: '#F7F7F4',
-        theme_color: '#11223C',
+        background_color: '#d8ccb8',
+        theme_color: '#354033',
         icons: [
           {
             src: '/pwa-64x64.png',
@@ -51,6 +51,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
         globIgnores: ['**/*.{mp3,wav,m4a,ogg,flac}', '**/audio/**'],
         cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
       },
     }),
   ],

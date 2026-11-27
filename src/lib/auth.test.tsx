@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Session } from '@supabase/supabase-js'
@@ -63,4 +64,40 @@ describe('AuthProvider session and profile readiness', () => {
     fireEvent(window, new Event('focus'))
     await screen.findByText('owner:false')
   })
+})
+
+function LocalDraft(){const auth=useAuth();const [text,setText]=useState('original');return <input aria-label="Draft" disabled={auth.isRefreshing} value={text} onChange={e=>setText(e.target.value)}/>}
+function GuardedDraft(){const auth=useAuth();if(auth.isLoading)return <p>guard loading</p>;if(!auth.profile?.is_active)return <p>guard denied</p>;return <LocalDraft/>}
+describe('background account checks preserve unsaved edits',()=>{
+ beforeEach(()=>{vi.clearAllMocks();mocks.getSession.mockResolvedValue({data:{session},error:null});mocks.single.mockResolvedValue({data:owner,error:null})})
+ it('keeps form state through focus revalidation and blocks editing until it finishes',async()=>{
+  render(<AuthProvider><GuardedDraft/></AuthProvider>);const input=await screen.findByLabelText('Draft')
+  fireEvent.change(input,{target:{value:'unsaved image and text selection'}})
+  const refresh=deferred<{data:typeof owner;error:null}>();mocks.single.mockReturnValue(refresh.promise)
+  fireEvent(window,new Event('focus'))
+  expect(screen.getByLabelText('Draft')).toHaveValue('unsaved image and text selection')
+  expect(screen.getByLabelText('Draft')).toBeDisabled()
+  await act(async()=>refresh.resolve({data:owner,error:null}))
+  expect(screen.getByLabelText('Draft')).toHaveValue('unsaved image and text selection')
+  expect(screen.getByLabelText('Draft')).toBeEnabled()
+ })
+ it('keeps the same user draft on token refresh but removes access after suspension',async()=>{
+  render(<AuthProvider><GuardedDraft/></AuthProvider>);const input=await screen.findByLabelText('Draft')
+  fireEvent.change(input,{target:{value:'draft survives token refresh'}})
+  const refresh=deferred<{data:typeof owner;error:null}>();mocks.single.mockReturnValue(refresh.promise)
+  await act(async()=>mocks.listener?.('TOKEN_REFRESHED',session))
+  expect(screen.getByLabelText('Draft')).toHaveValue('draft survives token refresh')
+  await act(async()=>refresh.resolve({data:{...owner,is_active:false},error:null}))
+  expect(screen.getByText('guard denied')).toBeInTheDocument()
+  expect(screen.queryByLabelText('Draft')).not.toBeInTheDocument()
+ })
+ it('does not retain a previous user form when the account changes',async()=>{
+  render(<AuthProvider><GuardedDraft/></AuthProvider>);const input=await screen.findByLabelText('Draft')
+  fireEvent.change(input,{target:{value:'private unsaved text'}})
+  const refresh=deferred<{data:typeof owner;error:null}>();mocks.single.mockReturnValue(refresh.promise)
+  await act(async()=>mocks.listener?.('SIGNED_IN',{user:{id:'other-owner'}} as Session))
+  expect(screen.queryByLabelText('Draft')).not.toBeInTheDocument()
+  await act(async()=>refresh.resolve({data:{...owner,id:'other-owner'},error:null}))
+  expect(screen.getByLabelText('Draft')).toHaveValue('original')
+ })
 })

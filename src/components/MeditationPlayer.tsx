@@ -1,8 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabaseClient } from '../lib/supabase'
 import { trackUsageEvent } from '../lib/analytics'
 import { formatMediaTime, parseWebVTT, type SubtitleCue } from '../lib/subtitles'
+
+export interface MeditationPlaybackControl {
+  playing: boolean
+  locked: boolean
+  onPlay: () => void
+  onPause: () => void
+  onError: () => void
+}
 
 interface Props {
   trackId: string
@@ -10,12 +18,16 @@ interface Props {
   audioPath: string | null
   subtitlePath: string | null
   tone?: 'light' | 'dark'
+  playbackControl?: MeditationPlaybackControl
 }
 
 // The parent keys this component by track/language so media cannot leak between selections.
-export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone = 'light' }: Props) {
+export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone = 'light', playbackControl }: Props) {
   const { t } = useTranslation()
   const isDark = tone === 'dark'
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const controlRef = useRef(playbackControl)
+  useEffect(() => { controlRef.current = playbackControl }, [playbackControl])
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [audioState, setAudioState] = useState<'loading' | 'ready' | 'missing' | 'error'>(audioPath ? 'loading' : 'missing')
   const [subtitleState, setSubtitleState] = useState<'loading' | 'ready' | 'missing' | 'error'>(subtitlePath ? 'loading' : 'missing')
@@ -74,6 +86,19 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
     return () => { active = false }
   }, [subtitlePath, subtitleAttempt])
 
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio || !audioUrl || playbackControl === undefined) return
+    if (playbackControl.playing) {
+      void audio.play().catch(() => controlRef.current?.onError())
+    } else audio.pause()
+  }, [playbackControl?.playing, audioUrl])
+
+  useEffect(() => {
+    const audio = audioRef.current
+    return () => { if (controlRef.current) audio?.pause() }
+  }, [audioUrl])
+
   const activeCues = cues.filter(cue => time >= cue.start && time < cue.end)
   const record = (eventType: 'audio_play' | 'audio_complete') => {
     void trackUsageEvent({ eventType, resourceType: 'meditation_track', resourceId: trackId }).catch(() => {
@@ -104,6 +129,7 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
         )}
         {audioUrl && audioState === 'ready' && (
           <audio
+            ref={audioRef}
             key={audioUrl}
             aria-label={`${t('meditation.audioPlayerTitle')}: ${title}`}
             controls
@@ -112,9 +138,10 @@ export function MeditationPlayer({ trackId, title, audioPath, subtitlePath, tone
             src={audioUrl}
             onTimeUpdate={event => setTime(event.currentTarget.currentTime)}
             onSeeked={event => setTime(event.currentTarget.currentTime)}
-            onPlay={() => record('audio_play')}
+            onPlay={() => { record('audio_play'); controlRef.current?.onPlay() }}
+            onPause={event => { if (!event.currentTarget.ended) controlRef.current?.onPause() }}
             onEnded={event => { setTime(event.currentTarget.currentTime); record('audio_complete') }}
-            onError={() => setAudioState('error')}
+            onError={() => { setAudioState('error'); controlRef.current?.onError() }}
           />
         )}
       </section>

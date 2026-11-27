@@ -55,7 +55,7 @@ function PictureCarousel({ cards, previous, next, swipe, cardLabel, countLabel, 
   </div>
 }
 
-export function MeditationBeginnerGuide() {
+export function MeditationBeginnerGuide({ audioHref = '#meditation-audio' }: { audioHref?: string }) {
   const { i18n } = useTranslation()
   const language = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en') ? 'en' : 'th'
   const copy = meditationJourneyCopy[language]
@@ -94,7 +94,7 @@ export function MeditationBeginnerGuide() {
       {phase === 1 && <div className="meditation-time-card mt-3 overflow-hidden rounded-2xl border border-brand-border bg-brand-surface">
         <div className="meditation-time-art"><MeditationGuideVisual meditationTime label={copy.duringImage} /></div>
         <div className="p-4 sm:p-6"><p className="text-base leading-6 text-brand-text">{copy.duringBody}</p><p className="mt-2 text-sm leading-5 text-brand-muted">{copy.duringNote}</p>
-          <a href="#meditation-audio" className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg bg-brand-terracotta px-4 text-sm font-medium text-white"><GuideIcon name="play" />{copy.listen}</a>
+          <a href={audioHref} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg bg-brand-terracotta px-4 text-sm font-medium text-white"><GuideIcon name="play" />{copy.listen}</a>
         </div>
       </div>}
       {phase === 2 && <>
