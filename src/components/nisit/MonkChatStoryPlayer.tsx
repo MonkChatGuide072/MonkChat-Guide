@@ -50,12 +50,26 @@ export function MonkChatStoryPlayer({ isEnglish = false, onExit, studentCode, st
     if (started) heading.current?.focus({ preventScroll: true })
   }, [sceneId, started, history.length])
   useEffect(() => {
-    if (!started || !eventDialog.current) return
-    const dialog = eventDialog.current
+    if (!started) return
     const overflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    if (!dialog.open) dialog.showModal()
-    return () => { if (dialog.open) dialog.close(); document.body.style.overflow = overflow }
+    try {
+      if (eventDialog.current && !eventDialog.current.open && typeof eventDialog.current.showModal === 'function') {
+        eventDialog.current.showModal()
+      }
+    } catch {
+      // Graceful fallback for mobile webviews; dialog has open attribute in JSX
+    }
+    return () => {
+      document.body.style.overflow = overflow
+      try {
+        if (eventDialog.current?.open && typeof eventDialog.current.close === 'function') {
+          eventDialog.current.close()
+        }
+      } catch {
+        // ignore
+      }
+    }
   }, [started])
 
   function unlock() { if (timer.current) clearTimeout(timer.current); locked.current = false; setChanging(false) }
@@ -90,7 +104,7 @@ export function MonkChatStoryPlayer({ isEnglish = false, onExit, studentCode, st
         <button type="button" onClick={() => { unlock(); setStarted(true) }} className="story-primary">{label('เริ่มเรื่องราว', 'Begin the story')} <span aria-hidden="true">&nbsp;→</span></button><p className="story-footnote">{label('เลือกคำพูดแล้วดูเหตุการณ์ต่อไป ไม่มีคะแนนสอบ · ใช้เวลาเล่นตามจังหวะของคุณ', 'Choose what to say and see what happens next. No test score; play at your own pace.')}</p>
       </div></div>
       <details className="story-plan"><summary>{label('เส้นทางการฝึก · พร้อมเล่นบทที่ 1', 'Learning path · Chapter 1 available')}</summary><ol>{invitationChapters.map((chapter,index) => <li key={chapter.en}>{index + 1}. {read(chapter)}<small>{index === 0 ? label('พร้อมทดลองฝึก', 'Available to try') : label('บทถัดไปในแผนพัฒนา', 'Planned next chapter')}</small></li>)}</ol></details>
-    </> : <dialog ref={eventDialog} className="story-event-dialog" aria-label={label('สถานการณ์ Monk Chat · บทที่ 1', 'Monk Chat event · Chapter 1')} onCancel={event => { event.preventDefault(); exit() }}>
+    </> : <div className="story-modal-overlay" role="presentation" onClick={e => { if (e.target === e.currentTarget) exit() }}><dialog ref={eventDialog} open className="story-event-dialog" aria-label={label('สถานการณ์ Monk Chat · บทที่ 1', 'Monk Chat event · Chapter 1')} onCancel={event => { event.preventDefault(); exit() }} onClick={e => e.stopPropagation()}>
       <div className="story-event-toolbar"><span>MONK CHAT · 01</span><div className="story-tools">
         <button type="button" aria-pressed={translation} onClick={() => setTranslation(!translation)}>{label('คำแปลไทย', 'Thai translation')}: {translation ? label('เปิด', 'on') : label('ปิด', 'off')}</button>
         <button type="button" onClick={reset}>{label('เริ่มใหม่', 'Restart')}</button><button type="button" onClick={exit}>{label('ปิด', 'Close')}</button>
@@ -104,6 +118,6 @@ export function MonkChatStoryPlayer({ isEnglish = false, onExit, studentCode, st
       </div>
       {active && history.length > 0 && <button type="button" className="story-back" disabled={changing} onClick={() => rewind(history.length - 1)}>{label('ย้อนคำตอบล่าสุด', 'Reconsider your last choice')}</button>}
       {scene.ending && <ol className="story-recap">{history.map((step,index) => { const node=invitationScenes[step.sceneId],item=node.choices[step.choiceIndex];return <li key={`${step.sceneId}-${index}`}><div className="story-recap-header"><h4>{index + 1}. {read(node.title)}</h4><button type="button" className="story-review-action" onClick={() => rewind(index)}>{label('ลองจุดนี้อีกครั้ง', 'Retry from here')}</button></div><p lang="en">{item.line.en}</p>{translation && <p lang="th" className="story-translation">{item.line.th}</p>}<p>{read(item.reaction)}</p><p className="story-takeaway">{read(item.takeaway)}</p></li> })}</ol>}
-    </dialog>}
+    </dialog></div>}
   </section>
 }

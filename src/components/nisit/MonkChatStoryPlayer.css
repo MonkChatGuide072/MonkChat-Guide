@@ -13,8 +13,9 @@
 .story-card{scroll-margin-top:90px}.story-art{aspect-ratio:16/8}.story-art img{object-position:center 48%}@media(max-width:520px){.story-art{aspect-ratio:16/9}.story-card{scroll-margin-top:82px}}
 
 /* Owner exact approved model: centered modal dialog, toolbar on top, clean 3-card side-by-side choices */
-.story-event-dialog{width:min(680px,calc(100vw - 28px));max-width:none;max-height:calc(100dvh - 28px);padding:0;margin:auto;border:1px solid #dcd7ca;border-radius:18px;background:#faf7ee;color:#18344e;box-shadow:0 24px 90px #101c2759;overflow:auto;overscroll-behavior:contain}
-.story-event-dialog::backdrop{background:#15252e80;backdrop-filter:blur(5px)}
+.story-modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(21,37,46,0.75);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:12px;overflow-y:auto;overscroll-behavior:contain}
+.story-event-dialog{position:relative;width:min(680px,calc(100vw - 24px));max-width:none;max-height:calc(100dvh - 24px);padding:0;margin:auto;border:1px solid #dcd7ca;border-radius:18px;background:#faf7ee;color:#18344e;box-shadow:0 24px 90px #101c2759;overflow:auto;overscroll-behavior:contain;display:block}
+.story-event-dialog::backdrop{display:none}
 .story-event-dialog:not([open]){display:none}
 .story-event-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid #eae4d4;background:#f5efe4}
 .story-event-toolbar>span{font-size:11px;font-weight:700;letter-spacing:.1em;color:#a77938}
