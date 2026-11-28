@@ -65,6 +65,8 @@ describe('VisitPage', () => {
     expect(fakeI18n.changeLanguage).toHaveBeenCalledWith('en')
     expect(await screen.findByRole('heading', { name: 'MonkChat Guide' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Location & map' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Play 5-minute guided meditation audio' })).not.toBeInTheDocument()
+    expect(document.querySelector('audio')).toBeNull()
     expect(screen.getByAltText(/Real Monk Chat outdoor meeting spot/i)).toHaveAttribute(
       'src',
       '/images/home/monkchat-spot-wat-mahathat.jpg',
@@ -78,6 +80,9 @@ describe('VisitPage', () => {
     expect(imgSources.some((src) => src.includes('/images/activities/'))).toBe(false)
     expect(new Set(imgSources).size).toBe(imgSources.length)
     expect(screen.getByRole('heading', { name: 'What to expect' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Location & map' }).compareDocumentPosition(
+      screen.getByRole('heading', { name: 'What to expect' }),
+    ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Atmosphere & surroundings' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Official Contact & Announcements' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /MonkChat Ayutthaya/ })).toHaveAttribute(
@@ -93,6 +98,9 @@ describe('VisitPage', () => {
 
     expect(await screen.findByRole('heading', { name: 'สถานที่และแผนที่' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'สิ่งที่จะได้สัมผัสในกิจกรรม' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'สถานที่และแผนที่' }).compareDocumentPosition(
+      screen.getByRole('heading', { name: 'สิ่งที่จะได้สัมผัสในกิจกรรม' }),
+    ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'บรรยากาศกิจกรรมและสถานที่' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'ติดต่อสอบถาม & ติดตามเพจอย่างเป็นทางการ' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'คุยกับแชทบอท' })).toBeInTheDocument()

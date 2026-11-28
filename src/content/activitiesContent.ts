@@ -160,7 +160,7 @@ const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
     },
     etiquette: {
       eyebrow: 'ข้อควรปฏิบัติสำหรับผู้ร่วมกิจกรรม',
-      title: 'ข้อแนะนำเบื้องต้นในการร่วมกิจกรรมในวัด',
+      title: 'ร่วมกิจกรรมกลางแจ้งอย่างสบายใจ',
       items: [
         {
           id: 'dress',
@@ -171,8 +171,8 @@ const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
         {
           id: 'shoes',
           icon: 'check',
-          title: 'ถอดรองเท้า',
-          description: 'ถอดรองเท้าและหมวกก่อนเข้าสู่ศาลาปฏิบัติธรรมหรือบริเวณปูเสื่อสำหรับสนทนา',
+          title: 'สวมรองเท้าเข้าร่วมได้',
+          description: 'กิจกรรมจัดกลางแจ้งและนั่งเก้าอี้ สวมรองเท้าเข้าร่วมได้ เลือกคู่ที่เดินสบาย',
         },
         {
           id: 'calm',
@@ -291,7 +291,7 @@ const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
     },
     etiquette: {
       eyebrow: 'Visitor Etiquette',
-      title: 'Simple Guidelines for Temple Activities',
+      title: 'A Comfortable Outdoor Visit',
       items: [
         {
           id: 'dress',
@@ -302,8 +302,8 @@ const contentByLanguage: Record<AppLanguage, ActivitiesPageContent> = {
         {
           id: 'shoes',
           icon: 'check',
-          title: 'Remove Footwear',
-          description: 'Remove shoes and hats before entering meditation halls, pavilions, and seated mat areas.',
+          title: 'Keep Your Shoes On',
+          description: 'We meet outdoors and sit on chairs. You can keep your shoes on; choose a pair that is comfortable for walking.',
         },
         {
           id: 'calm',

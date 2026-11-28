@@ -33,6 +33,7 @@ vi.mock('../lib/supabase', () => ({
 }))
 
 vi.mock('../lib/analytics', () => ({ trackUsageEvent: vi.fn(async () => {}) }))
+vi.mock('../lib/auth', () => ({ useAuth: () => ({ session: null, profile: null, isLoading: false, signOut: vi.fn() }) }))
 vi.mock('../lib/bioLinkImages', () => ({ getBioLinkImageUrl: () => null }))
 
 const i18n = createInstance()
@@ -194,6 +195,33 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     expect(screen.queryByRole('link', { name: /Student Training|Student Monks|พระนิสิต/i })).not.toBeInTheDocument()
   })
 
+  it('places the same account controls inside the student phone drawer and preserves unfinished profile input', async () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    // JSDOM has no rendered scroll target; real viewport scrolling is checked in browser.
+    vi.stubGlobal('requestAnimationFrame', vi.fn().mockReturnValue(1))
+    const media = {matches:true, addEventListener:vi.fn(), removeEventListener:vi.fn()}
+    vi.stubGlobal('matchMedia', () => media)
+    try {
+      const {container} = renderWithRouter(<Routes><Route path="/" element={<Layout />}><Route path="nisit" element={<NisitPracticePage />} /></Route></Routes>, ['/nisit'])
+      expect(container.querySelector('header')).toHaveTextContent('Monk Chat Practice')
+      expect(container.querySelector('#nisit-phone-account-slot .training-account-menu')).not.toBeNull()
+      expect(container.querySelector('.training-account-bar .training-account-menu')).toBeNull()
+      fireEvent.click(screen.getByRole('button', {name:'Open account menu'}))
+      const menu=screen.getByRole('region', {name:'Account menu'})
+      expect(within(menu).queryByRole('button', {name:'Practice Games'})).not.toBeInTheDocument()
+      expect(within(menu).getByLabelText('Password')).toHaveAttribute('type','password')
+      fireEvent.click(screen.getByRole('button', {name:'Enter ID & Name'}))
+      fireEvent.change(screen.getByLabelText(/Name & Dharma Name/i), {target:{value:'Unsubmitted draft'}})
+      fireEvent.click(screen.getByRole('button', {name:'Close account menu'}))
+      fireEvent.click(screen.getByRole('button', {name:'Open account menu'}))
+      expect(screen.getByLabelText(/Name & Dharma Name/i)).toHaveValue('Unsubmitted draft')
+      fireEvent.click(screen.getByRole('button', {name:'Close account menu'}))
+      fireEvent.click(screen.getByRole('button', {name:'Open Practice Games'}))
+      expect(screen.getByRole('heading', {level:1})).toHaveTextContent('Practice Games')
+      expect(screen.getByRole('button', {name:'Open account menu'})).toBeInTheDocument()
+      expect(container.querySelector('.nisit-phone-drawer nav')).toBeNull()
+    } finally { cleanup(); vi.unstubAllGlobals() }
+  })
   it('Layout keeps 5 visitor shortcuts persistent on sub-pages, keeps chatbot in header, and hides /nisit links publicly', async () => {
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
     sessionStorage.setItem(VISITOR_LANGUAGE_SESSION_KEY, 'en')
@@ -240,14 +268,14 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     expect(screen.queryByRole('heading', { name: 'Meditation sanctuaries & places to stay' })).not.toBeInTheDocument()
   })
 
-  it('keeps all seven modules reachable with arrow keys, Home and End', async () => {
+  it('keeps all five modules reachable with arrow keys, Home and End', async () => {
     renderWithRouter(<NisitPracticePage />)
-    const tabs = screen.getAllByRole('tab')
-    expect(tabs).toHaveLength(7)
-    const first = screen.getByRole('tab', { name: /Vocab & Cards/ })
+    const tabs = screen.getAllByRole('tab').filter(tab => tab.id.startsWith('tab-'))
+    expect(tabs).toHaveLength(5)
+    const first = screen.getByRole('tab', { name: /Vocabulary/ })
     first.focus()
     fireEvent.keyDown(first, { key: 'End' })
-    const last = screen.getByRole('tab', { name: /Notes & Card/ })
+    const last = screen.getByRole('tab', { name: /Thank-you Card/ })
     expect(last).toHaveFocus()
     expect(last).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', last.id)
@@ -259,11 +287,27 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     expect(first).toHaveFocus()
     expect(first).toHaveAttribute('aria-selected', 'true')
   })
+  it('changes the scene banner with the selected module and keeps account actions tucked away', () => {
+    renderWithRouter(<NisitPracticePage />)
+    expect(screen.getByRole('heading', {level:1})).toHaveTextContent('Vocabulary')
+    const account = screen.getByLabelText('Account').closest('details')
+    expect(account).not.toHaveAttribute('open')
+    fireEvent.click(screen.getByRole('tab', {name:/Practice Games/}))
+    expect(screen.getByRole('heading', {level:1})).toHaveTextContent('Practice Games')
+    fireEvent.click(screen.getByRole('tab', {name:/Videos & Resources/}))
+    expect(screen.getByRole('heading', {level:1})).toHaveTextContent('Videos & Resources')
+    fireEvent.click(screen.getByLabelText('Account'))
+    expect(account).toHaveAttribute('open')
+    expect(screen.getByLabelText('Password')).toHaveAttribute('type','password')
+    fireEvent.keyDown(screen.getByLabelText('Account'), {key:'Escape'})
+    expect(account).not.toHaveAttribute('open')
+  })
   it('NisitPracticePage supports student profile validation and all 5 learning modules', async () => {
     renderWithRouter(<NisitPracticePage />)
-    expect(screen.getByRole('heading', { name: 'Ayutthaya Monk Chat Practice Hub' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Vocabulary', level: 1 })).toBeInTheDocument()
 
     // Student ID validation
+    fireEvent.click(screen.getByLabelText('Account'))
     fireEvent.click(screen.getByRole('button', { name: 'Enter ID & Name' }))
     fireEvent.change(screen.getByLabelText(/7-digit Student ID/i), { target: { value: '661018' } })
     fireEvent.change(screen.getByLabelText(/Name & Dharma Name/i), { target: { value: 'Phra Somchai' } })
@@ -277,15 +321,16 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     // Tab 1: Vocab cards
     const practiceBtns = screen.getAllByRole('button', { name: 'Mark practiced' })
     fireEvent.click(practiceBtns[0])
-    expect(screen.getByText('1 / 7')).toBeInTheDocument()
+    expect(screen.getByText('1 / 8')).toBeInTheDocument()
 
     // Tab 2: Synchronized Audio & Live Script
-    fireEvent.click(screen.getByRole('tab', { name: /Audio & Script/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Videos & Resources/i }))
+    fireEvent.click(screen.getByText('Audio & guiding script practice'))
     expect(await screen.findByLabelText('Student audio player: 5-Minute Guided Meditation')).toBeInTheDocument()
     await waitFor(() => expect(screen.getByText('Let us adjust sitting posture.')).toBeInTheDocument())
 
-    // Tab 3: Listening Videos with safe YouTube check
-    fireEvent.click(screen.getByRole('tab', { name: /Listening Videos/i }))
+    // Tab 3: Videos & Resources with safe YouTube check
+    fireEvent.click(screen.getByRole('tab', { name: /Videos & Resources/i }))
     fireEvent.change(screen.getByLabelText('YouTube video URL'), { target: { value: 'https://evil.example/video' } })
     fireEvent.click(screen.getByRole('button', { name: 'Load video' }))
     expect(screen.getByRole('alert')).toHaveTextContent(/valid https:\/\/youtube\.com/i)
@@ -299,7 +344,8 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     )
 
     // Tab 4: Verified Q&A Flashcards
-    fireEvent.click(screen.getByRole('tab', { name: /Q&A Flashcards/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Phrases & Tools/i }))
+    fireEvent.click(screen.getByText('Q&A practice library'))
     expect(await screen.findByRole('heading', { name: 'Why do monks close their eyes gently?' })).toBeInTheDocument()
     expect(mocks.filters).toContainEqual(['qa_items', 'verification_status', 'verified'])
     expect(mocks.filters).toContainEqual(['qa_items', 'is_published', true])
@@ -309,7 +355,7 @@ describe('Phase 1 Home, Visit and Nisit routes', () => {
     ).toBeInTheDocument()
 
     // Tab 5: Local Visitor Notes & Thank-You Card (Zero DB writes)
-    fireEvent.click(screen.getByRole('tab', { name: /Notes & Card/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Thank-you Card/i }))
     fireEvent.change(screen.getByLabelText('Visitor name'), { target: { value: 'Elena' } })
     fireEvent.change(screen.getByLabelText(/Country or conversation note/i), { target: { value: 'Spain' } })
     fireEvent.click(screen.getByRole('button', { name: 'Add to local list' }))

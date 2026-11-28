@@ -77,7 +77,7 @@ export function HomeHeroIntro({
         </p>
 
         {/* 5 Tactile Handcrafted Shortcuts with scale-on-press */}
-        <nav aria-label={text('home_hero_004', isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก')} className="mx-auto mt-6 grid max-w-2xl grid-cols-5 gap-1.5 min-[390px]:gap-2 sm:gap-3">
+        <nav aria-label={text('home_hero_004', isEnglish ? 'Home shortcuts' : 'ทางลัดหน้าแรก')} className="visitor-home-shortcuts mx-auto mt-6 grid max-w-2xl grid-cols-5 gap-1.5 min-[390px]:gap-2 sm:gap-3">
           {PUBLIC_SHORTCUTS.map((item) => (
             <Link
               key={item.to}

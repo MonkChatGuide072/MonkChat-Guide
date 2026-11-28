@@ -1937,8 +1937,8 @@ export const websiteFields: WebsiteField[] = [
     "kind": "text",
     "limit": 2500,
     "defaults": {
-      "th": "ข้อแนะนำเบื้องต้นในการร่วมกิจกรรมในวัด",
-      "en": "Simple Guidelines for Temple Activities"
+      "th": "ร่วมกิจกรรมกลางแจ้งอย่างสบายใจ",
+      "en": "A Comfortable Outdoor Visit"
     },
     "path": [
       "etiquette",
@@ -1989,8 +1989,8 @@ export const websiteFields: WebsiteField[] = [
     "kind": "text",
     "limit": 2500,
     "defaults": {
-      "th": "ถอดรองเท้า",
-      "en": "Remove Footwear"
+      "th": "สวมรองเท้าเข้าร่วมได้",
+      "en": "Keep Your Shoes On"
     },
     "path": [
       "etiquette",
@@ -2007,8 +2007,8 @@ export const websiteFields: WebsiteField[] = [
     "kind": "text",
     "limit": 2500,
     "defaults": {
-      "th": "ถอดรองเท้าและหมวกก่อนเข้าสู่ศาลาปฏิบัติธรรมหรือบริเวณปูเสื่อสำหรับสนทนา",
-      "en": "Remove shoes and hats before entering meditation halls, pavilions, and seated mat areas."
+      "th": "กิจกรรมจัดกลางแจ้งและนั่งเก้าอี้ สวมรองเท้าเข้าร่วมได้ เลือกคู่ที่เดินสบาย",
+      "en": "We meet outdoors and sit on chairs. You can keep your shoes on; choose a pair that is comfortable for walking."
     },
     "path": [
       "etiquette",

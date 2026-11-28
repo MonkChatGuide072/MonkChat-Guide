@@ -1,0 +1,14 @@
+.nisit-mobile-nav { display:none; }
+@media(max-width:767px) {
+  .nisit-training { padding-bottom:calc(88px + env(safe-area-inset-bottom)); }
+  .nisit-training .training-sidebar { display:none; }
+  .nisit-training .training-workspace { grid-template-columns:minmax(0,1fr); }
+  .nisit-mobile-nav { position:fixed; z-index:40; inset:auto 0 0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:2px; padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left)); border-top:1px solid #e3dfd4; background:#fffdf9f5; backdrop-filter:blur(14px); box-shadow:0 -4px 18px #18344a0c; }
+  .nisit-mobile-nav button { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:56px; min-width:0; border-radius:12px; color:#62727b; font-size:11px; line-height:1.4; font-weight:550; cursor:pointer; }
+  .nisit-mobile-nav button[aria-pressed=true],.nisit-mobile-nav button[data-selected=true] { background:#fff0d0; color:#77551f; }
+  .nisit-mobile-icon { display:flex; align-items:center; justify-content:center; width:34px; height:26px; font-size:18px; letter-spacing:2px; }
+  .nisit-mobile-icon svg { width:23px; height:23px; }
+  .nisit-mobile-nav button:focus-visible { outline:2px solid #bd8a3d; outline-offset:-2px; }
+  .nisit-training:has(.story-event-dialog[open]) .nisit-mobile-nav { visibility:hidden; }
+  .nisit-training .training-panel { scroll-margin-top:85px; }
+}

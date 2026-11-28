@@ -17,10 +17,10 @@ interface TrainingModule {
 }
 
 /** Navigation copy only; lesson content, permissions and progress stay in their existing modules. */
-export const nisitTrainingModules: TrainingModule[] = [
+const modules: TrainingModule[] = [
   {
-    id: 'vocab', icon: 'book', th: 'คำศัพท์และประโยค', en: 'Vocab & Cards',
-    detailTh: '7 ขั้นตอนนำสมาธิ', detailEn: '7 guiding stages',
+    id: 'vocab', icon: 'book', th: 'คำศัพท์', en: 'Vocabulary',
+    detailTh: '2 บทฝึก · 8 ช่วงพื้นฐาน', detailEn: '2 scripts · 8 basic stages',
     descriptionTh: 'เริ่มจากภาพและความหมาย แล้วลองอ่านประโยคภาษาอังกฤษออกเสียงตาม',
     descriptionEn: 'Connect each visual with its meaning, then practice the English phrases aloud.',
     tipTh: 'ลองอ่านประโยคด้วยตนเองก่อนฟังเสียงตัวอย่าง แล้วทบทวนคำที่ยังไม่คุ้นเคย',
@@ -43,15 +43,15 @@ export const nisitTrainingModules: TrainingModule[] = [
     tipEn: 'Focus on the meaning. Try explaining it in words you understand.', group: 'practice',
   },
   {
-    id: 'drills', icon: 'chat', th: 'ซ้อมสถานการณ์จำลอง', en: 'Interactive Drills',
-    detailTh: '14 โจทย์สนทนา', detailEn: '14 practice questions',
+    id: 'drills', icon: 'chat', th: 'เกมฝึก', en: 'Practice Games',
+    detailTh: '8 บทสถานการณ์ · เกมฝึกสนทนา', detailEn: '8 story chapters · dialogue practice',
     descriptionTh: 'ฝึกเลือกคำตอบและเรียงประโยคจากสถานการณ์ พร้อมอ่านคำอธิบายหลังตอบ',
     descriptionEn: 'Choose responses and arrange sentences in scenarios, then review the feedback.',
     tipTh: 'หลังตอบแต่ละข้อ ลองพูดคำตอบออกเสียงอีกครั้งก่อนฝึกข้อต่อไป',
     tipEn: 'After each answer, say the response aloud once before continuing.', group: 'practice',
   },
   {
-    id: 'videos', icon: 'globe', th: 'วิดีโอและแหล่งเรียนรู้', en: 'Listening Videos',
+    id: 'videos', icon: 'globe', th: 'วิดีโอและแหล่งเรียนรู้', en: 'Videos & Resources',
     detailTh: 'ฝึกฟังและออกเสียง', detailEn: 'Listening & pronunciation',
     descriptionTh: 'เปิดวิดีโอที่ได้รับคำแนะนำ และเลือกแหล่งเรียนรู้เพื่อทบทวนเพิ่มเติม',
     descriptionEn: 'Open a recommended class video or explore resources for further study.',
@@ -59,7 +59,7 @@ export const nisitTrainingModules: TrainingModule[] = [
     tipEn: 'Choose a short section, note the key words, then try repeating without the script.', group: 'practice',
   },
   {
-    id: 'cockpit', icon: 'compass', th: 'ชุดประโยคและเครื่องมือ', en: 'On-Site Cockpit',
+    id: 'cockpit', icon: 'compass', th: 'ชุดประโยคและเครื่องมือ', en: 'Phrases & Tools',
     detailTh: 'เครื่องมือประกอบกิจกรรม', detailEn: 'Activity tools',
     descriptionTh: 'ทบทวนประโยคและเปิดเครื่องมือประกอบกิจกรรมจากพื้นที่เดียว',
     descriptionEn: 'Review useful phrases and access the existing activity tools in one place.',
@@ -67,7 +67,7 @@ export const nisitTrainingModules: TrainingModule[] = [
     tipEn: 'Review the phrases relevant to your role before joining the activity.', group: 'tools',
   },
   {
-    id: 'cards', icon: 'clipboard', th: 'บันทึกและการ์ดขอบคุณ', en: 'Notes & Card',
+    id: 'cards', icon: 'clipboard', th: 'การ์ดขอบคุณ', en: 'Thank-you Card',
     detailTh: 'จดจำบทสนทนา', detailEn: 'Notes & remembrance',
     descriptionTh: 'จดข้อมูลที่ต้องการทบทวน และจัดทำการ์ดขอบคุณสำหรับผู้มาเยือน',
     descriptionEn: 'Keep notes for review and prepare a thank-you card for visitors.',
@@ -75,3 +75,6 @@ export const nisitTrainingModules: TrainingModule[] = [
     tipEn: 'These notes stay on this device. Take care when using a shared device.', group: 'tools',
   },
 ]
+
+const order: NisitTab[] = ['vocab', 'drills', 'cockpit', 'videos', 'cards']
+export const nisitTrainingModules = order.map(id => modules.find(module => module.id === id)!)

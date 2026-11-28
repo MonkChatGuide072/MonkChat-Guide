@@ -1,0 +1,41 @@
+/* 60/30/10 hierarchy: quiet main surface, category secondary, concentrated accents.
+   Every rule is restricted to the student layout; visitor surfaces keep their theme. */
+.layout-nisit { --practice-main:#fbfcf8; --practice-secondary:#d5f1df; --practice-accent:#18745c; --practice-ink:#164e42; }
+.layout-nisit:has(.nisit-training[data-practice='vocab']),.layout-nisit .training-tab[data-module='vocab'] { --practice-secondary:#d5f1df; --practice-accent:#18745c; --practice-ink:#164e42; }
+.layout-nisit:has(.nisit-training[data-practice='drills']),.layout-nisit .training-tab[data-module='drills'] { --practice-secondary:#ffe2cf; --practice-accent:#a74f24; --practice-ink:#70381b; }
+.layout-nisit:has(.nisit-training[data-practice='cockpit']),.layout-nisit .training-tab[data-module='cockpit'] { --practice-secondary:#fff0b5; --practice-accent:#85600c; --practice-ink:#67460d; }
+.layout-nisit:has(.nisit-training[data-practice='videos']),.layout-nisit .training-tab[data-module='videos'] { --practice-secondary:#e9ddff; --practice-accent:#74509d; --practice-ink:#4e347c; }
+.layout-nisit:has(.nisit-training[data-practice='cards']),.layout-nisit .training-tab[data-module='cards'] { --practice-secondary:#ffdfeb; --practice-accent:#a64870; --practice-ink:#803c5b; }
+.layout-nisit .practice-scene-banner { background:var(--practice-secondary); color:var(--practice-ink); border-color:color-mix(in srgb,var(--practice-accent) 30%,white); }
+.layout-nisit .practice-scene-copy h1 { color:var(--practice-ink); }
+.layout-nisit .training-sidebar { background:var(--practice-main); }
+.layout-nisit .training-tab { background:var(--practice-main); }
+.layout-nisit .training-tab-copy strong { color:var(--practice-ink); }
+.layout-nisit .training-tab:hover { background:var(--practice-secondary); border-color:var(--practice-accent); }
+.layout-nisit .training-tab[aria-selected=true] { background:var(--practice-secondary); border-color:var(--practice-accent); box-shadow:inset 4px 0 var(--practice-accent); }
+.layout-nisit .training-tab[aria-selected=true]::before { background:var(--practice-accent); }
+.layout-nisit .nisit-mobile-nav button:hover { background:var(--practice-secondary); color:var(--practice-ink); }
+.layout-nisit .nisit-mobile-nav button[aria-pressed=true] { background:var(--practice-accent); color:#fff; }
+.layout-nisit .nisit-mobile-nav button:focus-visible { outline-color:var(--practice-accent); }
+.nisit-phone-drawer[hidden] { display:none; }
+@media(max-width:767px) {
+  .layout-nisit { background:var(--practice-main); }
+  .layout-nisit .nisit-existing-user-menu { display:none; }
+  .layout-nisit .training-account-bar { display:none; }
+  .layout-nisit .practice-scene-banner { width:calc(100% + 24px); margin-inline:-12px; border-radius:13px; }
+  .layout-nisit .nisit-phone-drawer { max-height:calc(100dvh - 72px); overflow-y:auto; padding:12px 16px; border-top:1px solid #e0e5df; background:var(--practice-main); }
+  .layout-nisit .nisit-phone-drawer nav { display:grid; gap:4px; }
+  .layout-nisit .nisit-drawer-link { display:flex; align-items:center; gap:12px; min-height:44px; padding:9px 12px; border:1px solid transparent; border-radius:12px; text-align:left; font-size:13px; color:#35505a; cursor:pointer; }
+  .layout-nisit .nisit-drawer-link svg { width:19px; height:19px; flex-shrink:0; }
+  .layout-nisit .nisit-drawer-link:hover { background:var(--practice-secondary); color:var(--practice-ink); }
+  .layout-nisit .nisit-drawer-link[aria-pressed=true] { background:var(--practice-secondary); color:var(--practice-ink); border-color:color-mix(in srgb,var(--practice-accent) 35%,white); box-shadow:inset 4px 0 var(--practice-accent); }
+  .layout-nisit #nisit-phone-account-slot { margin-top:10px; padding-top:10px; border-top:1px solid #e0e5df; }
+  .layout-nisit #nisit-phone-account-slot:empty { display:none; }
+  .layout-nisit #nisit-phone-account-slot { margin-top:0; padding-top:0; border-top:0; }
+  .layout-nisit #nisit-phone-account-slot .training-account-menu>summary { display:none; }
+  .layout-nisit #nisit-phone-account-slot .training-account-menu>summary { border-radius:12px; color:var(--practice-ink); background:var(--practice-secondary); }
+  .layout-nisit #nisit-phone-account-slot .training-account-panel { position:static; width:100%; max-height:45dvh; margin-top:8px; padding:12px; border-color:#e0e5df; box-shadow:none; }
+  .layout-nisit .nisit-drawer-visitor { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:44px; padding:12px; font-size:12px; color:#61737a; }
+  .layout-nisit .nisit-drawer-visitor svg { width:16px; height:16px; }
+  .layout-nisit .nisit-drawer-link:focus-visible,.layout-nisit .nisit-drawer-visitor:focus-visible { outline:2px solid var(--practice-accent); outline-offset:2px; }
+}

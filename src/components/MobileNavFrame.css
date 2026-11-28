@@ -1,0 +1,11 @@
+.mobile-nav-frame { display:contents; }
+.mobile-nav-handle { display:none; }
+@media(max-width:767px) {
+  .mobile-nav-frame { display:block; position:fixed; z-index:40; inset:auto 0 0; pointer-events:none; }
+  .mobile-nav-frame .nisit-mobile-nav,.mobile-nav-frame .visitor-mobile-nav { position:relative; inset:auto; pointer-events:auto; }
+  .mobile-nav-handle { display:flex; align-items:center; justify-content:center; gap:6px; margin:0 12px 0 auto; min-width:90px; min-height:28px; padding:2px 12px; border:1px solid #dedace; border-radius:12px 12px 0 0; background:#fffdf9f5; color:#536572; font-size:11px; cursor:pointer; pointer-events:auto; }
+  .mobile-nav-frame[data-collapsed=true] .mobile-nav-content { display:none; }
+  .mobile-nav-frame[data-collapsed=true] .mobile-nav-handle { margin-bottom:calc(8px + env(safe-area-inset-bottom)); border-radius:20px; min-height:36px; box-shadow:0 2px 10px #18344a18; }
+  .mobile-nav-handle:focus-visible { outline:2px solid #bd8a3d; outline-offset:2px; }
+  body:has(dialog[open]) .mobile-nav-frame { visibility:hidden; }
+}

@@ -15,7 +15,7 @@ import { StudentAccountStatus } from '../components/StudentAccountStatus'
 import { GuideIcon } from '../components/GuideIcon'
 
 /** Student monk login & direct self-registration at `/nisit/login`. */
-export function NisitLoginPage() {
+export function NisitLoginPage({ embedded = false, onGuest }: { embedded?: boolean; onGuest?: () => void } = {}) {
   const { i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
   const navigate = useNavigate()
@@ -45,10 +45,10 @@ export function NisitLoginPage() {
   }, [])
 
   useEffect(() => {
-    if (!isAuthLoading && session && profile && profile.is_active) {
+    if (!embedded && !isAuthLoading && session && profile && profile.is_active) {
       navigate('/nisit', { replace: true })
     }
-  }, [session, profile, isAuthLoading, navigate])
+  }, [session, profile, isAuthLoading, navigate, embedded])
 
   const handleSignIn = async (e: FormEvent) => {
     e.preventDefault()
@@ -240,9 +240,9 @@ export function NisitLoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl py-4 sm:py-8">
-      <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface lg:grid lg:grid-cols-[0.88fr_1.12fr]">
-        <section className="flex flex-col justify-between gap-6 border-b border-brand-border bg-brand-gold-soft/80 p-6 lg:border-b-0 lg:border-r lg:p-8">
+    <div className={embedded ? "nisit-login-card" : "mx-auto max-w-4xl py-4 sm:py-8"}>
+      <div className={embedded ? "nisit-login-card-body" : "overflow-hidden rounded-2xl border border-brand-border bg-brand-surface lg:grid lg:grid-cols-[0.88fr_1.12fr]"}>
+        {!embedded && <section className="flex flex-col justify-between gap-6 border-b border-brand-border bg-brand-gold-soft/80 p-6 lg:border-b-0 lg:border-r lg:p-8">
           <div className="space-y-4">
             <img
               src="/images/logo/ayutthaya-monk-chat-logo.png"
@@ -287,9 +287,15 @@ export function NisitLoginPage() {
               </Link>
             </div>
           </div>
-        </section>
+        </section>}
 
-        <section className="p-6 sm:p-8">
+        <section className={embedded ? "nisit-login-fields" : "p-6 sm:p-8"}>
+          {embedded && <div className="nisit-login-welcome">
+            <img src="/images/nisit-banners/vocab-v2.webp" alt="" width="96" height="64" />
+            <p>MONK CHAT · {isEnglish ? 'STUDENT ACCOUNT' : 'บัญชีพระนิสิต'}</p>
+            <h2>{isEnglish ? 'Your practice, together' : 'พื้นที่ฝึกของคุณ'}</h2>
+            <span>{isEnglish ? 'Sign in to keep your learning progress.' : 'เข้าสู่ระบบ เพื่อเก็บความก้าวหน้าในการเรียนรู้'}</span>
+          </div>}
           <div role="tablist" className="grid grid-cols-2 gap-2 rounded-xl border border-brand-border bg-brand-cream p-1">
             <button
               ref={(el) => { modeTabRefs.current[0] = el }}
@@ -405,7 +411,7 @@ export function NisitLoginPage() {
               </div>
 
               <label htmlFor="nisit-reg-code" className="block text-sm font-medium text-brand-maroon">
-                <span>{isEnglish ? '7-digit Student ID (4011001–6911060)' : 'รหัสนิสิต 7 หลัก (4011001–6911060)'}</span>
+                <span>{isEnglish ? '7-digit Student ID' : 'รหัสนิสิต 7 หลัก'}</span>
                 <input
                   id="nisit-reg-code"
                   type="text"
@@ -516,7 +522,7 @@ export function NisitLoginPage() {
           )}
 
           {/* Quick-Access Guest Training Mode */}
-          <div className="mt-6 rounded-xl border border-brand-gold/40 bg-brand-gold-soft/60 p-4">
+          {!embedded && <div className="mt-6 rounded-xl border border-brand-gold/40 bg-brand-gold-soft/60 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-brand-maroon">
@@ -536,7 +542,8 @@ export function NisitLoginPage() {
                 <GuideIcon name="arrow" className="h-4 w-4" />
               </Link>
             </div>
-          </div>
+          </div>}
+          {embedded && <div className="nisit-login-guest"><button type="button" onClick={onGuest}>{isEnglish ? 'Continue as guest →' : 'ฝึกต่อแบบเกสต์ →'}</button><p>{isEnglish ? 'You can practice without an account.' : 'ยังไม่สมัครก็เริ่มฝึกได้เลย'}</p></div>}
         </section>
       </div>
     </div>

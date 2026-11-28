@@ -1,0 +1,27 @@
+/* Student account only; uses the current module palette. */
+.layout-nisit .training-account-panel:has(.nisit-login-card) { padding:0; background:var(--nisit-paper,#fbfdfb); }
+.nisit-login-card { width:100%; }
+.nisit-login-fields { padding:22px; }
+.nisit-login-welcome { text-align:center; margin-bottom:20px; }
+.nisit-login-welcome img { width:96px; height:64px; object-fit:cover; border-radius:18px; margin:0 auto 10px; }
+.nisit-login-welcome p { font-size:10px; letter-spacing:.12em; color:var(--nisit-action,#315c4b); font-weight:700; }
+.nisit-login-welcome h2 { font-size:23px; font-weight:750; color:var(--nisit-ink,#244c40); margin:6px 0; }
+.nisit-login-welcome span,.nisit-login-guest p { font-size:12px; color:var(--nisit-muted,#61786e); }
+.nisit-login-fields input:focus-visible { outline:2px solid var(--nisit-action,#315c4b); outline-offset:2px; }
+.nisit-login-guest { text-align:center; border-top:1px solid var(--nisit-main-line,#d9e5dc); margin-top:20px; padding-top:14px; }
+.nisit-login-guest button { min-height:44px; font-weight:650; color:var(--nisit-action,#315c4b); cursor:pointer; }
+.layout-nisit .training-account-panel:has(.nisit-login-card) .training-account-strip>.shrink-0>div { display:block; }
+.layout-nisit .training-account-panel:has(.nisit-login-card) .training-account-strip>.shrink-0>div>button { margin:0 22px 16px; font-size:11px; }
+.layout-nisit .training-account-panel[data-signed-student=true] { background:var(--nisit-paper,#fbfdfb); border-color:var(--nisit-main-line,#d9e5dc); }
+.layout-nisit .training-account-panel[data-signed-student=true] .training-account-strip .inline-flex:has(.font-serif) { display:grid; width:100%; padding:20px; border-radius:16px; background:var(--nisit-secondary-paper,#eaf4ed); }
+.layout-nisit .training-account-panel[data-signed-student=true] .font-serif { font-size:18px; }
+.layout-nisit .training-account-panel[data-signed-student=true] .hidden.sm\:inline { display:block; }
+@media(max-width:767px) {
+ .layout-nisit>header { backdrop-filter:none; }
+ .layout-nisit:has(.nisit-phone-drawer:not([hidden])) .mobile-nav-frame { visibility:hidden; pointer-events:none; }
+ .layout-nisit .nisit-phone-drawer { position:fixed; inset:64px 0 0; z-index:60; padding:18px 16px 28px; max-height:none; background:#15362f55; backdrop-filter:blur(5px); overflow-y:auto; }
+ .layout-nisit #nisit-phone-account-slot { max-width:420px; margin:0 auto; }
+ .layout-nisit #nisit-phone-account-slot .training-account-panel { max-height:none; margin-top:0; padding:0; border-radius:24px; box-shadow:0 18px 65px #17352a24; }
+ .layout-nisit .nisit-drawer-visitor { max-width:420px; margin:10px auto 0; border-radius:14px; background:var(--nisit-paper,#fff); }
+ .nisit-login-fields { padding:20px; }
+}
