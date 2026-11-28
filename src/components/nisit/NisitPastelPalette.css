@@ -1,0 +1,163 @@
+/* One quiet colour family per student page: pale paper, soft tint and deeper
+   accents. No contrasting secondary palettes or alternating function colours. */
+.layout-nisit {
+  --nisit-main:#eff8f3;
+  --nisit-paper:#fbfdfb;
+  --nisit-main-line:#d2e4d9;
+  --nisit-secondary:#e0efe5;
+  --nisit-secondary-paper:#f4faf6;
+  --nisit-secondary-line:#b1cebc;
+  --nisit-highlight:#c8e2d2;
+  --nisit-highlight-line:#87b097;
+  --nisit-ink:#2d5142;
+  --nisit-muted:#61766a;
+  --nisit-action:#3f7f64;
+  --color-brand-cream:var(--nisit-main);
+  --color-brand-surface:var(--nisit-paper);
+  --color-brand-border:var(--nisit-main-line);
+  --color-brand-maroon:var(--nisit-ink);
+  --color-brand-terracotta:var(--nisit-action);
+  --color-brand-terracotta-dark:#205945;
+  --color-brand-gold:#91651c;
+  --color-brand-gold-soft:var(--nisit-highlight);
+  --color-brand-text:#28463e;
+  --color-brand-muted:var(--nisit-muted);
+  background:var(--nisit-paper);
+}
+
+/* Vocabulary uses the soft mint defaults above. */
+.layout-nisit:has(main .nisit-training[data-practice='drills']) {
+  --nisit-main:#f0f6fc;
+  --nisit-paper:#fcfdff;
+  --nisit-main-line:#d2deec;
+  --nisit-secondary:#e1ecf8;
+  --nisit-secondary-paper:#f5f8fd;
+  --nisit-secondary-line:#b2c8e0;
+  --nisit-highlight:#cbddef;
+  --nisit-highlight-line:#8caed0;
+  --nisit-ink:#304e6b;
+  --nisit-action:#48769d;
+  --nisit-muted:#65788b;
+}
+.layout-nisit:has(main .nisit-training[data-practice='cockpit']) {
+  --nisit-main:#fbf7ed;
+  --nisit-paper:#fffefa;
+  --nisit-main-line:#e9dfc7;
+  --nisit-secondary:#f4ebd5;
+  --nisit-secondary-paper:#fcf9f2;
+  --nisit-secondary-line:#d9c79d;
+  --nisit-highlight:#e9d8ae;
+  --nisit-highlight-line:#bea36c;
+  --nisit-ink:#635432;
+  --nisit-action:#8a7345;
+  --nisit-muted:#81765f;
+}
+.layout-nisit:has(main .nisit-training[data-practice='videos']) {
+  --nisit-main:#f6f2fb;
+  --nisit-paper:#fefcff;
+  --nisit-main-line:#e0d6ec;
+  --nisit-secondary:#ebe2f4;
+  --nisit-secondary-paper:#f9f6fc;
+  --nisit-secondary-line:#cbb9df;
+  --nisit-highlight:#d9c9eb;
+  --nisit-highlight-line:#aa8bc4;
+  --nisit-ink:#57436d;
+  --nisit-action:#7c5f98;
+  --nisit-muted:#7d6d8a;
+}
+.layout-nisit:has(main .nisit-training[data-practice='cards']) {
+  --nisit-main:#fcf2f6;
+  --nisit-paper:#fffcfd;
+  --nisit-main-line:#ecd6df;
+  --nisit-secondary:#f5e2eb;
+  --nisit-secondary-paper:#fcf6f9;
+  --nisit-secondary-line:#dfbdce;
+  --nisit-highlight:#ebccdc;
+  --nisit-highlight-line:#c591ab;
+  --nisit-ink:#704b5e;
+  --nisit-action:#9d6a82;
+  --nisit-muted:#8b7380;
+}
+.layout-nisit:has(main .nisit-training[data-practice]) {
+  --practice-main:var(--nisit-paper);
+  --practice-secondary:var(--nisit-secondary);
+  --practice-accent:var(--nisit-action);
+  --practice-ink:var(--nisit-ink);
+}
+.layout-nisit main .nisit-training,.layout-nisit .nisit-training .training-tab[data-module] {
+  --module-soft:var(--nisit-main);
+  --module-art-bg:var(--nisit-secondary);
+  --module-bright:var(--nisit-action);
+  --module-ink:var(--nisit-ink);
+  --practice-main:var(--nisit-paper);
+  --practice-secondary:var(--nisit-secondary);
+  --practice-accent:var(--nisit-action);
+  --practice-ink:var(--nisit-ink);
+  color:var(--nisit-ink);
+}
+.layout-nisit main .practice-scene-banner { background:var(--nisit-main); border-color:var(--nisit-main-line); }
+.layout-nisit .practice-scene-image { background:var(--nisit-secondary); border-color:var(--nisit-secondary-paper); }
+.layout-nisit .practice-scene-image img { background:var(--nisit-secondary-paper); }
+.layout-nisit .practice-scene-kicker { color:var(--nisit-muted); }
+.layout-nisit main .practice-scene-drills,.layout-nisit main .practice-scene-videos { background:var(--nisit-main); border-color:var(--nisit-main-line); }
+.layout-nisit .practice-scene-copy h1 { color:var(--nisit-ink); }
+.layout-nisit .training-sidebar,.layout-nisit .training-tab { background:var(--nisit-paper); }
+.layout-nisit .training-tab:hover { background:var(--nisit-secondary-paper); }
+.layout-nisit .training-tab[aria-selected=true] { background:var(--nisit-secondary); border-color:var(--nisit-secondary-line); box-shadow:inset 2px 0 var(--nisit-highlight-line); }
+.layout-nisit .nisit-training .nisit-mobile-nav button[aria-pressed=true] { background:var(--nisit-highlight); color:var(--nisit-ink); box-shadow:inset 0 -2px var(--nisit-highlight-line); }
+.layout-nisit .nisit-training .nisit-mobile-nav button:hover { background:var(--nisit-secondary); color:var(--nisit-ink); }
+.layout-nisit .nisit-phone-drawer .nisit-drawer-link[aria-pressed=true] { background:var(--nisit-secondary); border-color:var(--nisit-secondary-line); box-shadow:inset 2px 0 var(--nisit-highlight-line); }
+.layout-nisit .nisit-training .guiding-library { color:var(--nisit-ink); }
+.layout-nisit .guiding-library-heading { background:var(--nisit-main); border-radius:16px; padding:16px 18px; }
+.layout-nisit .guiding-kicker,.layout-nisit .guiding-script-copy small { color:var(--nisit-muted); }
+.layout-nisit .guiding-script-choice { background:var(--nisit-paper); border-color:var(--nisit-main-line); }
+.layout-nisit .guiding-script-choice:hover { background:var(--nisit-secondary-paper); border-color:var(--nisit-secondary-line); }
+.layout-nisit .guiding-script-choice[aria-pressed=true] { background:var(--nisit-secondary); border-color:var(--nisit-secondary-line); box-shadow:inset 2px 0 var(--nisit-highlight-line),0 3px 10px #9e755c0c; }
+.layout-nisit .guiding-script-picture { background:var(--nisit-main); }
+.layout-nisit .guiding-script-copy>span,.layout-nisit .guiding-library-heading>div>p:last-child { color:var(--nisit-muted); }
+.layout-nisit .guiding-view-buttons { background:var(--nisit-main); border-color:var(--nisit-main-line); }
+.layout-nisit .guiding-view-buttons button { color:var(--nisit-ink); }
+.layout-nisit .guiding-view-buttons button:hover { background:var(--nisit-secondary-paper); }
+.layout-nisit .guiding-view-buttons button[aria-pressed=true] { background:var(--nisit-highlight); color:var(--nisit-ink); box-shadow:0 1px 4px #9e7a2320; }
+.layout-nisit .guiding-reading-switch { color:var(--nisit-ink); }
+.layout-nisit .guiding-switch-knob { background:#ccdfd4; border:1px solid #739783; }
+.layout-nisit .guiding-switch-knob::after { top:2px; left:2px; box-shadow:0 1px 3px #244d4333; }
+.layout-nisit .guiding-reading-switch[aria-checked=true] .guiding-switch-knob { background:var(--nisit-highlight); border-color:var(--nisit-highlight-line); }
+.layout-nisit .guiding-reading-note { background:var(--nisit-highlight); color:var(--nisit-ink); }
+.layout-nisit .guiding-full-script { background:var(--nisit-paper); border-color:var(--nisit-main-line); }
+.layout-nisit .guiding-full-script>header { background:var(--nisit-secondary); padding:16px 18px; border-radius:12px; margin-bottom:8px; }
+.layout-nisit .guiding-full-script h3 { margin-bottom:0; }
+.layout-nisit .guiding-full-paragraph { border-color:var(--nisit-main-line); }
+.layout-nisit .guiding-full-paragraph h4,.layout-nisit .guiding-alternative-card h3 { color:var(--nisit-action); }
+.layout-nisit .guiding-line-en { color:var(--nisit-ink); }
+.layout-nisit .guiding-reading { color:var(--nisit-action); }
+.layout-nisit .guiding-meaning { color:var(--nisit-muted); }
+.layout-nisit .guiding-pause { background:var(--nisit-highlight); color:var(--nisit-ink); }
+.layout-nisit .guiding-alternative-card { background:var(--nisit-paper); border-color:var(--nisit-main-line); }
+.layout-nisit .guiding-paragraph-picture { background:var(--nisit-secondary); }
+.layout-nisit .training-vocab-card { background:var(--nisit-paper); border-color:var(--nisit-main-line); }
+.layout-nisit .training-vocab-card .training-vocab-visual { background:var(--nisit-secondary); border-color:var(--nisit-secondary-line); }
+.layout-nisit .training-vocab-terms button { background:var(--nisit-secondary-paper); border-color:var(--nisit-secondary-line); }
+.layout-nisit .training-vocab-terms button:hover { background:var(--nisit-secondary); }
+.layout-nisit .training-vocab-card .training-vocab-prompt { color:var(--nisit-ink); }
+.layout-nisit .training-tip { background:var(--nisit-secondary-paper); color:var(--nisit-ink); }
+.layout-nisit .training-audio-player,.layout-nisit .training-video-launcher { background:var(--nisit-main); border-color:var(--nisit-main-line); }
+.layout-nisit .training-video-resource { background:var(--nisit-secondary-paper); border-color:var(--nisit-secondary-line); }
+.layout-nisit .training-video-resource::before { background:var(--nisit-highlight-line); }
+.layout-nisit .training-qa-card { background:var(--nisit-paper); border-color:var(--nisit-main-line); }
+.layout-nisit .training-qa-answer { background:var(--nisit-secondary); border-color:var(--nisit-secondary-line); }
+.layout-nisit .training-qa-question { color:var(--nisit-ink); }
+.layout-nisit .training-notes-privacy { background:var(--nisit-highlight); color:var(--nisit-ink); }
+.layout-nisit .training-card-columns>section { background:var(--nisit-paper); border-color:var(--nisit-main-line); }
+.layout-nisit .training-drill-category { background:var(--nisit-main); border-color:var(--nisit-main-line); }
+.layout-nisit .training-drill-category:nth-child(even) { background:var(--nisit-secondary-paper); border-color:var(--nisit-secondary-line); }
+.layout-nisit .training-drill-category::before { background:var(--nisit-highlight-line); }
+.layout-nisit .training-drill-active { background:var(--nisit-paper); border-color:var(--nisit-main-line); }
+.layout-nisit .story-chapter-menu button { background:var(--nisit-paper); border-color:var(--nisit-main-line); }
+.layout-nisit .story-chapter-menu button:hover { background:var(--nisit-secondary-paper); border-color:var(--nisit-secondary-line); }
+.layout-nisit .story-chapter-menu button[aria-pressed=true] { background:var(--nisit-secondary); border-color:var(--nisit-secondary-line); box-shadow:inset 0 -2px var(--nisit-highlight-line); }
+.layout-nisit .compact-filter-toggle { background:var(--nisit-secondary-paper); border-color:var(--nisit-secondary-line); color:var(--nisit-ink); }
+.layout-nisit .guiding-library button:focus-visible { outline:2px solid var(--nisit-action); outline-offset:3px; }
+
+/* Uniform quiet cards within each page; no alternating function colours. */
+.layout-nisit .nisit-phrase-card { background:var(--nisit-paper); border:1px solid var(--nisit-main-line); }

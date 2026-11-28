@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MonkChatStoryPlayer } from './MonkChatStoryPlayer'
 import { invitationScenes, invitationArt, validateInvitationGraph } from '../../content/monkChatInvitation'
 
-function start() { fireEvent.click(screen.getByRole('button', { name: /เริ่มเรื่องราว|Begin the story/ })) }
+function start() { fireEvent.click(within(screen.getByRole('navigation', { name: /เลือกบทฝึกสถานการณ์|Choose a story chapter/ })).getAllByRole('button')[0]) }
 function choose(index: number) {
   fireEvent.click(within(screen.getByRole('group', { name: /คำตอบของคุณ|Your response/ })).getAllByRole('button')[index])
   act(() => { vi.advanceTimersByTime(500) })
@@ -30,8 +30,14 @@ describe('Illustrated invitation chapter', () => {
 
   it('begins with the monk observing passers-by and changes picture and event immediately on choice', () => {
     render(<MonkChatStoryPlayer />)
-    expect(screen.getByRole('img')).toHaveAttribute('src', invitationArt.arrival.src)
+    const covers = within(screen.getByRole('navigation', { name: /เลือกบทฝึกสถานการณ์/ })).getAllByRole('button').map(button => button.querySelector('img')?.getAttribute('src'))
+    expect(covers).toHaveLength(8)
+    expect(new Set(covers).size).toBe(8)
+    expect(covers.every(src => src?.startsWith('/images/nisit-chapter-covers/'))).toBe(true)
+    expect(screen.queryByRole('button', { name: /เริ่มเรื่องราว|Begin the story/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     start(); expect(currentScene()).toBe('arrival')
+    expect(screen.getByRole('img')).toHaveAttribute('src', invitationArt.arrival.src)
     expect(screen.getByRole('dialog')).toHaveAttribute('open')
     expect(document.body.style.overflow).toBe('hidden')
     choose(0)
@@ -49,9 +55,9 @@ describe('Illustrated invitation chapter', () => {
     choose(0); choose(0)
     expect(currentScene()).toBe('joined')
     expect(screen.getByTestId('story-ending-view')).toHaveTextContent('จบบทที่ 1')
-    expect(screen.getByRole('img')).toHaveAttribute('src', invitationArt.joined.src)
+    expect(screen.getByRole('img')).toHaveAttribute('src', '/images/nisit-stories/outcomes/invitation-good.png')
     expect(screen.getAllByRole('listitem')).toHaveLength(4)
-    expect(screen.queryByRole('button', { name: /ไปต่อบทที่ 2/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /ไปต่อบทที่ 2/ })).toBeInTheDocument()
   })
 
   it('answers the five-minute question, agrees on a short chat and never silently adds meditation', () => {
@@ -67,7 +73,7 @@ describe('Illustrated invitation chapter', () => {
   it('ends a declined invitation respectfully and shows the departure image', () => {
     render(<MonkChatStoryPlayer />); start(); choose(1); choose(1)
     expect(currentScene()).toBe('declined')
-    expect(screen.getByRole('img')).toHaveAttribute('src', invitationArt.farewell.src)
+    expect(screen.getByRole('img')).toHaveAttribute('src', '/images/nisit-stories/outcomes/farewell-good.png')
     expect(screen.getByText(invitationScenes.declined.setting.th)).toBeInTheDocument()
     expect(screen.getAllByRole('listitem')).toHaveLength(2)
   })
@@ -89,6 +95,11 @@ describe('Illustrated invitation chapter', () => {
     const confirm = vi.spyOn(window,'confirm').mockReturnValue(false)
     fireEvent.click(screen.getByRole('button', { name: 'เริ่มใหม่' }))
     expect(confirm).toHaveBeenCalledOnce(); expect(currentScene()).toBe('explain')
+    confirm.mockReturnValue(true)
+    fireEvent.click(screen.getByRole('button', { name: 'เริ่มใหม่' }))
+    expect(currentScene()).toBe('arrival')
+    expect(screen.getByRole('dialog')).toHaveAttribute('open')
+    expect(screen.queryByRole('button', { name: /เริ่มเรื่องราว/ })).not.toBeInTheDocument()
   })
 
   it('keeps shortcuts within the game and prevents repeat/double-choice during transition', () => {
@@ -117,7 +128,7 @@ describe('Illustrated invitation chapter', () => {
   it('does not carry another student’s round into a changed identity', () => {
     const {rerender}=render(<MonkChatStoryPlayer studentCode="student-a" />); start(); choose(0)
     rerender(<MonkChatStoryPlayer studentCode="student-b" />)
-    expect(screen.getByRole('button',{name:/เริ่มเรื่องราว/})).toBeInTheDocument()
+    expect(screen.getByRole('navigation',{name:'เลือกบทฝึกสถานการณ์'})).toBeInTheDocument()
     start(); expect(currentScene()).toBe('arrival')
   })
 

@@ -1,0 +1,18 @@
+.tourist-phrase-overlay { background:#24485b40; }
+.tourist-phrase-card { max-height:calc(100dvh - 32px); max-width:960px; overflow-y:auto; border:3px solid #087965; border-top:10px solid #087965; background:#fff4b8; color:#10263b; box-shadow:0 20px 70px #18384a30; }
+.tourist-phrase-header,.tourist-phrase-footer { border-color:#d5dccc; }
+.tourist-phrase-badge { border-radius:12px; padding:8px 10px; background:#ffd34e; color:#493308; line-height:1.5; font-weight:700; }
+.tourist-phrase-dismiss { background:#fffdf5; color:#285a61; border:1px solid #c7ded1; }
+.tourist-phrase-dismiss:hover { background:#d4efe1; }
+.tourist-phrase-english { color:#10263b; font-family:var(--font-sans,ui-sans-serif,system-ui,sans-serif); font-size:clamp(28px,3.5vw,48px); font-weight:800; line-height:1.25; letter-spacing:0; text-transform:none; }
+.tourist-phrase-thai { color:#304c52; font-size:14px; font-style:normal; line-height:1.6; }
+.tourist-phrase-hint { color:#52676a; }
+.tourist-phrase-done { background:#19725f; color:#fff; box-shadow:0 3px 9px #19725f25; }
+.tourist-phrase-done:hover { background:#125b4c; }
+.tourist-phrase-card button:focus-visible { outline:3px solid #b47b19; outline-offset:3px; }
+@media(max-width:767px) {
+  .tourist-phrase-card { padding:20px; }
+  .tourist-phrase-card> :not(:last-child) { margin-bottom:18px; }
+  .tourist-phrase-hint { display:none; }
+  .tourist-phrase-footer { justify-content:flex-end; }
+}

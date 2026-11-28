@@ -49,11 +49,11 @@ describe('NisitFieldCockpit Component', () => {
     vi.restoreAllMocks()
   })
 
-  it('renders one-tap meditation player and emergency Vinaya phrases', () => {
+  it('renders on-site phrases without the removed meditation player', () => {
     render(<NisitFieldCockpit isEnglish={false} studentCode="6611018" studentName="พระมหาอมรเทพ" />)
 
     expect(screen.getByText(/โหมดหน้างานจริง ณ โต๊ะสนทนา/i)).toBeInTheDocument()
-    expect(screen.getByText(/เปิดเสียงนำสมาธิสากล 5 นาทีทันใจ/i)).toBeInTheDocument()
+    expect(screen.queryByText(/ONE-TAP AUDIO|LIVE TELEPROMPTER/i)).not.toBeInTheDocument()
     expect(screen.getByText(/คลังประโยคช่วยชีวิตและข้อปฏิบัติพระวินัยหน้างาน/i)).toBeInTheDocument()
     expect(screen.getByText(/In our Theravada monastic tradition/i)).toBeInTheDocument()
   })
@@ -67,20 +67,6 @@ describe('NisitFieldCockpit Component', () => {
 
     expect(screen.getByText(/Would you like to experience 5 minutes of peaceful meditation/i)).toBeInTheDocument()
     expect(screen.queryByText(/monks do not have physical contact with women/i)).not.toBeInTheDocument()
-  })
-
-  it('toggles 5-minute meditation audio playback', () => {
-    render(<NisitFieldCockpit isEnglish={false} studentCode="6611018" studentName="พระมหาอมรเทพ" />)
-
-    const playBtn = screen.getByRole('button', { name: /กดเปิดเสียงนำสมาธิ/i })
-    fireEvent.click(playBtn)
-
-    expect(screen.getByText(/กำลังเปิดเสียงนำสมาธิภาษาอังกฤษ/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /หยุดเสียงชั่วคราว/i })).toBeInTheDocument()
-
-    // Pause audio
-    fireEvent.click(screen.getByRole('button', { name: /หยุดเสียงชั่วคราว/i }))
-    expect(screen.getByRole('button', { name: /กดเปิดเสียงนำสมาธิ/i })).toBeInTheDocument()
   })
 
   it('allows logging an unhandled question to CMS', () => {

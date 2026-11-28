@@ -1,16 +1,20 @@
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { createPortal } from 'react-dom'
+import { NISIT_SELECT_TAB, NISIT_ACTIVE_TAB, NISIT_OPEN_ACCOUNT } from '../content/nisitNavigation'
 import { getNextRovingTabIndex, parseNisitStudentId } from '../content/nisitPractice'
 import { useAuth } from '../lib/auth'
 import { supabaseClient } from '../lib/supabase'
 import { isAcceptableStudentPassword } from '../lib/studentPractice'
 import { GuideIcon } from '../components/GuideIcon'
+import { nisitPracticeBanners } from '../content/nisitPracticeBanners'
 import { nisitTrainingModules, type NisitTab } from '../content/nisitTrainingModules'
 import '../components/nisit/NisitTraining.css'
 import '../components/nisit/NisitTrainingColor.css'
+import '../components/nisit/NisitPracticeScenes.css'
 import { NisitModuleArt } from '../components/nisit/NisitModuleArt'
-import { NisitVocabCards } from '../components/nisit/NisitVocabCards'
+import { NisitGuidingLibrary } from '../components/nisit/NisitGuidingLibrary'
 import { NisitAudioTeleprompter } from '../components/nisit/NisitAudioTeleprompter'
 import { NisitVideoStudy } from '../components/nisit/NisitVideoStudy'
 import { NisitFlashcards } from '../components/nisit/NisitFlashcards'
@@ -18,6 +22,9 @@ import { NisitThankYouCard } from '../components/nisit/NisitThankYouCard'
 import { NisitInteractiveDrill } from '../components/nisit/NisitInteractiveDrill'
 import { MonkChatStoryPlayer } from '../components/nisit/MonkChatStoryPlayer'
 import { NisitFieldCockpit } from '../components/nisit/NisitFieldCockpit'
+import { NisitLoginPage } from './NisitLoginPage'
+import '../components/nisit/NisitAccountCard.css'
+import { NisitMobileNav } from '../components/nisit/NisitMobileNav'
 
 
 interface LocalNisitProfile {
@@ -42,11 +49,12 @@ export function NisitPracticePage() {
   const [activeTab, setActiveTab] = useState<NisitTab>(() => {
     try {
       const param = new URLSearchParams(window.location.search).get('tab')
+      // Preserve old shared links within the consolidated destinations.
+      if (param === 'audio') return 'videos'
+      if (param === 'qa') return 'cockpit'
       if (
         param === 'drills' ||
         param === 'cockpit' ||
-        param === 'qa' ||
-        param === 'audio' ||
         param === 'vocab' ||
         param === 'videos' ||
         param === 'cards'
@@ -190,27 +198,58 @@ export function NisitPracticePage() {
 
   const tabs = nisitTrainingModules
   const selectedModule = tabs.find((tab) => tab.id === activeTab)!
+  const banner = nisitPracticeBanners[selectedModule.id as keyof typeof nisitPracticeBanners]
   const panelRef = useRef<HTMLDivElement>(null)
+  const bannerRef = useRef<HTMLElement>(null)
 
   const openPractice = (tab: NisitTab) => {
-    if (!selectPracticeTab(tab)) return
+    if (!selectPracticeTab(tab)) return false
     requestAnimationFrame(() => {
-      panelRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' })
+      bannerRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' })
       panelRef.current?.focus({ preventScroll: true })
     })
+    return true
   }
 
-  return (
-    <div className="nisit-training" data-practice={activeTab}>
-      <div className="training-account">
+  const [mobileAccountTarget, setMobileAccountTarget] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    const media = window.matchMedia?.('(max-width: 767px)')
+    const update = () => setMobileAccountTarget(media?.matches ? document.getElementById('nisit-phone-account-slot') : null)
+    update()
+    media?.addEventListener('change', update)
+    return () => media?.removeEventListener('change', update)
+  }, [])
+  useEffect(() => {
+    const select = (event: Event) => {
+      const tab = (event as CustomEvent<NisitTab>).detail
+      if (nisitTrainingModules.some(module => module.id === tab)) openPractice(tab)
+    }
+    window.addEventListener(NISIT_SELECT_TAB, select)
+    return () => window.removeEventListener(NISIT_SELECT_TAB, select)
+  }, [openPractice])
+  useEffect(() => { window.dispatchEvent(new CustomEvent(NISIT_ACTIVE_TAB, {detail:activeTab})) }, [activeTab])
+  const accountRef = useRef<HTMLDetailsElement>(null)
+  useEffect(() => {
+    const open = () => { if (accountRef.current) accountRef.current.open = true }
+    window.addEventListener(NISIT_OPEN_ACCOUNT, open)
+    return () => window.removeEventListener(NISIT_OPEN_ACCOUNT, open)
+  }, [])
+  const accountMenu = (
+        <details ref={accountRef} className="training-account-menu" onKeyDown={event => {
+          if (event.key === 'Escape') {
+            event.currentTarget.open = false
+            event.currentTarget.querySelector('summary')?.focus()
+          }
+        }}>
+          <summary aria-label={isEnglish ? 'Account' : 'บัญชีผู้ใช้'}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M5 21v-2a7 7 0 0 1 14 0v2" /></svg>
+            <span>{isEnglish ? 'Account' : 'บัญชี'}</span><span aria-hidden="true">⌄</span>
+          </summary>
+          <div className="training-account training-account-panel" data-signed-student={isSignedStudent}>
+
         {/* Top Strip: Live Cockpit Status on Left, Prominent Monastic Profile / Sign-In on Right */}
         <div className="training-account-strip">
-          <div className="training-location">
-            <GuideIcon name="lotus" className="h-4 w-4" />
-            <span>Ayutthaya Monk Chat</span>
-            <span aria-hidden="true">/</span>
-            <span>{isEnglish ? 'Student practice' : 'พื้นที่ฝึกพระนิสิต'}</span>
-          </div>
+
 
           {/* Right: Monastic Profile Identity Bar (Accessible, Prominent, Clickable) */}
           <div className="shrink-0">
@@ -325,13 +364,10 @@ export function NisitPracticePage() {
               </div>
             ) : (
               <div className="flex flex-wrap items-center gap-2">
-                <Link
-                  to="/nisit/login"
-                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full bg-brand-maroon px-3.5 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-brand-maroon/90 transition-all active:scale-95"
-                >
-                  <span>🔑</span>
-                  <span>{isEnglish ? 'Student Sign In / Register' : 'เข้าสู่ระบบ / สมัครด้วยรหัสเชิญรุ่น'}</span>
-                </Link>
+                {!isEditingProfile && <NisitLoginPage embedded onGuest={() => {
+                  if (accountRef.current) accountRef.current.open = false
+                  window.dispatchEvent(new Event('monkchat:nisit-close-account'))
+                }} />}
                 <button
                   type="button"
                   aria-label={isEditingProfile ? (isEnglish ? 'Close' : 'ปิด') : (isEnglish ? 'Enter ID & Name' : 'ระบุรหัสและชื่อ')}
@@ -448,32 +484,31 @@ export function NisitPracticePage() {
           </form>
         )}
 
+
+          </div>
+        </details>
+  )
+
+  return (
+    <div className="nisit-training" data-practice={activeTab}>
+      <div className="training-account-bar">
+          <div className="training-location">
+            <GuideIcon name="lotus" className="h-4 w-4" />
+            <span>Ayutthaya Monk Chat</span>
+            <span aria-hidden="true">/</span>
+            <span>{isEnglish ? 'Student practice' : 'พื้นที่ฝึกพระนิสิต'}</span>
+          </div>
+        {mobileAccountTarget ? createPortal(accountMenu, mobileAccountTarget) : accountMenu}
       </div>
 
-      <header className="training-hero">
-        <div className="training-hero-copy">
-          <p className="training-eyebrow">MONK CHAT · PRACTICE SPACE</p>
-          <h1>{isEnglish ? 'Ayutthaya Monk Chat Practice Hub' : 'พื้นที่ฝึกของพระนิสิต'}</h1>
-          <p>
-            {isEnglish
-              ? 'A little practice, at your own pace. Build your vocabulary, rehearse meditation guidance, and explore Dhamma conversations.'
-              : 'ทบทวนภาษา ฝึกนำสมาธิ และซ้อมบทสนทนาธรรม เลือกเรื่องที่อยากฝึก แล้วค่อย ๆ เรียนรู้ในจังหวะของตนเอง'}
-          </p>
-          <div className="training-hero-actions">
-            <button type="button" onClick={() => openPractice('vocab')} className="training-primary">
-              <span>{isEnglish ? 'Start with vocabulary' : 'เริ่มฝึกคำศัพท์'}</span>
-              <GuideIcon name="arrow" className="h-4 w-4" />
-            </button>
-            <button type="button" onClick={() => openPractice('drills')} className="training-secondary">
-              <GuideIcon name="chat" className="h-4 w-4" />
-              <span>{isEnglish ? 'Try a scenario' : 'ลองซ้อมสถานการณ์'}</span>
-            </button>
-          </div>
+      <header ref={bannerRef} key={activeTab} className={`practice-scene-banner practice-scene-${activeTab}`}>
+        <div className="practice-scene-copy">
+          <p className="practice-scene-kicker">{isEnglish ? 'MONK CHAT · PRACTICE SPACE' : 'MONK CHAT · พื้นที่ฝึกพระนิสิต'}</p>
+          <h1>{isEnglish ? selectedModule.en : selectedModule.th}</h1>
+          <p className="practice-scene-description">{isEnglish ? banner.en : banner.th}</p>
         </div>
-        <figure className="training-hero-image">
-          <img src="/images/home/monkchat-real-meditation.jpg"
-            alt={isEnglish ? 'Monk Chat conversation in the temple grounds' : 'บรรยากาศสนทนา Monk Chat ในบริเวณวัด'} />
-          <figcaption>AYUTTHAYA MONK CHAT · WAT MAHATHAT</figcaption>
+        <figure className="practice-scene-image">
+          <img src={`/images/nisit-banners/${activeTab}-v2.webp`} alt={isEnglish ? banner.altEn : banner.altTh} width="768" height="512" />
         </figure>
       </header>
 
@@ -513,19 +548,6 @@ export function NisitPracticePage() {
 
         <div ref={panelRef} role="tabpanel" id={`panel-${activeTab}`} aria-labelledby={`tab-${activeTab}`}
           tabIndex={0} className="training-panel">
-          <div className="training-panel-heading">
-            <div>
-              <p className="training-panel-kicker">{selectedModule.group === 'practice'
-                ? (isEnglish ? 'LEARN & REHEARSE' : 'เรียนรู้และฝึกซ้อม')
-                : (isEnglish ? 'ACTIVITY TOOLS' : 'เครื่องมือเสริมกิจกรรม')}</p>
-              <h2>{isEnglish ? selectedModule.en : selectedModule.th}</h2>
-              <p>{activeTab === 'drills' && drillSubMode === 'story'
-                ? (isEnglish ? 'Step into a Monk Chat encounter. Choose your words and see how the conversation unfolds.' : 'เข้าสู่เหตุการณ์ Monk Chat เลือกคำพูด แล้วดูว่าบทสนทนาจะดำเนินต่ออย่างไร')
-                : (isEnglish ? selectedModule.descriptionEn : selectedModule.descriptionTh)}</p>
-            </div>
-            <div className="training-panel-illustration"><NisitModuleArt module={activeTab} /></div>
-            <span className="training-panel-number" aria-hidden="true">{String(tabs.indexOf(selectedModule) + 1).padStart(2, '0')}</span>
-          </div>
           <div className={`training-module ${selectedModule.group === 'tools' ? 'training-tools' : ''}`} data-module={activeTab}>
           {activeTab === 'drills' && (
             <div className="space-y-5">
@@ -546,7 +568,7 @@ export function NisitPracticePage() {
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
                       drillSubMode === 'story' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
                     }`}>
-                      {isEnglish ? 'Chapter 1' : 'บทที่ 1'}
+                      {isEnglish ? '8 chapters' : '8 บท'}
                     </span>
                   </button>
 
@@ -609,23 +631,31 @@ export function NisitPracticePage() {
             />
           )}
           {activeTab === 'vocab' && (
-            <NisitVocabCards
+            <NisitGuidingLibrary
               key={`vocab-${activeStudentProfileId ?? localProfile?.studentId ?? 'guest'}`}
               isEnglish={isEnglish}
               studentProfileId={activeStudentProfileId}
               progressScope={localProfile?.studentId}
             />
           )}
-          {activeTab === 'audio' && <NisitAudioTeleprompter isEnglish={isEnglish} />}
-          {activeTab === 'videos' && <NisitVideoStudy isEnglish={isEnglish} />}
-          {activeTab === 'qa' && (
+          {activeTab === 'videos' && <>
+            <NisitVideoStudy isEnglish={isEnglish} />
+            <details className="mt-6 rounded-2xl border border-brand-border p-5">
+              <summary className="cursor-pointer font-semibold">{isEnglish ? 'Audio & guiding script practice' : 'ฟังเสียงและฝึกตามบท'}</summary>
+              <div className="mt-4"><NisitAudioTeleprompter isEnglish={isEnglish} /></div>
+            </details>
+          </>}
+          {activeTab === 'cockpit' && <details className="mt-6 rounded-2xl border border-brand-border p-5">
+            <summary className="cursor-pointer font-semibold">{isEnglish ? 'Q&A practice library' : 'คลังคำถาม–คำตอบสำหรับฝึก'}</summary>
+            <div className="mt-4">
             <NisitFlashcards
               key={`qa-${activeStudentProfileId ?? localProfile?.studentId ?? 'guest'}`}
               isEnglish={isEnglish}
               studentProfileId={activeStudentProfileId}
               progressScope={localProfile?.studentId}
             />
-          )}
+            </div>
+          </details>}
           {activeTab === 'cards' && (
             <NisitThankYouCard
               isEnglish={isEnglish}
@@ -639,6 +669,7 @@ export function NisitPracticePage() {
           </p>
         </div>
       </div>
+      <NisitMobileNav activeTab={activeTab} isEnglish={isEnglish} onSelect={openPractice} />
     </div>
   )
 }

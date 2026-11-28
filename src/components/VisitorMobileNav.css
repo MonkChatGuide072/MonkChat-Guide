@@ -1,0 +1,16 @@
+.visitor-mobile-nav { display:none; }
+@media(max-width:767px) {
+  .layout-with-visitor-nav { padding-bottom:calc(84px + env(safe-area-inset-bottom)); }
+  .visitor-header-shortcuts,.visitor-mobile-menu-toggle,.visitor-mobile-drawer,.layout-with-visitor-nav .visitor-home-shortcuts { display:none; }
+  .visitor-mobile-nav { position:fixed; z-index:40; inset:auto 0 0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:2px; padding:4px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left)); border-top:1px solid #e3dfd4; background:#fffdf9f5; backdrop-filter:blur(14px); box-shadow:0 -4px 18px #18344a0c; }
+  .visitor-mobile-nav a { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:62px; min-width:0; border-radius:12px; color:#62727b; font-size:11px; line-height:1.4; font-weight:550; text-decoration:none; }
+  .visitor-mobile-nav a[aria-current=page]:not(.visitor-mobile-home) { background:#fff0d0; color:#77551f; }
+  .visitor-mobile-icon { display:flex; align-items:center; justify-content:center; width:42px; height:42px; }
+  .visitor-mobile-icon svg { width:23px; height:23px; }
+  .visitor-home-orb { position:relative; display:flex; align-items:center; justify-content:center; width:46px; height:46px; margin-top:-12px; margin-bottom:8px; border:1px solid #c3b482; border-radius:50%; background:radial-gradient(ellipse at 30% 23%,#fff 0%,#ffffffd9 14%,#e7f5f1d9 34%,#d5e8e5eb 58%,#edf5e6 77%,#c2d5c9 100%); box-shadow:inset 0 0 0 3px #ffffffa8,inset -4px -6px 10px #68878235,0 4px 11px #1b3b4d24,0 0 0 4px #fffdf9; color:#24485b; }
+  .visitor-home-orb::before { content:''; position:absolute; top:7px; left:10px; width:13px; height:7px; border-radius:50%; background:#fff; transform:rotate(-35deg); opacity:.8; }
+  .visitor-home-orb svg { width:23px; height:23px; position:relative; }
+  .visitor-mobile-home[aria-current=page] .visitor-home-orb { border-color:#b58c39; box-shadow:inset 0 0 0 3px #ffffffb5,inset -4px -6px 10px #68878235,0 4px 14px #bb963c3b,0 0 0 4px #fffdf9; }
+  .visitor-mobile-home[aria-current=page] .visitor-mobile-label { color:#77551f; }
+  .visitor-mobile-nav a:focus-visible { outline:2px solid #bd8a3d; outline-offset:-2px; }
+}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { nisitMeditationLessons } from '../../content/nisitPractice'
+import { guidingReadings } from '../../content/nisitGuidingScripts'
 import { usePracticeCompletion } from '../../lib/usePracticeCompletion'
 import { MeditationGuideVisual } from '../MeditationGuideVisual'
 import { GuideIcon } from '../GuideIcon'
@@ -11,10 +12,12 @@ export function NisitVocabCards({
   isEnglish,
   studentProfileId,
   progressScope,
+  showReadings = true,
 }: {
   isEnglish: boolean
   studentProfileId?: string
   progressScope?: string
+  showReadings?: boolean
 }) {
   const storageKey = VOCAB_PROGRESS_KEY + ':' + (studentProfileId ?? progressScope ?? 'guest')
   const [speakingId, setSpeakingId] = useState<string | null>(null)
@@ -107,6 +110,7 @@ export function NisitVocabCards({
                           <GuideIcon name="play" className="h-3.5 w-3.5" />
                         </button>
                       </div>
+                      {showReadings && <p data-reading lang="th" className="mt-2 text-xs leading-6 text-brand-terracotta">{guidingReadings[lesson.id]}</p>}
                       <p className="mt-1.5 text-sm leading-6 text-brand-muted">{lesson.meaningTh}</p>
                     </div>
 
@@ -143,7 +147,7 @@ export function NisitVocabCards({
                           <p className="font-sans text-sm font-semibold text-brand-maroon">{term.word}</p>
                           <span className="text-xs text-brand-gold" aria-hidden="true">🔊</span>
                         </div>
-                        <p className="mt-0.5 text-xs text-brand-terracotta">{term.readingTh}</p>
+                        {showReadings && <p data-reading className="mt-0.5 text-xs text-brand-terracotta">{term.readingTh}</p>}
                         <p className="mt-1 text-xs leading-5 text-brand-muted">{term.meaningTh}</p>
                       </button>
                     ))}

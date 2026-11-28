@@ -3,6 +3,7 @@ import { supabaseClient } from '../../lib/supabase'
 import { usePracticeCompletion } from '../../lib/usePracticeCompletion'
 import { NISIT_MASTER_QA_ITEMS, type QAItemRow } from '../../content/nisitQAData'
 import { GuideIcon } from '../GuideIcon'
+import { CompactFilters } from '../CompactFilters'
 
 const MASTERED_STORAGE_KEY = 'monkchat_nisit_qa_mastered_v1'
 
@@ -129,7 +130,8 @@ export function NisitFlashcards({
 
       {/* Category & Progress Bar */}
       <div className="training-qa-filter flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-border bg-brand-surface p-4">
-        <div className="flex flex-wrap gap-2" role="group" aria-label={isEnglish ? 'Question categories' : 'หมวดหมู่คำถาม'}>
+        <CompactFilters label={isEnglish ? 'Question categories' : 'หมวดหมู่คำถาม'}
+          selected={CATEGORY_LABELS[selectedCategory]?.[isEnglish ? 'en' : 'th'] ?? selectedCategory}>
           {categories.map((cat) => {
             const label = CATEGORY_LABELS[cat]
             const text = label ? (isEnglish ? label.en : label.th) : cat
@@ -154,7 +156,7 @@ export function NisitFlashcards({
               </button>
             )
           })}
-        </div>
+        </CompactFilters>
 
         <div className="flex flex-wrap items-center gap-2">
           {isUsingFallback && (

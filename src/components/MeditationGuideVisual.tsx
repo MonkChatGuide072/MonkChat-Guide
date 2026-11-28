@@ -2,9 +2,9 @@ import type { MeditationScene } from '../content/meditationGuide'
 
 interface Props { base?: number; still?: boolean; scene?: MeditationScene; meditationTime?: boolean; breathLabels?: readonly [string, string]; label: string }
 
-/** Original vector artwork. Positions follow the cited guide; the drawing is schematic. */
+/** Original vector artwork. Schematic; bases 3–7 share a vertical axis per the owner’s instructor correction. */
 export function MeditationGuideVisual({ base, still = false, scene = 'sit', meditationTime = false, breathLabels = ['Breathe in', 'Breathe out'], label }: Props) {
-  const points = [[208, 91], [188, 65], [139, 65], [169, 102], [141, 154], [132, 259], [132, 220]]
+  const points = [[208, 91], [188, 65], [132, 65], [132, 102], [132, 154], [132, 259], [132, 220]]
   return (
     <svg viewBox={base ? '85 5 145 285' : '0 0 320 220'} role="img" aria-label={label} className="h-full w-full" fill="none">
       <rect width="320" height={base ? 300 : 220} rx="20" fill={base ? '#EDF3F4' : '#EDF3E9'} />
@@ -18,12 +18,12 @@ export function MeditationGuideVisual({ base, still = false, scene = 'sit', medi
         <path d="M106 288 99 187Q99 162 124 155L123 123Q98 117 99 79 98 22 148 22 184 22 189 52L191 73 210 86Q214 94 198 98L194 113Q185 126 159 126L157 156Q182 161 191 187L202 288" fill="#FAE0C5" stroke="#825A48" strokeWidth="2" strokeLinejoin="round" />
         <path d="M99 187Q99 162 124 155L157 156Q182 161 191 187L202 288H106Z" fill="#F1B46B" fillOpacity=".75" />
         <path d="M184 64q-7-5-14 0" stroke="#825A48" strokeWidth="2" strokeLinecap="round" />
-        <path d="m208 91-20-26H139L169 102 141 154 132 259V220" stroke="#B8A591" strokeWidth="2" strokeDasharray="4 5" />
+        <path d={`M${points.map(point => point.join(' ')).join(' L')}`} stroke="#B8A591" strokeWidth="2" strokeDasharray="4 5" />
         <path d="M107 259h95" stroke="#A0907A" strokeDasharray="4 4" />
         <circle cx="195" cy="259" r="3" fill="#825A48" />
         {base === 7 && <path d="M168 220h12m-6 0v39m-6 0h12" stroke="#16324F" strokeWidth="2" />}
         {points.map(([cx, cy], index) => <g key={index} opacity={base === index + 1 ? 1 : .85}>
-          <circle cx={cx} cy={cy} r={base === index + 1 ? 17 : 14} fill={base === index + 1 ? '#16324F' : '#FFFFFF'} stroke={base === index + 1 ? '#16324F' : '#8A94A3'} strokeWidth="1.5" />
+          <circle data-meditation-base={index + 1} cx={cx} cy={cy} r={base === index + 1 ? 17 : 14} fill={base === index + 1 ? '#16324F' : '#FFFFFF'} stroke={base === index + 1 ? '#16324F' : '#8A94A3'} strokeWidth="1.5" />
           <text x={cx} y={cy + 7} textAnchor="middle" fontFamily="sans-serif" fontSize="20" fontWeight="500" fill={base === index + 1 ? '#FFFFFF' : '#475569'}>{index + 1}</text>
         </g>)}
       </> : <>

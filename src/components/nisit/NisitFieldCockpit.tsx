@@ -1,5 +1,15 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { GuideIcon } from '../GuideIcon'
+import { CompactFilters } from '../CompactFilters'
+import './TouristPhraseCard.css'
+
+const phraseCategories = [
+  { id: 'all', th: 'ทั้งหมด', en: 'All' },
+  { id: 'vinaya', th: 'พระวินัย & ข้อห้าม', en: 'Vinaya' },
+  { id: 'rescue', th: 'การสื่อสาร & ขอเวลา', en: 'Communication' },
+  { id: 'meditation', th: 'ชวนนั่งสมาธิ', en: 'Meditation' },
+  { id: 'blessing', th: 'ให้พร & อำลา', en: 'Blessings' },
+]
 
 interface QuickPhrase {
   id: string
@@ -142,166 +152,6 @@ const QUICK_PHRASES: QuickPhrase[] = [
   },
 ]
 
-interface MeditationCue {
-  start: number
-  end: number
-  en: string
-  th: string
-}
-
-const MEDITATION_CUES: MeditationCue[] = [
-  {
-    start: 0,
-    end: 8,
-    en: "It's time to take a mental coffee break.",
-    th: 'ขอเรียนเชิญทุกท่าน ละจากภารกิจการงานสักครู่หนึ่ง มาพักใจ พักความคิด ให้ใจได้หยุดนิ่งกันนะครับ',
-  },
-  {
-    start: 8,
-    end: 15,
-    en: "Let's begin with adjusting your sitting posture.",
-    th: 'ให้เราเริ่มต้นด้วยการปรับร่างกาย ปรับท่านั่งของเราให้สะดวกสบายที่สุด',
-  },
-  {
-    start: 15,
-    end: 22,
-    en: 'You can simply sit in your regular working chair.',
-    th: 'จะนั่งบนเก้าอี้ทำงานตามปกติ หรือเลือกท่าทางที่รู้สึกผ่อนคลายที่สุดก็ได้นะครับ',
-  },
-  {
-    start: 22,
-    end: 31.5,
-    en: 'Please keep your back straight and lay both of your feet flat on the floor.',
-    th: 'ให้ขยับร่างกาย ตั้งหลังให้ตรงพอดี ๆ แล้ววางเท้าทั้งสองข้างราบไปกับพื้นสบาย ๆ',
-  },
-  {
-    start: 31.5,
-    end: 44,
-    en: 'Relieve your entire body from any remaining tension.',
-    th: 'ผ่อนคลายร่างกายทุกส่วน ปล่อยความตึงเครียดที่ค้างคาอยู่ให้ออกไปให้หมดสิ้น',
-  },
-  {
-    start: 44,
-    end: 58.5,
-    en: "Let's close your eyes softly, feeling relaxation around the eyes.",
-    th: 'ค่อย ๆ หลับตาลงเบา ๆ ในระดับที่พอดี ๆ ไม่บีบเปลือกตา สัมผัสถึงความผ่อนคลายรอบดวงตาของเรา',
-  },
-  {
-    start: 58.5,
-    end: 75,
-    en: 'Let the relaxation spread to your facial muscles and the entire body.',
-    th: 'ปล่อยกระแสแห่งความผ่อนคลายนี้ แผ่ซ่านไปยังกล้ามเนื้อใบหน้า และขยายไปทั่วทั้งร่างกาย',
-  },
-  {
-    start: 75,
-    end: 94.5,
-    en: 'Allow the relaxation to fill every part of your body, beginning from the top of your head down to your face, body, legs, and down to your toes.',
-    th: 'ให้ความผ่อนคลายนี้เติมเต็มในทุก ๆ ส่วนของร่างกาย ตั้งแต่ยอดศีรษะ ลงมาที่ใบหน้า ลำตัว ขา ไปจนถึงปลายเท้า',
-  },
-  {
-    start: 94.5,
-    end: 108,
-    en: 'Gently draw your attention back to be with your sensation.',
-    th: 'น้อมนำใจนิ่ง ๆ กลับมาอยู่กับเนื้อกับตัว กลับมารับรู้ถึงความรู้สึกภายในที่สงบ',
-  },
-  {
-    start: 108,
-    end: 124.5,
-    en: 'Keep aware of your body, aware of your whereabouts as you are growing more aware of your presence.',
-    th: 'ประคองสติให้อยู่กับตัว มีสติระลึกรู้ตื่นและเบิกบานอยู่ภายใน ณ ขณะนี้ให้มากยิ่งขึ้น',
-  },
-  {
-    start: 124.5,
-    end: 138,
-    en: 'Inhale deeply and gently feel your breath passing your nostrils.',
-    th: 'สูดลมหายใจเข้าลึก ๆ... สัมผัสกระแสลมหายใจที่ผ่านช่องจมูกเข้าไปอย่างแผ่วเบา',
-  },
-  {
-    start: 138,
-    end: 154,
-    en: 'Let it flow down along the airway until it reaches the final end at the middle of your abdomen.',
-    th: 'ปล่อยให้ลมหายใจไหลผ่านช่องทางเดินหายใจอย่างนุ่มนวล ลงไปจนสุดสายที่กึ่งกลางท้อง (ศูนย์กลางกาย)',
-  },
-  {
-    start: 154,
-    end: 164.5,
-    en: 'Feeling your breath turn into warm out breath.',
-    th: 'รับรู้ถึงลมหายใจที่ค่อย ๆ แปรเปลี่ยนเป็นลมหายใจออกที่อบอุ่นและผ่อนคลาย',
-  },
-  {
-    start: 164.5,
-    end: 180,
-    en: 'Slowly exhale and observe your warm breath coming out from deep within your body.',
-    th: 'ค่อย ๆ ผ่อนลมหายใจออกช้า ๆ สังเกตลมหายใจอุ่นที่เดินทางออกมาจากภายในร่างกาย',
-  },
-  {
-    start: 180,
-    end: 196,
-    en: "Let's inhale deeply again and keep your attention at the end of your breath, at the center space within your body.",
-    th: 'สูดลมหายใจเข้าลึก ๆ อีกครั้ง แล้วประคองใจไว้ที่จุดสิ้นสุดของลมหายใจ ณ ศูนย์กลางกายภายในตัวเรา',
-  },
-  {
-    start: 196,
-    end: 205,
-    en: 'Let your mind rest here for a while.',
-    th: 'ปล่อยให้ใจได้หยุดพักนิ่ง ๆ สบาย ๆ อยู่ตรงนี้สักครู่หนึ่ง',
-  },
-  {
-    start: 205,
-    end: 214,
-    en: 'Maintain your awareness at the center space.',
-    th: 'ประคองความรู้สึก ความระลึกรู้ อยู่ที่ศูนย์กลางกายอย่างต่อเนื่องและแผ่วเบา',
-  },
-  {
-    start: 214,
-    end: 224.5,
-    en: 'Let your mind stand still right there at your comfort spot.',
-    th: 'ให้ใจหยุดนิ่งสนิท อยู่ตรงจุดที่รู้สึกสบายที่สุด สว่างที่สุด นุ่มนวลที่สุด',
-  },
-  {
-    start: 224.5,
-    end: 233,
-    en: 'Let it rest inside comfortably for a while.',
-    th: 'ให้ใจได้พักผ่อนอยู่ภายในอย่างแสนสบาย ผ่อนคลายอย่างแท้จริง',
-  },
-  {
-    start: 233,
-    end: 245,
-    en: 'Let your mind immerse deeply in your inner peace. Here at the comfort spot here. Deep within your body.',
-    th: 'ให้ใจได้ดิ่งลึก ดื่มด่ำกับความสงบสุขภายใน ณ จุดที่สบายลึกซึ้งภายในศูนย์กลางกายของเรา',
-  },
-  {
-    start: 245,
-    end: 279,
-    en: '— Silent Meditation Period (Resting in inner stillness) —',
-    th: '— ช่วงเวลาพักใจในความสงบนิ่งและหยุดนิ่ง ณ ศูนย์กลางกาย —',
-  },
-  {
-    start: 279,
-    end: 288,
-    en: 'Gently bring attention back to be aware of your sensation.',
-    th: 'ค่อย ๆ น้อมนำความรู้สึกตัวกลับมา รับรู้ถึงสัมผัสและความสงบสบายในร่างกาย',
-  },
-  {
-    start: 288,
-    end: 308.5,
-    en: 'Slowly be aware of your ambience and breathe in deeply and softly exhale all the way out.',
-    th: 'ค่อย ๆ รับรู้ถึงบรรยากาศรอบตัว สูดลมหายใจเข้าลึก ๆ และผ่อนลมหายใจออกช้า ๆ จนสุดสาย',
-  },
-  {
-    start: 308.5,
-    end: 318,
-    en: 'Breathe in deeply and exhale.',
-    th: 'สูดลมหายใจเข้าลึก ๆ อีกครั้ง... และผ่อนลมหายใจออกอย่างผ่อนคลาย',
-  },
-  {
-    start: 318,
-    end: 326.5,
-    en: 'Now you can slowly open your eyes.',
-    th: 'ตอนนี้ ให้ค่อย ๆ ลืมตาขึ้นช้า ๆ แย้มยิ้มให้กับความสุขและความผ่องใสภายในตัวเรานะครับ',
-  },
-]
-
 interface LoggedQuestion {
   id: string
   timestamp: string
@@ -332,17 +182,6 @@ export function NisitFieldCockpit({
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [speakingPhraseId, setSpeakingPhraseId] = useState<string | null>(null)
 
-  // Real Audio Guide State
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
-  const [audioProgress, setAudioProgress] = useState(0)
-  const [audioSeconds, setAudioSeconds] = useState(0)
-  const [audioDuration, setAudioDuration] = useState(326)
-  const [volume, setVolume] = useState(1)
-  const [isMuted, setIsMuted] = useState(false)
-  const [activeCue, setActiveCue] = useState<MeditationCue>(MEDITATION_CUES[0])
-  const [audioErrorMessage, setAudioErrorMessage] = useState('')
-
   // CMS Question Logging State
   const [showLogForm, setShowLogForm] = useState(false)
   const [visitorCountry, setVisitorCountry] = useState('')
@@ -362,101 +201,6 @@ export function NisitFieldCockpit({
       // Ignore
     }
   }, [])
-
-  // Sync active cue with audio seconds
-  useEffect(() => {
-    const cue = MEDITATION_CUES.find((c) => audioSeconds >= c.start && audioSeconds < c.end)
-    if (cue) {
-      setActiveCue(cue)
-    }
-  }, [audioSeconds])
-
-  const toggleMeditationAudio = async () => {
-    const el = audioRef.current
-    if (!el) return
-
-    setAudioErrorMessage('')
-
-    if (isPlayingAudio || !el.paused) {
-      try {
-        el.pause()
-      } catch (err) {
-        console.warn('Pause error:', err)
-      }
-      setIsPlayingAudio(false)
-    } else {
-      try {
-        el.muted = false
-        el.volume = volume || 1
-        setIsPlayingAudio(true)
-        await el.play()
-      } catch (err) {
-        console.error('Audio play error:', err)
-        setIsPlayingAudio(false)
-        const msg = err instanceof Error ? err.message : String(err)
-        setAudioErrorMessage(
-          isEnglish
-            ? `Audio play blocked or waiting for user interaction: ${msg}`
-            : `ระบบบล็อกเสียงอัตโนมัติ กรุณากดปุ่มอีกครั้งเพื่อเปิดเสียง`,
-        )
-      }
-    }
-  }
-
-  const handleTimeUpdate = () => {
-    const el = audioRef.current
-    if (!el) return
-    const cur = el.currentTime
-    const dur = el.duration || audioDuration || 326
-    setAudioSeconds(Math.floor(cur))
-    setAudioProgress((cur / dur) * 100)
-  }
-
-  const handleSeekRelative = (deltaSeconds: number) => {
-    const el = audioRef.current
-    if (!el) return
-    const dur = el.duration || audioDuration || 326
-    const newTime = Math.max(0, Math.min(dur, el.currentTime + deltaSeconds))
-    el.currentTime = newTime
-    setAudioSeconds(Math.floor(newTime))
-    setAudioProgress((newTime / dur) * 100)
-  }
-
-  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = audioRef.current
-    const rect = e.currentTarget.getBoundingClientRect()
-    const clickX = e.clientX - rect.left
-    const percent = Math.max(0, Math.min(1, clickX / rect.width))
-    const dur = el?.duration || audioDuration || 326
-    const targetTime = percent * dur
-    if (el) el.currentTime = targetTime
-    setAudioSeconds(Math.floor(targetTime))
-    setAudioProgress(percent * 100)
-  }
-
-  const handleVolumeChange = (newVol: number) => {
-    setVolume(newVol)
-    setIsMuted(newVol === 0)
-    if (audioRef.current) {
-      audioRef.current.volume = newVol
-      audioRef.current.muted = newVol === 0
-    }
-  }
-
-  const toggleMute = () => {
-    if (isMuted) {
-      setIsMuted(false)
-      if (audioRef.current) {
-        audioRef.current.muted = false
-        audioRef.current.volume = volume || 1
-      }
-    } else {
-      setIsMuted(true)
-      if (audioRef.current) {
-        audioRef.current.muted = true
-      }
-    }
-  }
 
   const playSpeech = (phraseId: string, text: string) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -562,27 +306,6 @@ export function NisitFieldCockpit({
 
   return (
     <div className="space-y-6">
-      {/* Hidden real audio element powering the station */}
-      <audio
-        ref={audioRef}
-        src="/audio/meditation-5min-en.mp3"
-        preload="auto"
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={(e) => {
-          if (e.currentTarget.duration) setAudioDuration(e.currentTarget.duration)
-        }}
-        onPlay={() => setIsPlayingAudio(true)}
-        onPause={() => setIsPlayingAudio(false)}
-        onEnded={() => {
-          setIsPlayingAudio(false)
-          setAudioSeconds(0)
-          setAudioProgress(0)
-        }}
-        onError={() => {
-          setAudioErrorMessage('ไม่สามารถโหลดไฟล์เสียงนำสมาธิได้ กรุณาลองใหม่อีกครั้ง')
-        }}
-      />
-
       {/* Cockpit Operation Banner */}
       <div className="training-module-intro rounded-2xl border border-brand-border bg-white p-5 sm:p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
@@ -595,8 +318,8 @@ export function NisitFieldCockpit({
           </h2>
           <p className="mt-1 text-xs sm:text-sm text-brand-muted">
             {isEnglish
-              ? 'Instant tools while stationed: One-tap 5-min meditation audio, quick Vinaya spoken phrases, and unhandled Q&A logger.'
-              : 'เครื่องมือสนับสนุนพระนิสิตขณะปฏิบัติหน้าที่: เปิดเสียงนำสมาธิ 5 นาทีทันใจ, ประโยคชี้แจงพระวินัยพร้อมฟังเสียงอ่าน, และจดคำถามสดไว้ในเครื่อง'}
+              ? 'Quick spoken phrases for on-site conversations and a local unanswered-question log.'
+              : 'ประโยคช่วยสื่อสารหน้างานพร้อมฟังเสียงอ่าน และจดคำถามที่ยังตอบไม่ได้ไว้ในเครื่อง'}
           </p>
         </div>
 
@@ -608,170 +331,6 @@ export function NisitFieldCockpit({
           <GuideIcon name="clipboard" className="h-4 w-4" />
           <span>{showLogForm ? (isEnglish ? 'Close Logger' : 'ปิดกล่องจด') : (isEnglish ? '+ Save a Question' : '+ จดคำถามในเครื่อง')}</span>
         </button>
-      </div>
-
-      {/* SECTION 1: Master One-Tap Guided Meditation Station (High-Impact Operational Console) */}
-      <div className="training-cockpit-player rounded-3xl border border-[#D5B77E]/40 bg-gradient-to-br from-[#0B1528] via-[#11223C] to-[#1A2F50] p-6 sm:p-8 text-white shadow-lg space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-brand-gold uppercase tracking-wider">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>{isEnglish ? 'Instant Audio Broadcaster' : 'ระบบเปิดเสียงนำสมาธิสากลประจำโต๊ะ · 5 นาที'}</span>
-            </div>
-            <h3 className="mt-1 font-serif text-xl sm:text-2xl lg:text-[1.7rem] font-bold text-white">
-              {isEnglish ? 'One-Tap 5-Min Guided Meditation' : 'เปิดเสียงนำสมาธิสากล 5 นาทีทันใจ (ONE-TAP AUDIO)'}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed mt-1">
-              {isEnglish
-                ? 'English guided meditation audio with calm pacing in Luang Por Dattajeevo style. Tap large button to broadcast through device speaker.'
-                : 'เสียงนำสมาธิภาษาอังกฤษสำเนียงสากลสไตล์หลวงพ่อทัตตชีโว กดเปิดให้โยมฟังจากมือถือได้ทันที'}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {isPlayingAudio && (
-              <div className="flex items-end gap-1 h-5 pb-1" aria-label="Audio playing indicator">
-                <span className="w-1 bg-emerald-400 rounded-full animate-bounce [animation-delay:0ms] h-3"></span>
-                <span className="w-1 bg-emerald-400 rounded-full animate-bounce [animation-delay:150ms] h-5"></span>
-                <span className="w-1 bg-emerald-400 rounded-full animate-bounce [animation-delay:300ms] h-4"></span>
-              </div>
-            )}
-            <span className="text-2xl sm:text-3xl font-mono font-bold text-brand-gold tabular-nums">
-              {String(Math.floor(audioSeconds / 60)).padStart(2, '0')}:{String(audioSeconds % 60).padStart(2, '0')}
-            </span>
-            <span className="text-xs text-slate-400 font-mono">
-              / {String(Math.floor(audioDuration / 60)).padStart(2, '0')}:{String(Math.floor(audioDuration % 60)).padStart(2, '0')}
-            </span>
-          </div>
-        </div>
-
-        {audioErrorMessage && (
-          <div role="alert" className="p-3 rounded-xl bg-amber-500/20 border border-amber-400 text-amber-200 text-xs flex items-center justify-between">
-            <span>⚠️ {audioErrorMessage}</span>
-            <button
-              type="button"
-              onClick={() => void toggleMeditationAudio()}
-              className="underline font-bold ml-2 cursor-pointer"
-            >
-              แตะเพื่อเปิดเสียง
-            </button>
-          </div>
-        )}
-
-        {/* Master Control Zone: High-Impact Big Button & Operations */}
-        <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6 pt-1">
-          <button
-            type="button"
-            onClick={() => void toggleMeditationAudio()}
-            className={`min-h-14 sm:min-h-16 rounded-2xl px-6 sm:px-8 text-base sm:text-lg font-bold transition-all cursor-pointer shadow-lg inline-flex items-center gap-4 ${
-              isPlayingAudio
-                ? 'bg-amber-700 hover:bg-amber-800 text-white ring-4 ring-amber-500/40'
-                : 'bg-brand-gold hover:bg-[#a6741c] text-[#11223C] ring-4 ring-brand-gold/30 hover:ring-brand-gold/50'
-            }`}
-          >
-            <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 flex items-center justify-center shrink-0">
-              {isPlayingAudio ? (
-                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="6" y="5" width="4" height="14" rx="1" />
-                  <rect x="14" y="5" width="4" height="14" rx="1" />
-                </svg>
-              ) : (
-                <svg className="h-6 w-6 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              )}
-            </span>
-            <span>
-              {isPlayingAudio
-                ? (isEnglish ? 'Pause Meditation' : 'หยุดเสียงชั่วคราว')
-                : (isEnglish ? 'Play 5-Min Meditation' : 'กดเปิดเสียงนำสมาธิ')}
-            </span>
-          </button>
-
-          <div className="space-y-2 flex-1 w-full">
-            <div className="flex items-center justify-between text-xs sm:text-sm">
-              <span className="font-medium text-slate-300">
-                {isPlayingAudio
-                  ? (isEnglish ? 'Playing English Guided Meditation...' : 'กำลังเปิดเสียงนำสมาธิภาษาอังกฤษ...')
-                  : (isEnglish ? 'Ready · Tap button to play' : 'พร้อมเปิดหน้างาน · แตะปุ่มใหญ่เพื่อเปิดเสียง')}
-              </span>
-
-              {/* Quick Seek Buttons */}
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => handleSeekRelative(-15)}
-                  className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[11px] font-mono text-slate-300 cursor-pointer transition-colors"
-                  title="ย้อนกลับ 15 วินาที"
-                >
-                  ⏪ -15s
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSeekRelative(15)}
-                  className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[11px] font-mono text-slate-300 cursor-pointer transition-colors"
-                  title="ข้ามไปข้างหน้า 15 วินาที"
-                >
-                  +15s ⏩
-                </button>
-              </div>
-            </div>
-
-            {/* Clickable Audio Progress Bar */}
-            <div
-              onClick={handleProgressBarClick}
-              className="h-3 w-full bg-slate-800 rounded-full overflow-hidden cursor-pointer relative group"
-              title="คลิกที่แถบเพื่อเลื่อนเวลา"
-            >
-              <div
-                className="h-full bg-brand-gold rounded-full transition-all duration-200"
-                style={{ width: `${Math.max(audioProgress, isPlayingAudio ? 2 : 0)}%` }}
-              />
-            </div>
-
-            {/* Volume Control Bar */}
-            <div className="flex items-center justify-between pt-1 text-xs text-slate-400">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  className="hover:text-white transition-colors cursor-pointer text-xs"
-                >
-                  {isMuted || volume === 0 ? '🔇 ปิดเสียง' : '🔊 เปิดเสียง'}
-                </button>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={isMuted ? 0 : volume}
-                  onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                  className="w-20 sm:w-28 accent-brand-gold h-1.5 cursor-pointer bg-slate-700 rounded-lg"
-                  title="ปรับระดับความดังเสียง"
-                />
-                <span className="font-mono text-[11px] tabular-nums">{Math.round((isMuted ? 0 : volume) * 100)}%</span>
-              </div>
-
-              <span className="text-[11px] text-slate-400">
-                {isEnglish ? 'Lp Pasura · Dhammakaya Foundation' : 'เสียงบรรยาย: พระอาจารย์พสุธา · วัดพระธรรมกาย'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Live Subtitle Prompter (Synchronized with speech audio) */}
-        <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
-          <div className="flex items-center justify-between text-[11px] text-brand-gold font-mono">
-            <span>LIVE TELEPROMPTER · บทอ่านตามเสียงพูดจริง</span>
-            <span>{activeCue.start}s – {activeCue.end}s</span>
-          </div>
-          <p className="text-sm sm:text-base text-slate-100 font-serif italic text-pretty leading-relaxed">
-            “{activeCue.en}”
-          </p>
-          <p className="text-xs text-slate-300 leading-normal">
-            ({activeCue.th})
-          </p>
-        </div>
       </div>
 
       {/* SECTION 2: CMS Unhandled Question Logger Form */}
@@ -887,17 +446,13 @@ export function NisitFieldCockpit({
         </div>
 
         {/* Category Filter Pills */}
-        <div className="flex flex-wrap gap-2">
-          {[
-            { id: 'all', th: 'ทั้งหมด', en: 'All' },
-            { id: 'vinaya', th: 'พระวินัย & ข้อห้าม', en: 'Vinaya' },
-            { id: 'rescue', th: 'การสื่อสาร & ขอเวลา', en: 'Communication' },
-            { id: 'meditation', th: 'ชวนนั่งสมาธิ', en: 'Meditation' },
-            { id: 'blessing', th: 'ให้พร & อำลา', en: 'Blessings' },
-          ].map((cat) => (
+        <CompactFilters label={isEnglish ? 'Categories' : 'เลือกหมวด'}
+          selected={phraseCategories.find(cat => cat.id === selectedCategory)?.[isEnglish ? 'en' : 'th'] ?? ''}>
+          {phraseCategories.map((cat) => (
             <button
               key={cat.id}
               type="button"
+              aria-pressed={selectedCategory === cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold cursor-pointer transition-colors ${
                 selectedCategory === cat.id
@@ -908,14 +463,15 @@ export function NisitFieldCockpit({
               {isEnglish ? cat.en : cat.th}
             </button>
           ))}
-        </div>
+        </CompactFilters>
 
         {/* Phrases List Cards (Tactile Action Deck) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredPhrases.map((phrase) => (
             <div
               key={phrase.id}
-              className="rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] p-5 sm:p-6 shadow-2xs hover:border-brand-gold/80 hover:shadow-xs transition-all duration-150 flex flex-col justify-between space-y-3"
+              data-phrase-category={phrase.category}
+              className="nisit-phrase-card rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] p-5 sm:p-6 shadow-2xs hover:border-brand-gold/80 hover:shadow-xs transition-all duration-150 flex flex-col justify-between space-y-3"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2 border-b border-brand-border/60 pb-2.5">
@@ -1022,17 +578,17 @@ export function NisitFieldCockpit({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          className="tourist-phrase-overlay fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
         >
-          <div className="w-full max-w-2xl rounded-3xl border-2 border-brand-gold bg-[#0B1528] p-6 sm:p-10 text-white shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <div className="flex items-center gap-2 text-xs font-mono text-brand-gold uppercase tracking-wider">
+          <div className="tourist-phrase-card w-full max-w-2xl rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="tourist-phrase-header flex items-center justify-between gap-3 border-b pb-4">
+              <div className="tourist-phrase-badge flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
                 <span>Ayutthaya Monk Chat · Card for Tourist</span>
               </div>
               <button
                 type="button"
                 onClick={() => setExpandedPhrase(null)}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white cursor-pointer transition-colors"
+                className="tourist-phrase-dismiss w-9 h-9 shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-colors"
                 title="ปิดหน้าต่างการ์ด"
               >
                 ✕
@@ -1040,22 +596,22 @@ export function NisitFieldCockpit({
             </div>
 
             <div className="space-y-4 py-2">
-              <p className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight text-white tracking-wide text-pretty uppercase">
+              <p className="tourist-phrase-english font-serif text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-wide text-pretty uppercase">
                 “{expandedPhrase.textEn}”
               </p>
-              <p className="text-xs sm:text-sm text-slate-300 italic pt-2">
+              <p className="tourist-phrase-thai text-xs sm:text-sm italic pt-2">
                 ({expandedPhrase.textTh})
               </p>
             </div>
 
-            <div className="flex items-center justify-between border-t border-white/10 pt-4">
-              <span className="text-xs text-slate-400">
+            <div className="tourist-phrase-footer flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+              <span className="tourist-phrase-hint text-xs">
                 ยื่นหน้าจอนี้ให้นักท่องเที่ยวชาวต่างชาติอ่านได้ทันที
               </span>
               <button
                 type="button"
                 onClick={() => setExpandedPhrase(null)}
-                className="min-h-11 rounded-xl bg-brand-gold hover:bg-[#a6741c] text-[#11223C] px-5 text-sm font-bold cursor-pointer transition-colors"
+                className="tourist-phrase-done min-h-11 rounded-xl px-5 text-sm font-bold cursor-pointer transition-colors"
               >
                 ปิดหน้าต่างการ์ด
               </button>

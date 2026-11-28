@@ -150,6 +150,21 @@ afterEach(() => {
 })
 
 describe('Phase 2 Student Accounts & Role Isolation', () => {
+  it('embedded account card signs in using the existing service and returns to guest practice', async () => {
+    const onGuest = vi.fn()
+    mocks.signInWithPassword.mockResolvedValue({ error: { message: 'invalid credentials' } })
+    renderRoute(<NisitLoginPage embedded onGuest={onGuest} />, ['/nisit'])
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('7-digit Student ID'), { target: { value: '6611018' } })
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'ExamplePractice2026!' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in to /nisit' }))
+    await waitFor(() => expect(mocks.signInWithPassword).toHaveBeenCalledWith({ email: '6611018@student.monkchat.invalid', password: 'ExamplePractice2026!' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Invalid student ID or password')
+    fireEvent.click(screen.getByRole('button', { name: 'Continue as guest →' }))
+    expect(onGuest).toHaveBeenCalledOnce()
+    fireEvent.click(screen.getByRole('tab', { name: 'Register student' }))
+    expect(screen.getByLabelText('Full name')).toBeInTheDocument()
+  })
   it('NisitLoginPage signs in via 7-digit ID mapped to .invalid internal email and validates cohort registration passwords', async () => {
     mocks.functionsInvoke.mockResolvedValue({
       data: { registered: true, student_code: '6611018', cohort_year: 66, display_name: 'Phra Somchai', is_active: false },
@@ -249,19 +264,21 @@ describe('Phase 2 Student Accounts & Role Isolation', () => {
 
     renderRoute(<NisitPracticePage />, ['/nisit'])
 
+    fireEvent.click(screen.getByLabelText('Account'))
     expect(screen.getByText(/Phra Somchai · Sutthipanyo/)).toBeInTheDocument()
     expect(screen.getByText(/Signed in as student · Progress synced to database/)).toBeInTheDocument()
     await waitFor(() => expect(mocks.fromSelect).toHaveBeenCalledWith('vocab_lesson'))
-    expect(screen.getByText('1 / 7')).toBeInTheDocument()
+    expect(screen.getByText('1 / 8')).toBeInTheDocument()
 
     // Marking a second vocabulary lesson syncs to Supabase
     const markButtons = screen.getAllByRole('button', { name: 'Mark practiced' })
     fireEvent.click(markButtons[0])
     await waitFor(() => expect(mocks.fromUpsert).toHaveBeenCalled())
-    expect(screen.getByText('2 / 7')).toBeInTheDocument()
+    expect(screen.getByText('2 / 8')).toBeInTheDocument()
 
     // Switching to Q&A tab fetches qa_flashcard completion keys
-    fireEvent.click(screen.getByRole('tab', { name: /Q&A Flashcards/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Phrases & Tools/i }))
+    fireEvent.click(screen.getByText('Q&A practice library'))
     await waitFor(() => expect(mocks.fromSelect).toHaveBeenCalledWith('qa_flashcard'))
     expect(await screen.findByRole('heading', { name: 'Why do monks close their eyes gently?' })).toBeInTheDocument()
 

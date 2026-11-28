@@ -1,0 +1,29 @@
+.visit-stats-section { min-width:0; }
+.visit-stats-heading { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:8px 20px; margin:0 8px 12px; }
+.visit-stats-kicker { display:inline-flex; gap:6px; align-items:center; font-size:10px; font-weight:650; letter-spacing:.04em; color:#916928; }
+.visit-stats-title { font-size:17px; line-height:1.7; font-weight:650; color:#19384c; margin-top:3px; }
+.visit-stats-date { display:flex; align-items:center; gap:7px; color:#79766d; font-size:11px; line-height:1.7; }
+.visit-stats-ribbon { position:relative; padding:0 8px 7px; }
+.visit-stats-ribbon::before,.visit-stats-ribbon::after { content:''; position:absolute; top:14px; bottom:0; width:17px; background:#d8b66d; }
+.visit-stats-ribbon::before { left:0; clip-path:polygon(0 0,100% 0,100% 100%,0 100%,28% 50%); }
+.visit-stats-ribbon::after { right:0; clip-path:polygon(0 0,100% 0,72% 50%,100% 100%,0 100%); }
+.visit-stats-track { position:relative; z-index:1; display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); min-width:0; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x proximity; scrollbar-width:thin; scrollbar-color:#c5a45b #f6edda; border:1px solid #dfc88f; border-radius:13px; background:linear-gradient(100deg,#fff5dc,#fffbef 45%,#f5e9ca); box-shadow:0 4px 10px #9a773810; }
+.visit-stats-track:focus-visible { outline:2px solid #a77e32; outline-offset:3px; }
+.visit-stat-item { position:relative; padding:18px 9px 16px; min-width:0; text-align:center; scroll-snap-align:start; }
+.visit-stat-item+.visit-stat-item::before { content:''; position:absolute; left:0; top:22%; height:56%; width:1px; background:#dac38f; }
+.visit-stat-value { color:#8a5816; font-family:var(--font-mono,ui-monospace,monospace); font-size:27px; line-height:1.3; font-weight:750; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.visit-stat-label { margin-top:5px; color:#344655; font-size:12px; line-height:1.6; font-weight:600; }
+.visit-stat-detail { margin-top:2px; color:#8a806c; font-size:10px; line-height:1.6; }
+.visit-stat-free .visit-stat-value { color:#28734d; }
+.visit-stats-swipe { display:none; }
+@media(max-width:767px) {
+  .visit-stats-heading { align-items:flex-start; gap:4px; margin:0 8px 10px; }
+  .visit-stats-kicker { display:none; }
+  .visit-stats-title { font-size:14px; line-height:1.7; margin:0; }
+  .visit-stats-date { font-size:10px; }
+  .visit-stats-track { grid-auto-columns:145px; }
+  .visit-stat-item { padding:14px 9px 12px; }
+  .visit-stat-value { font-size:25px; }
+  .visit-stat-label { font-size:11px; }
+  .visit-stats-swipe { display:block; margin:5px 8px 0; font-size:10px; color:#8c8069; text-align:right; }
+}

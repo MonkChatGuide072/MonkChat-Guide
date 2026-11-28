@@ -1,5 +1,5 @@
 import { usePublicPageCopy, pageValue } from '../lib/siteContent'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { HomeHeroIntro } from '../components/HomeHeroIntro'
@@ -8,6 +8,7 @@ import { GuideIcon } from '../components/GuideIcon'
 import { PublishedLinks } from '../components/PublishedLinks'
 import { OfficialContactBanner } from '../components/OfficialContactBanner'
 import { AnimatedCounter } from '../components/AnimatedCounter'
+import '../components/VisitStatsRibbon.css'
 import {
   normalizeLanguage,
   VISITOR_LANGUAGE_SELECTED_EVENT,
@@ -81,28 +82,7 @@ export function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
   const copy = usePublicPageCopy('home', currentLang)
   const text = (key: string, fallback: string) => pageValue(copy, key, currentLang, fallback)
 
-  // Live 5-minute meditation player state
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(326) // 5:26
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null)
-
-  const togglePlayMeditation = () => {
-    if (!audioRef.current) return
-    if (isPlaying) {
-      audioRef.current.pause()
-      setIsPlaying(false)
-    } else {
-      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false))
-    }
-  }
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
-  }
 
   const whatToExpect = [
     {
@@ -208,40 +188,27 @@ export function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
     <div className="bg-[#FAF7F2] text-[#292524] break-words [overflow-wrap:anywhere] min-h-screen">
       <HomeHeroIntro language={currentLang} activePath="/" />
 
-      {/* Hidden real audio element for live meditation playback */}
-      <audio
-        ref={audioRef}
-        src="/audio/meditation-5min-en.mp3"
-        preload="metadata"
-        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 326)}
-        onEnded={() => {
-          setIsPlaying(false)
-          setCurrentTime(0)
-        }}
-      />
-
       <div className="mx-auto w-full max-w-[76rem] space-y-12 px-4 pb-16 pt-6 sm:space-y-16 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8">
 
         {/* 1. OFFICIAL AYUTTHAYA MONK CHAT FIELD MILESTONE STRIP */}
         <section
           aria-label="Impact statistics and milestones"
-          className="rounded-3xl border border-[#D5B77E]/80 bg-gradient-to-r from-[#FFFDF9] via-[#FAF6EE] to-[#FFFDF9] p-5 sm:p-7 shadow-xs space-y-6"
+          className="visit-stats-section"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7DFD3] pb-4">
+          <div className="visit-stats-heading">
             <div>
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#8A5816] bg-[#EBD8B0]/70 px-3 py-1 rounded-full">
+              <span className="visit-stats-kicker">
                 <span>✦</span>
                 <span>{`${text('home_text_031', '')} ${text('home_stat_sessions', '122')}`}</span>
               </span>
-              <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#451A03] mt-2">
+              <h2 className="visit-stats-title">
                 {text('home_text_032', isEnglish
                   ? 'Official Historic Field Record at Wat Mahathat'
                   : 'สถิติประวัติศาสตร์กิจกรรมจริง ณ วัดมหาธาตุ พระนครศรีอยุธยา')}
               </h2>
             </div>
-            <div className="flex items-center gap-2 text-xs text-[#78716C]">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div className="visit-stats-date">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
               <span className="font-medium">
                 {`${text('home_text_033', '')}: ${text('home_stat_sessions', '122')} (${text('home_stat_date', '')})`}
               </span>
@@ -249,72 +216,73 @@ export function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           </div>
 
           {/* 5 Real Counter Metrics */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 divide-y md:divide-y-0 md:divide-x divide-[#E7DFD3]">
+          <div className="visit-stats-ribbon"><div className="visit-stats-track" tabIndex={0} role="group" aria-label={isEnglish ? 'Activity statistics · swipe horizontally for more' : 'สถิติกิจกรรม · ปัดแนวนอนเพื่อดูเพิ่มเติม'}>
             {/* 1. 122 ครั้ง */}
-            <div className="text-center p-2">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
+            <div className="visit-stat-item">
+              <div className="visit-stat-value">
                 <AnimatedCounter end={Number(text('home_stat_sessions', '122'))} />
               </div>
-              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+              <div className="visit-stat-label">
                 {text('home_text_034', isEnglish ? 'Historic Sessions' : 'ครั้งจัดกิจกรรม')}
               </div>
-              <div className="text-[10px] text-[#A8A29E] mt-0.5">
+              <div className="visit-stat-detail">
                 {text('home_text_035', isEnglish ? 'Ayutthaya heritage' : 'ประวัติศาสตร์อยุธยา')}
               </div>
             </div>
 
             {/* 2. 15,317 ท่าน */}
-            <div className="text-center p-2">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
+            <div className="visit-stat-item">
+              <div className="visit-stat-value">
                 <AnimatedCounter end={Number(text('home_stat_participants', '15317'))} />
               </div>
-              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+              <div className="visit-stat-label">
                 {text('home_text_036', isEnglish ? 'Total Participants' : 'ผู้เข้าร่วมทั้งสิ้น (ท่าน)')}
               </div>
-              <div className="text-[10px] text-[#A8A29E] mt-0.5">
+              <div className="visit-stat-detail">
                 {text('home_text_037', isEnglish ? 'Welcomed warmly' : 'สนทนาธรรมและสมาธิ')}
               </div>
             </div>
 
             {/* 3. 94 ชนชาติ */}
-            <div className="text-center p-2">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
+            <div className="visit-stat-item">
+              <div className="visit-stat-value">
                 <AnimatedCounter end={Number(text('home_stat_nations', '94'))} />
               </div>
-              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+              <div className="visit-stat-label">
                 {text('home_text_038', isEnglish ? 'Nations Reached' : 'ชนชาติ / ประเทศ')}
               </div>
-              <div className="text-[10px] text-[#A8A29E] mt-0.5">
+              <div className="visit-stat-detail">
                 {text('home_text_039', isEnglish ? 'Global friendship' : 'มิตรภาพไร้พรมแดน')}
               </div>
             </div>
 
             {/* 4. 1,276+ ชม. (76,585 นาที) */}
-            <div className="text-center p-2">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#8A5816]">
+            <div className="visit-stat-item">
+              <div className="visit-stat-value">
                 <AnimatedCounter end={Number(text('home_stat_hours', '1276'))} suffix="+" />
               </div>
-              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+              <div className="visit-stat-label">
                 {text('home_text_040', isEnglish ? 'Meditation Hours' : 'เวลานั่งสมาธิสะสม (ชม.)')}
               </div>
-              <div className="text-[10px] text-[#8A5816] font-mono mt-0.5 font-medium">
+              <div className="visit-stat-detail">
                 {`${Number(text('home_stat_minutes', '76585')).toLocaleString()} ${isEnglish ? 'total mins' : 'นาทีรวม'}`}
               </div>
             </div>
 
             {/* 5. 0 ฿ 100% ฟรี */}
-            <div className="text-center p-2 col-span-2 md:col-span-1">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-mono text-[#15803D]">
+            <div className="visit-stat-item visit-stat-free">
+              <div className="visit-stat-value">
                 0 ฿
               </div>
-              <div className="text-xs text-[#57534E] mt-1 font-semibold">
+              <div className="visit-stat-label">
                 {text('home_text_042', isEnglish ? '100% Free' : 'ฟรี 100% ทุกกิจกรรม')}
               </div>
-              <div className="text-[10px] text-[#15803D] mt-0.5 font-medium">
+              <div className="visit-stat-detail">
                 {text('home_text_043', isEnglish ? 'Universal gift of calm' : 'บริการด้วยกุศลจิต')}
               </div>
             </div>
-          </div>
+          </div></div>
+          <p className="visit-stats-swipe" aria-hidden="true">{isEnglish ? 'Swipe to explore the numbers ↔' : 'ปัดซ้าย–ขวาเพื่อดูสถิติ ↔'}</p>
         </section>
 
         {/* 2. SCHEDULE & LOCATION PILL */}
@@ -358,155 +326,7 @@ export function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
           </dl>
         </section>
 
-        {/* 3. INTERACTIVE 5-MINUTE MEDITATION SANCTUARY (เล่นเสียงจริงได้ทันที!) */}
-        <section
-          aria-labelledby="live-meditation-heading"
-          className="rounded-3xl border-2 border-[#D5B77E] bg-gradient-to-b from-[#FFFDF9] to-[#FDF8EE] p-6 sm:p-8 shadow-sm overflow-hidden relative"
-        >
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-            <div className="space-y-3 max-w-xl text-center lg:text-left">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBD8B0] text-[#78350F] text-xs font-bold font-mono">
-                {text('home_station_label', '🎧 ONE-TAP MEDITATION STATION')}
-              </span>
-              <h2 id="live-meditation-heading" className="text-2xl sm:text-3xl font-serif font-bold text-[#451A03] tracking-tight">
-                {text('home_text_054', isEnglish ? 'A 5-Minute Mental Coffee Break' : 'สมาธิสั้น 5 นาที: พักใจ พักความคิด')}
-              </h2>
-              <p className="text-sm text-[#57534E] leading-relaxed">
-                {text('home_text_055', isEnglish
-                  ? 'Listen to our peaceful guided meditation audio by Lp Pasura (Dhammakaya Foundation). Sit back comfortably, close your eyes softly, and let your mind settle into gentle stillness.'
-                  : 'ร่วมฝึกสมาธิเบื้องต้นผ่านเสียงนำสมาธิสากลของพระอาจารย์พสุธา (มูลนิธิธรรมกาย) นั่งเก้าอี้สบายๆ ค่อยๆ หลับตาลงเบาๆ และรวมใจหยุดนิ่ง ณ ศูนย์กลางกาย')}
-              </p>
-            </div>
-
-            {/* Audio Master Disc & Playback Controls */}
-            <div className="flex flex-col items-center gap-3 bg-[#FFF] p-5 rounded-3xl border border-[#E7DFD3] shadow-xs shrink-0 w-full sm:w-auto">
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={togglePlayMeditation}
-                  aria-label={isPlaying ? 'Pause meditation audio' : 'Play 5-minute guided meditation audio'}
-                  className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#A16207] to-[#D97706] text-white flex items-center justify-center font-bold text-xl shadow-md transition-all active:scale-[0.96] hover:brightness-110 cursor-pointer"
-                >
-                  {isPlaying ? '⏸' : '▶'}
-                </button>
-                <div>
-                  <div className="text-sm font-bold text-[#451A03]">
-                    {isPlaying ? (text('home_text_056', isEnglish ? 'Playing Guided Audio' : 'กำลังเล่นเสียงนำสมาธิ')) : (text('home_text_057', isEnglish ? 'Tap to Start Audio' : 'แตะเพื่อเริ่มสมาธิ'))}
-                  </div>
-                  <div className="text-xs font-mono text-[#8A5816] mt-0.5 font-bold">
-                    {formatTime(currentTime)} / {formatTime(duration)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Dynamic Equalizer Bar when playing */}
-              {isPlaying && (
-                <div className="flex items-center gap-1.5 pt-2">
-                  <span className="w-1.5 h-3 bg-[#D97706] rounded-full animate-bounce"></span>
-                  <span className="w-1.5 h-5 bg-[#D97706] rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                  <span className="w-1.5 h-4 bg-[#D97706] rounded-full animate-bounce [animation-delay:0.1s]"></span>
-                  <span className="w-1.5 h-6 bg-[#D97706] rounded-full animate-bounce [animation-delay:0.3s]"></span>
-                  <span className="text-[11px] text-[#78350F] font-serif italic ml-2">
-                    "{text('home_relax_quote', 'Relax your body and mind...')}"
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* 4. WHAT TO EXPECT SECTION WITH AUTHENTIC PHOTOGRAPHY */}
-        <section className="space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-            <div>
-              <h2 className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl">
-                {text('home_text_058', isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม')}
-              </h2>
-            </div>
-            <p className="text-xs sm:text-sm text-brand-muted max-w-md">
-              {text('home_text_059', isEnglish
-                ? 'Sit under the historic trees with MCU student monks. Friendly, open, and peaceful.'
-                : 'ล้อมวงคุยสบายๆ ใต้ร่มเงาไม้โบราณสถาน กับพระนิสิต มจร อย่างเป็นมิตรและเป็นกันเอง')}
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {whatToExpect.map((item) => (
-              <div
-                key={item.title}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] shadow-2xs hover:shadow-md transition-all duration-300"
-              >
-                <div className="relative h-44 w-full overflow-hidden bg-brand-gold-soft">
-                  <img
-                    src={item.img}
-                    alt={item.title}
-                    width={item.width}
-                    height={item.height}
-                    loading="lazy"
-                    className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${item.imageClassName}`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
-                </div>
-                <div className="flex flex-1 flex-col p-4 justify-between">
-                  <div>
-                    <h3 className="font-serif text-base font-bold text-brand-maroon">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 text-xs leading-5 text-[#5A4B40]">{item.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 5. TOP CURATED DHAMMA QUESTIONS PREVIEW */}
-        <section aria-labelledby="curated-qa-heading" className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
-                {text('home_text_060', isEnglish ? 'Top Curiosities' : 'คำถามยอดนิยม')}
-              </span>
-              <h2 id="curated-qa-heading" className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl mt-1">
-                {text('home_text_061', isEnglish ? 'Questions Visitors Wonder Most' : 'ข้อสงสัยที่นักท่องเที่ยวมักถามบ่อย')}
-              </h2>
-            </div>
-            <Link
-              to="/qa"
-              className="text-xs font-bold text-brand-terracotta hover:text-brand-terracotta-dark flex items-center gap-1 shrink-0"
-            >
-              <span>{text('home_text_062', isEnglish ? 'View all 200 Q&As' : 'ดูคลังคำถาม 200 ข้อ')}</span>
-              <span>→</span>
-            </Link>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {topQuestions.map((item, idx) => (
-              <div
-                key={item.q}
-                className="rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] p-4 shadow-2xs space-y-2 hover:border-[#D5B77E] transition"
-              >
-                <div
-                  className="flex items-start justify-between gap-3 cursor-pointer"
-                  onClick={() => setExpandedFaqIndex(expandedFaqIndex === idx ? null : idx)}
-                >
-                  <h3 className="text-sm font-bold text-[#451A03] flex items-start gap-2">
-                    <span className="text-[#8A5816] font-mono text-xs">#{String(idx + 1).padStart(2, '0')}</span>
-                    <span>{item.q}</span>
-                  </h3>
-                  <span className="text-[#8A5816] text-xs font-bold shrink-0">
-                    {expandedFaqIndex === idx ? '▲' : '▼'}
-                  </span>
-                </div>
-                <p className={`text-xs text-[#57534E] leading-relaxed pt-1 border-t border-[#F5EFE6] ${expandedFaqIndex === idx ? 'block' : 'line-clamp-2'}`}>
-                  {item.a}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 6. LOCATION & MAP SECTION WITH REAL SPOT PHOTO */}
+        {/* 3. LOCATION & MAP SECTION WITH REAL SPOT PHOTO */}
         <section id="location-details" className="scroll-mt-8 space-y-4">
           <div>
             <h2 className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl">
@@ -632,6 +452,97 @@ export function VisitorHome({ currentLang }: { currentLang: AppLanguage }) {
                 className="h-full w-full border-0"
               />
             </div>
+          </div>
+        </section>
+
+        {/* 4. WHAT TO EXPECT SECTION WITH AUTHENTIC PHOTOGRAPHY */}
+        <section className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+            <div>
+              <h2 className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl">
+                {text('home_text_058', isEnglish ? 'What to expect' : 'สิ่งที่จะได้สัมผัสในกิจกรรม')}
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-brand-muted max-w-md">
+              {text('home_text_059', isEnglish
+                ? 'Sit under the historic trees with MCU student monks. Friendly, open, and peaceful.'
+                : 'ล้อมวงคุยสบายๆ ใต้ร่มเงาไม้โบราณสถาน กับพระนิสิต มจร อย่างเป็นมิตรและเป็นกันเอง')}
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {whatToExpect.map((item) => (
+              <div
+                key={item.title}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] shadow-2xs hover:shadow-md transition-all duration-300"
+              >
+                <div className="relative h-44 w-full overflow-hidden bg-brand-gold-soft">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    width={item.width}
+                    height={item.height}
+                    loading="lazy"
+                    className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${item.imageClassName}`}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
+                </div>
+                <div className="flex flex-1 flex-col p-4 justify-between">
+                  <div>
+                    <h3 className="font-serif text-base font-bold text-brand-maroon">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-xs leading-5 text-[#5A4B40]">{item.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 5. TOP CURATED DHAMMA QUESTIONS PREVIEW */}
+        <section aria-labelledby="curated-qa-heading" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-brand-terracotta">
+                {text('home_text_060', isEnglish ? 'Top Curiosities' : 'คำถามยอดนิยม')}
+              </span>
+              <h2 id="curated-qa-heading" className="font-serif text-2xl font-bold text-brand-maroon sm:text-3xl mt-1">
+                {text('home_text_061', isEnglish ? 'Questions Visitors Wonder Most' : 'ข้อสงสัยที่นักท่องเที่ยวมักถามบ่อย')}
+              </h2>
+            </div>
+            <Link
+              to="/qa"
+              className="text-xs font-bold text-brand-terracotta hover:text-brand-terracotta-dark flex items-center gap-1 shrink-0"
+            >
+              <span>{text('home_text_062', isEnglish ? 'View all 200 Q&As' : 'ดูคลังคำถาม 200 ข้อ')}</span>
+              <span>→</span>
+            </Link>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {topQuestions.map((item, idx) => (
+              <div
+                key={item.q}
+                className="rounded-2xl border border-[#E7DFD3] bg-[#FFFDF9] p-4 shadow-2xs space-y-2 hover:border-[#D5B77E] transition"
+              >
+                <div
+                  className="flex items-start justify-between gap-3 cursor-pointer"
+                  onClick={() => setExpandedFaqIndex(expandedFaqIndex === idx ? null : idx)}
+                >
+                  <h3 className="text-sm font-bold text-[#451A03] flex items-start gap-2">
+                    <span className="text-[#8A5816] font-mono text-xs">#{String(idx + 1).padStart(2, '0')}</span>
+                    <span>{item.q}</span>
+                  </h3>
+                  <span className="text-[#8A5816] text-xs font-bold shrink-0">
+                    {expandedFaqIndex === idx ? '▲' : '▼'}
+                  </span>
+                </div>
+                <p className={`text-xs text-[#57534E] leading-relaxed pt-1 border-t border-[#F5EFE6] ${expandedFaqIndex === idx ? 'block' : 'line-clamp-2'}`}>
+                  {item.a}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
 

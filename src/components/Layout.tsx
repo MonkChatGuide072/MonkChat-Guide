@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { MeditationMark } from './MeditationMark'
 import { ChatbotServiceCard } from './ChatbotServiceCard'
 import { GuideIcon, type GuideIconName } from './GuideIcon'
 import { PUBLIC_SHORTCUTS } from '../content/publicShortcuts'
+import { VisitorMobileNav } from './VisitorMobileNav'
+import { NISIT_SELECT_TAB, NISIT_OPEN_ACCOUNT } from '../content/nisitNavigation'
+import './nisit/NisitPhoneShell.css'
+import './nisit/NisitPastelPalette.css'
 import { useAuth } from '../lib/auth'
 import {
   VISITOR_LANGUAGE_SELECTED_EVENT,
@@ -16,6 +20,16 @@ export function Layout() {
   const { t, i18n } = useTranslation()
   const isEnglish = (i18n.resolvedLanguage || i18n.language || 'th').startsWith('en')
   const location = useLocation()
+  const navigate = useNavigate()
+  const isNisitArea = location.pathname === '/nisit' || location.pathname.startsWith('/nisit/')
+  const [isPhone, setIsPhone] = useState(() => window.matchMedia?.('(max-width: 767px)').matches ?? false)
+  const useNisitMobile = isNisitArea && isPhone
+  useEffect(() => {
+    const media = window.matchMedia?.('(max-width: 767px)')
+    const resize = () => setIsPhone(media?.matches ?? false)
+    media?.addEventListener('change', resize)
+    return () => media?.removeEventListener('change', resize)
+  }, [])
   const { session, profile: authProfile, signOut } = useAuth()
   const isSignedStudent = Boolean(session && authProfile?.is_active && authProfile.role === 'student')
   const isSignedStaff = Boolean(
@@ -34,6 +48,12 @@ export function Layout() {
     }
     window.addEventListener(VISITOR_LANGUAGE_SELECTED_EVENT, handleLanguageSelected)
     return () => window.removeEventListener(VISITOR_LANGUAGE_SELECTED_EVENT, handleLanguageSelected)
+  }, [])
+
+  useEffect(() => {
+    const close = () => setIsMobileMenuOpen(false)
+    window.addEventListener('monkchat:nisit-close-account', close)
+    return () => window.removeEventListener('monkchat:nisit-close-account', close)
   }, [])
 
   // Close mobile menu on route change
@@ -66,6 +86,8 @@ export function Layout() {
     (prefix) => location.pathname === prefix || location.pathname.startsWith(`${prefix}/`),
   )
   const isHomeRoute = location.pathname === '/' || location.pathname === '/home' || location.pathname === '/visit'
+
+  const hasVisitorNav = isHomeRoute || isSubShortcutPage
 
   const navItems = [
     {
@@ -119,7 +141,7 @@ export function Layout() {
   ]
 
   return (
-    <div className="relative isolate flex min-h-screen flex-col overflow-x-clip bg-brand-cream text-brand-text">
+    <div className={`relative isolate flex min-h-screen flex-col overflow-x-clip bg-brand-cream text-brand-text ${hasVisitorNav ? 'layout-with-visitor-nav' : ''} ${isNisitArea ? 'layout-nisit' : ''}`}>
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-lg focus:bg-brand-maroon focus:px-4 focus:text-sm focus:font-medium focus:text-white"
@@ -132,6 +154,12 @@ export function Layout() {
           {/* Logo & Brand */}
           <NavLink
             to="/"
+            onClick={event => {
+              if (!useNisitMobile) return
+              event.preventDefault()
+              if (location.pathname === '/nisit') window.dispatchEvent(new CustomEvent(NISIT_SELECT_TAB, {detail:'vocab'}))
+              else navigate('/nisit')
+            }}
             className="group flex min-h-11 min-w-0 shrink items-center gap-2 sm:gap-3 text-brand-maroon transition-colors duration-150 lg:shrink-0"
           >
             <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-surface p-0.5 shadow-xs ring-1 ring-brand-gold/45 sm:h-11 sm:w-11">
@@ -145,7 +173,7 @@ export function Layout() {
             </div>
             <span className="min-w-0 leading-tight">
               <span className="block truncate whitespace-nowrap font-sans text-[13px] min-[390px]:text-sm font-semibold text-brand-maroon sm:font-serif sm:text-base lg:text-lg">
-                MonkChat Guide
+                {useNisitMobile ? (isEnglish ? 'Monk Chat Practice' : 'พื้นที่ฝึกพระนิสิต') : 'MonkChat Guide'}
               </span>
               <span className="hidden whitespace-nowrap text-xs font-medium text-brand-gold xl:block">
                 {isEnglish ? 'Meditation & Monk Chat' : 'คู่มือสมาธิและสนทนาธรรม'}
@@ -183,7 +211,7 @@ export function Layout() {
 
             {/* Logged-in User Profile Dropdown */}
             {(isSignedStudent || isSignedStaff) && (
-              <div className="relative">
+              <div className={isNisitArea ? "relative nisit-existing-user-menu" : "relative"}>
                 <button
                   type="button"
                   onClick={() => setIsUserMenuOpen((v) => !v)}
@@ -258,15 +286,22 @@ export function Layout() {
             {/* Mobile Hamburger Button */}
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => {
+                if (useNisitMobile && !isMobileMenuOpen) window.dispatchEvent(new Event(NISIT_OPEN_ACCOUNT))
+                setIsMobileMenuOpen(!isMobileMenuOpen)
+              }}
               aria-expanded={isMobileMenuOpen}
-              aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-brand-border bg-brand-surface text-brand-maroon shadow-xs transition-colors hover:bg-brand-gold-soft lg:hidden cursor-pointer"
+              aria-label={useNisitMobile ? (isMobileMenuOpen ? (isEnglish ? 'Close account menu' : 'ปิดเมนูบัญชี') : (isEnglish ? 'Open account menu' : 'เปิดเมนูบัญชี')) : (isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu')}
+              aria-controls={useNisitMobile ? 'nisit-phone-account-menu' : undefined}
+              className={`inline-flex h-11 w-11 items-center justify-center rounded-lg border border-brand-border bg-brand-surface text-brand-maroon shadow-xs transition-colors hover:bg-brand-gold-soft lg:hidden cursor-pointer ${hasVisitorNav ? 'visitor-mobile-menu-toggle' : ''}`}
             >
               <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 {isMobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                ) : (
+                ) : useNisitMobile ? <>
+                  <circle cx="12" cy="8" r="3.5" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 21v-2a7 7 0 0 1 14 0v2" />
+                </> : (
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
@@ -278,7 +313,7 @@ export function Layout() {
         {isSubShortcutPage && (
           <nav
             aria-label={isEnglish ? 'Visitor quick shortcuts' : 'ทางลัดเมนูหลัก'}
-            className="border-t border-brand-border/80 bg-brand-surface/95 px-2 py-1.5 lg:hidden"
+            className="visitor-header-shortcuts border-t border-brand-border/80 bg-brand-surface/95 px-2 py-1.5 lg:hidden"
           >
             <div className="mx-auto grid max-w-2xl grid-cols-5 gap-1 min-[390px]:gap-1.5">
               {PUBLIC_SHORTCUTS.map((item) => {
@@ -306,8 +341,8 @@ export function Layout() {
         )}
 
         {/* Mobile Navigation Drawer */}
-        {isMobileMenuOpen && (
-          <div className="border-t border-brand-border bg-brand-surface px-4 py-4 shadow-lg lg:hidden">
+        {isMobileMenuOpen && !useNisitMobile && (
+          <div className={`border-t border-brand-border bg-brand-surface px-4 py-4 shadow-lg lg:hidden ${hasVisitorNav ? 'visitor-mobile-drawer' : ''}`}>
             <nav aria-label={t('nav.mainNavigation')} className="flex flex-col gap-1">
               {navItems.map((item) => (
                 <NavLink
@@ -331,6 +366,12 @@ export function Layout() {
             </nav>
           </div>
         )}
+        {isNisitArea && <div id="nisit-phone-account-menu" className="nisit-phone-drawer" role="region" aria-label={isEnglish ? 'Account menu' : 'เมนูบัญชี'} hidden={!isMobileMenuOpen || !isPhone}>
+          <div id="nisit-phone-account-slot" />
+          <NavLink className="nisit-drawer-visitor" to="/visit" onClick={() => setIsMobileMenuOpen(false)}>
+            {isEnglish ? 'Visitor area' : 'ไปพื้นที่ผู้มาเยือน'} <GuideIcon name="external" />
+          </NavLink>
+        </div>}
       </header>
 
       {/* Main Content Area */}
@@ -356,6 +397,7 @@ export function Layout() {
           </p>
         </div>
       </footer>
+      {hasVisitorNav && <VisitorMobileNav isEnglish={isEnglish} />}
     </div>
   )
 }
